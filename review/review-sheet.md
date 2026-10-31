@@ -288,6 +288,8 @@
 
 ![블레이드의 생김새](images/detail-saw-blade.svg)
 
+![블레이드의 생김새](images/detail-blade-sem.svg)
+
 ![자르는 원리](images/detail-saw-cut.svg)
 
 ![마모와 교체](images/detail-saw-blade-wear.svg)

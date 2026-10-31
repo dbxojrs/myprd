@@ -41,6 +41,47 @@ const Later = ({ animate, from, to = 1, children }) =>
     children
   )
 
+
+// 현미경(SEM) 사진처럼 보이게 그린 블레이드 날 끝. 실제 사진이 아니므로 그림 안에 그렇게 적습니다.
+// 다이아몬드 입자 위치는 고정된 씨앗값으로 만들어 매번 같은 그림이 나옵니다.
+function seeded(seed) {
+  let a = seed
+  return () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const SEM_EDGE = 'M68 0 L68 58 Q68 74 100 74 Q132 74 132 58 L132 0 Z'
+
+const semGrits = (() => {
+  const rand = seeded(7)
+  const grits = []
+  while (grits.length < 34) {
+    const x = 66 + rand() * 68
+    const y = 4 + rand() * 72
+    const inside = y < 58 ? x > 66 && x < 134 : Math.hypot((x - 100) / 34, (y - 58) / 18) < 1.08
+    if (!inside) continue
+    const r = 2.2 + rand() * 3
+    const sides = 4 + Math.floor(rand() * 3)
+    const turn = rand() * Math.PI
+    const points = Array.from({ length: sides }, (_, i) => {
+      const a = turn + (i / sides) * Math.PI * 2
+      const k = 0.75 + rand() * 0.4
+      return `${(x + Math.cos(a) * r * k).toFixed(1)},${(y + Math.sin(a) * r * k).toFixed(1)}`
+    }).join(' ')
+    grits.push({ x, y, points, dim: rand() < 0.35 })
+  }
+  return grits
+})()
+
+const semPores = (() => {
+  const rand = seeded(19)
+  return Array.from({ length: 10 }, () => ({ x: 72 + rand() * 56, y: 6 + rand() * 56, r: 0.8 + rand() * 1.2 }))
+})()
+
 const detailDrawings = {
   // ── 다이 어태치 ──
   'die-fillet': (animate) => (
@@ -514,6 +555,56 @@ const detailDrawings = {
     )
   },
 
+  'blade-sem': (animate) => (
+    <>
+      <defs>
+        <filter id="il-sem-grain" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" />
+          <feColorMatrix type="saturate" values="0" />
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.35" />
+          </feComponentTransfer>
+        </filter>
+        <linearGradient id="il-sem-bond" x1="0" x2="1">
+          <stop offset="0" stopColor="#4a4a4a" />
+          <stop offset="0.5" stopColor="#7a7a7a" />
+          <stop offset="1" stopColor="#4a4a4a" />
+        </linearGradient>
+        <clipPath id="il-sem-frame">
+          <rect x="0" y="0" width="200" height="80" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#il-sem-frame)">
+        <rect x="0" y="0" width="200" height="80" className="il-sem-bg" />
+        <path d={SEM_EDGE} fill="url(#il-sem-bond)" className="il-sem-edge" />
+        {semPores.map((p) => (
+          <ellipse key={`${p.x}-${p.y}`} cx={p.x} cy={p.y} rx={p.r} ry={p.r * 0.7} className="il-sem-pore" />
+        ))}
+        {semGrits.map((g) => (
+          <g key={`${g.x}-${g.y}`}>
+            <polygon points={g.points} className="il-sem-shadow" transform="translate(0.9 1.1)" />
+            <polygon points={g.points} className={g.dim ? 'il-sem-grit il-sem-grit-dim' : 'il-sem-grit'} />
+          </g>
+        ))}
+        <rect x="0" y="0" width="200" height="80" filter="url(#il-sem-grain)" />
+        {animate && (
+          <rect x="0" y="0" width="200" height="1.2" className="il-sem-scan">
+            <Anim attr="y" points={[[0, 0], [1, 80]]} dur="3s" />
+          </rect>
+        )}
+        <line x1="138" y1="20" x2="160" y2="20" className="il-sem-pointer" />
+        <text x="162" y="22" className="il-sem-text">다이아몬드 입자</text>
+        <line x1="134" y1="40" x2="160" y2="40" className="il-sem-pointer" />
+        <text x="162" y="42" className="il-sem-text">니켈 결합재</text>
+        <text x="8" y="14" className="il-sem-text">블레이드 날 끝 (옆에서 확대)</text>
+        <text x="8" y="70" className="il-sem-text">날 끝이 닳으면 입자가</text>
+        <text x="8" y="77" className="il-sem-text">빠지고 새 입자가 드러남</text>
+      </g>
+      <rect x="0" y="80" width="200" height="12" className="il-sem-bar" />
+      <text x="6" y="88.5" className="il-sem-text">현미경(SEM) 사진처럼 그린 그림 · 실제 사진 아님</text>
+    </>
+  ),
+
   // ── 블레이드 구조(멈춘 그림) ──
   'saw-blade': () => (
     <>
@@ -564,7 +655,7 @@ const detailDrawings = {
 }
 
 // 움직이는 상세 그림
-const ANIMATED = new Set(['die-fillet', 'die-void', 'daf', 'saw-cut', 'ultrasonic', 'wire-sweep', 'mold-void', 'mark-depth', 'qfn-burr', 'thin-wafer'])
+const ANIMATED = new Set(['blade-sem', 'die-fillet', 'die-void', 'daf', 'saw-cut', 'ultrasonic', 'wire-sweep', 'mold-void', 'mark-depth', 'qfn-burr', 'thin-wafer'])
 
 export function DetailIllustration({ id, still = false }) {
   const draw = detailDrawings[id]

@@ -52,10 +52,13 @@ function processSection(id, index) {
   if (p.keyPoints?.length) {
     lines.push('', '**알아둘 점**', '', '| 주제 | 설명 | 판단 | 고칠 곳·의견 |', '|---|---|---|---|')
     for (const point of p.keyPoints) {
-      lines.push(`| ${cell(point.title)} | ${cell(point.body)}${point.figure ? ' (아래 그림)' : ''} | ${CHECK} | |`)
+      const figures = point.figures ?? (point.figure ? [point.figure] : [])
+      lines.push(`| ${cell(point.title)} | ${cell(point.body)}${figures.length ? ' (아래 그림)' : ''} | ${CHECK} | |`)
     }
-    for (const point of p.keyPoints.filter((item) => item.figure)) {
-      lines.push('', `![${point.title}](images/detail-${point.figure}.svg)`)
+    for (const point of p.keyPoints) {
+      for (const figure of point.figures ?? (point.figure ? [point.figure] : [])) {
+        lines.push('', `![${point.title}](images/detail-${figure}.svg)`)
+      }
     }
   }
 
@@ -102,7 +105,8 @@ async function exportIllustrations(ids) {
     const { ProcessIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
     const { DetailIllustration } = await vite.ssrLoadModule('/src/components/DetailIllustration.jsx')
     mkdirSync(`${OUT_DIR}images`, { recursive: true })
-    const figures = ids.flatMap((id) => (findProcess(id).keyPoints ?? []).filter((point) => point.figure).map((point) => point.figure))
+    const figuresOf = (point) => point.figures ?? (point.figure ? [point.figure] : [])
+    const figures = ids.flatMap((id) => (findProcess(id).keyPoints ?? []).flatMap(figuresOf))
     const items = [
       ...ids.map((id) => [id, createElement(ProcessIllustration, { id, still: true })]),
       ...figures.map((figure) => [`detail-${figure}`, createElement(DetailIllustration, { id: figure, still: true })]),

@@ -107,4 +107,14 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
-.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><g><text x="50" y="8" class="il-label" text-anchor="middle">새 블레이드</text><rect x="28" y="14" width="44" height="20" class="il-frame"></rect><rect x="48" y="34" width="4" height="32" rx="0" class="il-tool"></rect><line x1="60" y1="34" x2="60" y2="66" class="il-dim"></line><line x1="56" y1="66" x2="64" y2="66" class="il-dim"></line><line x1="56" y1="34" x2="64" y2="34" class="il-dim"></line><text x="50" y="76" class="il-label" text-anchor="middle">날 노출 충분</text></g><g><text x="150" y="8" class="il-label" text-anchor="middle">마모된 블레이드</text><rect x="128" y="14" width="44" height="20" class="il-frame"></rect><rect x="148" y="34" width="4" height="20" rx="2" class="il-tool"></rect><rect x="148" y="54" width="4" height="12" class="il-worn"></rect><line x1="160" y1="34" x2="160" y2="54" class="il-dim"></line><line x1="156" y1="54" x2="164" y2="54" class="il-dim"></line><line x1="156" y1="34" x2="164" y2="34" class="il-dim"></line><text x="150" y="76" class="il-label" text-anchor="middle">날이 짧아지고 무뎌짐</text></g><text x="100" y="88" class="il-label" text-anchor="middle">줄어든 만큼 더 내려 보정하고, 한계가 되면 교체</text></svg>
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><g><text x="50" y="8" class="il-label" text-anchor="middle">새 블레이드</text><rect x="28" y="14" width="44" height="20" class="il-frame"></rect><rect x="48" y="34" width="4" height="32" rx="0" class="il-tool"></rect><line x1="60" y1="34" x2="60" y2="66" class="il-dim"></line><line x1="56" y1="66" x2="64" y2="66" class="il-dim"></line><line x1="56" y1="34" x2="64" y2="34" class="il-dim"></line><text x="50" y="76" class="il-label" text-anchor="middle">날 노출 충분</text></g><g><text x="150" y="8" class="il-label" text-anchor="middle">마모된 블레이드</text><rect x="128" y="14" width="44" height="20" class="il-frame"></rect><rect x="148" y="34" width="4" height="20" rx="2" class="il-tool"></rect><rect x="148" y="54" width="4" height="12" class="il-worn"></rect><line x1="160" y1="34" x2="160" y2="54" class="il-dim"></line><line x1="156" y1="54" x2="164" y2="54" class="il-dim"></line><line x1="156" y1="34" x2="164" y2="34" class="il-dim"></line><text x="150" y="76" class="il-label" text-anchor="middle">날이 짧아지고 무뎌짐</text></g><text x="100" y="88" class="il-label" text-anchor="middle">줄어든 만큼 더 내려 보정하고, 한계가 되면 교체</text></svg>

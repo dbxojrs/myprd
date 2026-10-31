@@ -107,4 +107,14 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
-.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="40" width="80" height="6" class="il-oxide"></rect><rect x="20" y="35" width="80" height="5" class="il-substrate"></rect><circle cx="28" cy="24" r="2" class="il-bump"></circle><circle cx="44" cy="18" r="2" class="il-bump"></circle><circle cx="60" cy="24" r="2" class="il-bump"></circle><circle cx="76" cy="18" r="2" class="il-bump"></circle><circle cx="92" cy="24" r="2" class="il-bump"></circle><text x="60" y="10" class="il-label" text-anchor="middle">기체 원료</text><text x="60" y="72" class="il-label" text-anchor="middle">얇은 막을 고르게 쌓음</text></svg>
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="40" width="80" height="6" class="il-oxide"></rect><rect x="20" y="35" width="80" height="5" class="il-substrate"></rect><circle cx="28" cy="24" r="2" class="il-bump"></circle><circle cx="44" cy="18" r="2" class="il-bump"></circle><circle cx="60" cy="24" r="2" class="il-bump"></circle><circle cx="76" cy="18" r="2" class="il-bump"></circle><circle cx="92" cy="24" r="2" class="il-bump"></circle><text x="60" y="10" class="il-label" text-anchor="middle">기체 원료</text><text x="60" y="72" class="il-label" text-anchor="middle">얇은 막을 고르게 쌓음</text></svg>

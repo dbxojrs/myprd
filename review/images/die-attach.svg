@@ -107,4 +107,14 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
-.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><rect x="20" y="56" width="80" height="6" class="il-frame"></rect><rect x="38" y="52" width="44" height="4" class="il-glue"></rect><g><rect x="40" y="42" width="40" height="10" rx="1" class="il-die"></rect></g><g transform="translate(0 -36)"><line x1="60" y1="0" x2="60" y2="34" class="il-probe"></line><rect x="50" y="34" width="20" height="8" class="il-tool"></rect></g><text x="60" y="74" class="il-label" text-anchor="middle">접착제 위에 다이를 눌러 붙임</text></svg>
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><rect x="20" y="56" width="80" height="6" class="il-frame"></rect><rect x="38" y="52" width="44" height="4" class="il-glue"></rect><g><rect x="40" y="42" width="40" height="10" rx="1" class="il-die"></rect></g><g transform="translate(0 -36)"><line x1="60" y1="0" x2="60" y2="34" class="il-probe"></line><rect x="50" y="34" width="20" height="8" class="il-tool"></rect></g><text x="60" y="74" class="il-label" text-anchor="middle">접착제 위에 다이를 눌러 붙임</text></svg>

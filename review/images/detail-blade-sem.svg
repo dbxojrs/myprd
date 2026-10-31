@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="276" viewBox="0 0 200 92" class="il il-detail" role="img" aria-label="상세 그림"><style>svg {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #1c2330;
+  --muted: #5d6675;
+  --border: #d8dde5;
+  --accent: #2f5bd3;
+  --accent-text: #ffffff;
+  --accent-soft: #e6ecfb;
+  --good: #1f7a45;
+  --good-soft: #e3f3ea;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  color-scheme: light;
+}
+svg { background: #ffffff; font-family: sans-serif; }
+.il-wafer { fill: var(--muted); }
+.il-tape { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.il-oxide { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.il-resist { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.il-tool { fill: var(--border); stroke: var(--text); stroke-width: 1; }
+.il-frame { fill: var(--muted); }
+.il-substrate { fill: var(--good-soft); stroke: var(--good); stroke-width: 1; }
+.il-rdl { fill: var(--accent); }
+.il-glue { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+.il-die { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.il-mold { fill: var(--border); stroke: var(--muted); stroke-width: 1; }
+.il-wire { fill: none; stroke: var(--warn); stroke-width: 1.5; }
+.il-bump { fill: var(--muted); stroke: var(--text); stroke-width: 0.6; }
+.il-ghost { opacity: 0.45; }
+.il-line { fill: none; stroke: var(--text); stroke-width: 1; }
+.il-cut { stroke: var(--bg); stroke-width: 1.5; }
+.il-blade { stroke: var(--bad); stroke-width: 2; }
+.il-laser { stroke: var(--bad); stroke-width: 2; stroke-dasharray: 3 2; }
+.il-probe { stroke: var(--text); stroke-width: 1.5; }
+.il-needle { stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.il-check { fill: none; stroke: var(--good); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.il-arrow line { stroke: var(--accent); stroke-width: 1.5; }
+.il-arrow polygon { fill: var(--accent); }
+.il-label {
+  font-size: 7px;
+  fill: var(--muted);
+}
+.il-mark {
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--surface);
+  letter-spacing: 1px;
+}
+.il-logic { fill: var(--accent-soft); }
+.il-interposer { opacity: 0.85; }
+.il-tsv { stroke: var(--warn); stroke-width: 1.5; }
+.il-cu { fill: var(--warn); }
+.il-link { fill: none; stroke: var(--accent); stroke-width: 2; }
+.il-dashed { stroke-dasharray: 3 2; }
+.il-tag {
+  font-size: 7px;
+  font-weight: 700;
+  fill: var(--text);
+}
+.il-blade-spokes line { stroke: var(--text); stroke-width: 1; }
+.il-blade-edge { fill: none; stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.il-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.il-wrap .il {
+  margin-bottom: 4px;
+}
+.il-play {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+.il-wide { max-width: 560px; width: 100%; }
+.il-kerf { fill: var(--bad); opacity: 0.25; }
+.il-cut-top { stroke: var(--bg); stroke-width: 2; }
+.il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
+.il-blade-top { fill: var(--bad); }
+.il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.il-cut-dark { stroke: var(--text); }
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }
+.il-outline { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.il-daf { fill: var(--accent); opacity: 0.75; }
+.il-warn-ring { fill: none; stroke: var(--bad); stroke-width: 1.5; }
+.il-dust { fill: var(--muted); }
+.il-water { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-oxide-film { fill: var(--bad); opacity: 0.6; }
+.il-imc { fill: var(--good); }
+.il-mold-flow { fill: var(--muted); opacity: 0.35; }
+.il-void { fill: var(--surface); stroke: var(--bad); stroke-width: 0.8; }
+.il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
+.il-kerf-gap { fill: var(--surface); }
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><defs><filter id="il-sem-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix><feComponentTransfer><feFuncA type="linear" slope="0.35"></feFuncA></feComponentTransfer></filter><linearGradient id="il-sem-bond" x1="0" x2="1"><stop offset="0" stop-color="#4a4a4a"></stop><stop offset="0.5" stop-color="#7a7a7a"></stop><stop offset="1" stop-color="#4a4a4a"></stop></linearGradient><clipPath id="il-sem-frame"><rect x="0" y="0" width="200" height="80"></rect></clipPath></defs><g clip-path="url(#il-sem-frame)"><rect x="0" y="0" width="200" height="80" class="il-sem-bg"></rect><path d="M68 0 L68 58 Q68 74 100 74 Q132 74 132 58 L132 0 Z" fill="url(#il-sem-bond)" class="il-sem-edge"></path><ellipse cx="75.27847627736628" cy="24.305740784853697" rx="1.3430196914821864" ry="0.9401137840375304" class="il-sem-pore"></ellipse><ellipse cx="114.38842929713428" cy="61.248530864715576" rx="1.1870280299335718" ry="0.8309196209535002" class="il-sem-pore"></ellipse><ellipse cx="108.59926372393966" cy="35.751516222953796" rx="1.4356384991668165" ry="1.0049469494167715" class="il-sem-pore"></ellipse><ellipse cx="118.04617094621062" cy="12.370717184618115" rx="1.3848460583016275" ry="0.9693922408111392" class="il-sem-pore"></ellipse><ellipse cx="104.29844139330089" cy="28.28202210366726" rx="1.4919371882453563" ry="1.0443560317717493" class="il-sem-pore"></ellipse><ellipse cx="76.75309742055833" cy="11.33766021206975" rx="1.4039265804924073" ry="0.982748606344685" class="il-sem-pore"></ellipse><ellipse cx="111.98023391142488" cy="52.74452085420489" rx="1.3604037259705364" ry="0.9522826081793754" class="il-sem-pore"></ellipse><ellipse cx="82.92827817052603" cy="10.217502444982529" rx="0.9679146994836629" ry="0.677540289638564" class="il-sem-pore"></ellipse><ellipse cx="106.05477232299745" cy="22.078096328303218" rx="0.9974069158546627" ry="0.6981848410982638" class="il-sem-pore"></ellipse><ellipse cx="121.36483632400632" cy="21.14637877047062" rx="1.9542363529093563" ry="1.3679654470365492" class="il-sem-pore"></ellipse><g><polygon points="66.5,13.1 62.5,10.6 63.2,6.0 67.1,3.5 71.6,6.1 70.4,10.9" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="66.5,13.1 62.5,10.6 63.2,6.0 67.1,3.5 71.6,6.1 70.4,10.9" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="119.6,43.5 116.6,43.3 114.9,40.4 117.9,39.0 120.9,40.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="119.6,43.5 116.6,43.3 114.9,40.4 117.9,39.0 120.9,40.3" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="74.0,16.8 72.8,13.5 76.3,12.2 78.8,14.8 77.1,18.0" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="74.0,16.8 72.8,13.5 76.3,12.2 78.8,14.8 77.1,18.0" class="il-sem-grit"></polygon></g><g><polygon points="112.0,72.5 106.2,74.0 105.4,68.5 110.4,67.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="112.0,72.5 106.2,74.0 105.4,68.5 110.4,67.2" class="il-sem-grit"></polygon></g><g><polygon points="88.9,37.7 87.9,34.4 89.8,31.8 92.8,32.4 94.0,35.1 92.7,38.4" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="88.9,37.7 87.9,34.4 89.8,31.8 92.8,32.4 94.0,35.1 92.7,38.4" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="77.0,52.5 76.3,47.8 80.8,46.6 81.7,51.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="77.0,52.5 76.3,47.8 80.8,46.6 81.7,51.3" class="il-sem-grit"></polygon></g><g><polygon points="69.5,42.7 71.5,38.9 75.8,37.8 78.6,41.6 76.4,45.4 72.2,46.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="69.5,42.7 71.5,38.9 75.8,37.8 78.6,41.6 76.4,45.4 72.2,46.3" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="97.5,31.1 97.3,25.6 101.9,23.0 105.1,27.1 103.0,31.6" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="97.5,31.1 97.3,25.6 101.9,23.0 105.1,27.1 103.0,31.6" class="il-sem-grit"></polygon></g><g><polygon points="106.8,26.7 103.3,29.6 100.6,26.3 103.7,24.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="106.8,26.7 103.3,29.6 100.6,26.3 103.7,24.3" class="il-sem-grit"></polygon></g><g><polygon points="101.2,55.8 106.2,50.1 111.6,55.4 106.7,61.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="101.2,55.8 106.2,50.1 111.6,55.4 106.7,61.2" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="134.6,43.6 129.6,41.8 132.2,36.5 137.5,39.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="134.6,43.6 129.6,41.8 132.2,36.5 137.5,39.2" class="il-sem-grit"></polygon></g><g><polygon points="133.5,51.6 129.7,50.2 129.2,45.7 133.2,43.1 136.4,45.9 137.1,49.9" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="133.5,51.6 129.7,50.2 129.2,45.7 133.2,43.1 136.4,45.9 137.1,49.9" class="il-sem-grit"></polygon></g><g><polygon points="101.9,19.4 99.7,17.8 100.2,15.1 102.9,15.1 104.0,17.5" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="101.9,19.4 99.7,17.8 100.2,15.1 102.9,15.1 104.0,17.5" class="il-sem-grit"></polygon></g><g><polygon points="132.8,11.2 130.5,9.1 131.4,6.4 134.5,6.0 135.5,9.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="132.8,11.2 130.5,9.1 131.4,6.4 134.5,6.0 135.5,9.2" class="il-sem-grit"></polygon></g><g><polygon points="104.0,64.1 100.0,64.5 99.5,60.7 102.0,58.6 105.5,60.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="104.0,64.1 100.0,64.5 99.5,60.7 102.0,58.6 105.5,60.3" class="il-sem-grit"></polygon></g><g><polygon points="120.7,37.0 117.9,37.9 115.3,35.8 116.6,32.8 119.7,31.4 121.7,34.1" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="120.7,37.0 117.9,37.9 115.3,35.8 116.6,32.8 119.7,31.4 121.7,34.1" class="il-sem-grit"></polygon></g><g><polygon points="88.2,46.1 85.8,43.6 86.9,40.7 89.7,39.9 92.1,41.7 91.5,45.0" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="88.2,46.1 85.8,43.6 86.9,40.7 89.7,39.9 92.1,41.7 91.5,45.0" class="il-sem-grit"></polygon></g><g><polygon points="109.1,20.1 106.8,15.6 109.7,12.1 113.5,13.8 114.2,18.4" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="109.1,20.1 106.8,15.6 109.7,12.1 113.5,13.8 114.2,18.4" class="il-sem-grit"></polygon></g><g><polygon points="129.5,29.4 129.2,24.8 133.7,24.4 134.2,29.0" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="129.5,29.4 129.2,24.8 133.7,24.4 134.2,29.0" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="130.1,27.5 129.0,23.0 132.7,20.4 136.2,23.3 134.6,27.5" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="130.1,27.5 129.0,23.0 132.7,20.4 136.2,23.3 134.6,27.5" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="122.9,41.3 120.5,40.3 119.9,37.6 122.2,35.8 124.3,37.5 124.5,39.6" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="122.9,41.3 120.5,40.3 119.9,37.6 122.2,35.8 124.3,37.5 124.5,39.6" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="101.1,37.7 97.8,34.0 97.8,29.6 102.1,26.8 106.2,30.2 105.9,35.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="101.1,37.7 97.8,34.0 97.8,29.6 102.1,26.8 106.2,30.2 105.9,35.3" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="125.3,4.9 123.9,7.1 121.6,5.7 120.8,3.3 122.9,1.9 125.5,2.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="125.3,4.9 123.9,7.1 121.6,5.7 120.8,3.3 122.9,1.9 125.5,2.3" class="il-sem-grit"></polygon></g><g><polygon points="74.4,37.4 68.5,41.4 64.8,34.8 71.1,31.9" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="74.4,37.4 68.5,41.4 64.8,34.8 71.1,31.9" class="il-sem-grit"></polygon></g><g><polygon points="76.4,40.6 72.6,41.7 69.6,39.1 71.7,35.3 75.2,37.0" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="76.4,40.6 72.6,41.7 69.6,39.1 71.7,35.3 75.2,37.0" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="113.6,70.7 112.4,68.5 113.4,66.3 116.3,65.2 117.9,68.1 116.2,70.4" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="113.6,70.7 112.4,68.5 113.4,66.3 116.3,65.2 117.9,68.1 116.2,70.4" class="il-sem-grit"></polygon></g><g><polygon points="74.0,42.9 70.9,44.0 68.3,42.7 68.3,39.7 70.8,37.3 73.1,39.8" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="74.0,42.9 70.9,44.0 68.3,42.7 68.3,39.7 70.8,37.3 73.1,39.8" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="98.7,48.8 94.6,45.2 99.1,41.0 103.6,45.7" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="98.7,48.8 94.6,45.2 99.1,41.0 103.6,45.7" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="106.0,32.1 104.1,32.6 102.7,31.1 103.1,28.8 105.6,28.3 107.3,30.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="106.0,32.1 104.1,32.6 102.7,31.1 103.1,28.8 105.6,28.3 107.3,30.2" class="il-sem-grit"></polygon></g><g><polygon points="112.1,69.2 110.4,66.0 112.3,62.5 116.1,63.3 117.6,66.5 115.8,69.8" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="112.1,69.2 110.4,66.0 112.3,62.5 116.1,63.3 117.6,66.5 115.8,69.8" class="il-sem-grit"></polygon></g><g><polygon points="109.1,37.8 109.0,32.0 114.6,31.8 115.3,37.9" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="109.1,37.8 109.0,32.0 114.6,31.8 115.3,37.9" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="107.4,43.8 104.0,47.6 99.7,44.5 101.1,39.8 105.9,39.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="107.4,43.8 104.0,47.6 99.7,44.5 101.1,39.8 105.9,39.3" class="il-sem-grit il-sem-grit-dim"></polygon></g><g><polygon points="135.6,11.3 130.9,12.0 127.5,8.2 131.1,3.5 136.0,6.3" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="135.6,11.3 130.9,12.0 127.5,8.2 131.1,3.5 136.0,6.3" class="il-sem-grit"></polygon></g><g><polygon points="75.6,41.0 75.5,37.3 78.5,37.0 79.4,40.2" class="il-sem-shadow" transform="translate(0.9 1.1)"></polygon><polygon points="75.6,41.0 75.5,37.3 78.5,37.0 79.4,40.2" class="il-sem-grit"></polygon></g><rect x="0" y="0" width="200" height="80" filter="url(#il-sem-grain)"></rect><line x1="138" y1="20" x2="160" y2="20" class="il-sem-pointer"></line><text x="162" y="22" class="il-sem-text">다이아몬드 입자</text><line x1="134" y1="40" x2="160" y2="40" class="il-sem-pointer"></line><text x="162" y="42" class="il-sem-text">니켈 결합재</text><text x="8" y="14" class="il-sem-text">블레이드 날 끝 (옆에서 확대)</text><text x="8" y="70" class="il-sem-text">날 끝이 닳으면 입자가</text><text x="8" y="77" class="il-sem-text">빠지고 새 입자가 드러남</text></g><rect x="0" y="80" width="200" height="12" class="il-sem-bar"></rect><text x="6" y="88.5" class="il-sem-text">현미경(SEM) 사진처럼 그린 그림 · 실제 사진 아님</text></svg>

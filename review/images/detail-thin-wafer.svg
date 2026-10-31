@@ -107,4 +107,14 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
-.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><text x="100" y="14" class="il-label" text-anchor="middle">옆에서 본 웨이퍼</text><path d="M20 36 Q100 58 180 36 L180 42 Q100 64 20 42 Z" class="il-wafer"></path><path d="M100 47 l-2 2 l3 2 l-2 2" class="il-crack"></path><circle cx="100" cy="50" r="8" class="il-warn-ring"></circle><text x="100" y="89" class="il-label" text-anchor="middle">너무 얇으면 휘고, 심하면 금이 가거나 깨짐</text></svg>
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><text x="100" y="14" class="il-label" text-anchor="middle">옆에서 본 웨이퍼</text><path d="M20 36 Q100 58 180 36 L180 42 Q100 64 20 42 Z" class="il-wafer"></path><path d="M100 47 l-2 2 l3 2 l-2 2" class="il-crack"></path><circle cx="100" cy="50" r="8" class="il-warn-ring"></circle><text x="100" y="89" class="il-label" text-anchor="middle">너무 얇으면 휘고, 심하면 금이 가거나 깨짐</text></svg>
