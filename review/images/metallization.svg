@@ -59,4 +59,25 @@ svg { background: #ffffff; font-family: sans-serif; }
   font-size: 7px;
   font-weight: 700;
   fill: var(--text);
-}</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="28" width="80" height="18" class="il-oxide"></rect><rect x="30" y="36" width="60" height="4" class="il-cu"></rect><rect x="32" y="40" width="4" height="6" class="il-cu"></rect><rect x="58" y="40" width="4" height="6" class="il-cu"></rect><rect x="84" y="40" width="4" height="6" class="il-cu"></rect><rect x="58" y="28" width="4" height="8" class="il-cu"></rect><rect x="50" y="22" width="20" height="6" class="il-cu"></rect><text x="60" y="16" class="il-label" text-anchor="middle">패드</text><text x="60" y="72" class="il-label" text-anchor="middle">금속 선으로 소자를 연결</text></svg>
+}
+.il-blade-spokes line { stroke: var(--text); stroke-width: 1; }
+.il-blade-edge { fill: none; stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.il-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.il-wrap .il {
+  margin-bottom: 4px;
+}
+.il-play {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+.il-wide { max-width: 560px; width: 100%; }
+.il-kerf { fill: var(--bad); opacity: 0.25; }
+.il-cut-top { stroke: var(--bg); stroke-width: 2; }
+.il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
+.il-blade-top { fill: var(--bad); }
+.il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.il-cut-dark { stroke: var(--text); }</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="28" width="80" height="18" class="il-oxide"></rect><rect x="30" y="36" width="60" height="4" class="il-cu"></rect><rect x="32" y="40" width="4" height="6" class="il-cu"></rect><rect x="58" y="40" width="4" height="6" class="il-cu"></rect><rect x="84" y="40" width="4" height="6" class="il-cu"></rect><rect x="58" y="28" width="4" height="8" class="il-cu"></rect><rect x="50" y="22" width="20" height="6" class="il-cu"></rect><text x="60" y="16" class="il-label" text-anchor="middle">패드</text><text x="60" y="72" class="il-label" text-anchor="middle">금속 선으로 소자를 연결</text></svg>

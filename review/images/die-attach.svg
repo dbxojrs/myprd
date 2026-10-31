@@ -59,4 +59,25 @@ svg { background: #ffffff; font-family: sans-serif; }
   font-size: 7px;
   font-weight: 700;
   fill: var(--text);
-}</style><rect x="20" y="52" width="80" height="8" class="il-frame"></rect><rect x="40" y="46" width="40" height="6" class="il-glue"></rect><rect x="42" y="18" width="36" height="14" rx="1" class="il-die"></rect><g class="il-arrow"><line x1="60" y1="34" x2="60" y2="44"></line><polygon points="60,44 57.60287230697899,39.61208719054814 62.39712769302101,39.61208719054814"></polygon></g><text x="60" y="12" class="il-label" text-anchor="middle">다이</text><text x="60" y="74" class="il-label" text-anchor="middle">접착제 위에 다이를 붙임</text></svg>
+}
+.il-blade-spokes line { stroke: var(--text); stroke-width: 1; }
+.il-blade-edge { fill: none; stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.il-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.il-wrap .il {
+  margin-bottom: 4px;
+}
+.il-play {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+.il-wide { max-width: 560px; width: 100%; }
+.il-kerf { fill: var(--bad); opacity: 0.25; }
+.il-cut-top { stroke: var(--bg); stroke-width: 2; }
+.il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
+.il-blade-top { fill: var(--bad); }
+.il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.il-cut-dark { stroke: var(--text); }</style><rect x="20" y="52" width="80" height="8" class="il-frame"></rect><rect x="40" y="46" width="40" height="6" class="il-glue"></rect><rect x="42" y="18" width="36" height="14" rx="1" class="il-die"></rect><g class="il-arrow"><line x1="60" y1="34" x2="60" y2="44"></line><polygon points="60,44 57.60287230697899,39.61208719054814 62.39712769302101,39.61208719054814"></polygon></g><text x="60" y="12" class="il-label" text-anchor="middle">다이</text><text x="60" y="74" class="il-label" text-anchor="middle">접착제 위에 다이를 붙임</text></svg>

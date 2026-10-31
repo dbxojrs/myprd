@@ -81,8 +81,8 @@ async function exportIllustrations(ids) {
     const { ProcessIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
     mkdirSync(`${OUT_DIR}images`, { recursive: true })
     for (const id of ids) {
-      const svg = renderToStaticMarkup(createElement(ProcessIllustration, { id }))
-        .replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="360" height="240" ')
+      const svg = renderToStaticMarkup(createElement(ProcessIllustration, { id, still: true }))
+        .replace(/<svg ([^>]*)viewBox="0 0 (\d+) (\d+)"/, (_, rest, w, h) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w * 3}" height="${h * 3}" ${rest}viewBox="0 0 ${w} ${h}"`)
         .replace(/(<svg[^>]*>)/, `$1${style}`)
       writeFileSync(`${OUT_DIR}images/${id}.svg`, svg)
     }

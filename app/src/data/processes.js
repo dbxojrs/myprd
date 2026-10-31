@@ -1,6 +1,7 @@
 // 공정 데이터. PRD '공정 흐름 초안' 기준이며 모두 검수 전입니다.
 // sources의 tier: evidence(근거 출처) | explain(설명 출처). sourceDate는 링크를 확인한 날짜입니다.
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
+// videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
 // stage는 front(전공정: 웨이퍼에 회로를 만듦) 또는 back(후공정: 칩을 패키지로 만듦)입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
@@ -190,6 +191,10 @@ export const processes = [
     ],
     sourceDate: '2026-10-31',
     photo: { kind: 'attach', title: '다이싱 블레이드', src: 'photos/wafer-saw.jpg', url: 'https://commons.wikimedia.org/wiki/File:Dicing_blade.jpg', author: 'HokuhokuhokukunOiso', license: 'CC BY-SA 3.0' },
+    videos: [
+      { title: '웨이퍼 micro SAW W 홍보영상', channel: '한미반도체 (공식 채널)', url: 'https://www.youtube.com/watch?v=sO_XsIAfCvs', note: '한국어 · 웨이퍼 쏘잉 장비 소개 (1분)', checked: '2026-10-31' },
+      { title: '7900 Duo dicing system in action 1', channel: 'ADT Advanced Dicing Technologies (공식 채널)', url: 'https://www.youtube.com/watch?v=ZTm-MbnlUOY', note: '설명 없음 · 다이싱 장비가 실제로 자르는 모습 (1분 23초)', checked: '2026-10-31' },
+    ],
   },
   {
     id: 'die-attach',

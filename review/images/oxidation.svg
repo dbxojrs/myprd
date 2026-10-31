@@ -59,4 +59,25 @@ svg { background: #ffffff; font-family: sans-serif; }
   font-size: 7px;
   font-weight: 700;
   fill: var(--text);
-}</style><rect x="20" y="40" width="80" height="12" class="il-wafer"></rect><rect x="20" y="35" width="80" height="5" class="il-oxide"></rect><g class="il-arrow"><line x1="34" y1="12" x2="34" y2="30"></line><polygon points="34,30 31.602872306978984,25.612087190548138 36.39712769302101,25.612087190548138"></polygon></g><g class="il-arrow"><line x1="60" y1="12" x2="60" y2="30"></line><polygon points="60,30 57.60287230697899,25.612087190548138 62.39712769302101,25.612087190548138"></polygon></g><g class="il-arrow"><line x1="86" y1="12" x2="86" y2="30"></line><polygon points="86,30 83.60287230697898,25.612087190548138 88.39712769302102,25.612087190548138"></polygon></g><text x="60" y="8" class="il-label" text-anchor="middle">O₂ · 고온</text><text x="60" y="70" class="il-label" text-anchor="middle">표면에 얇은 산화막이 자람</text></svg>
+}
+.il-blade-spokes line { stroke: var(--text); stroke-width: 1; }
+.il-blade-edge { fill: none; stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.il-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.il-wrap .il {
+  margin-bottom: 4px;
+}
+.il-play {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+.il-wide { max-width: 560px; width: 100%; }
+.il-kerf { fill: var(--bad); opacity: 0.25; }
+.il-cut-top { stroke: var(--bg); stroke-width: 2; }
+.il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
+.il-blade-top { fill: var(--bad); }
+.il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.il-cut-dark { stroke: var(--text); }</style><rect x="20" y="40" width="80" height="12" class="il-wafer"></rect><rect x="20" y="35" width="80" height="5" class="il-oxide"></rect><g class="il-arrow"><line x1="34" y1="12" x2="34" y2="30"></line><polygon points="34,30 31.602872306978984,25.612087190548138 36.39712769302101,25.612087190548138"></polygon></g><g class="il-arrow"><line x1="60" y1="12" x2="60" y2="30"></line><polygon points="60,30 57.60287230697899,25.612087190548138 62.39712769302101,25.612087190548138"></polygon></g><g class="il-arrow"><line x1="86" y1="12" x2="86" y2="30"></line><polygon points="86,30 83.60287230697898,25.612087190548138 88.39712769302102,25.612087190548138"></polygon></g><text x="60" y="8" class="il-label" text-anchor="middle">O₂ · 고온</text><text x="60" y="70" class="il-label" text-anchor="middle">표면에 얇은 산화막이 자람</text></svg>

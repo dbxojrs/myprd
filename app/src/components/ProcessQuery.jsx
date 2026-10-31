@@ -6,6 +6,7 @@ import { processAnalogies } from '../data/analogies.js'
 import ReviewBadge, { SourceList } from './ReviewBadge.jsx'
 import AnalogyButton from './AnalogyButton.jsx'
 import PhotoExample from './PhotoExample.jsx'
+import VideoLinks from './VideoLinks.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
@@ -76,6 +77,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             <Term value={process.name} />
           </h3>
           <ProcessIllustration id={process.id} />
+          <VideoLinks videos={process.videos} />
           <p>{process.summary}</p>
           <dl className="facts">
             <dt>입력</dt>

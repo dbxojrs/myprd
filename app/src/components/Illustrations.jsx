@@ -1,5 +1,9 @@
 // 공정과 패키지를 설명하는 단순한 그림(SVG). 실제 장비·제품 사진이 아니라 개념도입니다.
 // compact가 true이면 상단 흐름 막대용으로 글자 없이 작게 그립니다.
+// 공정 그림 함수는 (compact, animate)를 받습니다. animate가 true일 때만 SVG 애니메이션(<animate>)을 넣고,
+// false이면 공정이 끝난 모습을 멈춘 그림으로 그립니다.
+
+import { useState } from 'react'
 
 const Arrow = ({ x1, y1, x2, y2 }) => (
   <g className="il-arrow">
@@ -15,6 +19,168 @@ const Arrow = ({ x1, y1, x2, y2 }) => (
     />
   </g>
 )
+
+// ── 쏘잉 그림: 옆에서 본 모습(왼쪽)과 위에서 본 모습(오른쪽)을 같은 시간에 맞춰 움직입니다. ──
+// 블레이드는 자르는 방향(왼쪽 → 오른쪽)으로 돌며 나아가고, 한 줄을 다 자르면 들어 올려 다음 줄로 옮깁니다.
+
+// [시각(0–1), 값] 목록을 SMIL의 values·keyTimes로 바꿉니다. 같은 시각은 아주 조금씩 밀어 순서를 지킵니다.
+function track(points) {
+  const pts = [...points]
+  if (pts[0][0] > 0) pts.unshift([0, pts[0][1]])
+  if (pts[pts.length - 1][0] < 1) pts.push([1, pts[pts.length - 1][1]])
+  const times = []
+  pts.forEach(([t], i) => times.push(i > 0 && t <= times[i - 1] ? times[i - 1] + 0.0005 : t))
+  return {
+    values: pts.map(([, v]) => v).join(';'),
+    keyTimes: times.map((t) => +Math.min(t, 1).toFixed(4)).join(';'),
+  }
+}
+
+const Anim = ({ attr, points, dur }) => (
+  <animate attributeName={attr} {...track(points)} dur={dur} repeatCount="indefinite" />
+)
+
+const Move = ({ points, dur }) => (
+  <animateTransform attributeName="transform" type="translate" {...track(points)} dur={dur} repeatCount="indefinite" />
+)
+
+// 옆에서 본 블레이드: 원판 면이 보입니다. 회전을 보여주려고 살 두 개를 돌립니다.
+const SideBlade = ({ cy, r, animate }) => (
+  <g>
+    <circle cx="0" cy={cy} r={r} className="il-tool" />
+    <g className="il-blade-spokes">
+      <line x1={-r + 2} y1={cy} x2={r - 2} y2={cy} />
+      <line x1="0" y1={cy - r + 2} x2="0" y2={cy + r - 2} />
+      {animate && (
+        <animateTransform attributeName="transform" type="rotate" from={`0 0 ${cy}`} to={`360 0 ${cy}`} dur="0.5s" repeatCount="indefinite" />
+      )}
+    </g>
+    <circle cx="0" cy={cy} r={r} className="il-blade-edge" />
+  </g>
+)
+
+// 쏘잉 그림 공통 틀. side: 옆에서 본 층(위에서 아래 순서), top: 위에서 본 모양과 절단선 위치
+function sawDrawing({ layers, cutBottom, topShape, streets, gridLines, cutClass = 'il-cut-top', caption }) {
+  const SIDE_START = 5
+  const SIDE_END = 115
+  const MAT_START = 15
+  const MAT_END = 105
+  const BLADE_CY = 44
+  const LIFT = -10
+  const topX = (bx) => 16 + ((bx - SIDE_START) * 88) / (SIDE_END - SIDE_START)
+
+  return (c, animate) => {
+    const n = streets.length
+    const hold = 0.1
+    const seg = (1 - hold) / n
+    const dur = `${(n * 1.8 + 0.8).toFixed(1)}s`
+    const matTop = layers[0].y
+
+    // 줄마다: 내려감(b) → 자르며 이동(e) → 들어 올림(f) → 다음 줄 시작점으로 복귀(g)
+    const phases = streets.map((y, i) => {
+      const a = i * seg
+      const b = a + seg * 0.08
+      const e = a + seg * 0.78
+      const f = a + seg * 0.85
+      const g = a + seg
+      const at = (bx) => b + ((bx - SIDE_START) / (SIDE_END - SIDE_START)) * (e - b)
+      return { y, a, b, e, f, g, at, next: streets[(i + 1) % n] }
+    })
+
+    const sideBlade = phases.flatMap((p) => [
+      [p.a, `${SIDE_START} ${LIFT}`],
+      [p.b, `${SIDE_START} 0`],
+      [p.e, `${SIDE_END} 0`],
+      [p.f, `${SIDE_END} ${LIFT}`],
+      [p.g, `${SIDE_START} ${LIFT}`],
+    ])
+    const kerf = phases.flatMap((p) => [
+      [p.a, 0],
+      [p.at(MAT_START), 0],
+      [p.at(MAT_END), MAT_END - MAT_START],
+      [p.g - 0.001, MAT_END - MAT_START],
+      [p.g, 0],
+    ])
+    const topBlade = phases.flatMap((p) => [
+      [p.a, `${topX(SIDE_START)} ${p.y}`],
+      [p.b, `${topX(SIDE_START)} ${p.y}`],
+      [p.e, `${topX(SIDE_END)} ${p.y}`],
+      [p.f, `${topX(SIDE_END)} ${p.y}`],
+      [p.g, `${topX(SIDE_START)} ${p.next}`],
+    ])
+
+    // 멈춘 그림: 둘째 줄을 절반쯤 자르는 순간
+    const stillX = 60
+    const stillStreet = Math.min(1, n - 1)
+
+    const side = (
+      <>
+        {layers.map((l) => (
+          <rect key={l.cls} x={l.x ?? MAT_START} y={l.y} width={l.w ?? MAT_END - MAT_START} height={l.h} className={l.cls} />
+        ))}
+        <rect x={MAT_START} y={matTop} height={cutBottom - matTop} width={animate ? 0 : stillX - MAT_START} className="il-kerf">
+          {animate && <Anim attr="width" points={kerf} dur={dur} />}
+        </rect>
+        <g transform={`translate(${stillX} 0)`}>
+          <SideBlade cy={BLADE_CY} r={12} animate={animate} />
+          {animate && <Move points={sideBlade} dur={dur} />}
+        </g>
+      </>
+    )
+
+    if (c) return side
+
+    const clipId = `il-clip-${caption.id}`
+    return (
+      <>
+        <Label x="60" y="9" compact={c}>옆에서 본 모습</Label>
+        <Arrow x1="40" y1="17" x2="80" y2="17" />
+        <Label x="60" y="25" compact={c}>자르는 방향</Label>
+        {side}
+        <Label x="60" y="70" compact={c}>{caption.side}</Label>
+
+        <line x1="120" y1="4" x2="120" y2="76" className="il-divider" />
+
+        <g transform="translate(120 0)">
+          <Label x="60" y="9" compact={c}>위에서 본 모습</Label>
+          <defs>
+            <clipPath id={clipId}>{topShape}</clipPath>
+          </defs>
+          {topShape}
+          {gridLines}
+          <g clipPath={`url(#${clipId})`}>
+            {phases.map((p, i) => (
+              <line
+                key={p.y}
+                x1={topX(SIDE_START)}
+                y1={p.y}
+                x2={animate ? topX(SIDE_START) : i < stillStreet ? topX(SIDE_END) : i === stillStreet ? topX(stillX) : topX(SIDE_START)}
+                y2={p.y}
+                className={cutClass}
+              >
+                {animate && (
+                  <Anim
+                    attr="x2"
+                    points={[
+                      [p.b, topX(SIDE_START)],
+                      [p.e, topX(SIDE_END)],
+                    ]}
+                    dur={dur}
+                  />
+                )}
+              </line>
+            ))}
+          </g>
+          <g transform={`translate(${topX(stillX)} ${streets[stillStreet]})`}>
+            <rect x="-12" y="-1.5" width="24" height="3" rx="1" className="il-blade-top" />
+            {animate && <Move points={topBlade} dur={dur} />}
+          </g>
+          <Label x="60" y="78" compact={c}>{caption.top}</Label>
+        </g>
+      </>
+    )
+  }
+}
 
 const Label = ({ x, y, children, compact }) =>
   compact ? null : (
@@ -139,17 +305,17 @@ const processDrawings = {
       <Label x="60" y="76" compact={c}>연마 휠이 뒷면을 갈아냄</Label>
     </>
   ),
-  'wafer-saw': (c) => (
-    <>
-      <rect x="15" y="40" width="90" height="10" className="il-wafer" />
-      {[30, 45, 60, 75, 90].map((x) => (
-        <line key={x} x1={x} y1="40" x2={x} y2="50" className="il-cut" />
-      ))}
-      <circle cx="60" cy="24" r="14" className="il-tool" />
-      <line x1="60" y1="38" x2="60" y2="44" className="il-blade" />
-      <Label x="60" y="66" compact={c}>블레이드가 선을 따라 자름</Label>
-    </>
-  ),
+  'wafer-saw': sawDrawing({
+    layers: [
+      { cls: 'il-wafer', y: 42, h: 10 },
+      { cls: 'il-tape', x: 10, y: 52, w: 100, h: 4 },
+    ],
+    cutBottom: 54,
+    topShape: <circle cx="60" cy="44" r="30" className="il-wafer" />,
+    streets: [32, 40, 48, 56],
+    gridLines: [44, 52, 60, 68, 76].map((x) => <line key={x} x1={x} y1="16" x2={x} y2="72" className="il-street" />),
+    caption: { id: 'wafer-saw', side: '블레이드가 돌며 오른쪽으로 나아감', top: '한 방향을 다 자르면 90° 돌려 자름' },
+  }),
   'die-attach': (c) => (
     <>
       <rect x="20" y="52" width="80" height="8" className="il-frame" />
@@ -193,16 +359,19 @@ const processDrawings = {
       <Label x="60" y="72" compact={c}>레이저로 표면에 식별 정보를 새김</Label>
     </>
   ),
-  'package-saw': (c) => (
-    <>
-      {[14, 46, 78].map((x) => (
-        <rect key={x} x={x} y="36" width="28" height="18" rx="2" className="il-mold" />
-      ))}
-      <circle cx="44" cy="22" r="12" className="il-tool" />
-      <line x1="44" y1="34" x2="44" y2="56" className="il-blade" />
-      <Label x="60" y="72" compact={c}>스트립을 개별 패키지로 자름</Label>
-    </>
-  ),
+  'package-saw': sawDrawing({
+    layers: [
+      { cls: 'il-mold', y: 38, h: 12 },
+      { cls: 'il-frame', y: 50, h: 4 },
+      { cls: 'il-tape', x: 10, y: 54, w: 100, h: 3 },
+    ],
+    cutBottom: 55,
+    topShape: <rect x="22" y="22" width="76" height="44" className="il-mold" />,
+    streets: [36.7, 51.3],
+    cutClass: 'il-cut-top il-cut-dark',
+    gridLines: [41, 60, 79].map((x) => <line key={x} x1={x} y1="22" x2={x} y2="66" className="il-street" />),
+    caption: { id: 'package-saw', side: '몰딩과 리드프레임을 함께 자름', top: '한 방향을 다 자르면 90° 돌려 자름' },
+  }),
   test: (c) => (
     <>
       <rect x="36" y="40" width="48" height="16" rx="2" className="il-mold" />
@@ -413,19 +582,43 @@ export function AdvancedIllustration({ id }) {
   )
 }
 
-export function ProcessIllustration({ id, compact = false }) {
+// 움직이는 개념도가 있는 공정
+const ANIMATED = new Set(['wafer-saw', 'package-saw'])
+
+// 옆·위 두 모습을 나란히 그리는 공정(작게 그릴 때는 옆에서 본 모습만)
+const WIDE = new Set(['wafer-saw', 'package-saw'])
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+}
+
+// still이 true이면 버튼 없이 멈춘 그림만 그립니다(검수표 그림 내보내기용).
+export function ProcessIllustration({ id, compact = false, still = false }) {
+  const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const draw = processDrawings[id]
   if (!draw) return null
-  return (
+
+  const canAnimate = !compact && !still && ANIMATED.has(id)
+  const svg = (
     <svg
-      viewBox={compact ? '0 0 120 66' : '0 0 120 80'}
-      className={compact ? 'il il-compact' : 'il'}
+      viewBox={compact ? '0 0 120 66' : WIDE.has(id) ? '0 0 240 82' : '0 0 120 80'}
+      className={compact ? 'il il-compact' : WIDE.has(id) ? 'il il-wide' : 'il'}
       role={compact ? undefined : 'img'}
       aria-hidden={compact ? 'true' : undefined}
       aria-label={compact ? undefined : '공정 개념도'}
     >
-      {draw(compact)}
+      {draw(compact, canAnimate && playing)}
     </svg>
+  )
+  if (!canAnimate) return svg
+
+  return (
+    <div className="il-wrap">
+      {svg}
+      <button type="button" className="il-play" aria-pressed={playing} onClick={() => setPlaying(!playing)}>
+        {playing ? '⏸ 멈춤' : '▶ 움직임 보기'}
+      </button>
+    </div>
   )
 }
 
