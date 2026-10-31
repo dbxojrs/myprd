@@ -80,7 +80,7 @@ const processDrawings = {
     <>
       <rect x="20" y="46" width="80" height="10" className="il-wafer" />
       <rect x="20" y="40" width="80" height="6" className="il-oxide" />
-      <rect x="20" y="35" width="80" height="5" className="il-frame" />
+      <rect x="20" y="35" width="80" height="5" className="il-substrate" />
       {[28, 44, 60, 76, 92].map((x) => (
         <circle key={x} cx={x} cy={x % 32 === 12 ? 18 : 24} r="2" className="il-bump" />
       ))}
@@ -93,7 +93,7 @@ const processDrawings = {
       <rect x="20" y="40" width="80" height="16" className="il-wafer" />
       <rect x="20" y="34" width="28" height="6" className="il-resist" />
       <rect x="72" y="34" width="28" height="6" className="il-resist" />
-      <rect x="48" y="40" width="24" height="6" className="il-glue" />
+      <rect x="48" y="40" width="24" height="6" className="il-substrate" />
       {[54, 66].map((x) => (
         <Arrow key={x} x1={x} y1="10" x2={x} y2="38" />
       ))}
@@ -109,6 +109,7 @@ const processDrawings = {
       {[34, 60, 86].map((x) => (
         <rect key={x} x={x - 2} y="40" width="4" height="6" className="il-cu" />
       ))}
+      <rect x="58" y="28" width="4" height="8" className="il-cu" />
       <rect x="50" y="22" width="20" height="6" className="il-cu" />
       <Label x="60" y="16" compact={c}>패드</Label>
       <Label x="60" y="72" compact={c}>금속 선으로 소자를 연결</Label>

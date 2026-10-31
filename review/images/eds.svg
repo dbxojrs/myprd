@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="240" viewBox="0 0 120 80" class="il" role="img" aria-label="공정 개념도"><style>svg {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #1c2330;
+  --muted: #5d6675;
+  --border: #d8dde5;
+  --accent: #2f5bd3;
+  --accent-text: #ffffff;
+  --accent-soft: #e6ecfb;
+  --good: #1f7a45;
+  --good-soft: #e3f3ea;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  color-scheme: light;
+}
+svg { background: #ffffff; font-family: sans-serif; }
+.il-wafer { fill: var(--muted); }
+.il-tape { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.il-oxide { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.il-resist { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.il-tool { fill: var(--border); stroke: var(--text); stroke-width: 1; }
+.il-frame { fill: var(--muted); }
+.il-substrate { fill: var(--good-soft); stroke: var(--good); stroke-width: 1; }
+.il-rdl { fill: var(--accent); }
+.il-glue { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+.il-die { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.il-mold { fill: var(--border); stroke: var(--muted); stroke-width: 1; }
+.il-wire { fill: none; stroke: var(--warn); stroke-width: 1.5; }
+.il-bump { fill: var(--muted); stroke: var(--text); stroke-width: 0.6; }
+.il-ghost { opacity: 0.45; }
+.il-line { fill: none; stroke: var(--text); stroke-width: 1; }
+.il-cut { stroke: var(--bg); stroke-width: 1.5; }
+.il-blade { stroke: var(--bad); stroke-width: 2; }
+.il-laser { stroke: var(--bad); stroke-width: 2; stroke-dasharray: 3 2; }
+.il-probe { stroke: var(--text); stroke-width: 1.5; }
+.il-needle { stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.il-check { fill: none; stroke: var(--good); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.il-arrow line { stroke: var(--accent); stroke-width: 1.5; }
+.il-arrow polygon { fill: var(--accent); }
+.il-label {
+  font-size: 7px;
+  fill: var(--muted);
+}
+.il-mark {
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--surface);
+  letter-spacing: 1px;
+}
+.il-logic { fill: var(--accent-soft); }
+.il-interposer { opacity: 0.85; }
+.il-tsv { stroke: var(--warn); stroke-width: 1.5; }
+.il-cu { fill: var(--warn); }
+.il-link { fill: none; stroke: var(--accent); stroke-width: 2; }
+.il-dashed { stroke-dasharray: 3 2; }
+.il-tag {
+  font-size: 7px;
+  font-weight: 700;
+  fill: var(--text);
+}</style><circle cx="60" cy="44" r="18" class="il-wafer"></circle><rect x="48" y="32" width="8" height="8" class="il-die"></rect><rect x="58" y="32" width="8" height="8" class="il-die"></rect><rect x="44" y="42" width="8" height="8" class="il-die"></rect><rect x="54" y="42" width="8" height="8" class="il-die"></rect><rect x="64" y="42" width="8" height="8" class="il-glue"></rect><rect x="50" y="50" width="8" height="8" class="il-die"></rect><rect x="60" y="50" width="8" height="8" class="il-die"></rect><line x1="58" y1="8" x2="58" y2="42" class="il-probe"></line><rect x="44" y="4" width="28" height="6" class="il-tool"></rect><text x="60" y="76" class="il-label" text-anchor="middle">칩마다 전기 검사 · 불량 표시</text></svg>
