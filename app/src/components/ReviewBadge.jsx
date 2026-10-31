@@ -33,3 +33,23 @@ export default function ReviewBadge({ reviewed, sources = [], sourceDate = null 
     </div>
   )
 }
+
+// 출처 제목을 목록으로 보여줍니다. 공정 설명 아래의 "참고 자료"에 씁니다.
+export function SourceList({ sources = [] }) {
+  if (sources.length === 0) return null
+  return (
+    <ol className="source-list">
+      {sources.map((source) => (
+        <li key={source.url}>
+          <a href={source.url} target="_blank" rel="noreferrer">
+            {source.title}
+          </a>
+          <span className="muted">
+            {' '}
+            · {source.publisher} · {source.tier === 'explain' ? '설명 출처' : '근거 출처'}
+          </span>
+        </li>
+      ))}
+    </ol>
+  )
+}

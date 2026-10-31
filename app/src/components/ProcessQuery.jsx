@@ -3,7 +3,7 @@ import { findProcess, frontFlow, STAGES } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
-import ReviewBadge from './ReviewBadge.jsx'
+import ReviewBadge, { SourceList } from './ReviewBadge.jsx'
 import AnalogyButton from './AnalogyButton.jsx'
 import PhotoExample from './PhotoExample.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
@@ -87,7 +87,13 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
           </dl>
           <AnalogyButton key={process.id} text={processAnalogies[process.id]} />
           <PhotoExample key={`photo-${process.id}`} photo={process.photo} />
-          <ReviewBadge reviewed={process.reviewed} sources={process.sources} />
+          <ReviewBadge reviewed={process.reviewed} sources={process.sources} sourceDate={process.sourceDate} />
+          {process.sources.length > 0 && (
+            <details className="sources-detail">
+              <summary>참고 자료 {process.sources.length}개</summary>
+              <SourceList sources={process.sources} />
+            </details>
+          )}
 
           {flowIndex >= 0 && (
             <p className="position">

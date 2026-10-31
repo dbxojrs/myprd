@@ -1,4 +1,6 @@
-// 공정 데이터. PRD "공정 흐름 초안" 기준이며 모두 검수 전입니다.
+// 공정 데이터. PRD '공정 흐름 초안' 기준이며 모두 검수 전입니다.
+// sources의 tier: evidence(근거 출처) | explain(설명 출처). sourceDate는 링크를 확인한 날짜입니다.
+// photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // stage는 front(전공정: 웨이퍼에 회로를 만듦) 또는 back(후공정: 칩을 패키지로 만듦)입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
@@ -16,7 +18,11 @@ export const processes = [
     terms: [{ en: 'Ingot', ko: '잉곳' }, { en: 'Single Crystal', ko: '단결정' }, { en: 'Polishing', ko: '연마' }],
     prerequisites: [],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: "[반도체 8대 공정] 1탄, '웨이퍼'란 무엇일까요?', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-1%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%eb%9e%80-%eb%ac%b4%ec%97%87%ec%9d%bc%ea%b9%8c%ec%9a%94/", tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '단결정 실리콘 잉곳', src: 'photos/wafer-make.jpg', url: 'https://commons.wikimedia.org/wiki/File:Monokristalines_Silizium_f%C3%BCr_die_Waferherstellung.jpg', author: 'Stahlkocher', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'oxidation',
@@ -30,7 +36,11 @@ export const processes = [
     terms: [{ en: 'Oxide Layer', ko: '산화막' }, { en: 'Insulation', ko: '절연' }, { en: 'Furnace', ko: '산화로' }],
     prerequisites: ['wafer-make'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '[반도체 8대 공정] 2탄, 웨이퍼 표면을 보호하는 산화공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-2%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc-%ed%91%9c%eb%a9%b4%ec%9d%84-%eb%b3%b4%ed%98%b8%ed%95%98%eb%8a%94-%ec%82%b0%ed%99%94%ea%b3%b5/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '산화·확산로 (LAAS 연구소)', src: 'photos/oxidation.jpg', url: 'https://commons.wikimedia.org/wiki/File:Centrotherm_diffusion_furnace_at_LAAS_0493.jpg', author: 'Guillaume Paumier', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'photo',
@@ -44,7 +54,11 @@ export const processes = [
     terms: [{ en: 'Photoresist', ko: '감광액' }, { en: 'Mask', ko: '마스크' }, { en: 'Exposure', ko: '노광' }, { en: 'Develop', ko: '현상' }],
     prerequisites: ['oxidation'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '[반도체 8대 공정] 4탄, 웨이퍼에 회로를 그려 넣는 포토공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%9a%8c%eb%a1%9c%eb%a5%bc-%ea%b7%b8%eb%a0%a4-%eb%84%a3%eb%8a%94-%ed%8f%ac%ed%86%a0/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '반도체 포토마스크', src: 'photos/photo.jpg', url: 'https://commons.wikimedia.org/wiki/File:Semiconductor_photomask.jpg', author: 'Peellden', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'etch',
@@ -58,7 +72,12 @@ export const processes = [
     terms: [{ en: 'Dry Etch', ko: '건식 식각' }, { en: 'Wet Etch', ko: '습식 식각' }, { en: 'Plasma', ko: '플라즈마' }],
     prerequisites: ['photo'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: "[반도체 8대 공정] 5탄, 반도체 회로패턴의 완성 '식각 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-5%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ed%9a%8c%eb%a1%9c%ed%8c%a8%ed%84%b4%ec%9d%98-%ec%99%84%ec%84%b1-%ec%8b%9d%ea%b0%81-%ea%b3%b5/", tier: 'explain' },
+      { title: 'Lecture 17: Dry Etching (6.152J Micro/Nano Processing Technology, Fall 2005)', publisher: 'MIT OpenCourseWare', url: 'https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture17/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '습식 식각·세정 장비 (LAAS 연구소)', src: 'photos/etch.jpg', url: 'https://commons.wikimedia.org/wiki/File:Wet_etching_tanks_at_LAAS_0465.jpg', author: 'Guillaume Paumier', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'deposition',
@@ -72,7 +91,12 @@ export const processes = [
     terms: [{ en: 'CVD', ko: '화학 기상 증착' }, { en: 'PVD', ko: '물리 기상 증착' }, { en: 'Thin Film', ko: '박막' }],
     prerequisites: ['etch'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '[반도체 8대 공정] 6탄, 반도체에 전기적 특성을 입히다! 증착&이온주입 공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-6%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4%ec%97%90-%ec%a0%84%ea%b8%b0%ec%a0%81-%ed%8a%b9%ec%84%b1%ec%9d%84-%ec%9e%85%ed%9e%88%eb%8b%a4/', tier: 'explain' },
+      { title: 'CVD lecture notes (6.152J Micro/Nano Processing Technology, Fall 2005)', publisher: 'MIT OpenCourseWare', url: 'https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/cvd/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: 'PECVD 증착 장비 (LAAS 연구소)', src: 'photos/deposition.jpg', url: 'https://commons.wikimedia.org/wiki/File:STS_multiplex_PECVD_machine_at_LAAS_0495.jpg', author: 'Guillaume Paumier', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'ion-implant',
@@ -86,7 +110,12 @@ export const processes = [
     terms: [{ en: 'Dopant', ko: '불순물' }, { en: 'Annealing', ko: '열처리' }, { en: 'Transistor', ko: '트랜지스터' }],
     prerequisites: ['deposition'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '[반도체 8대 공정] 6탄, 반도체에 전기적 특성을 입히다! 증착&이온주입 공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-6%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4%ec%97%90-%ec%a0%84%ea%b8%b0%ec%a0%81-%ed%8a%b9%ec%84%b1%ec%9d%84-%ec%9e%85%ed%9e%88%eb%8b%a4/', tier: 'explain' },
+      { title: 'Lecture 6: Diffusion/Implantation (6.152J Micro/Nano Processing Technology, Fall 2005)', publisher: 'MIT OpenCourseWare', url: 'https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture6/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '이온 주입 장비 (LAAS 연구소)', src: 'photos/ion-implant.jpg', url: 'https://commons.wikimedia.org/wiki/File:Ion_implantation_machine_at_LAAS_0521.jpg', author: 'Guillaume Paumier', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'metallization',
@@ -100,7 +129,11 @@ export const processes = [
     terms: [{ en: 'Interconnect', ko: '배선' }, { en: 'CMP', ko: '화학적 기계 연마' }, { en: 'Bond Pad', ko: '본드 패드' }],
     prerequisites: ['ion-implant'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: "[반도체 8대 공정] 7탄, 전기가 통하는 길을 만드는 '금속 배선 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-7%ed%83%84-%ec%a0%84%ea%b8%b0%ea%b0%80-%ed%86%b5%ed%95%98%eb%8a%94-%ea%b8%b8%ec%9d%84-%eb%a7%8c%eb%93%9c%eb%8a%94-%ea%b8%88/", tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '칩 표면의 금속 배선과 가장자리 본드 패드', src: 'photos/metallization.jpg', url: 'https://commons.wikimedia.org/wiki/File:1886VE10-HD.jpg', author: 'ZeptoBars', license: 'CC BY 3.0' },
   },
   {
     id: 'eds',
@@ -114,7 +147,11 @@ export const processes = [
     terms: [{ en: 'Probe Card', ko: '프로브 카드' }, { en: 'Yield', ko: '수율' }, { en: 'Wafer Map', ko: '웨이퍼 맵' }],
     prerequisites: ['metallization'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: "[반도체 8대 공정] 8탄, 완벽한 반도체로 태어나기 위한 첫 번째 테스트 'EDS공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-8%ed%83%84-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a1%9c-%ed%83%9c%ec%96%b4%eb%82%98%ea%b8%b0-%ec%9c%84%ed%95%9c/", tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '프로브 카드', src: 'photos/eds.jpg', url: 'https://commons.wikimedia.org/wiki/File:Probe_card.JPG', author: 'Ajoones', license: 'CC BY 3.0' },
   },
   {
     id: 'backgrind',
@@ -128,7 +165,12 @@ export const processes = [
     terms: [{ en: 'Wafer Thickness', ko: '웨이퍼 두께' }, { en: 'Warpage', ko: '휨' }, { en: 'Protective Tape', ko: '보호 테이프' }],
     prerequisites: ['eds'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '4점굽힘시험에 의한 실리콘 다이의 두께에 따른 파단강도 평가 (Evaluation of Flexural Strength of Silicon Die with Thickness by 4 Point Bending Test)', publisher: '마이크로전자및패키징학회지 18(1), 2011 (민윤기·변재원, 서울과학기술대) DOI 10.6117/kmeps.2011.18.1.015', url: 'https://koreascience.kr/article/JAKO201121538716920.page?lang=ko', tier: 'evidence' },
+      { title: 'Ultra-Thin Grinding | Grinding | Solutions', publisher: 'DISCO Corporation', url: 'https://disco.co.jp/eg/solution/library/grinder/thin.html', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '백그라인딩 원리와 장비 (논문 그림)', src: 'photos/backgrind.png', url: 'https://commons.wikimedia.org/wiki/File:Back_grinding.png', author: 'Joong-Cheul Yun, Dae-Soon Lim', license: 'CC BY 4.0' },
   },
   {
     id: 'wafer-saw',
@@ -142,7 +184,12 @@ export const processes = [
     terms: [{ en: 'Blade', ko: '블레이드' }, { en: 'Scribe Line', ko: '스크라이브 라인' }, { en: 'Chipping', ko: '가장자리 깨짐' }],
     prerequisites: ['backgrind'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Dicing Thin Wafers | Blade Dicing | Solutions', publisher: 'DISCO Corporation', url: 'https://disco.co.jp/eg/solution/library/dicing/dicing_thin.html', tier: 'explain' },
+      { title: 'Silicon wafer thinning, the singulation process, and die strength (DISCO Technical Review TR16-03, Feb 2016)', publisher: 'DISCO Corporation', url: 'https://www-hq.disco.co.jp/eg/solution/technical_review/doc/TR16-03_Silicon%20wafer%20thinning,%20the%20singulation%20process,%20and%20die%20strength_20160610.pdf', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '다이싱 블레이드', src: 'photos/wafer-saw.jpg', url: 'https://commons.wikimedia.org/wiki/File:Dicing_blade.jpg', author: 'HokuhokuhokukunOiso', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'die-attach',
@@ -156,7 +203,11 @@ export const processes = [
     terms: [{ en: 'Epoxy', ko: '접착제' }, { en: 'Cure', ko: '경화' }, { en: 'Void', ko: '빈 공간' }, { en: 'Delamination', ko: '박리' }],
     prerequisites: ['wafer-saw'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '전통 반도체 패키지를 위한 고방열 다이 어태치 필름(DAF) 기술 동향 (High-Thermal-Conductivity Die Attach Film Technologies for Conventional Semiconductor Packaging)', publisher: '마이크로전자및패키징학회지 32(2), 2025 (한국전자기술연구원 KETI) DOI 10.6117/kmeps.2025.32.2.010', url: 'https://koreascience.kr/journal/view.jsp?kj=MOKRBW&py=2025&vnc=v32n2&sp=10', tier: 'evidence' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '패키지에 붙은 다이 (세라믹 패키지 예시)', src: 'photos/die-attach.jpg', url: 'https://commons.wikimedia.org/wiki/File:NatSemi_MM54HCU04J_die_attached.jpg', author: 'John McMaster', license: 'CC BY 4.0' },
   },
   {
     id: 'wire-bond',
@@ -170,7 +221,12 @@ export const processes = [
     terms: [{ en: 'Ultrasonic Energy', ko: '초음파 에너지' }, { en: 'Bond Force', ko: '본딩 하중' }, { en: 'Cratering', ko: '패드 아래 손상' }],
     prerequisites: ['die-attach'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Wire Bonding Basics (Version 4.0, 2013)', publisher: 'TPT Wire Bonder (Franz Hickmann); hosted by UCSB Nanofab wiki', url: 'https://protowiki.oasis.ucsb.edu/images/3/3e/Wire-Bonding-Basics.pdf', tier: 'explain' },
+      { title: '[반도체 8대 공정] 9탄, 외부환경으로부터 반도체를 보호하는 패키징 (Packaging) 공정', publisher: '삼성전자 반도체 뉴스룸 (2018.10.12)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '금 와이어 볼·웨지 본딩 확대 사진', src: 'photos/wire-bond.jpg', url: 'https://commons.wikimedia.org/wiki/File:07R01_(cropped_ball-wedge_bonding).jpg', author: 'Mister rf', license: 'CC BY-SA 4.0' },
   },
   {
     id: 'molding',
@@ -184,7 +240,12 @@ export const processes = [
     terms: [{ en: 'EMC', ko: '에폭시 몰딩 컴파운드' }, { en: 'Wire Sweep', ko: '와이어 쓸림' }, { en: 'Incomplete Fill', ko: '미충전' }],
     prerequisites: ['wire-bond'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '반도체 칩 캡슐화 공정에 있어서 와이어 스윕(wire sweep) 최소화에 관한 연구 (Reduction of Wire Sweep during Chip Encapsulation by Runner Balancing and Ram Control)', publisher: '한국정밀공학회지 13(12), 1996 (한세진·허용정)', url: 'https://koreascience.kr/article/JAKO199611920342181.page?lang=ko', tier: 'evidence' },
+      { title: '[반도체 8대 공정] 9탄, 외부환경으로부터 반도체를 보호하는 패키징 (Packaging) 공정', publisher: '삼성전자 반도체 뉴스룸 (2018.10.12)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '몰딩된 패키지 단면 (BGA 예시)', src: 'photos/molding.jpg', url: 'https://commons.wikimedia.org/wiki/File:BGA_package_cross_section.jpg', author: 'TubeTimeUS', license: 'CC BY-SA 4.0' },
   },
   {
     id: 'marking',
@@ -198,7 +259,12 @@ export const processes = [
     terms: [{ en: 'Laser Power', ko: '레이저 출력' }, { en: 'Legibility', ko: '가독성' }],
     prerequisites: ['molding'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Laser Source 특성 분석을 통한 Low Depth Marking 공법 연구 및 고찰 (A Study on the Low Depth Marking Method through Laser Source Characteristic Analysis)', publisher: '마이크로전자및패키징학회지 29(2), 2022 (SK hynix PKG개발) DOI 10.6117/kmeps.2022.29.2.065', url: 'https://koreascience.kr/article/JAKO202220157213895.page', tier: 'evidence' },
+      { title: '반도체 8대 공정 9탄. 외부환경으로부터 반도체를 보호하는 패키징(Packaging) 공정 (2013 판)', publisher: '삼성전자 반도체 뉴스룸 (2013.01.14)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8-2/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: null,
   },
   {
     id: 'package-saw',
@@ -212,7 +278,12 @@ export const processes = [
     terms: [{ en: 'Blade Wear', ko: '블레이드 마모' }, { en: 'Burr', ko: '버·거스러미' }, { en: 'Chipping', ko: '가장자리 깨짐' }],
     prerequisites: ['marking'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'QFN/MLP singulation (Chip Scale Review, Sept/Oct 2012)', publisher: 'Advanced Dicing Technologies (ADT), reprint of Chip Scale Review article', url: 'https://www.adt-co.com/wp-content/uploads/2023/06/QFN-Singulation-CSR.pdf', tier: 'explain' },
+      { title: 'QFN Package Processing | Blade Dicing | Solutions', publisher: 'DISCO Corporation', url: 'https://disco.co.jp/eg/solution/apexp/dicing/qfn.html', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: { kind: 'attach', title: '개별 패키지들 (오른쪽 끝이 QFN)', src: 'photos/package-saw.jpg', url: 'https://commons.wikimedia.org/wiki/File:TSSOP_RQFP_SO_SSOP_QFN.jpg', author: 'NobbiP', license: 'CC BY-SA 3.0' },
   },
   {
     id: 'test',
@@ -226,7 +297,11 @@ export const processes = [
     terms: [{ en: 'Electrical Test', ko: '전기 특성 검사' }, { en: 'Visual Inspection', ko: '외관 검사' }],
     prerequisites: ['package-saw'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: '반도체 8대 공정 9탄. 외부환경으로부터 반도체를 보호하는 패키징(Packaging) 공정 (2013 판)', publisher: '삼성전자 반도체 뉴스룸 (2013.01.14)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8-2/', tier: 'explain' },
+    ],
+    sourceDate: '2026-10-31',
+    photo: null,
   },
   {
     id: 'flipchip-bond',

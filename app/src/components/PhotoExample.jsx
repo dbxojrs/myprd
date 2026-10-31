@@ -24,7 +24,7 @@ export default function PhotoExample({ photo }) {
       </button>
       {open && (
         <figure className="photo-body">
-          <img src={photo.src} alt={photo.title} loading="lazy" />
+          <img src={`${import.meta.env.BASE_URL}${photo.src}`} alt={photo.title} loading="lazy" />
           <figcaption className="muted">
             {photo.title} · {photo.author} ·{' '}
             <a href={photo.url} target="_blank" rel="noreferrer">

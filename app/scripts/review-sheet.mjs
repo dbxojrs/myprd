@@ -51,6 +51,14 @@ function processSection(id, index) {
     )
   }
 
+  if (p.sources.length) {
+    lines.push(
+      '',
+      '**등록된 출처** (내용과 맞는지 봐 주세요)',
+      '',
+      ...p.sources.map((s) => `- [${s.title}](${s.url}) · ${s.publisher} · ${s.tier === 'explain' ? '설명 출처' : '근거 출처'}`),
+    )
+  }
   lines.push('', '**이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): ', '', '---', '')
   return lines.join('\n')
 }

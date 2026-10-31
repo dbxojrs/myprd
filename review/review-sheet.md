@@ -37,6 +37,10 @@
 
 ![웨이퍼 제조 (Wafer Fabrication) 개념도](images/wafer-make.svg)
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 1탄, '웨이퍼'란 무엇일까요?', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-1%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%eb%9e%80-%eb%ac%b4%ec%97%87%ec%9d%bc%ea%b9%8c%ec%9a%94/](undefined) · undefined · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -54,6 +58,10 @@
 | 개념도 | 아래 그림 | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![산화 (Oxidation) 개념도](images/oxidation.svg)
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 2탄, 웨이퍼 표면을 보호하는 산화공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-2%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc-%ed%91%9c%eb%a9%b4%ec%9d%84-%eb%b3%b4%ed%98%b8%ed%95%98%eb%8a%94-%ec%82%b0%ed%99%94%ea%b3%b5/) · 삼성전자 반도체 뉴스룸 (삼성반도체이야기) · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -73,6 +81,10 @@
 
 ![포토 공정 (Photolithography) 개념도](images/photo.svg)
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 4탄, 웨이퍼에 회로를 그려 넣는 포토공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%9a%8c%eb%a1%9c%eb%a5%bc-%ea%b7%b8%eb%a0%a4-%eb%84%a3%eb%8a%94-%ed%8f%ac%ed%86%a0/) · 삼성전자 반도체 뉴스룸 (삼성반도체이야기) · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -90,6 +102,11 @@
 | 개념도 | 아래 그림 | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![식각 (Etching) 개념도](images/etch.svg)
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 5탄, 반도체 회로패턴의 완성 '식각 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-5%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ed%9a%8c%eb%a1%9c%ed%8c%a8%ed%84%b4%ec%9d%98-%ec%99%84%ec%84%b1-%ec%8b%9d%ea%b0%81-%ea%b3%b5/](undefined) · undefined · 설명 출처
+- [Lecture 17: Dry Etching (6.152J Micro/Nano Processing Technology, Fall 2005)](https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture17/) · MIT OpenCourseWare · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -109,6 +126,11 @@
 
 ![증착 (Deposition) 개념도](images/deposition.svg)
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 6탄, 반도체에 전기적 특성을 입히다! 증착&이온주입 공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-6%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4%ec%97%90-%ec%a0%84%ea%b8%b0%ec%a0%81-%ed%8a%b9%ec%84%b1%ec%9d%84-%ec%9e%85%ed%9e%88%eb%8b%a4/) · 삼성전자 반도체 뉴스룸 (삼성반도체이야기) · 설명 출처
+- [CVD lecture notes (6.152J Micro/Nano Processing Technology, Fall 2005)](https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/cvd/) · MIT OpenCourseWare · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -126,6 +148,11 @@
 | 개념도 | 아래 그림 | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![이온 주입 (Ion Implantation) 개념도](images/ion-implant.svg)
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 6탄, 반도체에 전기적 특성을 입히다! 증착&이온주입 공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-6%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4%ec%97%90-%ec%a0%84%ea%b8%b0%ec%a0%81-%ed%8a%b9%ec%84%b1%ec%9d%84-%ec%9e%85%ed%9e%88%eb%8b%a4/) · 삼성전자 반도체 뉴스룸 (삼성반도체이야기) · 설명 출처
+- [Lecture 6: Diffusion/Implantation (6.152J Micro/Nano Processing Technology, Fall 2005)](https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture6/) · MIT OpenCourseWare · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -145,6 +172,10 @@
 
 ![금속 배선 (Metallization) 개념도](images/metallization.svg)
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 7탄, 전기가 통하는 길을 만드는 '금속 배선 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-7%ed%83%84-%ec%a0%84%ea%b8%b0%ea%b0%80-%ed%86%b5%ed%95%98%eb%8a%94-%ea%b8%b8%ec%9d%84-%eb%a7%8c%eb%93%9c%eb%8a%94-%ea%b8%88/](undefined) · undefined · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -162,6 +193,10 @@
 | 개념도 | 아래 그림 | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![EDS·웨이퍼 테스트 (EDS (Wafer Test)) 개념도](images/eds.svg)
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [[반도체 8대 공정] 8탄, 완벽한 반도체로 태어나기 위한 첫 번째 테스트 'EDS공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-8%ed%83%84-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a1%9c-%ed%83%9c%ec%96%b4%eb%82%98%ea%b8%b0-%ec%9c%84%ed%95%9c/](undefined) · undefined · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -189,6 +224,11 @@
 | 권장 두께 | 권장 | - | 패키지 두께 규격과 웨이퍼 강도를 함께 만족합니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 너무 두껍게 | 불량 | 패키지 두께 초과 (Over-Thickness) | 다이가 두꺼우면 완성된 패키지가 두께 규격을 넘습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [4점굽힘시험에 의한 실리콘 다이의 두께에 따른 파단강도 평가 (Evaluation of Flexural Strength of Silicon Die with Thickness by 4 Point Bending Test)](https://koreascience.kr/article/JAKO201121538716920.page?lang=ko) · 마이크로전자및패키징학회지 18(1), 2011 (민윤기·변재원, 서울과학기술대) DOI 10.6117/kmeps.2011.18.1.015 · 근거 출처
+- [Ultra-Thin Grinding | Grinding | Solutions](https://disco.co.jp/eg/solution/library/grinder/thin.html) · DISCO Corporation · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -214,6 +254,11 @@
 | 느리게 | 권장 | - | 품질에는 문제가 없지만 생산 속도가 떨어집니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 권장 속도 | 권장 | - | 절단 품질과 생산 속도의 균형이 맞습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 빠르게 | 주의 | 가장자리 깨짐 (Chipping) | 빠르게 자르면 절단면에 힘이 몰려 다이 가장자리가 깨질 수 있습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [Dicing Thin Wafers | Blade Dicing | Solutions](https://disco.co.jp/eg/solution/library/dicing/dicing_thin.html) · DISCO Corporation · 설명 출처
+- [Silicon wafer thinning, the singulation process, and die strength (DISCO Technical Review TR16-03, Feb 2016)](https://www-hq.disco.co.jp/eg/solution/technical_review/doc/TR16-03_Silicon%20wafer%20thinning,%20the%20singulation%20process,%20and%20die%20strength_20160610.pdf) · DISCO Corporation · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -249,6 +294,10 @@
 | 권장 | 권장 | - | 접착제가 충분히 굳어 다이를 고정합니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 과경화 | 주의 | 접착층 취화·응력 (Embrittlement) | 지나치게 경화하면 접착층이 딱딱해져 응력에 약해질 수 있습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [전통 반도체 패키지를 위한 고방열 다이 어태치 필름(DAF) 기술 동향 (High-Thermal-Conductivity Die Attach Film Technologies for Conventional Semiconductor Packaging)](https://koreascience.kr/journal/view.jsp?kj=MOKRBW&py=2025&vnc=v32n2&sp=10) · 마이크로전자및패키징학회지 32(2), 2025 (한국전자기술연구원 KETI) DOI 10.6117/kmeps.2025.32.2.010 · 근거 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -274,6 +323,11 @@
 | 약하게 | 불량 | 접합 안 됨 (Non-Stick on Pad) | 접합 에너지가 부족해 와이어가 패드에 붙지 않습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 권장 | 권장 | - | 와이어가 패드에 안정적으로 접합됩니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 강하게 | 주의 | 패드 아래 손상 (Cratering) | 에너지가 지나치면 패드 아래 층에 균열이 생길 수 있습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [Wire Bonding Basics (Version 4.0, 2013)](https://protowiki.oasis.ucsb.edu/images/3/3e/Wire-Bonding-Basics.pdf) · TPT Wire Bonder (Franz Hickmann); hosted by UCSB Nanofab wiki · 설명 출처
+- [[반도체 8대 공정] 9탄, 외부환경으로부터 반도체를 보호하는 패키징 (Packaging) 공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8/) · 삼성전자 반도체 뉴스룸 (2018.10.12) · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -301,6 +355,11 @@
 | 권장 | 권장 | - | 수지가 와이어를 밀지 않고 고르게 채워집니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 빠르게 | 불량 | 와이어 쓸림 (Wire Sweep) | 빠른 수지 흐름이 와이어를 밀어 서로 닿게(단락) 할 수 있습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [반도체 칩 캡슐화 공정에 있어서 와이어 스윕(wire sweep) 최소화에 관한 연구 (Reduction of Wire Sweep during Chip Encapsulation by Runner Balancing and Ram Control)](https://koreascience.kr/article/JAKO199611920342181.page?lang=ko) · 한국정밀공학회지 13(12), 1996 (한세진·허용정) · 근거 출처
+- [[반도체 8대 공정] 9탄, 외부환경으로부터 반도체를 보호하는 패키징 (Packaging) 공정](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8/) · 삼성전자 반도체 뉴스룸 (2018.10.12) · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -326,6 +385,11 @@
 | 약하게 | 주의 | 식별 불가 (Illegible Marking) | 기능은 정상이지만 글자가 흐려 제품을 추적하기 어렵습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 권장 | 권장 | - | 글자가 선명하고 몰딩 표면이 손상되지 않습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 강하게 | 주의 | 몰딩 표면 손상 (Mold Damage) | 출력이 지나치면 몰딩을 깊게 파서 보호 두께가 줄어듭니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [Laser Source 특성 분석을 통한 Low Depth Marking 공법 연구 및 고찰 (A Study on the Low Depth Marking Method through Laser Source Characteristic Analysis)](https://koreascience.kr/article/JAKO202220157213895.page) · 마이크로전자및패키징학회지 29(2), 2022 (SK hynix PKG개발) DOI 10.6117/kmeps.2022.29.2.065 · 근거 출처
+- [반도체 8대 공정 9탄. 외부환경으로부터 반도체를 보호하는 패키징(Packaging) 공정 (2013 판)](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8-2/) · 삼성전자 반도체 뉴스룸 (2013.01.14) · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
@@ -353,6 +417,11 @@
 | 권장 | 권장 | - | 절단면이 깨끗하고 리드가 손상되지 않습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 너무 빠르게 | 주의 | 깨짐·리드 손상 (Chipping / Lead Damage) | 빠른 절단은 패키지 모서리와 리드를 손상시킬 수 있습니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [QFN/MLP singulation (Chip Scale Review, Sept/Oct 2012)](https://www.adt-co.com/wp-content/uploads/2023/06/QFN-Singulation-CSR.pdf) · Advanced Dicing Technologies (ADT), reprint of Chip Scale Review article · 설명 출처
+- [QFN Package Processing | Blade Dicing | Solutions](https://disco.co.jp/eg/solution/apexp/dicing/qfn.html) · DISCO Corporation · 설명 출처
+
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
 ---
@@ -370,6 +439,10 @@
 | 개념도 | 아래 그림 | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![최종 테스트 (Final Test) 개념도](images/test.svg)
+
+**등록된 출처** (내용과 맞는지 봐 주세요)
+
+- [반도체 8대 공정 9탄. 외부환경으로부터 반도체를 보호하는 패키징(Packaging) 공정 (2013 판)](https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8-2/) · 삼성전자 반도체 뉴스룸 (2013.01.14) · 설명 출처
 
 **이 공정의 근거로 추천할 자료**(교재, 논문, 표준 등): 
 
