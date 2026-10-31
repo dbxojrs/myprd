@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { findPackage } from './data/packages.js'
+import { findProcess } from './data/processes.js'
 import { useStoredState } from './lib/storage.js'
 import PackageSelect from './components/PackageSelect.jsx'
 import FlowChart from './components/FlowChart.jsx'
+import FrontFlow from './components/FrontFlow.jsx'
 import ProcessQuery from './components/ProcessQuery.jsx'
 import ProcessSim from './components/ProcessSim.jsx'
 import AdvancedPackage from './components/AdvancedPackage.jsx'
@@ -12,7 +14,8 @@ import { TermModeSwitch } from './lib/terms.jsx'
 
 const NAV = [
   { id: 'package', label: '패키지' },
-  { id: 'flow', label: '흐름도' },
+  { id: 'front', label: '전공정' },
+  { id: 'flow', label: '후공정 흐름도' },
   { id: 'query', label: '공정 질문' },
   { id: 'sim', label: '시뮬레이션' },
   { id: 'line', label: '라인 실습' },
@@ -29,7 +32,8 @@ export default function App() {
   const [, setReports] = useStoredState('tutor.reports', [])
 
   const pkg = findPackage(packageId)
-  const flowMode = screen === 'line' ? 'line' : 'learn'
+  const studyingFront = screen === 'front' || (screen === 'query' && findProcess(processId)?.stage === 'front')
+  const flowMode = screen === 'line' ? 'line' : studyingFront ? 'front' : 'learn'
   const activeId = flowMode === 'line' ? lineProcessId : processId
 
   const openProcess = (id) => {
@@ -82,6 +86,7 @@ export default function App() {
         {screen === 'package' && (
           <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} />
         )}
+        {screen === 'front' && <FrontFlow completed={completed} currentId={processId} onOpenProcess={openProcess} />}
         {screen === 'flow' && (
           <FlowChart
             pkg={pkg}

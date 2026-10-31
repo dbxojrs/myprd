@@ -1,7 +1,7 @@
 // 패키지 선택 화면 데이터. PRD "패키지 선택 데이터 초안" 기준이며 모두 검수 전입니다.
 // name과 substrate는 { en, ko } 용어 쌍입니다.
 // flow가 null인 패키지는 첫 버전에서 설명만 제공합니다.
-// flow는 후공정 순서만 적습니다. 모든 패키지에 같은 전공정(frontFlow)은 fullFlow로 앞에 붙입니다.
+// flow는 후공정 순서만 적습니다. 전공정(frontFlow)은 모든 패키지가 같아 따로 둡니다. 전체 순서가 필요하면 fullFlow를 씁니다(검수표).
 
 import { frontFlow } from './processes.js'
 

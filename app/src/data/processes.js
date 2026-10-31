@@ -258,6 +258,12 @@ export const processes = [
   },
 ]
 
+// 단계 이름과 한 줄 소개. 화면의 단계 제목에 씁니다.
+export const STAGES = {
+  front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.' },
+  back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.' },
+}
+
 // 전공정은 모든 패키지가 같으므로 패키지마다 따로 적지 않습니다.
 export const frontFlow = processes.filter((process) => process.stage === 'front').map((process) => process.id)
 

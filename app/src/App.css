@@ -706,17 +706,24 @@ input:focus-visible {
   color: var(--accent-text);
 }
 
-/* 전공정·후공정 구분 */
-.flow-stage + .flow-stage {
-  margin-top: 16px;
+/* 실제 사진 예시 */
+.photo {
+  margin: 12px 0;
 }
 
-.flowbar-stage {
-  writing-mode: vertical-rl;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--muted);
-  border-left: 2px solid var(--border);
-  padding: 0 4px 0 6px;
-  margin-right: 4px;
+.photo-body {
+  margin: 8px 0 0;
+}
+
+.photo-body img {
+  display: block;
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.photo-body figcaption {
+  font-size: 0.8rem;
+  margin-top: 4px;
 }

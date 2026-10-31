@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { findProcess } from '../data/processes.js'
-import { fullFlow } from '../data/packages.js'
+import { findProcess, frontFlow, STAGES } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
 import ReviewBadge from './ReviewBadge.jsx'
 import AnalogyButton from './AnalogyButton.jsx'
+import PhotoExample from './PhotoExample.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
@@ -33,7 +33,8 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
 
   const process = result?.status === 'found' ? result.process : null
   const prereqs = process ? recommendPrerequisites(process.id, completed) : []
-  const flow = fullFlow(pkg)
+  const isFront = process?.stage === 'front'
+  const flow = isFront ? frontFlow : pkg?.flow
   const flowIndex = process && flow ? flow.indexOf(process.id) : -1
   const prev = flowIndex > 0 ? findProcess(flow[flowIndex - 1]) : null
   const next = flowIndex >= 0 && flowIndex < flow.length - 1 ? findProcess(flow[flowIndex + 1]) : null
@@ -85,11 +86,12 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             <dd>{list(process.terms)}</dd>
           </dl>
           <AnalogyButton key={process.id} text={processAnalogies[process.id]} />
+          <PhotoExample key={`photo-${process.id}`} photo={process.photo} />
           <ReviewBadge reviewed={process.reviewed} sources={process.sources} />
 
           {flowIndex >= 0 && (
             <p className="position">
-              <Term value={pkg.name} /> 흐름에서 {flowIndex + 1}번째 공정({process.stage === 'front' ? '전공정' : '후공정'}) · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
+              {!isFront && <Term value={pkg.name} />} <Term value={STAGES[process.stage].name} /> 흐름에서 {flowIndex + 1}번째 공정 · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
               {next ? <Term value={next.name} /> : '없음'}
             </p>
           )}
