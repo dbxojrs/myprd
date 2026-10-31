@@ -94,4 +94,17 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
 .il-bond { fill: var(--border); }
 .il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
-.il-dim { stroke: var(--accent); stroke-width: 0.8; }</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="36" width="26" height="10" class="il-oxide"></rect><rect x="54" y="36" width="12" height="10" class="il-oxide"></rect><rect x="82" y="36" width="18" height="10" class="il-oxide"></rect><rect x="20" y="32" width="26" height="4" class="il-resist"></rect><rect x="54" y="32" width="12" height="4" class="il-resist"></rect><rect x="82" y="32" width="18" height="4" class="il-resist"></rect><g class="il-arrow"><line x1="50" y1="12" x2="50" y2="40"></line><polygon points="50,40 47.60287230697899,35.61208719054814 52.39712769302101,35.61208719054814"></polygon></g><g class="il-arrow"><line x1="74" y1="12" x2="74" y2="40"></line><polygon points="74,40 71.60287230697898,35.61208719054814 76.39712769302102,35.61208719054814"></polygon></g><text x="60" y="8" class="il-label" text-anchor="middle">플라즈마</text><text x="60" y="72" class="il-label" text-anchor="middle">가려지지 않은 막을 깎아 냄</text></svg>
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }
+.il-outline { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.il-daf { fill: var(--accent); opacity: 0.75; }
+.il-warn-ring { fill: none; stroke: var(--bad); stroke-width: 1.5; }
+.il-dust { fill: var(--muted); }
+.il-water { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-oxide-film { fill: var(--bad); opacity: 0.6; }
+.il-imc { fill: var(--good); }
+.il-mold-flow { fill: var(--muted); opacity: 0.35; }
+.il-void { fill: var(--surface); stroke: var(--bad); stroke-width: 0.8; }
+.il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
+.il-kerf-gap { fill: var(--surface); }
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><rect x="20" y="46" width="80" height="10" class="il-wafer"></rect><rect x="20" y="36" width="26" height="10" class="il-oxide"></rect><rect x="54" y="36" width="12" height="10" class="il-oxide"></rect><rect x="82" y="36" width="18" height="10" class="il-oxide"></rect><rect x="20" y="32" width="26" height="4" class="il-resist"></rect><rect x="54" y="32" width="12" height="4" class="il-resist"></rect><rect x="82" y="32" width="18" height="4" class="il-resist"></rect><g class="il-arrow"><line x1="50" y1="12" x2="50" y2="40"></line><polygon points="50,40 47.60287230697899,35.61208719054814 52.39712769302101,35.61208719054814"></polygon></g><g class="il-arrow"><line x1="74" y1="12" x2="74" y2="40"></line><polygon points="74,40 71.60287230697898,35.61208719054814 76.39712769302102,35.61208719054814"></polygon></g><text x="60" y="8" class="il-label" text-anchor="middle">플라즈마</text><text x="60" y="72" class="il-label" text-anchor="middle">가려지지 않은 막을 깎아 냄</text></svg>

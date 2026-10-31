@@ -5,7 +5,7 @@
 
 import { useState } from 'react'
 
-const Arrow = ({ x1, y1, x2, y2 }) => (
+export const Arrow = ({ x1, y1, x2, y2 }) => (
   <g className="il-arrow">
     <line x1={x1} y1={y1} x2={x2} y2={y2} />
     <polygon
@@ -36,11 +36,11 @@ function track(points) {
   }
 }
 
-const Anim = ({ attr, points, dur }) => (
+export const Anim = ({ attr, points, dur }) => (
   <animate attributeName={attr} {...track(points)} dur={dur} repeatCount="indefinite" />
 )
 
-const Move = ({ points, dur }) => (
+export const Move = ({ points, dur }) => (
   <animateTransform attributeName="transform" type="translate" {...track(points)} dur={dur} repeatCount="indefinite" />
 )
 
@@ -182,7 +182,7 @@ function sawDrawing({ layers, cutBottom, topShape, streets, gridLines, cutClass 
   }
 }
 
-const Label = ({ x, y, children, compact }) =>
+export const Label = ({ x, y, children, compact }) =>
   compact ? null : (
     <text x={x} y={y} className="il-label" textAnchor="middle">
       {children}
@@ -190,9 +190,9 @@ const Label = ({ x, y, children, compact }) =>
   )
 
 // 움직이는 동안 지금 어느 세부 단계인지 아래에 자막으로 보여줍니다. items: [시작, 끝, 글자] (0–1)
-const StepCaption = ({ items, dur, y = 76 }) =>
+export const StepCaption = ({ items, dur, x = 60, y = 76 }) =>
   items.map(([from, to, text]) => (
-    <text key={text} x="60" y={y} className="il-label il-step" textAnchor="middle" opacity="0">
+    <text key={text} x={x} y={y} className="il-label il-step" textAnchor="middle" opacity="0">
       {text}
       <Anim
         attr="opacity"
@@ -208,7 +208,7 @@ const StepCaption = ({ items, dur, y = 76 }) =>
   ))
 
 // 일정 시간 동안만 보이는 묶음
-const Visible = ({ from, to, dur, children }) => (
+export const Visible = ({ from, to, dur, children }) => (
   <g opacity="0">
     {children}
     <Anim
@@ -846,29 +846,15 @@ function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
-// still이 true이면 버튼 없이 멈춘 그림만 그립니다(검수표 그림 내보내기용).
-export function ProcessIllustration({ id, compact = false, still = false }) {
+// 움직이는 그림에 ⏸/▶ 버튼을 붙입니다. 동작 줄이기 설정이면 멈춘 채로 시작합니다.
+// render(playing)는 svg를 돌려줍니다. enabled가 false이면 버튼 없이 멈춘 그림만 그립니다.
+export function Playable({ enabled, render }) {
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
-  const draw = processDrawings[id]
-  if (!draw) return null
-
-  const canAnimate = !compact && !still && ANIMATED.has(id)
-  const svg = (
-    <svg
-      viewBox={compact ? '0 0 120 66' : WIDE.has(id) ? '0 0 240 82' : '0 0 120 80'}
-      className={compact ? 'il il-compact' : WIDE.has(id) ? 'il il-wide' : 'il'}
-      role={compact ? undefined : 'img'}
-      aria-hidden={compact ? 'true' : undefined}
-      aria-label={compact ? undefined : '공정 개념도'}
-    >
-      {draw(compact, canAnimate && playing)}
-    </svg>
-  )
-  if (!canAnimate) return svg
+  if (!enabled) return render(false)
 
   return (
     <div className="il-wrap">
-      {svg}
+      {render(playing)}
       <button type="button" className="il-play" aria-pressed={playing} onClick={() => setPlaying(!playing)}>
         {playing ? '⏸ 멈춤' : '▶ 움직임 보기'}
       </button>
@@ -876,62 +862,26 @@ export function ProcessIllustration({ id, compact = false, still = false }) {
   )
 }
 
-// 알아둘 점에 붙는 상세 그림. 키는 processes.js keyPoints의 figure입니다.
-const detailDrawings = {
-  'saw-blade': () => (
-    <>
-      <circle cx="50" cy="44" r="32" className="il-tool" />
-      {Array.from({ length: 24 }, (_, i) => {
-        const a = (i / 24) * Math.PI * 2
-        return <circle key={i} cx={50 + 29.5 * Math.cos(a)} cy={44 + 29.5 * Math.sin(a)} r="1" className="il-diamond" />
-      })}
-      <circle cx="50" cy="44" r="26" className="il-frame" />
-      <circle cx="50" cy="44" r="7" className="il-hole" />
-      <line x1="76" y1="26" x2="128" y2="20" className="il-callout" />
-      <line x1="80" y1="44" x2="128" y2="66" className="il-callout" />
-      <circle cx="78" cy="34" r="6" className="il-callout-ring" />
-      <rect x="128" y="14" width="64" height="58" rx="4" className="il-zoom" />
-      <rect x="128" y="14" width="64" height="40" className="il-bond" />
-      {[
-        [136, 22], [150, 18], [166, 24], [182, 19], [142, 34], [158, 32], [174, 36], [186, 30], [134, 46], [152, 44], [168, 48], [184, 45],
-      ].map(([x, y]) => (
-        <rect key={`${x}-${y}`} x={x - 2} y={y - 2} width="4" height="4" className="il-diamond" transform={`rotate(45 ${x} ${y})`} />
-      ))}
-      <Label x="160" y="64">니켈 속 다이아몬드 입자</Label>
-      <Label x="50" y="83">안쪽: 허브(알루미늄)</Label>
-      <Label x="50" y="91">바깥 테두리: 다이아몬드 날</Label>
-      <Label x="160" y="86">확대: 날 가장자리</Label>
-    </>
-  ),
-  'saw-blade-wear': () => (
-    <>
-      {[
-        { x: 50, tip: 66, title: '새 블레이드', note: '날 노출 충분' },
-        { x: 150, tip: 54, title: '마모된 블레이드', note: '날이 짧아지고 무뎌짐' },
-      ].map((b) => (
-        <g key={b.x}>
-          <Label x={b.x} y="8">{b.title}</Label>
-          <rect x={b.x - 22} y="14" width="44" height="20" className="il-frame" />
-          <rect x={b.x - 2} y="34" width="4" height={b.tip - 34} rx={b.tip < 66 ? 2 : 0} className="il-tool" />
-          {b.tip < 66 && <rect x={b.x - 2} y={b.tip} width="4" height={66 - b.tip} className="il-worn" />}
-          <line x1={b.x + 10} y1="34" x2={b.x + 10} y2={b.tip} className="il-dim" />
-          <line x1={b.x + 6} y1={b.tip} x2={b.x + 14} y2={b.tip} className="il-dim" />
-          <line x1={b.x + 6} y1="34" x2={b.x + 14} y2="34" className="il-dim" />
-          <Label x={b.x} y="76">{b.note}</Label>
-        </g>
-      ))}
-      <Label x="100" y="88">줄어든 만큼 더 내려 보정하고, 한계가 되면 교체</Label>
-    </>
-  ),
-}
-
-export function DetailIllustration({ id }) {
-  const draw = detailDrawings[id]
+// still이 true이면 버튼 없이 멈춘 그림만 그립니다(검수표 그림 내보내기용).
+export function ProcessIllustration({ id, compact = false, still = false }) {
+  const draw = processDrawings[id]
   if (!draw) return null
+
   return (
-    <svg viewBox="0 0 200 92" className="il il-detail" role="img" aria-label="상세 그림">
-      {draw()}
-    </svg>
+    <Playable
+      enabled={!compact && !still && ANIMATED.has(id)}
+      render={(animate) => (
+        <svg
+          viewBox={compact ? '0 0 120 66' : WIDE.has(id) ? '0 0 240 82' : '0 0 120 80'}
+          className={compact ? 'il il-compact' : WIDE.has(id) ? 'il il-wide' : 'il'}
+          role={compact ? undefined : 'img'}
+          aria-hidden={compact ? 'true' : undefined}
+          aria-label={compact ? undefined : '공정 개념도'}
+        >
+          {draw(compact, animate)}
+        </svg>
+      )}
+    />
   )
 }
 

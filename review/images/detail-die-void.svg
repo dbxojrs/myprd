@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="276" viewBox="0 0 200 92" class="il il-detail" role="img" aria-label="상세 그림"><style>svg {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #1c2330;
+  --muted: #5d6675;
+  --border: #d8dde5;
+  --accent: #2f5bd3;
+  --accent-text: #ffffff;
+  --accent-soft: #e6ecfb;
+  --good: #1f7a45;
+  --good-soft: #e3f3ea;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  color-scheme: light;
+}
+svg { background: #ffffff; font-family: sans-serif; }
+.il-wafer { fill: var(--muted); }
+.il-tape { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.il-oxide { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.il-resist { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.il-tool { fill: var(--border); stroke: var(--text); stroke-width: 1; }
+.il-frame { fill: var(--muted); }
+.il-substrate { fill: var(--good-soft); stroke: var(--good); stroke-width: 1; }
+.il-rdl { fill: var(--accent); }
+.il-glue { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+.il-die { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.il-mold { fill: var(--border); stroke: var(--muted); stroke-width: 1; }
+.il-wire { fill: none; stroke: var(--warn); stroke-width: 1.5; }
+.il-bump { fill: var(--muted); stroke: var(--text); stroke-width: 0.6; }
+.il-ghost { opacity: 0.45; }
+.il-line { fill: none; stroke: var(--text); stroke-width: 1; }
+.il-cut { stroke: var(--bg); stroke-width: 1.5; }
+.il-blade { stroke: var(--bad); stroke-width: 2; }
+.il-laser { stroke: var(--bad); stroke-width: 2; stroke-dasharray: 3 2; }
+.il-probe { stroke: var(--text); stroke-width: 1.5; }
+.il-needle { stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.il-check { fill: none; stroke: var(--good); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.il-arrow line { stroke: var(--accent); stroke-width: 1.5; }
+.il-arrow polygon { fill: var(--accent); }
+.il-label {
+  font-size: 7px;
+  fill: var(--muted);
+}
+.il-mark {
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--surface);
+  letter-spacing: 1px;
+}
+.il-logic { fill: var(--accent-soft); }
+.il-interposer { opacity: 0.85; }
+.il-tsv { stroke: var(--warn); stroke-width: 1.5; }
+.il-cu { fill: var(--warn); }
+.il-link { fill: none; stroke: var(--accent); stroke-width: 2; }
+.il-dashed { stroke-dasharray: 3 2; }
+.il-tag {
+  font-size: 7px;
+  font-weight: 700;
+  fill: var(--text);
+}
+.il-blade-spokes line { stroke: var(--text); stroke-width: 1; }
+.il-blade-edge { fill: none; stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.il-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.il-wrap .il {
+  margin-bottom: 4px;
+}
+.il-play {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+.il-wide { max-width: 560px; width: 100%; }
+.il-kerf { fill: var(--bad); opacity: 0.25; }
+.il-cut-top { stroke: var(--bg); stroke-width: 2; }
+.il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
+.il-blade-top { fill: var(--bad); }
+.il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.il-cut-dark { stroke: var(--text); }
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }
+.il-outline { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.il-daf { fill: var(--accent); opacity: 0.75; }
+.il-warn-ring { fill: none; stroke: var(--bad); stroke-width: 1.5; }
+.il-dust { fill: var(--muted); }
+.il-water { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-oxide-film { fill: var(--bad); opacity: 0.6; }
+.il-imc { fill: var(--good); }
+.il-mold-flow { fill: var(--muted); opacity: 0.35; }
+.il-void { fill: var(--surface); stroke: var(--bad); stroke-width: 0.8; }
+.il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
+.il-kerf-gap { fill: var(--surface); }
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><text x="50" y="9" class="il-label" text-anchor="middle">고르게 퍼짐</text><text x="150" y="9" class="il-label" text-anchor="middle">공기가 갇힘</text><line x1="100" y1="4" x2="100" y2="80" class="il-divider"></line><defs><clipPath id="il-clip-void-0"><rect x="25" y="16" width="50" height="50"></rect></clipPath><clipPath id="il-clip-void-100"><rect x="125" y="16" width="50" height="50"></rect></clipPath></defs><rect x="25" y="16" width="50" height="50" class="il-die"></rect><g clip-path="url(#il-clip-void-0)"><rect x="23" y="14" width="54" height="54" class="il-glue"></rect></g><rect x="25" y="16" width="50" height="50" class="il-outline"></rect><rect x="125" y="16" width="50" height="50" class="il-die"></rect><g clip-path="url(#il-clip-void-100)"><circle cx="137.5" cy="28.5" r="12.5" class="il-glue"></circle><circle cx="162.5" cy="28.5" r="12.5" class="il-glue"></circle><circle cx="137.5" cy="53.5" r="12.5" class="il-glue"></circle><circle cx="162.5" cy="53.5" r="12.5" class="il-glue"></circle></g><rect x="125" y="16" width="50" height="50" class="il-outline"></rect><circle cx="150" cy="41" r="6" class="il-warn-ring"></circle><text x="50" y="76" class="il-label" text-anchor="middle">빈 곳 없음</text><text x="150" y="76" class="il-label" text-anchor="middle">가운데에 빈 곳(보이드)</text><text x="100" y="89" class="il-label" text-anchor="middle">위에서 본 접착층: 퍼진 접착제 사이에 갇힌 공기 = 보이드</text></svg>

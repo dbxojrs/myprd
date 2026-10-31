@@ -99,12 +99,13 @@ async function exportIllustrations(ids) {
 
   const vite = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' })
   try {
-    const { ProcessIllustration, DetailIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
+    const { ProcessIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
+    const { DetailIllustration } = await vite.ssrLoadModule('/src/components/DetailIllustration.jsx')
     mkdirSync(`${OUT_DIR}images`, { recursive: true })
     const figures = ids.flatMap((id) => (findProcess(id).keyPoints ?? []).filter((point) => point.figure).map((point) => point.figure))
     const items = [
       ...ids.map((id) => [id, createElement(ProcessIllustration, { id, still: true })]),
-      ...figures.map((figure) => [`detail-${figure}`, createElement(DetailIllustration, { id: figure })]),
+      ...figures.map((figure) => [`detail-${figure}`, createElement(DetailIllustration, { id: figure, still: true })]),
     ]
     for (const [name, element] of items) {
       const svg = renderToStaticMarkup(element)

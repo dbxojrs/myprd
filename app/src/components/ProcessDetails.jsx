@@ -1,4 +1,5 @@
-import { DetailIllustration } from './Illustrations.jsx'
+import { DetailIllustration } from './DetailIllustration.jsx'
+import PhotoExample from './PhotoExample.jsx'
 
 // 공정의 세부 단계와 알아둘 점. 내용은 processes.js의 steps·keyPoints에서 가져옵니다.
 export default function ProcessDetails({ steps, keyPoints }) {
@@ -24,10 +25,17 @@ export default function ProcessDetails({ steps, keyPoints }) {
           <h4>알아둘 점</h4>
           <div className="key-points">
             {keyPoints.map((point) => (
-              <details key={point.title} className="key-point" open={Boolean(point.figure)}>
-                <summary>{point.title}</summary>
+              <details key={point.title} className="key-point">
+                <summary>
+                  {point.title}
+                  {point.figure && <span className="muted"> · 그림</span>}
+                  {point.photos?.length > 0 && <span className="muted"> · 사진</span>}
+                </summary>
                 {point.figure && <DetailIllustration id={point.figure} />}
                 <p>{point.body}</p>
+                {point.photos?.map((photo) => (
+                  <PhotoExample key={photo.url} photo={photo} />
+                ))}
               </details>
             ))}
           </div>

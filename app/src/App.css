@@ -857,3 +857,18 @@ input:focus-visible {
   font-size: 0.8rem;
   margin-top: 8px;
 }
+
+/* 상세 그림(알아둘 점) */
+.il-outline { fill: none; stroke: var(--text); stroke-width: 1.5; }
+.il-daf { fill: var(--accent); opacity: 0.75; }
+.il-warn-ring { fill: none; stroke: var(--bad); stroke-width: 1.5; }
+.il-dust { fill: var(--muted); }
+.il-water { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-oxide-film { fill: var(--bad); opacity: 0.6; }
+.il-imc { fill: var(--good); }
+.il-mold-flow { fill: var(--muted); opacity: 0.35; }
+.il-void { fill: var(--surface); stroke: var(--bad); stroke-width: 0.8; }
+.il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
+.il-kerf-gap { fill: var(--surface); }
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
