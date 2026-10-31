@@ -59,6 +59,9 @@ function processSection(id, index) {
       for (const figure of point.figures ?? (point.figure ? [point.figure] : [])) {
         lines.push('', `![${point.title}](images/detail-${figure}.svg)`)
       }
+      for (const photo of point.photos ?? []) {
+        lines.push('', `- 사진(${point.title}): [${photo.title}](${photo.url})${photo.license ? ` · ${photo.author} · ${photo.license}` : ' · 원본 링크'}`)
+      }
     }
   }
 

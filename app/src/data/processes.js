@@ -2,7 +2,7 @@
 // sources의 tier: evidence(근거 출처) | explain(설명 출처). sourceDate는 링크를 확인한 날짜입니다.
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
-// steps: 세부 단계(순서대로). keyPoints: 알아둘 점. figure(하나) 또는 figures(여러 개)가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
+// steps: 세부 단계(순서대로). keyPoints: 알아둘 점. photos는 그 주제의 실제 사진(photo와 같은 모양). figure(하나) 또는 figures(여러 개)가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
 // stage는 front(전공정: 웨이퍼에 회로를 만듦) 또는 back(후공정: 칩을 패키지로 만듦)입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
@@ -176,7 +176,9 @@ export const processes = [
     keyPoints: [
       { title: '연마 휠의 생김새', body: '둥근 휠의 아랫면 가장자리에 다이아몬드 입자를 굳힌 날(세그먼트)이 빙 둘러 붙어 있습니다. 휠과 웨이퍼가 함께 돌면서 날이 뒷면을 조금씩 갈아냅니다.' },
       { title: '왜 얇게 만들까', body: '패키지 두께 규격을 맞추고, 칩의 열을 잘 빼며, 여러 칩을 쌓을 수 있게 하려고 얇게 만듭니다.' },
-      { title: '너무 얇으면', body: '웨이퍼가 휘거나 다루는 중에 깨지기 쉽습니다. 그래서 얇을수록 손상층 제거와 조심스러운 운반이 중요합니다.', figure: 'thin-wafer' },
+      { title: '너무 얇으면', body: '웨이퍼가 휘거나 다루는 중에 깨지기 쉽습니다. 그래서 얇을수록 손상층 제거와 조심스러운 운반이 중요합니다.', figure: 'thin-wafer', photos: [
+        { kind: 'link', title: 'DISCO: 연삭 손상으로 생기는 웨이퍼 휨 설명 그림', url: 'https://www.disco.co.jp/eg/solution/library/grinder/warpage.html' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -205,8 +207,13 @@ export const processes = [
       { name: '세정·건조', desc: '절단 찌꺼기(실리콘 가루)를 물로 씻어 내고 말립니다.' },
     ],
     keyPoints: [
-      { title: '블레이드의 생김새', body: '알루미늄 허브에 아주 얇은 원판 날이 붙은 모양입니다. 날 가장자리에는 작은 다이아몬드 입자가 니켈 같은 금속에 박혀 있고, 이 가장자리 일부만 허브 밖으로 나와(날 노출) 웨이퍼를 자릅니다.', figures: ['saw-blade', 'blade-sem'] },
-      { title: '자르는 원리', body: '칼처럼 베는 것이 아니라, 매우 빠르게 도는 날의 다이아몬드 입자들이 실리콘을 조금씩 갈아내며 홈을 만듭니다. 절단하는 동안 물을 뿌려 열을 식히고 가루를 씻어 냅니다. 날 두께만큼 깎여 나간 홈을 커프(kerf)라고 합니다.', figure: 'saw-cut' },
+      { title: '블레이드의 생김새', body: '알루미늄 허브에 아주 얇은 원판 날이 붙은 모양입니다. 날 가장자리에는 작은 다이아몬드 입자가 니켈 같은 금속에 박혀 있고, 이 가장자리 일부만 허브 밖으로 나와(날 노출) 웨이퍼를 자릅니다.', figures: ['saw-blade', 'blade-sem'], photos: [
+        { kind: 'attach', title: '다이싱 블레이드 날 끝 SEM 사진: 금속 결합재에 박힌 다이아몬드 입자와 기공', src: 'photos/detail-blade-sem.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9694500/', author: 'Feng Y 외, Materials 15, 8083 (2022) 그림 6', license: 'CC BY 4.0' },
+        { kind: 'link', title: 'DISCO 허브 블레이드 날 표면 SEM 사진', url: 'https://www.disco.co.jp/eg/products/blade/zh05.html' },
+      ] },
+      { title: '자르는 원리', body: '칼처럼 베는 것이 아니라, 매우 빠르게 도는 날의 다이아몬드 입자들이 실리콘을 조금씩 갈아내며 홈을 만듭니다. 절단하는 동안 물을 뿌려 열을 식히고 가루를 씻어 냅니다. 날 두께만큼 깎여 나간 홈을 커프(kerf)라고 합니다.', figure: 'saw-cut', photos: [
+        { kind: 'attach', title: '블레이드로 자른 홈(커프)과 가장자리 깨짐 비교 (Si·SiC·사파이어)', src: 'photos/detail-dicing-kerf.png', url: 'https://www.nature.com/articles/s41598-020-69399-9', author: 'Chu JP 외, Scientific Reports 10, 12432 (2020) 그림 6', license: 'CC BY 4.0' },
+      ] },
       { title: '마모와 교체', body: '자를수록 날 가장자리가 닳아 지름이 줄고, 다이아몬드 입자도 무뎌집니다. 장비는 날 높이를 주기적으로 재서 줄어든 만큼 더 내려 보정합니다. 노출된 날이 한계까지 줄거나 칩핑(가장자리 깨짐)이 늘면 블레이드를 교체합니다.', figure: 'saw-blade-wear' },
       { title: '드레싱', body: '새 날이나 무뎌진 날은 드레싱 보드를 몇 번 잘라 표면의 금속을 걷어 내고 새 다이아몬드 입자가 드러나게 합니다. 이렇게 날을 "세워야" 절단면이 깨끗합니다.' },
     ],
@@ -241,7 +248,9 @@ export const processes = [
       { name: '경화', desc: '오븐에서 열을 가해 접착제를 단단하게 굳힙니다.' },
     ],
     keyPoints: [
-      { title: '필렛', body: '다이를 누르면 접착제가 가장자리로 살짝 올라온 모양(필렛)이 생깁니다. 적당한 필렛은 잘 붙었다는 표시이고, 너무 많으면 넘쳐서 패드를 더럽힙니다.', figure: 'die-fillet' },
+      { title: '필렛', body: '다이를 누르면 접착제가 가장자리로 살짝 올라온 모양(필렛)이 생깁니다. 적당한 필렛은 잘 붙었다는 표시이고, 너무 많으면 넘쳐서 패드를 더럽힙니다.', figure: 'die-fillet', photos: [
+        { kind: 'attach', title: 'QFN 리드프레임 위 다이 둘레 접착제 검사 사진 (위에서 본 모습, 양호·불량)', src: 'photos/detail-die-fillet.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12694084/', author: 'Chang BR 외, Sensors 25, 7358 (2025) 그림 A2', license: 'CC BY 4.0' },
+      ] },
       { title: '보이드', body: '접착제 속에 공기 방울이 갇히면 열이 잘 빠지지 않고 나중에 들뜰 수 있습니다. 바르는 모양과 누르는 힘이 중요합니다.', figure: 'die-void' },
       { title: '접착 필름(DAF)', body: '얇은 칩에는 액체 접착제 대신 웨이퍼 뒷면에 미리 붙여 둔 접착 필름을 쓰기도 합니다. 두께가 일정하고 넘치지 않습니다.', figure: 'daf' },
     ],
@@ -272,7 +281,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: '캐필러리', body: '가운데에 와이어가 지나가는 구멍이 뚫린 세라믹 관입니다. 끝 모양이 볼을 누르는 모양과 스티치를 만드는 모양을 정합니다.' },
-      { title: '초음파의 역할', body: '초음파 진동이 표면의 얇은 산화막을 문질러 깨고 금속끼리 맞닿게 해, 낮은 온도에서도 단단히 붙게 합니다.', figure: 'ultrasonic' },
+      { title: '초음파의 역할', body: '초음파 진동이 표면의 얇은 산화막을 문질러 깨고 금속끼리 맞닿게 해, 낮은 온도에서도 단단히 붙게 합니다.', figure: 'ultrasonic', photos: [
+        { kind: 'attach', title: '패드 위 볼 본드 SEM 사진 (초음파 출력 60·70·80 mW 비교)', src: 'photos/detail-ball-bond.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10456307/', author: 'Zhou H 외, Micromachines 14, 1587 (2023) 그림 9', license: 'CC BY 4.0' },
+      ] },
       { title: '와이어 재료', body: '금(Au) 와이어가 다루기 쉽지만 비싸서, 구리(Cu) 와이어도 많이 씁니다. 구리는 더 단단해 본딩 조건을 더 세밀하게 맞춰야 합니다.' },
     ],
     reviewed: false,
@@ -304,7 +315,9 @@ export const processes = [
     keyPoints: [
       { title: 'EMC', body: '에폭시 수지에 실리카 가루(필러)를 많이 섞은 재료입니다. 필러는 열팽창을 줄이고 단단하게 만듭니다.' },
       { title: '와이어 쓸림', body: '수지가 너무 빠르게 흐르면 가는 와이어가 밀려 옆 와이어와 닿을 수 있습니다.', figure: 'wire-sweep' },
-      { title: '미충전·보이드', body: '수지가 너무 느리게 흐르면 다 차기 전에 굳어 빈 곳이 남습니다.', figure: 'mold-void' },
+      { title: '미충전·보이드', body: '수지가 너무 느리게 흐르면 다 차기 전에 굳어 빈 곳이 남습니다.', figure: 'mold-void', photos: [
+        { kind: 'attach', title: '몰딩 후 X선 사진: 수지 속 보이드(빨간 원)와 보이드 없는 경우', src: 'photos/detail-mold-void.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5539550/', author: 'Hera D 외, Sensors 17, 1511 (2017) 그림 4', license: 'CC BY 4.0' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -331,7 +344,9 @@ export const processes = [
       { name: '판독 검사', desc: '카메라로 글자가 잘 읽히는지, 빠진 글자나 번짐이 없는지 확인합니다.' },
     ],
     keyPoints: [
-      { title: '새기는 깊이', body: '얕으면 잘 안 읽히고, 깊으면 수지가 얇아져 안쪽 칩이나 와이어가 손상될 수 있습니다. 패키지가 얇을수록 얕게 새기는 기술이 중요합니다.', figure: 'mark-depth' },
+      { title: '새기는 깊이', body: '얕으면 잘 안 읽히고, 깊으면 수지가 얇아져 안쪽 칩이나 와이어가 손상될 수 있습니다. 패키지가 얇을수록 얕게 새기는 기술이 중요합니다.', figure: 'mark-depth', photos: [
+        { kind: 'link', title: 'KEYENCE: 레이저로 마킹한 IC 패키지 사진', url: 'https://www.keyence.com/products/marker/laser-marker/industries/electronics.jsp' },
+      ] },
       { title: '무엇을 새기나', body: '제품 이름, 회사 로고, 생산 날짜와 로트 번호처럼 나중에 제품을 추적할 수 있는 정보를 새깁니다.' },
     ],
     reviewed: false,
@@ -362,7 +377,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: '웨이퍼 쏘잉과 다른 점', body: '실리콘만 자르는 웨이퍼 쏘잉과 달리, 단단한 수지와 무른 구리를 함께 잘라야 합니다. 그래서 블레이드 종류가 다르고 마모도 빠릅니다.' },
-      { title: '버(burr)', body: '구리 리드를 자를 때 금속이 늘어나 거스러미(버)가 남을 수 있습니다. 버가 크면 기판에 붙일 때 옆 단자와 닿을 수 있습니다.', figure: 'qfn-burr' },
+      { title: '버(burr)', body: '구리 리드를 자를 때 금속이 늘어나 거스러미(버)가 남을 수 있습니다. 버가 크면 기판에 붙일 때 옆 단자와 닿을 수 있습니다.', figure: 'qfn-burr', photos: [
+        { kind: 'link', title: 'DISCO: QFN 절단면의 구리 버 사진', url: 'https://www.disco.co.jp/eg/solution/library/dicing/qfn.html' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -392,7 +409,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: 'EDS(웨이퍼 테스트)와 다른 점', body: 'EDS는 패키징 전에 웨이퍼 상태로 칩을 검사하고, 최종 테스트는 패키지가 된 뒤 다시 검사합니다. 패키징 과정에서 생긴 불량을 여기서 걸러 냅니다.' },
-      { title: '번인', body: '일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다.' },
+      { title: '번인', body: '일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다.', photos: [
+        { kind: 'link', title: 'Trio-Tech: 번인 보드 사진', url: 'https://www.triotech.com/our-products/burn-in-boards-and-related-equipment/' },
+      ] },
     ],
     reviewed: false,
     sources: [
