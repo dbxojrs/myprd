@@ -189,6 +189,41 @@ const Label = ({ x, y, children, compact }) =>
     </text>
   )
 
+// 움직이는 동안 지금 어느 세부 단계인지 아래에 자막으로 보여줍니다. items: [시작, 끝, 글자] (0–1)
+const StepCaption = ({ items, dur, y = 76 }) =>
+  items.map(([from, to, text]) => (
+    <text key={text} x="60" y={y} className="il-label il-step" textAnchor="middle" opacity="0">
+      {text}
+      <Anim
+        attr="opacity"
+        points={[
+          [from, 0],
+          [from + 0.005, 1],
+          [to, 1],
+          ...(to < 1 ? [[to + 0.005, 0]] : []),
+        ]}
+        dur={dur}
+      />
+    </text>
+  ))
+
+// 일정 시간 동안만 보이는 묶음
+const Visible = ({ from, to, dur, children }) => (
+  <g opacity="0">
+    {children}
+    <Anim
+      attr="opacity"
+      points={[
+        [from, 0],
+        [from + 0.005, 1],
+        [to, 1],
+        ...(to < 1 ? [[to + 0.005, 0]] : []),
+      ]}
+      dur={dur}
+    />
+  </g>
+)
+
 const processDrawings = {
   'wafer-make': (c) => (
     <>
@@ -294,17 +329,45 @@ const processDrawings = {
       <Label x="60" y="76" compact={c}>칩마다 전기 검사 · 불량 표시</Label>
     </>
   ),
-  backgrind: (c) => (
-    <>
-      <rect x="20" y="22" width="80" height="10" className="il-wafer" />
-      <rect x="20" y="16" width="80" height="6" className="il-tape" />
-      <rect x="30" y="38" width="60" height="12" rx="3" className="il-tool" />
-      <Arrow x1="60" y1="62" x2="60" y2="52" />
-      <path d="M40 58 a20 6 0 1 0 40 0" className="il-line" />
-      <Label x="60" y="12" compact={c}>보호 테이프 + 웨이퍼</Label>
-      <Label x="60" y="76" compact={c}>연마 휠이 뒷면을 갈아냄</Label>
-    </>
-  ),
+  backgrind: (c, animate) => {
+    const dur = '5s'
+    return (
+      <>
+        <rect x="15" y="60" width="90" height="6" className="il-tool" />
+        <rect x="20" y="56" width="80" height="4" className="il-tape" />
+        <rect x="20" y={animate ? 40 : 48} width="80" height={animate ? 16 : 8} className="il-wafer">
+          {animate && (
+            <>
+              <Anim attr="y" points={[[0.1, 40], [0.45, 46], [0.75, 48], [0.97, 48], [0.98, 40]]} dur={dur} />
+              <Anim attr="height" points={[[0.1, 16], [0.45, 10], [0.75, 8], [0.97, 8], [0.98, 16]]} dur={dur} />
+            </>
+          )}
+        </rect>
+        <g transform={animate ? undefined : 'translate(0 8)'}>
+          <line x1="60" y1="10" x2="60" y2="22" className="il-probe" />
+          <rect x="30" y="22" width="60" height="12" className="il-tool" />
+          <line x1="30" y1="37" x2="90" y2="37" className="il-teeth">
+            {animate && <Anim attr="stroke-dashoffset" points={[[0, 0], [1, 6]]} dur="0.3s" />}
+          </line>
+          {animate && <Move points={[[0.1, '0 0'], [0.45, '0 6'], [0.75, '0 8'], [0.85, '0 8'], [0.95, '0 0']]} dur={dur} />}
+        </g>
+        <Label x="60" y="7" compact={c}>연마 휠 (아랫면에 다이아몬드 날)</Label>
+        {animate ? (
+          <StepCaption
+            dur={dur}
+            items={[
+              [0, 0.1, '① 휠을 웨이퍼 뒷면에 내림'],
+              [0.1, 0.45, '② 거친 연마: 빠르게 많이 갈아냄'],
+              [0.45, 0.75, '③ 미세 연마: 목표 두께에 맞춤'],
+              [0.75, 1, '④ 휠을 올리고 두께 확인'],
+            ]}
+          />
+        ) : (
+          <Label x="60" y="76" compact={c}>연마 휠이 뒷면을 갈아 얇게 만듦</Label>
+        )}
+      </>
+    )
+  },
   'wafer-saw': sawDrawing({
     layers: [
       { cls: 'il-wafer', y: 42, h: 10 },
@@ -316,49 +379,203 @@ const processDrawings = {
     gridLines: [44, 52, 60, 68, 76].map((x) => <line key={x} x1={x} y1="16" x2={x} y2="72" className="il-street" />),
     caption: { id: 'wafer-saw', side: '블레이드가 돌며 오른쪽으로 나아감', top: '한 방향을 다 자르면 90° 돌려 자름' },
   }),
-  'die-attach': (c) => (
-    <>
-      <rect x="20" y="52" width="80" height="8" className="il-frame" />
-      <rect x="40" y="46" width="40" height="6" className="il-glue" />
-      <rect x="42" y="18" width="36" height="14" rx="1" className="il-die" />
-      <Arrow x1="60" y1="34" x2="60" y2="44" />
-      <Label x="60" y="12" compact={c}>다이</Label>
-      <Label x="60" y="74" compact={c}>접착제 위에 다이를 붙임</Label>
-    </>
-  ),
-  'wire-bond': (c) => (
-    <>
-      <rect x="40" y="48" width="40" height="8" className="il-frame" />
-      <rect x="44" y="36" width="32" height="12" className="il-die" />
-      <rect x="10" y="48" width="18" height="8" className="il-frame" />
-      <rect x="92" y="48" width="18" height="8" className="il-frame" />
-      <path d="M48 36 Q34 14 20 48" className="il-wire" />
-      <path d="M72 36 Q86 14 100 48" className="il-wire" />
-      <Label x="60" y="72" compact={c}>와이어로 다이와 리드를 연결</Label>
-    </>
-  ),
-  molding: (c) => (
-    <>
-      <rect x="14" y="20" width="92" height="38" rx="4" className="il-mold" />
-      <rect x="44" y="40" width="32" height="10" className="il-die il-ghost" />
-      <path d="M48 40 Q34 24 22 52" className="il-wire il-ghost" />
-      <path d="M72 40 Q86 24 98 52" className="il-wire il-ghost" />
-      <rect x="14" y="52" width="92" height="6" className="il-frame" />
-      <Arrow x1="60" y1="6" x2="60" y2="18" />
-      <Label x="60" y="72" compact={c}>수지로 다이와 와이어를 감쌈</Label>
-    </>
-  ),
-  marking: (c) => (
-    <>
-      <rect x="20" y="36" width="80" height="22" rx="3" className="il-mold" />
-      <line x1="60" y1="6" x2="60" y2="36" className="il-laser" />
-      <rect x="50" y="2" width="20" height="8" className="il-tool" />
-      <text x="60" y="51" textAnchor="middle" className="il-mark">
-        AX01
-      </text>
-      <Label x="60" y="72" compact={c}>레이저로 표면에 식별 정보를 새김</Label>
-    </>
-  ),
+  'die-attach': (c, animate) => {
+    const dur = '6s'
+    return (
+      <>
+        <rect x="20" y="56" width="80" height="6" className="il-frame" />
+        <rect x={animate ? 60 : 38} y="52" width={animate ? 0 : 44} height="4" className="il-glue">
+          {animate && (
+            <>
+              <Anim attr="x" points={[[0.1, 60], [0.25, 52], [0.55, 52], [0.65, 38]]} dur={dur} />
+              <Anim attr="width" points={[[0.1, 0], [0.25, 16], [0.55, 16], [0.65, 44]]} dur={dur} />
+            </>
+          )}
+        </rect>
+        {animate && (
+          <Visible from={0.72} to={0.98} dur={dur}>
+            <rect x="38" y="52" width="44" height="4" className="il-cured" />
+          </Visible>
+        )}
+        <g>
+          <rect x="40" y="42" width="40" height="10" rx="1" className="il-die" />
+          {animate && <Move points={[[0, '0 -36'], [0.32, '0 -36'], [0.55, '0 0']]} dur={dur} />}
+        </g>
+        <g transform={animate ? undefined : 'translate(0 -36)'}>
+          <line x1="60" y1="0" x2="60" y2="34" className="il-probe" />
+          <rect x="50" y="34" width="20" height="8" className="il-tool" />
+          {animate && <Move points={[[0, '0 -36'], [0.32, '0 -36'], [0.55, '0 0'], [0.62, '0 0'], [0.7, '0 -36']]} dur={dur} />}
+        </g>
+        {animate && (
+          <g>
+            <line x1="60" y1="-22" x2="60" y2="0" className="il-needle" />
+            <Move points={[[0, '0 20'], [0.1, '0 50'], [0.25, '0 50'], [0.3, '0 20'], [0.32, '0 -30']]} dur={dur} />
+          </g>
+        )}
+        {animate ? (
+          <StepCaption
+            dur={dur}
+            items={[
+              [0, 0.3, '① 패드에 접착제 바르기'],
+              [0.3, 0.55, '②·③ 콜릿으로 다이를 집어 옮김'],
+              [0.55, 0.7, '④ 눌러 붙이기 (접착제가 퍼짐)'],
+              [0.7, 1, '⑤ 열로 접착제 굳히기'],
+            ]}
+          />
+        ) : (
+          <Label x="60" y="74" compact={c}>접착제 위에 다이를 눌러 붙임</Label>
+        )}
+      </>
+    )
+  },
+  'wire-bond': (c, animate) => {
+    const dur = '5s'
+    return (
+      <>
+        <rect x="40" y="48" width="40" height="8" className="il-frame" />
+        <rect x="44" y="36" width="32" height="12" className="il-die" />
+        <rect x="10" y="48" width="18" height="8" className="il-frame" />
+        <rect x="92" y="48" width="18" height="8" className="il-frame" />
+        <path d="M48 36 Q34 14 20 48" className="il-wire" />
+        <path
+          d="M72 36 Q86 14 100 48"
+          className="il-wire"
+          strokeDasharray={animate ? 43 : undefined}
+          strokeDashoffset={animate ? 43 : undefined}
+        >
+          {/* 43: 이 곡선의 길이. 점선 간격을 곡선 길이와 같게 두고 어긋남을 줄여 선이 그려지는 것처럼 보이게 합니다. */}
+          {animate && <Anim attr="stroke-dashoffset" points={[[0.2, 43], [0.62, 0]]} dur={dur} />}
+        </path>
+        {animate && (
+          <>
+            <Visible from={0.12} to={1} dur={dur}>
+              <circle cx="72" cy="35" r="2" className="il-ball" />
+            </Visible>
+            <Visible from={0.65} to={1} dur={dur}>
+              <ellipse cx="100" cy="47.5" rx="3" ry="1.2" className="il-ball" />
+            </Visible>
+            <g>
+              <polygon points="-3,-16 3,-16 1.2,0 -1.2,0" className="il-tool" />
+              <circle cx="0" cy="1.5" r="1.8" className="il-ball" opacity="0">
+                <Anim attr="opacity" points={[[0, 1], [0.12, 1], [0.125, 0], [0.86, 0], [0.865, 1]]} dur={dur} />
+              </circle>
+              <Move
+                points={[
+                  [0, '72 18'],
+                  [0.12, '72 34'],
+                  [0.2, '72 34'],
+                  [0.35, '72 14'],
+                  [0.55, '100 30'],
+                  [0.65, '100 46'],
+                  [0.72, '100 46'],
+                  [0.8, '100 28'],
+                  [0.95, '72 18'],
+                ]}
+                dur={dur}
+              />
+            </g>
+          </>
+        )}
+        {animate ? (
+          <StepCaption
+            dur={dur}
+            items={[
+              [0, 0.12, '① 와이어 끝을 녹여 볼 만들기'],
+              [0.12, 0.2, '② 패드에 볼 본드'],
+              [0.2, 0.55, '③ 와이어를 풀며 루프 만들기'],
+              [0.55, 0.72, '④ 리드에 스티치 본드'],
+              [0.72, 1, '⑤ 와이어 끊고 다음 볼 준비'],
+            ]}
+          />
+        ) : (
+          <Label x="60" y="72" compact={c}>와이어로 다이와 리드를 연결</Label>
+        )}
+      </>
+    )
+  },
+  molding: (c, animate) => {
+    const dur = '6s'
+    return (
+      <>
+        {animate && <rect x="8" y="58" width="104" height="8" className="il-tool" />}
+        <rect x="14" y="20" width={animate ? 0 : 92} height="32" rx={animate ? 0 : 4} className="il-mold">
+          {animate && <Anim attr="width" points={[[0.25, 0], [0.75, 92]]} dur={dur} />}
+        </rect>
+        <rect x="44" y="40" width="32" height="10" className="il-die il-ghost" />
+        <path d="M48 40 Q34 24 22 52" className="il-wire il-ghost" />
+        <path d="M72 40 Q86 24 98 52" className="il-wire il-ghost" />
+        <rect x="14" y="52" width="92" height="6" className="il-frame" />
+        {animate ? (
+          <>
+            <g>
+              <rect x="8" y="6" width="104" height="14" className="il-tool" />
+              <Move points={[[0, '0 -20'], [0.2, '0 0'], [0.8, '0 0'], [0.92, '0 -20']]} dur={dur} />
+            </g>
+            <Visible from={0.25} to={0.75} dur={dur}>
+              <Arrow x1="1" y1="36" x2="12" y2="36" />
+            </Visible>
+            <StepCaption
+              dur={dur}
+              items={[
+                [0, 0.22, '①·② 금형을 닫고 수지를 녹임'],
+                [0.22, 0.75, '③ 녹은 수지를 빈 공간에 밀어 넣음'],
+                [0.75, 0.85, '④ 금형 안에서 굳힘'],
+                [0.85, 1, '⑤ 금형을 열고 꺼냄'],
+              ]}
+            />
+          </>
+        ) : (
+          <>
+            <Arrow x1="60" y1="6" x2="60" y2="18" />
+            <Label x="60" y="72" compact={c}>수지로 다이와 와이어를 감쌈</Label>
+          </>
+        )}
+      </>
+    )
+  },
+  marking: (c, animate) => {
+    const dur = '4.5s'
+    return (
+      <>
+        <rect x="20" y="36" width="80" height="22" rx="3" className="il-mold" />
+        {animate && (
+          <defs>
+            <clipPath id="il-clip-marking">
+              <rect x="40" y="36" width="0" height="22">
+                <Anim attr="width" points={[[0.1, 0], [0.7, 40]]} dur={dur} />
+              </rect>
+            </clipPath>
+          </defs>
+        )}
+        <text x="60" y="51" textAnchor="middle" className="il-mark" clipPath={animate ? 'url(#il-clip-marking)' : undefined}>
+          AX01
+        </text>
+        <g transform={animate ? undefined : 'translate(60 0)'}>
+          <rect x="-8" y="2" width="16" height="8" className="il-tool" />
+          {animate ? (
+            <Visible from={0.1} to={0.7} dur={dur}>
+              <line x1="0" y1="10" x2="0" y2="36" className="il-laser" />
+            </Visible>
+          ) : (
+            <line x1="0" y1="10" x2="0" y2="36" className="il-laser" />
+          )}
+          {animate && <Move points={[[0, '40 0'], [0.1, '40 0'], [0.7, '80 0'], [0.85, '80 0'], [1, '40 0']]} dur={dur} />}
+        </g>
+        {animate ? (
+          <StepCaption
+            dur={dur}
+            items={[
+              [0, 0.1, '① 새길 위치 맞추기'],
+              [0.1, 0.7, '② 레이저를 움직이며 글자 새기기'],
+              [0.7, 1, '③ 글자가 잘 읽히는지 검사'],
+            ]}
+          />
+        ) : (
+          <Label x="60" y="72" compact={c}>레이저로 표면에 식별 정보를 새김</Label>
+        )}
+      </>
+    )
+  },
   'package-saw': sawDrawing({
     layers: [
       { cls: 'il-mold', y: 38, h: 12 },
@@ -372,17 +589,54 @@ const processDrawings = {
     gridLines: [41, 60, 79].map((x) => <line key={x} x1={x} y1="22" x2={x} y2="66" className="il-street" />),
     caption: { id: 'package-saw', side: '몰딩과 리드프레임을 함께 자름', top: '한 방향을 다 자르면 90° 돌려 자름' },
   }),
-  test: (c) => (
-    <>
-      <rect x="36" y="40" width="48" height="16" rx="2" className="il-mold" />
-      {[44, 54, 66, 76].map((x) => (
-        <line key={x} x1={x} y1="20" x2={x} y2="40" className="il-probe" />
-      ))}
-      <rect x="36" y="12" width="48" height="8" className="il-tool" />
-      <path d="M92 44 l6 6 l12 -14" className="il-check" />
-      <Label x="60" y="72" compact={c}>전기·외관을 검사해 양품 판정</Label>
-    </>
-  ),
+  test: (c, animate) => {
+    const dur = '4.5s'
+    const pins = [44, 54, 66, 76]
+    return (
+      <>
+        {animate && <rect x="30" y="56" width="60" height="6" className="il-frame" />}
+        <rect x="36" y="40" width="48" height="16" rx="2" className="il-mold" />
+        <g>
+          {pins.map((x) => (
+            <line key={x} x1={x} y1="20" x2={x} y2="40" className="il-probe" />
+          ))}
+          <rect x="36" y="12" width="48" height="8" className="il-tool" />
+          {animate && <Move points={[[0, '0 -10'], [0.15, '0 -10'], [0.3, '0 0'], [0.7, '0 0'], [0.85, '0 -10']]} dur={dur} />}
+        </g>
+        {animate && (
+          <Visible from={0.3} to={0.6} dur={dur}>
+            <g>
+              {pins.map((x) => (
+                <circle key={x} cx={x} cy="22" r="1.6" className="il-signal" />
+              ))}
+              <animateTransform attributeName="transform" type="translate" values="0 0;0 16" dur="0.5s" repeatCount="indefinite" />
+            </g>
+          </Visible>
+        )}
+        {animate ? (
+          <>
+            <Visible from={0.6} to={0.95} dur={dur}>
+              <path d="M92 44 l6 6 l12 -14" className="il-check" />
+            </Visible>
+            <StepCaption
+              dur={dur}
+              items={[
+                [0, 0.3, '① 패키지를 소켓에 넣고 누름'],
+                [0.3, 0.6, '② 전기 신호를 보내 동작 검사'],
+                [0.6, 0.85, '③ 결과에 따라 양품·불량 분류'],
+                [0.85, 1, '④ 다음 패키지로'],
+              ]}
+            />
+          </>
+        ) : (
+          <>
+            <path d="M92 44 l6 6 l12 -14" className="il-check" />
+            <Label x="60" y="72" compact={c}>전기·외관을 검사해 양품 판정</Label>
+          </>
+        )}
+      </>
+    )
+  },
   'flipchip-bond': (c) => (
     <>
       <rect x="20" y="52" width="80" height="8" className="il-substrate" />
@@ -583,7 +837,7 @@ export function AdvancedIllustration({ id }) {
 }
 
 // 움직이는 개념도가 있는 공정
-const ANIMATED = new Set(['wafer-saw', 'package-saw'])
+const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test'])
 
 // 옆·위 두 모습을 나란히 그리는 공정(작게 그릴 때는 옆에서 본 모습만)
 const WIDE = new Set(['wafer-saw', 'package-saw'])
@@ -619,6 +873,65 @@ export function ProcessIllustration({ id, compact = false, still = false }) {
         {playing ? '⏸ 멈춤' : '▶ 움직임 보기'}
       </button>
     </div>
+  )
+}
+
+// 알아둘 점에 붙는 상세 그림. 키는 processes.js keyPoints의 figure입니다.
+const detailDrawings = {
+  'saw-blade': () => (
+    <>
+      <circle cx="50" cy="44" r="32" className="il-tool" />
+      {Array.from({ length: 24 }, (_, i) => {
+        const a = (i / 24) * Math.PI * 2
+        return <circle key={i} cx={50 + 29.5 * Math.cos(a)} cy={44 + 29.5 * Math.sin(a)} r="1" className="il-diamond" />
+      })}
+      <circle cx="50" cy="44" r="26" className="il-frame" />
+      <circle cx="50" cy="44" r="7" className="il-hole" />
+      <line x1="76" y1="26" x2="128" y2="20" className="il-callout" />
+      <line x1="80" y1="44" x2="128" y2="66" className="il-callout" />
+      <circle cx="78" cy="34" r="6" className="il-callout-ring" />
+      <rect x="128" y="14" width="64" height="58" rx="4" className="il-zoom" />
+      <rect x="128" y="14" width="64" height="40" className="il-bond" />
+      {[
+        [136, 22], [150, 18], [166, 24], [182, 19], [142, 34], [158, 32], [174, 36], [186, 30], [134, 46], [152, 44], [168, 48], [184, 45],
+      ].map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x - 2} y={y - 2} width="4" height="4" className="il-diamond" transform={`rotate(45 ${x} ${y})`} />
+      ))}
+      <Label x="160" y="64">니켈 속 다이아몬드 입자</Label>
+      <Label x="50" y="83">안쪽: 허브(알루미늄)</Label>
+      <Label x="50" y="91">바깥 테두리: 다이아몬드 날</Label>
+      <Label x="160" y="86">확대: 날 가장자리</Label>
+    </>
+  ),
+  'saw-blade-wear': () => (
+    <>
+      {[
+        { x: 50, tip: 66, title: '새 블레이드', note: '날 노출 충분' },
+        { x: 150, tip: 54, title: '마모된 블레이드', note: '날이 짧아지고 무뎌짐' },
+      ].map((b) => (
+        <g key={b.x}>
+          <Label x={b.x} y="8">{b.title}</Label>
+          <rect x={b.x - 22} y="14" width="44" height="20" className="il-frame" />
+          <rect x={b.x - 2} y="34" width="4" height={b.tip - 34} rx={b.tip < 66 ? 2 : 0} className="il-tool" />
+          {b.tip < 66 && <rect x={b.x - 2} y={b.tip} width="4" height={66 - b.tip} className="il-worn" />}
+          <line x1={b.x + 10} y1="34" x2={b.x + 10} y2={b.tip} className="il-dim" />
+          <line x1={b.x + 6} y1={b.tip} x2={b.x + 14} y2={b.tip} className="il-dim" />
+          <line x1={b.x + 6} y1="34" x2={b.x + 14} y2="34" className="il-dim" />
+          <Label x={b.x} y="76">{b.note}</Label>
+        </g>
+      ))}
+      <Label x="100" y="88">줄어든 만큼 더 내려 보정하고, 한계가 되면 교체</Label>
+    </>
+  ),
+}
+
+export function DetailIllustration({ id }) {
+  const draw = detailDrawings[id]
+  if (!draw) return null
+  return (
+    <svg viewBox="0 0 200 92" className="il il-detail" role="img" aria-label="상세 그림">
+      {draw()}
+    </svg>
   )
 }
 

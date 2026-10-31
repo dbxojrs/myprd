@@ -796,3 +796,64 @@ input:focus-visible {
 .videos li {
   margin-bottom: 4px;
 }
+
+/* 움직이는 개념도의 부품 */
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+
+/* 상세 그림 */
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }
+
+/* 세부 단계와 알아둘 점 */
+.details h4 {
+  margin: 16px 0 6px;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.steps li {
+  margin-bottom: 6px;
+}
+
+.steps strong {
+  display: block;
+}
+
+.key-points {
+  display: grid;
+  gap: 6px;
+}
+
+.key-point {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.key-point summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.key-point p {
+  margin: 6px 0 2px;
+}
+
+.details-note {
+  font-size: 0.8rem;
+  margin-top: 8px;
+}

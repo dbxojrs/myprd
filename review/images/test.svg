@@ -80,4 +80,18 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
 .il-blade-top { fill: var(--bad); }
 .il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
-.il-cut-dark { stroke: var(--text); }</style><rect x="36" y="40" width="48" height="16" rx="2" class="il-mold"></rect><line x1="44" y1="20" x2="44" y2="40" class="il-probe"></line><line x1="54" y1="20" x2="54" y2="40" class="il-probe"></line><line x1="66" y1="20" x2="66" y2="40" class="il-probe"></line><line x1="76" y1="20" x2="76" y2="40" class="il-probe"></line><rect x="36" y="12" width="48" height="8" class="il-tool"></rect><path d="M92 44 l6 6 l12 -14" class="il-check"></path><text x="60" y="72" class="il-label" text-anchor="middle">전기·외관을 검사해 양품 판정</text></svg>
+.il-cut-dark { stroke: var(--text); }
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }</style><rect x="36" y="40" width="48" height="16" rx="2" class="il-mold"></rect><g><line x1="44" y1="20" x2="44" y2="40" class="il-probe"></line><line x1="54" y1="20" x2="54" y2="40" class="il-probe"></line><line x1="66" y1="20" x2="66" y2="40" class="il-probe"></line><line x1="76" y1="20" x2="76" y2="40" class="il-probe"></line><rect x="36" y="12" width="48" height="8" class="il-tool"></rect></g><path d="M92 44 l6 6 l12 -14" class="il-check"></path><text x="60" y="72" class="il-label" text-anchor="middle">전기·외관을 검사해 양품 판정</text></svg>

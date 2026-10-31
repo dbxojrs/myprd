@@ -80,4 +80,18 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
 .il-blade-top { fill: var(--bad); }
 .il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
-.il-cut-dark { stroke: var(--text); }</style><circle cx="60" cy="44" r="18" class="il-wafer"></circle><rect x="48" y="32" width="8" height="8" class="il-die"></rect><rect x="58" y="32" width="8" height="8" class="il-die"></rect><rect x="44" y="42" width="8" height="8" class="il-die"></rect><rect x="54" y="42" width="8" height="8" class="il-die"></rect><rect x="64" y="42" width="8" height="8" class="il-glue"></rect><rect x="50" y="50" width="8" height="8" class="il-die"></rect><rect x="60" y="50" width="8" height="8" class="il-die"></rect><line x1="58" y1="8" x2="58" y2="42" class="il-probe"></line><rect x="44" y="4" width="28" height="6" class="il-tool"></rect><text x="60" y="76" class="il-label" text-anchor="middle">칩마다 전기 검사 · 불량 표시</text></svg>
+.il-cut-dark { stroke: var(--text); }
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }</style><circle cx="60" cy="44" r="18" class="il-wafer"></circle><rect x="48" y="32" width="8" height="8" class="il-die"></rect><rect x="58" y="32" width="8" height="8" class="il-die"></rect><rect x="44" y="42" width="8" height="8" class="il-die"></rect><rect x="54" y="42" width="8" height="8" class="il-die"></rect><rect x="64" y="42" width="8" height="8" class="il-glue"></rect><rect x="50" y="50" width="8" height="8" class="il-die"></rect><rect x="60" y="50" width="8" height="8" class="il-die"></rect><line x1="58" y1="8" x2="58" y2="42" class="il-probe"></line><rect x="44" y="4" width="28" height="6" class="il-tool"></rect><text x="60" y="76" class="il-label" text-anchor="middle">칩마다 전기 검사 · 불량 표시</text></svg>

@@ -2,6 +2,7 @@
 // sources의 tier: evidence(근거 출처) | explain(설명 출처). sourceDate는 링크를 확인한 날짜입니다.
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
+// steps: 세부 단계(순서대로). keyPoints: 알아둘 점. figure가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
 // stage는 front(전공정: 웨이퍼에 회로를 만듦) 또는 back(후공정: 칩을 패키지로 만듦)입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
@@ -165,6 +166,18 @@ export const processes = [
     output: '얇아진 웨이퍼',
     terms: [{ en: 'Wafer Thickness', ko: '웨이퍼 두께' }, { en: 'Warpage', ko: '휨' }, { en: 'Protective Tape', ko: '보호 테이프' }],
     prerequisites: ['eds'],
+    steps: [
+      { name: '보호 테이프 붙이기', desc: '회로가 있는 앞면에 보호 테이프를 붙여, 연마하는 동안 회로가 긁히거나 오염되지 않게 합니다.' },
+      { name: '거친 연마', desc: '굵은 다이아몬드 입자가 박힌 휠로 뒷면을 빠르게 많이 갈아냅니다.' },
+      { name: '미세 연마', desc: '고운 입자의 휠로 천천히 갈아 목표 두께에 맞추고 표면을 매끄럽게 합니다.' },
+      { name: '손상층 제거', desc: '연마로 생긴 미세한 손상층을 연마·식각 등으로 걷어내 웨이퍼가 쉽게 깨지지 않게 합니다.' },
+      { name: '테이프 옮겨 붙이기', desc: '다이싱 테이프와 링 프레임에 웨이퍼를 옮겨 붙이고 앞면 보호 테이프를 떼어 다음 공정(쏘잉)으로 보냅니다.' },
+    ],
+    keyPoints: [
+      { title: '연마 휠의 생김새', body: '둥근 휠의 아랫면 가장자리에 다이아몬드 입자를 굳힌 날(세그먼트)이 빙 둘러 붙어 있습니다. 휠과 웨이퍼가 함께 돌면서 날이 뒷면을 조금씩 갈아냅니다.' },
+      { title: '왜 얇게 만들까', body: '패키지 두께 규격을 맞추고, 칩의 열을 잘 빼며, 여러 칩을 쌓을 수 있게 하려고 얇게 만듭니다.' },
+      { title: '너무 얇으면', body: '웨이퍼가 휘거나 다루는 중에 깨지기 쉽습니다. 그래서 얇을수록 손상층 제거와 조심스러운 운반이 중요합니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: '4점굽힘시험에 의한 실리콘 다이의 두께에 따른 파단강도 평가 (Evaluation of Flexural Strength of Silicon Die with Thickness by 4 Point Bending Test)', publisher: '마이크로전자및패키징학회지 18(1), 2011 (민윤기·변재원, 서울과학기술대) DOI 10.6117/kmeps.2011.18.1.015', url: 'https://koreascience.kr/article/JAKO201121538716920.page?lang=ko', tier: 'evidence' },
@@ -184,6 +197,19 @@ export const processes = [
     output: '개별 다이(칩)',
     terms: [{ en: 'Blade', ko: '블레이드' }, { en: 'Scribe Line', ko: '스크라이브 라인' }, { en: 'Chipping', ko: '가장자리 깨짐' }],
     prerequisites: ['backgrind'],
+    steps: [
+      { name: '웨이퍼 고정', desc: '다이싱 테이프와 링 프레임에 붙은 웨이퍼를 진공 척 위에 고정합니다.' },
+      { name: '정렬', desc: '카메라로 스크라이브 라인(칩 사이 빈 길)을 찾아 블레이드가 지나갈 위치를 맞춥니다.' },
+      { name: '1방향 절단', desc: '고속으로 도는 블레이드를 테이프까지 살짝 내려, 한 방향의 스크라이브 라인을 한 줄씩 자릅니다.' },
+      { name: '90° 돌려 절단', desc: '웨이퍼를 90° 돌려 나머지 방향을 자르면 칩이 하나씩 나뉩니다.' },
+      { name: '세정·건조', desc: '절단 찌꺼기(실리콘 가루)를 물로 씻어 내고 말립니다.' },
+    ],
+    keyPoints: [
+      { title: '블레이드의 생김새', body: '알루미늄 허브에 아주 얇은 원판 날이 붙은 모양입니다. 날 가장자리에는 작은 다이아몬드 입자가 니켈 같은 금속에 박혀 있고, 이 가장자리 일부만 허브 밖으로 나와(날 노출) 웨이퍼를 자릅니다.', figure: 'saw-blade' },
+      { title: '자르는 원리', body: '칼처럼 베는 것이 아니라, 매우 빠르게 도는 날의 다이아몬드 입자들이 실리콘을 조금씩 갈아내며 홈을 만듭니다. 절단하는 동안 물을 뿌려 열을 식히고 가루를 씻어 냅니다. 날 두께만큼 깎여 나간 홈을 커프(kerf)라고 합니다.' },
+      { title: '마모와 교체', body: '자를수록 날 가장자리가 닳아 지름이 줄고, 다이아몬드 입자도 무뎌집니다. 장비는 날 높이를 주기적으로 재서 줄어든 만큼 더 내려 보정합니다. 노출된 날이 한계까지 줄거나 칩핑(가장자리 깨짐)이 늘면 블레이드를 교체합니다.', figure: 'saw-blade-wear' },
+      { title: '드레싱', body: '새 날이나 무뎌진 날은 드레싱 보드를 몇 번 잘라 표면의 금속을 걷어 내고 새 다이아몬드 입자가 드러나게 합니다. 이렇게 날을 "세워야" 절단면이 깨끗합니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: 'Dicing Thin Wafers | Blade Dicing | Solutions', publisher: 'DISCO Corporation', url: 'https://disco.co.jp/eg/solution/library/dicing/dicing_thin.html', tier: 'explain' },
@@ -207,6 +233,18 @@ export const processes = [
     output: '리드프레임에 붙은 다이',
     terms: [{ en: 'Epoxy', ko: '접착제' }, { en: 'Cure', ko: '경화' }, { en: 'Void', ko: '빈 공간' }, { en: 'Delamination', ko: '박리' }],
     prerequisites: ['wafer-saw'],
+    steps: [
+      { name: '접착제 바르기', desc: '리드프레임의 다이 패드 위에 정해진 양의 접착제(에폭시)를 바늘로 찍어 바릅니다.' },
+      { name: '다이 밀어 올리기', desc: '다이싱 테이프 아래에서 핀으로 다이를 살짝 밀어 올려 테이프에서 떼기 쉽게 합니다.' },
+      { name: '다이 집기', desc: '콜릿(진공으로 빨아들이는 집게)으로 다이를 집어 올립니다.' },
+      { name: '올려 누르기', desc: '다이를 접착제 위에 내려 놓고 눌러, 접착제가 다이 아래에 고르게 퍼지게 합니다.' },
+      { name: '경화', desc: '오븐에서 열을 가해 접착제를 단단하게 굳힙니다.' },
+    ],
+    keyPoints: [
+      { title: '필렛', body: '다이를 누르면 접착제가 가장자리로 살짝 올라온 모양(필렛)이 생깁니다. 적당한 필렛은 잘 붙었다는 표시이고, 너무 많으면 넘쳐서 패드를 더럽힙니다.' },
+      { title: '보이드', body: '접착제 속에 공기 방울이 갇히면 열이 잘 빠지지 않고 나중에 들뜰 수 있습니다. 바르는 모양과 누르는 힘이 중요합니다.' },
+      { title: '접착 필름(DAF)', body: '얇은 칩에는 액체 접착제 대신 웨이퍼 뒷면에 미리 붙여 둔 접착 필름을 쓰기도 합니다. 두께가 일정하고 넘치지 않습니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: '전통 반도체 패키지를 위한 고방열 다이 어태치 필름(DAF) 기술 동향 (High-Thermal-Conductivity Die Attach Film Technologies for Conventional Semiconductor Packaging)', publisher: '마이크로전자및패키징학회지 32(2), 2025 (한국전자기술연구원 KETI) DOI 10.6117/kmeps.2025.32.2.010', url: 'https://koreascience.kr/journal/view.jsp?kj=MOKRBW&py=2025&vnc=v32n2&sp=10', tier: 'evidence' },
@@ -225,6 +263,18 @@ export const processes = [
     output: '전기적으로 연결된 다이',
     terms: [{ en: 'Ultrasonic Energy', ko: '초음파 에너지' }, { en: 'Bond Force', ko: '본딩 하중' }, { en: 'Cratering', ko: '패드 아래 손상' }],
     prerequisites: ['die-attach'],
+    steps: [
+      { name: '볼 만들기', desc: '캐필러리(가는 관) 끝으로 나온 와이어 끝에 전기 불꽃을 튀겨 녹이면 작은 공(볼)이 생깁니다.' },
+      { name: '1차 본딩 (볼 본드)', desc: '볼을 칩의 패드에 누르고 열·하중·초음파 진동을 함께 줘서 붙입니다.' },
+      { name: '루프 만들기', desc: '캐필러리가 와이어를 풀며 올라갔다가 리드 쪽으로 움직여 고리 모양을 만듭니다.' },
+      { name: '2차 본딩 (스티치 본드)', desc: '리드 위에 와이어를 눌러 비벼 붙입니다. 볼 없이 와이어 옆면이 눌려 붙습니다.' },
+      { name: '와이어 끊기', desc: '캐필러리를 들어 올려 와이어를 끊고, 남은 끝으로 다음 볼을 만듭니다.' },
+    ],
+    keyPoints: [
+      { title: '캐필러리', body: '가운데에 와이어가 지나가는 구멍이 뚫린 세라믹 관입니다. 끝 모양이 볼을 누르는 모양과 스티치를 만드는 모양을 정합니다.' },
+      { title: '초음파의 역할', body: '초음파 진동이 표면의 얇은 산화막을 문질러 깨고 금속끼리 맞닿게 해, 낮은 온도에서도 단단히 붙게 합니다.' },
+      { title: '와이어 재료', body: '금(Au) 와이어가 다루기 쉽지만 비싸서, 구리(Cu) 와이어도 많이 씁니다. 구리는 더 단단해 본딩 조건을 더 세밀하게 맞춰야 합니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: 'Wire Bonding Basics (Version 4.0, 2013)', publisher: 'TPT Wire Bonder (Franz Hickmann); hosted by UCSB Nanofab wiki', url: 'https://protowiki.oasis.ucsb.edu/images/3/3e/Wire-Bonding-Basics.pdf', tier: 'explain' },
@@ -244,6 +294,18 @@ export const processes = [
     output: '수지로 감싼 스트립',
     terms: [{ en: 'EMC', ko: '에폭시 몰딩 컴파운드' }, { en: 'Wire Sweep', ko: '와이어 쓸림' }, { en: 'Incomplete Fill', ko: '미충전' }],
     prerequisites: ['wire-bond'],
+    steps: [
+      { name: '금형에 넣기', desc: '와이어 본딩이 끝난 스트립을 데워진 금형 아래판에 올리고 금형을 닫습니다.' },
+      { name: '수지 녹이기', desc: 'EMC 덩어리(태블릿)를 넣으면 금형 열에 녹아 끈적한 액체가 됩니다.' },
+      { name: '밀어 넣기', desc: '플런저가 녹은 수지를 통로(런너)를 따라 칩이 있는 빈 공간(캐비티)으로 밀어 넣습니다.' },
+      { name: '금형 안에서 굳히기', desc: '금형 안에서 잠시 기다리면 수지가 열로 굳습니다.' },
+      { name: '꺼내기·후경화', desc: '금형을 열어 꺼낸 뒤, 오븐에서 몇 시간 더 데워 완전히 굳힙니다.' },
+    ],
+    keyPoints: [
+      { title: 'EMC', body: '에폭시 수지에 실리카 가루(필러)를 많이 섞은 재료입니다. 필러는 열팽창을 줄이고 단단하게 만듭니다.' },
+      { title: '와이어 쓸림', body: '수지가 너무 빠르게 흐르면 가는 와이어가 밀려 옆 와이어와 닿을 수 있습니다.' },
+      { title: '미충전·보이드', body: '수지가 너무 느리게 흐르면 다 차기 전에 굳어 빈 곳이 남습니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: '반도체 칩 캡슐화 공정에 있어서 와이어 스윕(wire sweep) 최소화에 관한 연구 (Reduction of Wire Sweep during Chip Encapsulation by Runner Balancing and Ram Control)', publisher: '한국정밀공학회지 13(12), 1996 (한세진·허용정)', url: 'https://koreascience.kr/article/JAKO199611920342181.page?lang=ko', tier: 'evidence' },
@@ -263,6 +325,15 @@ export const processes = [
     output: '식별 표시가 새겨진 스트립',
     terms: [{ en: 'Laser Power', ko: '레이저 출력' }, { en: 'Legibility', ko: '가독성' }],
     prerequisites: ['molding'],
+    steps: [
+      { name: '위치 맞추기', desc: '카메라로 스트립의 위치를 확인해 패키지마다 새길 자리를 맞춥니다.' },
+      { name: '레이저로 새기기', desc: '레이저를 패키지 표면에 비추며 움직여 수지를 얇게 태우거나 녹여 글자를 새깁니다.' },
+      { name: '판독 검사', desc: '카메라로 글자가 잘 읽히는지, 빠진 글자나 번짐이 없는지 확인합니다.' },
+    ],
+    keyPoints: [
+      { title: '새기는 깊이', body: '얕으면 잘 안 읽히고, 깊으면 수지가 얇아져 안쪽 칩이나 와이어가 손상될 수 있습니다. 패키지가 얇을수록 얕게 새기는 기술이 중요합니다.' },
+      { title: '무엇을 새기나', body: '제품 이름, 회사 로고, 생산 날짜와 로트 번호처럼 나중에 제품을 추적할 수 있는 정보를 새깁니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: 'Laser Source 특성 분석을 통한 Low Depth Marking 공법 연구 및 고찰 (A Study on the Low Depth Marking Method through Laser Source Characteristic Analysis)', publisher: '마이크로전자및패키징학회지 29(2), 2022 (SK hynix PKG개발) DOI 10.6117/kmeps.2022.29.2.065', url: 'https://koreascience.kr/article/JAKO202220157213895.page', tier: 'evidence' },
@@ -282,6 +353,17 @@ export const processes = [
     output: '개별 패키지',
     terms: [{ en: 'Blade Wear', ko: '블레이드 마모' }, { en: 'Burr', ko: '버·거스러미' }, { en: 'Chipping', ko: '가장자리 깨짐' }],
     prerequisites: ['marking'],
+    steps: [
+      { name: '스트립 고정', desc: '몰딩이 끝난 스트립을 테이프나 지그에 붙여 진공으로 고정합니다.' },
+      { name: '정렬', desc: '카메라로 패키지 사이 절단 위치를 찾습니다.' },
+      { name: '1방향 절단', desc: '블레이드가 몰딩 수지와 구리 리드프레임을 함께 한 줄씩 자릅니다.' },
+      { name: '90° 돌려 절단', desc: '스트립을 90° 돌려 나머지 방향을 잘라 개별 패키지로 나눕니다.' },
+      { name: '세정·검사', desc: '가루를 씻어 내고 말린 뒤, 패키지를 집어 외관을 확인하고 다음 공정으로 보냅니다.' },
+    ],
+    keyPoints: [
+      { title: '웨이퍼 쏘잉과 다른 점', body: '실리콘만 자르는 웨이퍼 쏘잉과 달리, 단단한 수지와 무른 구리를 함께 잘라야 합니다. 그래서 블레이드 종류가 다르고 마모도 빠릅니다.' },
+      { title: '버(burr)', body: '구리 리드를 자를 때 금속이 늘어나 거스러미(버)가 남을 수 있습니다. 버가 크면 기판에 붙일 때 옆 단자와 닿을 수 있습니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: 'QFN/MLP singulation (Chip Scale Review, Sept/Oct 2012)', publisher: 'Advanced Dicing Technologies (ADT), reprint of Chip Scale Review article', url: 'https://www.adt-co.com/wp-content/uploads/2023/06/QFN-Singulation-CSR.pdf', tier: 'explain' },
@@ -301,6 +383,17 @@ export const processes = [
     output: '양품/불량 판정',
     terms: [{ en: 'Electrical Test', ko: '전기 특성 검사' }, { en: 'Visual Inspection', ko: '외관 검사' }],
     prerequisites: ['package-saw'],
+    steps: [
+      { name: '소켓에 넣기', desc: '핸들러(자동 운반 장비)가 패키지를 집어 테스트 소켓에 넣고 눌러 단자를 맞닿게 합니다.' },
+      { name: '전기 검사', desc: '테스터가 전원을 넣고 신호를 보내, 칩이 규격대로 동작하는지 확인합니다.' },
+      { name: '온도 바꿔 검사', desc: '필요하면 뜨겁거나 차가운 조건에서 다시 검사해 실제 사용 환경에서도 동작하는지 봅니다.' },
+      { name: '분류', desc: '결과에 따라 양품과 불량, 성능 등급별로 나눕니다.' },
+      { name: '외관 검사·포장', desc: '단자 모양과 표시를 확인한 뒤 트레이나 릴 테이프에 담아 포장합니다.' },
+    ],
+    keyPoints: [
+      { title: 'EDS(웨이퍼 테스트)와 다른 점', body: 'EDS는 패키징 전에 웨이퍼 상태로 칩을 검사하고, 최종 테스트는 패키지가 된 뒤 다시 검사합니다. 패키징 과정에서 생긴 불량을 여기서 걸러 냅니다.' },
+      { title: '번인', body: '일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다.' },
+    ],
     reviewed: false,
     sources: [
       { title: '반도체 8대 공정 9탄. 외부환경으로부터 반도체를 보호하는 패키징(Packaging) 공정 (2013 판)', publisher: '삼성전자 반도체 뉴스룸 (2013.01.14)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8-2/', tier: 'explain' },

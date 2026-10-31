@@ -7,6 +7,7 @@ import ReviewBadge, { SourceList } from './ReviewBadge.jsx'
 import AnalogyButton from './AnalogyButton.jsx'
 import PhotoExample from './PhotoExample.jsx'
 import VideoLinks from './VideoLinks.jsx'
+import ProcessDetails from './ProcessDetails.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
@@ -87,6 +88,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             <dt>핵심 용어</dt>
             <dd>{list(process.terms)}</dd>
           </dl>
+          <ProcessDetails steps={process.steps} keyPoints={process.keyPoints} />
           <AnalogyButton key={process.id} text={processAnalogies[process.id]} />
           <PhotoExample key={`photo-${process.id}`} photo={process.photo} />
           <ReviewBadge reviewed={process.reviewed} sources={process.sources} sourceDate={process.sourceDate} />

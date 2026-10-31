@@ -80,4 +80,18 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-street { stroke: var(--surface); stroke-width: 0.6; stroke-dasharray: 2 2; opacity: 0.8; }
 .il-blade-top { fill: var(--bad); }
 .il-divider { stroke: var(--border); stroke-width: 0.8; stroke-dasharray: 3 3; }
-.il-cut-dark { stroke: var(--text); }</style><rect x="20" y="50" width="80" height="8" class="il-wafer"></rect><rect x="20" y="45" width="80" height="5" class="il-resist"></rect><rect x="20" y="24" width="24" height="4" class="il-tool"></rect><rect x="54" y="24" width="12" height="4" class="il-tool"></rect><rect x="76" y="24" width="24" height="4" class="il-tool"></rect><line x1="49" y1="6" x2="49" y2="44" class="il-laser"></line><line x1="71" y1="6" x2="71" y2="44" class="il-laser"></line><text x="60" y="20" class="il-label" text-anchor="middle">마스크</text><text x="60" y="72" class="il-label" text-anchor="middle">빛으로 회로 무늬를 옮김</text></svg>
+.il-cut-dark { stroke: var(--text); }
+.il-teeth { stroke: var(--text); stroke-width: 4; stroke-dasharray: 3 3; }
+.il-ball { fill: var(--warn); }
+.il-cured { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.il-signal { fill: var(--accent); }
+.il-step { fill: var(--accent); font-weight: 700; }
+.il-detail { max-width: 460px; width: 100%; }
+.il-diamond { fill: var(--accent); }
+.il-hole { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.il-callout { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.il-callout-ring { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.il-zoom { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.il-bond { fill: var(--border); }
+.il-worn { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.il-dim { stroke: var(--accent); stroke-width: 0.8; }</style><rect x="20" y="50" width="80" height="8" class="il-wafer"></rect><rect x="20" y="45" width="80" height="5" class="il-resist"></rect><rect x="20" y="24" width="24" height="4" class="il-tool"></rect><rect x="54" y="24" width="12" height="4" class="il-tool"></rect><rect x="76" y="24" width="24" height="4" class="il-tool"></rect><line x1="49" y1="6" x2="49" y2="44" class="il-laser"></line><line x1="71" y1="6" x2="71" y2="44" class="il-laser"></line><text x="60" y="20" class="il-label" text-anchor="middle">마스크</text><text x="60" y="72" class="il-label" text-anchor="middle">빛으로 회로 무늬를 옮김</text></svg>

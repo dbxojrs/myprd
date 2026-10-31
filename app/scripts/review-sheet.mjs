@@ -38,6 +38,27 @@ function processSection(id, index) {
     `![${term(p.name)} 개념도](images/${p.id}.svg)`,
   ]
 
+  if (p.steps?.length) {
+    lines.push(
+      '',
+      '**세부 단계**',
+      '',
+      '| 순서 | 단계 | 설명 | 판단 | 고칠 곳·의견 |',
+      '|---|---|---|---|---|',
+      ...p.steps.map((step, i) => `| ${i + 1} | ${cell(step.name)} | ${cell(step.desc)} | ${CHECK} | |`),
+    )
+  }
+
+  if (p.keyPoints?.length) {
+    lines.push('', '**알아둘 점**', '', '| 주제 | 설명 | 판단 | 고칠 곳·의견 |', '|---|---|---|---|')
+    for (const point of p.keyPoints) {
+      lines.push(`| ${cell(point.title)} | ${cell(point.body)}${point.figure ? ' (아래 그림)' : ''} | ${CHECK} | |`)
+    }
+    for (const point of p.keyPoints.filter((item) => item.figure)) {
+      lines.push('', `![${point.title}](images/detail-${point.figure}.svg)`)
+    }
+  }
+
   for (const variable of lineOptions[id] ?? []) {
     lines.push(
       '',
@@ -78,13 +99,18 @@ async function exportIllustrations(ids) {
 
   const vite = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' })
   try {
-    const { ProcessIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
+    const { ProcessIllustration, DetailIllustration } = await vite.ssrLoadModule('/src/components/Illustrations.jsx')
     mkdirSync(`${OUT_DIR}images`, { recursive: true })
-    for (const id of ids) {
-      const svg = renderToStaticMarkup(createElement(ProcessIllustration, { id, still: true }))
+    const figures = ids.flatMap((id) => (findProcess(id).keyPoints ?? []).filter((point) => point.figure).map((point) => point.figure))
+    const items = [
+      ...ids.map((id) => [id, createElement(ProcessIllustration, { id, still: true })]),
+      ...figures.map((figure) => [`detail-${figure}`, createElement(DetailIllustration, { id: figure })]),
+    ]
+    for (const [name, element] of items) {
+      const svg = renderToStaticMarkup(element)
         .replace(/<svg ([^>]*)viewBox="0 0 (\d+) (\d+)"/, (_, rest, w, h) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w * 3}" height="${h * 3}" ${rest}viewBox="0 0 ${w} ${h}"`)
         .replace(/(<svg[^>]*>)/, `$1${style}`)
-      writeFileSync(`${OUT_DIR}images/${id}.svg`, svg)
+      writeFileSync(`${OUT_DIR}images/${name}.svg`, svg)
     }
   } finally {
     await vite.close()
