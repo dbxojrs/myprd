@@ -12,9 +12,10 @@ import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
 import { TermModeSwitch } from './lib/terms.jsx'
 
+// 메뉴는 실제 공정 순서(전공정 → 패키지 고르기 → 후공정)를 따릅니다.
 const NAV = [
-  { id: 'package', label: '패키지' },
   { id: 'front', label: '전공정' },
+  { id: 'package', label: '패키지' },
   { id: 'flow', label: '후공정 흐름도' },
   { id: 'query', label: '공정 질문' },
   { id: 'sim', label: '시뮬레이션' },
@@ -23,7 +24,7 @@ const NAV = [
 ]
 
 export default function App() {
-  const [screen, setScreen] = useState('package')
+  const [screen, setScreen] = useState('front')
   const [packageId, setPackageId] = useState(null)
   const [processId, setProcessId] = useState(null)
   const [lineProcessId, setLineProcessId] = useState(null)
