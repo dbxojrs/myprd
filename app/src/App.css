@@ -1078,3 +1078,30 @@ input:focus-visible {
 .zs-heat { fill: var(--bad); opacity: 0.3; }
 .zs-original { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
 .zs-dress { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+
+/* 확대 스토리: 와이어 본딩 */
+.zs-pad { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.zs-wire-thin { fill: none; stroke: var(--warn); stroke-width: 0.9; }
+.zs-wire-thick { stroke: var(--warn); stroke-width: 2.6; }
+.zs-wire-fill { fill: var(--warn); }
+.zs-spark { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-linejoin: round; }
+.zs-heat-line { fill: none; stroke: var(--bad); stroke-width: 0.9; opacity: 0.7; }
+.zs-ball-metal { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+.zs-ball-fill { fill: var(--warn-soft); }
+.zs-grain { fill: none; stroke: var(--muted); stroke-width: 0.5; stroke-dasharray: 2 1.5; }
+.zs-bonded { stroke: var(--good); stroke-width: 1.6; }
+.zs-note-good { fill: var(--good); font-weight: 700; }
+
+/* 확대 스토리: 몰딩 */
+.zs-resin { fill: var(--muted); opacity: 0.55; }
+.zs-resin-cured { fill: var(--text); opacity: 0.7; }
+.zs-plunger { fill: var(--surface); stroke: var(--text); stroke-width: 1; }
+.zs-cavity { fill: var(--surface); stroke: var(--text); stroke-width: 0.6; }
+.zs-front { fill: none; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.zs-bad-wire { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.zs-epoxy { fill: var(--warn-soft); }
+.zs-epoxy-cured { fill: var(--border); }
+.zs-filler { fill: var(--surface); stroke: var(--muted); stroke-width: 0.7; }
+.zs-link { stroke: var(--muted); stroke-width: 0.5; stroke-dasharray: 1.5 1.5; }
+.zs-oven { fill: var(--border); stroke: var(--text); stroke-width: 1; }
+.zs-oven-window { fill: var(--surface); stroke: var(--muted); stroke-width: 0.6; }
