@@ -842,7 +842,7 @@ const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', '
 // 옆·위 두 모습을 나란히 그리는 공정(작게 그릴 때는 옆에서 본 모습만)
 const WIDE = new Set(['wafer-saw', 'package-saw'])
 
-function prefersReducedMotion() {
+export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 

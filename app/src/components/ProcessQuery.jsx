@@ -9,6 +9,7 @@ import PhotoExample from './PhotoExample.jsx'
 import VideoLinks from './VideoLinks.jsx'
 import ProcessDetails from './ProcessDetails.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
+import ZoomStory from './ZoomStory.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
 export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onReport }) {
@@ -80,6 +81,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
           <ProcessIllustration id={process.id} />
           <VideoLinks videos={process.videos} />
           <p>{process.summary}</p>
+          <ZoomStory key={`zoom-${process.id}`} id={process.id} />
           <dl className="facts">
             <dt>입력</dt>
             <dd>{process.input}</dd>
