@@ -1114,3 +1114,31 @@ input:focus-visible {
 .zs-cure-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
 .zs-heat-path .il-arrow line { stroke: var(--bad); }
 .zs-heat-path .il-arrow polygon { fill: var(--bad); }
+/* 확대 스토리: 마킹 */
+.zs-engrave { font-size: 5px; font-weight: 700; fill: var(--text); opacity: 0.75; }
+.zs-beam { fill: var(--bad); opacity: 0.16; }
+.zs-glow { fill: var(--bad); opacity: 0.45; }
+.zs-smoke { fill: var(--muted); }
+.zs-x { stroke: var(--bad); stroke-width: 2.4; stroke-linecap: round; }
+
+/* 확대 스토리: 패키지 쏘잉 */
+.zs-clean { stroke: var(--good); stroke-width: 1.6; }
+.zs-board-pad { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.zs-lens { fill: var(--accent); fill-opacity: 0.06; stroke: var(--accent); stroke-width: 1.2; }
+
+/* 확대 스토리: 최종 테스트 */
+.zs-rail { stroke: var(--muted); stroke-width: 1.5; }
+.zs-nozzle { stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
+.zs-tray { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.zs-bin { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.zs-bin-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.8; }
+.zs-socket-cavity { fill: var(--bg); stroke: var(--muted); stroke-width: 0.5; }
+.zs-contact-ring { fill: none; stroke: var(--good); stroke-width: 1.2; }
+.zs-pin { stroke: var(--text); stroke-width: 2.4; stroke-linecap: round; }
+.zs-contact { fill: var(--good); }
+.zs-test-line { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.zs-wave { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.zs-wave-expect { fill: none; stroke: var(--good); stroke-width: 1; stroke-dasharray: 2 1.5; }
+.zs-hot { fill: var(--bad); }
+.zs-cold { fill: var(--accent); }
+.zs-note-cold { fill: var(--accent); }

@@ -4,7 +4,10 @@ import waferSaw from './waferSaw.js'
 import dieAttach from './dieAttach.js'
 import wireBond from './wireBond.js'
 import molding from './molding.js'
+import marking from './marking.js'
+import packageSaw from './packageSaw.js'
+import test from './test.js'
 
 export const zoomStories = Object.fromEntries(
-  [backgrind, waferSaw, dieAttach, wireBond, molding].map((story) => [story.id, story]),
+  [backgrind, waferSaw, dieAttach, wireBond, molding, marking, packageSaw, test].map((story) => [story.id, story]),
 )

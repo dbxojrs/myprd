@@ -4,6 +4,9 @@ import waferSaw from './waferSaw.jsx'
 import dieAttach from './dieAttach.jsx'
 import wireBond from './wireBond.jsx'
 import molding from './molding.jsx'
+import marking from './marking.jsx'
+import packageSaw from './packageSaw.jsx'
+import test from './test.jsx'
 
 export const zoomScenes = {
   backgrind,
@@ -11,4 +14,7 @@ export const zoomScenes = {
   'die-attach': dieAttach,
   'wire-bond': wireBond,
   molding,
+  marking,
+  'package-saw': packageSaw,
+  test,
 }
