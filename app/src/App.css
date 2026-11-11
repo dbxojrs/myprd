@@ -1110,7 +1110,7 @@ input:focus-visible {
 .zs-removed { fill: var(--bg); }
 
 /* 확대 스토리: 다이 어태치 */
-.zs-oven { fill: var(--surface); stroke: var(--text); stroke-width: 1; }
-.zs-heat-line { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.zs-cure-oven { fill: var(--surface); stroke: var(--text); stroke-width: 1; }
+.zs-cure-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
 .zs-heat-path .il-arrow line { stroke: var(--bad); }
 .zs-heat-path .il-arrow polygon { fill: var(--bad); }

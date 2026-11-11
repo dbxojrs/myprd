@@ -222,7 +222,7 @@ const fillet = {
           <Arrow x1={76} y1={50} x2={76} y2={94} />
         </g>
         <Note x={70} y={64} anchor="end">열이 빠져나감</Note>
-        <line x1="40" y1="50" x2="40" y2="69" className="zs-heat-line" />
+        <line x1="40" y1="50" x2="40" y2="69" className="zs-cure-heat" />
         <Note x={36} y={56} anchor="end" className="zs-note-hot">막힘 ✕</Note>
         <Note x={150} y={30}>열이 잘 빠지지 않고</Note>
         <Note x={150} y={38}>나중에 들뜰 수 있음</Note>
@@ -245,12 +245,12 @@ const cure = {
   draw: () => (
     <>
       <Vanish at={6} fade={0.8}>
-        <rect x="24" y="12" width="152" height="84" rx="4" className="zs-oven" />
-        <line x1="34" y1="20" x2="166" y2="20" className="zs-heat-line" />
-        <line x1="34" y1="88" x2="166" y2="88" className="zs-heat-line" />
+        <rect x="24" y="12" width="152" height="84" rx="4" className="zs-cure-oven" />
+        <line x1="34" y1="20" x2="166" y2="20" className="zs-cure-heat" />
+        <line x1="34" y1="88" x2="166" y2="88" className="zs-cure-heat" />
         <Note x={100} y={9}>오븐</Note>
         {HEAT.map((x, i) => (
-          <path key={x} d={`M ${x} 82 q 3 -4 0 -8 q -3 -4 0 -8 q 3 -4 0 -8`} className="zs-heat-line" opacity="0">
+          <path key={x} d={`M ${x} 82 q 3 -4 0 -8 q -3 -4 0 -8 q 3 -4 0 -8`} className="zs-cure-heat" opacity="0">
             <Keys loop attr="opacity" keys={[[0.6 + i * 0.3, 0], [1.2 + i * 0.3, 1], [2.2 + i * 0.3, 0]]} />
             <Path loop keys={[[0.6 + i * 0.3, '0 0'], [2.2 + i * 0.3, '0 -18']]} />
           </path>
