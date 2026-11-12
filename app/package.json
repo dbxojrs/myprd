@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "review-sheet": "node scripts/review-sheet.mjs"
+    "review-sheet": "node scripts/review-sheet.mjs",
+    "check-machines": "node scripts/check-machines.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

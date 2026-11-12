@@ -1919,3 +1919,14 @@ input:focus-visible {
 p.ms-log {
   padding-left: 8px;
 }
+
+.ms-machine-row {
+  align-items: center;
+}
+
+.ms-machine-stage {
+  min-width: 90px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}

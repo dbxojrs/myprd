@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { DISPLAY_MODES, machines, SEVERITY, SOURCES } from '../data/machineSim.js'
-import { findProcess } from '../data/processes.js'
+import { findProcess, STAGE_ORDER, STAGES } from '../data/processes.js'
 import { defaultValues, findFindings, goalMet, judge, levelText } from '../lib/machineJudge.js'
 import MachineView, { TowerLamp } from './MachineView.jsx'
 import { DetailIllustration } from './DetailIllustration.jsx'
@@ -211,13 +211,20 @@ export default function MachineSim({ onOpenProcess }) {
       </p>
 
       <div className="ms-toolbar">
-        <div className="button-row" role="group" aria-label="장비">
-          {machines.map((m) => (
-            <button key={m.id} type="button" className={m.id === machineId ? 'chip chip-active' : 'chip'} aria-pressed={m.id === machineId} onClick={() => chooseMachine(m.id)}>
-              {m.name}
-            </button>
-          ))}
-        </div>
+        {STAGE_ORDER.filter((stage) => machines.some((m) => m.stage === stage)).map((stage) => (
+          <div key={stage} className="button-row ms-machine-row" role="group" aria-label={STAGES[stage].name.ko}>
+            <span className="ms-machine-stage">
+              <Term value={STAGES[stage].name} compact />
+            </span>
+            {machines
+              .filter((m) => m.stage === stage)
+              .map((m) => (
+                <button key={m.id} type="button" className={m.id === machineId ? 'chip chip-active' : 'chip'} aria-pressed={m.id === machineId} onClick={() => chooseMachine(m.id)}>
+                  {m.name}
+                </button>
+              ))}
+          </div>
+        ))}
         <div className="button-row" role="group" aria-label="모드">
           {[
             ['free', '자유 조작'],
