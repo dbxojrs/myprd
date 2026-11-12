@@ -1967,3 +1967,36 @@ p.ms-log {
 }
 
 .ms-heat-glow { fill: var(--bad); transition: opacity 0.4s; }
+/* 장비: 백그라인더 */
+.ms-bg-wheel { fill: none; stroke: var(--border); stroke-width: 8; }
+.ms-bg-segment { fill: var(--muted); stroke: var(--text); stroke-width: 0.5; }
+.ms-bg-loaded { fill: var(--warn-soft); stroke: var(--warn); stroke-dasharray: 1.5 1; }
+.ms-bg-damage { stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 2 1.5; }
+.ms-bg-burn { fill: var(--warn); }
+
+/* 장비: 다이 본더 */
+.ms-db-pin { fill: var(--muted); stroke: var(--text); stroke-width: 0.5; }
+.ms-db-vacuum { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 2; }
+.ms-db-force { stroke: var(--accent); stroke-width: 2; }
+.ms-db-force-head { fill: var(--accent); }
+.ms-db-spill { stroke: var(--bad); stroke-width: 1; }
+.ms-db-hot { stroke: var(--bad); }
+
+/* 장비: 몰딩 프레스 */
+.ms-mp-cavity { fill: var(--surface); stroke: var(--muted); stroke-width: 0.6; }
+.ms-mp-fill { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); }
+.ms-mp-fill.run { animation: ms-mp-fill var(--dur) linear infinite; }
+.ms-mp-runner { stroke: var(--muted); stroke-width: 3; }
+.ms-mp-uneven { stroke: var(--warn); stroke-dasharray: 3 2; }
+.ms-mp-old { fill: var(--text); }
+.ms-mp-flash { fill: var(--bad); }
+
+@keyframes ms-mp-fill {
+  0% { transform: scaleX(0); }
+  80%,
+  100% { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-mp-fill.run { animation: none; transform: scaleX(1); }
+}
