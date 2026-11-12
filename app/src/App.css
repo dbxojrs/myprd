@@ -1142,3 +1142,182 @@ input:focus-visible {
 .zs-hot { fill: var(--bad); }
 .zs-cold { fill: var(--accent); }
 .zs-note-cold { fill: var(--accent); }
+
+/* 전체 공정 지도 */
+.map-stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+  margin: 12px 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.map-stages > li {
+  position: relative;
+}
+
+/* 단계 사이 화살표 */
+.map-stages > li:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.map-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.map-stage .il-compact {
+  width: 72px;
+}
+
+.map-stage.optional {
+  border-style: dashed;
+}
+
+.map-stage.open {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.map-stage-no {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.map-stage-result {
+  font-size: 0.8rem;
+}
+
+.map-stage-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.map-stage-tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.7rem;
+}
+
+.map-chain {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.map-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.map-step.done {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+
+.map-step.current {
+  border: 2px solid var(--accent);
+}
+
+.map-step-index {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.map-step-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.map-step-badges {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  font-size: 0.75rem;
+}
+
+.map-support {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.map-support-chip {
+  padding: 1px 8px;
+  font-size: 0.75rem;
+}
+
+.map-usedby {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+}
+
+.map-usedby-tag {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-size: 0.7rem;
+}
+
+.map-hint {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .map-stages {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .map-stages > li:not(:last-child)::after {
+    content: '↓';
+    top: auto;
+    right: auto;
+    bottom: -19px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

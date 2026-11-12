@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { findProcess, frontFlow, STAGES } from '../data/processes.js'
+import { findProcess, frontFlow, linkFlow, midFlow, STAGES } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
@@ -36,8 +36,9 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
 
   const process = result?.status === 'found' ? result.process : null
   const prereqs = process ? recommendPrerequisites(process.id, completed) : []
-  const isFront = process?.stage === 'front'
-  const flow = isFront ? frontFlow : pkg?.flow
+  const isBack = process?.stage === 'back'
+  const stageFlows = { front: frontFlow, link: linkFlow, mid: midFlow, back: pkg?.flow }
+  const flow = process && !process.repeatsAfter ? stageFlows[process.stage] : null
   const flowIndex = process && flow ? flow.indexOf(process.id) : -1
   const prev = flowIndex > 0 ? findProcess(flow[flowIndex - 1]) : null
   const next = flowIndex >= 0 && flowIndex < flow.length - 1 ? findProcess(flow[flowIndex + 1]) : null
@@ -103,8 +104,21 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
 
           {flowIndex >= 0 && (
             <p className="position">
-              {!isFront && <Term value={pkg.name} />} <Term value={STAGES[process.stage].name} /> 흐름에서 {flowIndex + 1}번째 공정 · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
+              {isBack && <Term value={pkg.name} />} <Term value={STAGES[process.stage].name} /> 흐름에서 {flowIndex + 1}번째 공정 · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
               {next ? <Term value={next.name} /> : '없음'}
+            </p>
+          )}
+
+          {process.repeatsAfter && (
+            <p className="position">
+              <Term value={STAGES.front.name} /> 사이사이 반복되는 공정 · 주로{' '}
+              {process.repeatsAfter.map((id, i) => (
+                <span key={id}>
+                  {i > 0 && ', '}
+                  <Term value={findProcess(id).name} compact />
+                </span>
+              ))}{' '}
+              뒤에 합니다
             </p>
           )}
 

@@ -661,6 +661,131 @@ const processDrawings = {
       <Label x="60" y="74" compact={c}>다이와 기판 사이 틈을 수지로 채움</Label>
     </>
   ),
+
+  // ── 전공정 사이사이 반복 공정 ──
+  cleaning: (c) => (
+    <>
+      <rect x="20" y="44" width="80" height="10" className="il-wafer" />
+      {[36, 60, 84].map((x) => (
+        <g key={x}>
+          <rect x={x - 5} y="10" width="10" height="5" className="il-tool" />
+          <line x1={x} y1="16" x2={x} y2="40" className="il-water" />
+        </g>
+      ))}
+      {[[30, 41], [52, 38], [74, 40], [92, 37]].map(([x, y]) => (
+        <circle key={x} cx={x} cy={y} r="1.6" className="il-dust" />
+      ))}
+      <Label x="60" y="70" compact={c}>약품·초순수로 오염을 씻어 냄</Label>
+    </>
+  ),
+  cmp: (c) => (
+    <>
+      <ellipse cx="60" cy="52" rx="46" ry="9" className="il-tool" />
+      <ellipse cx="60" cy="52" rx="40" ry="6.5" className="il-oxide" />
+      <rect x="50" y="22" width="20" height="18" className="il-frame" />
+      <rect x="46" y="40" width="28" height="5" className="il-wafer" />
+      <path d="M90 14 Q92 26 88 44" className="il-wire" />
+      <Label x="94" y="10" compact={c}>슬러리</Label>
+      <Label x="60" y="74" compact={c}>패드에 눌러 갈아 평평하게</Label>
+    </>
+  ),
+  anneal: (c) => (
+    <>
+      <rect x="14" y="20" width="92" height="40" rx="6" className="il-tool" />
+      <rect x="30" y="38" width="60" height="6" className="il-wafer" />
+      {[34, 50, 66, 82].map((x) => (
+        <path key={x} d={`M${x} 34 q 3 -4 0 -8 q -3 -4 0 -8`} className="il-wire" />
+      ))}
+      <Label x="60" y="74" compact={c}>고온으로 결정 회복·불순물 활성화</Label>
+    </>
+  ),
+  ald: (c) => (
+    <>
+      <rect x="20" y="50" width="80" height="10" className="il-wafer" />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x="20" y={47 - i * 3} width="80" height="2.4" className={i % 2 ? 'il-oxide' : 'il-resist'} />
+      ))}
+      <Arrow x1={36} y1={14} x2={36} y2={32} />
+      <Arrow x1={84} y1={14} x2={84} y2={32} />
+      <Label x="36" y="10" compact={c}>원료 A</Label>
+      <Label x="84" y="10" compact={c}>원료 B</Label>
+      <Label x="60" y="74" compact={c}>원자층을 한 층씩 번갈아 쌓음</Label>
+    </>
+  ),
+
+  // ── 연결 단계 ──
+  'wafer-map': (c) => (
+    <>
+      <circle cx="60" cy="38" r="26" className="il-wafer" />
+      {Array.from({ length: 25 }, (_, i) => {
+        const x = 40 + (i % 5) * 8
+        const y = 18 + Math.floor(i / 5) * 8
+        if (Math.hypot(x + 3 - 60, y + 3 - 38) > 22) return null
+        return <rect key={i} x={x} y={y} width="6.5" height="6.5" className={[7, 13, 16].includes(i) ? 'il-glue' : 'il-die'} />
+      })}
+      <Label x="60" y="74" compact={c}>칩마다 양품·불량 위치를 기록</Label>
+    </>
+  ),
+  'wafer-transport': (c) => (
+    <>
+      <rect x="30" y="14" width="60" height="44" rx="5" className="il-tool" />
+      {[22, 28, 34, 40, 46].map((y) => (
+        <line key={y} x1="36" y1={y} x2="84" y2={y} className="il-line" />
+      ))}
+      <rect x="44" y="8" width="32" height="6" rx="2" className="il-frame" />
+      <Arrow x1={92} y1={36} x2={112} y2={36} />
+      <Label x="60" y="72" compact={c}>밀폐 용기에 담아 옮기고 보관</Label>
+    </>
+  ),
+  'incoming-inspection': (c) => (
+    <>
+      <circle cx="46" cy="38" r="22" className="il-wafer" />
+      <circle cx="70" cy="30" r="12" className="il-hole" />
+      <line x1="78" y1="39" x2="92" y2="54" className="il-needle" />
+      <path d="M96 16 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="74" compact={c}>수량·겉모습·맵이 맞는지 확인</Label>
+    </>
+  ),
+
+  // ── 중간공정 ──
+  tsv: (c) => (
+    <>
+      <rect x="20" y="20" width="80" height="34" className="il-wafer" />
+      {[36, 60, 84].map((x) => (
+        <rect key={x} x={x - 2.5} y="20" width="5" height="34" className="il-cu" />
+      ))}
+      <rect x="20" y="14" width="80" height="6" className="il-die" />
+      <rect x="20" y="54" width="80" height="6" className="il-die" />
+      <Label x="60" y="74" compact={c}>실리콘을 꿰뚫는 구리 기둥으로 위아래 연결</Label>
+    </>
+  ),
+  rdl: (c) => (
+    <>
+      <rect x="22" y="12" width="76" height="48" className="il-die" />
+      {[[26, 16], [26, 52], [90, 16], [90, 52]].map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="5" height="5" className="il-frame" />
+      ))}
+      {[[28, 18, 46, 30], [28, 54, 46, 42], [92, 18, 74, 30], [92, 54, 74, 42]].map(([x1, y1, x2, y2]) => (
+        <polyline key={`${x1}-${y1}`} points={`${x1},${y1} ${x2},${y1} ${x2},${y2}`} className="il-link" />
+      ))}
+      {[[46, 30], [46, 42], [74, 30], [74, 42]].map(([x, y]) => (
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="3.4" className="il-bump" />
+      ))}
+      <Label x="60" y="74" compact={c}>가장자리 패드를 새 자리로 옮기는 배선</Label>
+    </>
+  ),
+  bumping: (c) => (
+    <>
+      <rect x="18" y="44" width="84" height="12" className="il-wafer" />
+      {[30, 46, 62, 78, 94].map((x) => (
+        <g key={x}>
+          <rect x={x - 5} y="41" width="10" height="3" className="il-frame" />
+          <circle cx={x} cy="35" r="6" className="il-bump" />
+        </g>
+      ))}
+      <Label x="60" y="72" compact={c}>패드 위에 작은 금속 돌기(범프)를 만듦</Label>
+    </>
+  ),
 }
 
 const packageDrawings = {

@@ -4,6 +4,7 @@ import { findProcess } from './data/processes.js'
 import { useStoredState } from './lib/storage.js'
 import PackageSelect from './components/PackageSelect.jsx'
 import FlowChart from './components/FlowChart.jsx'
+import ProcessMap from './components/ProcessMap.jsx'
 import FrontFlow from './components/FrontFlow.jsx'
 import ProcessQuery from './components/ProcessQuery.jsx'
 import ProcessSim from './components/ProcessSim.jsx'
@@ -14,6 +15,7 @@ import { TermModeSwitch } from './lib/terms.jsx'
 
 // 메뉴는 실제 공정 순서(전공정 → 패키지 고르기 → 후공정)를 따릅니다.
 const NAV = [
+  { id: 'map', label: '전체 지도' },
   { id: 'front', label: '전공정' },
   { id: 'package', label: '패키지' },
   { id: 'flow', label: '후공정 흐름도' },
@@ -24,7 +26,7 @@ const NAV = [
 ]
 
 export default function App() {
-  const [screen, setScreen] = useState('front')
+  const [screen, setScreen] = useState('map')
   const [packageId, setPackageId] = useState(null)
   const [processId, setProcessId] = useState(null)
   const [lineProcessId, setLineProcessId] = useState(null)
@@ -33,7 +35,7 @@ export default function App() {
   const [, setReports] = useStoredState('tutor.reports', [])
 
   const pkg = findPackage(packageId)
-  const studyingFront = screen === 'front' || (screen === 'query' && findProcess(processId)?.stage === 'front')
+  const studyingFront = screen === 'front' || screen === 'map' || (screen === 'query' && findProcess(processId)?.stage === 'front')
   const flowMode = screen === 'line' ? 'line' : studyingFront ? 'front' : 'learn'
   const activeId = flowMode === 'line' ? lineProcessId : processId
 
@@ -86,6 +88,15 @@ export default function App() {
       <main>
         {screen === 'package' && (
           <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} />
+        )}
+        {screen === 'map' && (
+          <ProcessMap
+            pkg={pkg}
+            completed={completed}
+            currentId={processId}
+            onOpenProcess={openProcess}
+            onChoosePackage={() => setScreen('package')}
+          />
         )}
         {screen === 'front' && <FrontFlow completed={completed} currentId={processId} onOpenProcess={openProcess} />}
         {screen === 'flow' && (
