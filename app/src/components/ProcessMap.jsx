@@ -18,7 +18,7 @@ import { zoomStories } from '../data/zoomStories/index.js'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term } from '../lib/terms.jsx'
 
-// 전체 공정 지도. 큰 단계(설계 → 전공정 → 연결 → 중간공정 → 후공정 → 보드 실장)를 순서대로 보여주고,
+// 전체 공정 지도. 큰 단계(칩 설계 → 전공정 → 팹 아웃·웨이퍼 출하/입고 → 웨이퍼 레벨 패키징 → 후공정 → 보드 실장)를 순서대로 보여주고,
 // 단계를 누르면 그 안의 공정이 순서대로 펼쳐지며, 공정을 누르면 공정 설명 화면이 열립니다.
 // 후공정은 고른 패키지의 흐름을 쓰고, 흐름이 있는 패키지를 고르지 않았으면 기본 패키지(QFN) 흐름을 보여줍니다.
 

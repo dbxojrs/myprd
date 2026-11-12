@@ -812,7 +812,7 @@ const processDrawings = {
     </>
   ),
 
-  // ── 연결 단계 ──
+  // ── 팹 아웃·웨이퍼 출하/입고 ──
   'wafer-map': (c) => (
     <>
       <circle cx="60" cy="38" r="26" className="il-wafer" />
@@ -846,7 +846,7 @@ const processDrawings = {
     </>
   ),
 
-  // ── 중간공정 ──
+  // ── 웨이퍼 레벨 패키징(WLP) ──
   tsv: (c) => (
     <>
       <rect x="20" y="20" width="80" height="34" className="il-wafer" />

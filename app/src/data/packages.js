@@ -88,7 +88,7 @@ export function backFlowPackage(pkg) {
   return pkg?.flow ? pkg : findPackage(DEFAULT_PACKAGE_ID)
 }
 
-// 전체 학습 순서: 설계 → 전공정 → 연결 단계 → 중간공정 → 후공정 → 보드 실장. 사이사이 반복 공정은 넣지 않습니다.
+// 전체 학습 순서: 칩 설계 → 전공정 → 팹 아웃·웨이퍼 출하/입고 → 웨이퍼 레벨 패키징 → 후공정 → 보드 실장. 사이사이 반복 공정은 넣지 않습니다.
 export function wholeFlow(pkg) {
   return [...designFlow, ...frontFlow, ...linkFlow, ...midFlow, ...backFlowPackage(pkg).flow, ...boardFlow]
 }

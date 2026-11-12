@@ -3,9 +3,9 @@
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
 // steps: 세부 단계(순서대로). keyPoints: 알아둘 점. photos는 그 주제의 실제 사진(photo와 같은 모양). figure(하나) 또는 figures(여러 개)가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
-// stage는 design(설계: 회로를 설계해 파운드리에 넘김), front(전공정: 웨이퍼에 회로를 만듦), link(연결: 전공정 웨이퍼를 후공정으로 넘김),
-// mid(중간공정: 웨이퍼 상태의 패키징 준비), back(후공정: 칩을 패키지로 만듦), board(보드 실장: 패키지를 제품 기판에 붙임) 중 하나입니다. repeatsAfter가 있는 전공정은 8대 공정 사이사이 반복되는 공정이고,
-// usedBy는 중간공정을 거치는 패키지(packages.js)·첨단 패키지(advanced.js) id입니다.
+// stage는 design(설계: 회로를 설계해 파운드리에 넘김), front(전공정: 웨이퍼에 회로를 만듦), link(팹 아웃·웨이퍼 출하/입고: 전공정 웨이퍼를 후공정으로 넘김),
+// mid(웨이퍼 레벨 패키징: 웨이퍼 상태에서 범프·재배선·관통 전극을 만듦), back(후공정: 칩을 패키지로 만듦), board(보드 실장: 패키지를 제품 기판에 붙임) 중 하나입니다. repeatsAfter가 있는 전공정은 8대 공정 사이사이 반복되는 공정이고,
+// usedBy는 웨이퍼 레벨 패키징 공정을 거치는 패키지(packages.js)·첨단 패키지(advanced.js) id입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
 
@@ -608,7 +608,7 @@ export const processes = [
     sources: [],
   },
 
-  // ── 연결 단계: 전공정이 끝난 웨이퍼가 후공정(또는 중간공정)으로 넘어가는 과정 ──
+  // ── 팹 아웃·웨이퍼 출하/입고: 전공정이 끝난 웨이퍼가 후공정(또는 웨이퍼 레벨 패키징)으로 넘어가는 과정 ──
   {
     id: 'wafer-map',
     name: { en: 'Wafer Map', ko: '웨이퍼 맵 전달' },
@@ -652,7 +652,7 @@ export const processes = [
     sources: [],
   },
 
-  // ── 중간공정: 웨이퍼 상태에서 하는 패키징 준비. 일부 패키지만 거칩니다(usedBy). ──
+  // ── 웨이퍼 레벨 패키징(WLP): 웨이퍼 상태에서 하는 패키징 준비. 일부 패키지만 거칩니다(usedBy). ──
   {
     id: 'tsv',
     name: { en: 'TSV', ko: 'TSV·실리콘 관통 전극' },
@@ -772,8 +772,8 @@ export const processes = [
 export const STAGES = {
   design: { name: { en: 'Chip Design', ko: '칩 설계' }, note: '칩이 할 일을 정하고, 회로를 코드로 설계해 실제 배치 도면으로 만든 뒤 파운드리에 넘깁니다.', result: '설계 데이터와 포토마스크', who: ['fabless', 'designhouse', 'idm'], hint: '프론트엔드 설계는 "무엇을 하는 회로인가", 백엔드 설계는 "칩 위에 어떻게 놓고 이을 것인가"를 정합니다.' },
   front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.', result: '회로가 완성된 웨이퍼', who: ['foundry', 'idm'], hint: '↻ 표시는 그 공정 뒤에 반복되는 공정입니다. 실제로는 산화·포토·식각·증착을 여러 번 되풀이하며 층을 쌓습니다.' },
-  link: { name: { en: 'Front-to-Back Handoff', ko: '연결 단계' }, note: '검사를 마친 웨이퍼와 양품·불량 지도를 후공정으로 넘깁니다.', result: '후공정에 들어온 웨이퍼', who: ['foundry', 'osat'] },
-  mid: { name: { en: 'Mid-End Process', ko: '중간공정' }, note: '웨이퍼 상태에서 범프·재배선·관통 전극을 만듭니다. 플립칩·WLCSP·팬아웃·첨단 패키지만 거칩니다.', result: '범프·재배선이 만들어진 웨이퍼', optional: true, who: ['foundry', 'osat'], hint: '공정 아래 태그는 이 공정을 거치는 패키지입니다.' },
+  link: { name: { en: 'Fab-out & Wafer Shipping', ko: '팹 아웃·웨이퍼 출하/입고' }, note: '검사를 마친 웨이퍼와 양품·불량 지도를 후공정으로 넘깁니다.', result: '후공정에 들어온 웨이퍼', who: ['foundry', 'osat'] },
+  mid: { name: { en: 'Wafer-Level Packaging (WLP)', ko: '웨이퍼 레벨 패키징(WLP)' }, note: '웨이퍼 상태에서 범프·재배선·관통 전극을 만듭니다. 플립칩·WLCSP·팬아웃·첨단 패키지만 거칩니다.', result: '범프·재배선이 만들어진 웨이퍼', optional: true, who: ['foundry', 'osat'], hint: '공정 아래 태그는 이 공정을 거치는 패키지입니다.' },
   back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.', result: '완성된 패키지', who: ['osat', 'idm'], hint: '🔍 표시가 있는 공정은 장비 전체부터 한 부분씩 확대해서 원리를 볼 수 있습니다.' },
   board: { name: { en: 'Board Mounting', ko: '보드 실장' }, note: '완성된 패키지를 제품 기판에 붙여 실제 제품에 들어가게 합니다.', result: '칩이 들어간 제품', who: ['ems'] },
 }

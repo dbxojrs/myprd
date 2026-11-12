@@ -2,7 +2,7 @@ import { wholeFlow } from '../data/packages.js'
 import { findProcess, STAGE_ORDER, STAGES } from '../data/processes.js'
 import { Term } from '../lib/terms.jsx'
 
-// 전체 순서(전공정 → 연결 → 중간공정 → 후공정)에서 지금 공정의 위치와 앞뒤 공정.
+// 전체 순서(칩 설계 → … → 보드 실장, STAGE_ORDER)에서 지금 공정의 위치와 앞뒤 공정.
 // 위쪽에는 경로(Breadcrumb), 아래쪽에는 이전·다음 버튼을 둡니다.
 
 export function ProcessBreadcrumb({ process, pkg, onOpenMap }) {
