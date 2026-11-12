@@ -216,14 +216,15 @@ export default {
     { id: 'load', name: '블레이드 부하', good: 'low', base: 10, add: { feed: [0, 15, 35, 60], grit: [0, 15], blade: [20, 0, 30], spindle: [20, 0, 0, 0] } },
     { id: 'heat', name: '절단부 온도', good: 'low', base: 10, add: { coolant: [80, 40, 0], feed: [0, 5, 15, 25] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩 · 진공 척 고정' },
-    { id: 'spin', text: '주축 회전 시작: {spindle}' },
-    { id: 'align', text: '카메라 정렬: 스크라이브 라인 확인' },
-    { id: 'cut1', text: '1방향 절단 · 이송 {feed} · 깊이 {depth}' },
-    { id: 'rotate', text: '웨이퍼 90° 회전' },
-    { id: 'cut2', text: '2방향 절단' },
-    { id: 'clean', text: '세정·건조' },
+    { id: 'load', text: '웨이퍼 로딩 · 진공 척 고정', scene: '다이싱 테이프와 링 프레임에 붙은 웨이퍼를 진공 척 위에 고정합니다.' },
+    { id: 'spin', text: '주축 회전 시작: {spindle}', scene: '블레이드를 단 주축(스핀들)이 고른 회전수로 돌기 시작합니다.' },
+    { id: 'align', text: '카메라 정렬: 스크라이브 라인 확인', scene: '카메라로 스크라이브 라인(칩 사이 빈 길)을 찾아 블레이드가 지나갈 위치를 맞춥니다.' },
+    { id: 'cut1', text: '1방향 절단 · 이송 {feed} · 깊이 {depth}', scene: '고속으로 도는 블레이드를 내려 한 방향의 스크라이브 라인을 한 줄씩 자릅니다.' },
+    { id: 'rotate', text: '웨이퍼 90° 회전', scene: '웨이퍼를 90° 돌려 나머지 방향을 자를 준비를 합니다.' },
+    { id: 'cut2', text: '2방향 절단', scene: '나머지 방향을 자르면 칩이 하나씩 나뉩니다.' },
+    { id: 'clean', text: '세정·건조', scene: '절단 찌꺼기(실리콘 가루)를 물로 씻어 내고 말립니다.' },
   ],
   scenarios: [
     {

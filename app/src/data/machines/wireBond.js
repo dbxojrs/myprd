@@ -264,14 +264,15 @@ export default {
     { id: 'damage', name: '패드 손상 위험', good: 'low', base: 5, add: { force: [0, 0, 45], power: [0, 0, 45], time: [0, 0, 30], temp: [0, 0, 25], pad: [0, 0, 25] } },
     { id: 'heat', name: '스테이지 온도', good: 'mid', base: 0, add: { temp: [25, 55, 90] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '리드프레임 로딩 · 히터 가열: {temp}' },
-    { id: 'efo', text: '전기 불꽃으로 와이어 끝에 볼 만들기' },
-    { id: 'ball1', text: '1차 본드: 하중 {force} · 초음파 {power} · 시간 {time}' },
-    { id: 'loop', text: '루프 만들기' },
-    { id: 'stitch', text: '2차 본드(스티치)' },
-    { id: 'tail', text: '와이어 끊고 꼬리 남기기' },
-    { id: 'repeat', text: '다음 와이어 반복' },
+    { id: 'load', text: '리드프레임 로딩 · 히터 가열: {temp}', scene: '리드프레임을 히터 블록 위에 올려 본딩 온도로 데웁니다.' },
+    { id: 'efo', text: '전기 불꽃으로 와이어 끝에 볼 만들기', scene: '캐필러리 끝으로 나온 와이어 끝에 전기 불꽃을 튀겨 녹이면 작은 볼이 생깁니다.' },
+    { id: 'ball1', text: '1차 본드: 하중 {force} · 초음파 {power} · 시간 {time}', scene: '볼을 칩의 패드에 누르고 열·하중·초음파 진동을 함께 줘서 붙입니다.' },
+    { id: 'loop', text: '루프 만들기', scene: '캐필러리가 와이어를 풀며 올라갔다가 리드 쪽으로 움직여 고리 모양을 만듭니다.' },
+    { id: 'stitch', text: '2차 본드(스티치)', scene: '리드 위에 와이어를 눌러 비벼 붙입니다. 볼 없이 와이어 옆면이 눌려 붙습니다.' },
+    { id: 'tail', text: '와이어 끊고 꼬리 남기기', scene: '캐필러리를 들어 올려 와이어를 끊고, 다음 볼을 만들 끝을 남깁니다.' },
+    { id: 'repeat', text: '다음 와이어 반복', scene: '다음 패드로 옮겨 같은 순서를 반복합니다.' },
   ],
   scenarios: [
     {

@@ -233,14 +233,15 @@ export default {
     { id: 'chipping', name: '가장자리 칩핑 위험', good: 'low', base: 5, add: { target: [0, 0, 10, 30], finish: [20, 5, 0], feed: [20, 5, 0], edge: [10, 0] } },
     { id: 'heat', name: '연삭부 온도', good: 'low', base: 5, add: { water: [80, 40, 0], wheel: [0, 30], feed: [20, 10, 5] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩 · 보호 테이프 확인' },
-    { id: 'coarse', text: '거친 연마 · 마무리 이송 {feed}' },
-    { id: 'fine', text: '미세 연마: {finish}' },
-    { id: 'measure', text: '두께 측정 · 목표 {target}' },
-    { id: 'relief', text: '손상층 제거: {relief}' },
-    { id: 'clean', text: '세정·건조' },
-    { id: 'transfer', text: '다이싱 테이프·링 프레임으로 옮겨 붙이기' },
+    { id: 'load', text: '웨이퍼 로딩 · 보호 테이프 확인', scene: '앞면에 보호 테이프를 붙인 웨이퍼를 척에 올리고 테이프가 잘 붙었는지 확인합니다.' },
+    { id: 'coarse', text: '거친 연마 · 마무리 이송 {feed}', scene: '굵은 다이아몬드 입자가 박힌 휠로 뒷면을 빠르게 많이 갈아냅니다.' },
+    { id: 'fine', text: '미세 연마: {finish}', scene: '고운 입자의 휠로 천천히 갈아 목표 두께에 맞추고 표면을 매끄럽게 합니다.' },
+    { id: 'measure', text: '두께 측정 · 목표 {target}', scene: '갈아 낸 웨이퍼의 두께를 재서 목표 두께와 비교합니다.' },
+    { id: 'relief', text: '손상층 제거: {relief}', scene: '연마로 생긴 미세한 손상층을 연마·식각 등으로 걷어 냅니다.' },
+    { id: 'clean', text: '세정·건조', scene: '연삭 가루를 씻어 내고 말립니다.' },
+    { id: 'transfer', text: '다이싱 테이프·링 프레임으로 옮겨 붙이기', scene: '다이싱 테이프와 링 프레임에 웨이퍼를 옮겨 붙이고 앞면 보호 테이프를 뗍니다.' },
   ],
   scenarios: [
     {

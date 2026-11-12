@@ -208,14 +208,15 @@ export default {
     { id: 'void', name: '보이드 위험', good: 'low', base: 5, add: { amount: [35, 0, 0], force: [30, 0, 0], cure: [0, 20, 0, 0] } },
     { id: 'damage', name: '다이 손상 위험', good: 'low', base: 5, add: { pin: [0, 0, 40], force: [0, 0, 30], die: [0, 20] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '리드프레임 로딩' },
-    { id: 'dispense', text: '접착제 바르기: {amount}' },
-    { id: 'eject', text: '이젝터 핀으로 다이 밀어 올리기: {pin}' },
-    { id: 'pick', text: '콜릿으로 다이 집기' },
-    { id: 'place', text: '올려 누르기 · 하중 {force}' },
-    { id: 'inspect', text: '위치·필렛 검사' },
-    { id: 'cure', text: '오븐 경화: {cure}' },
+    { id: 'load', text: '리드프레임 로딩', scene: '리드프레임을 장비에 넣어 다이 패드를 작업 위치로 옮깁니다.' },
+    { id: 'dispense', text: '접착제 바르기: {amount}', scene: '다이 패드 위에 정해진 양의 접착제를 찍어 바릅니다.' },
+    { id: 'eject', text: '이젝터 핀으로 다이 밀어 올리기: {pin}', scene: '다이싱 테이프 아래에서 핀으로 다이를 살짝 밀어 올려 테이프에서 떼기 쉽게 합니다.' },
+    { id: 'pick', text: '콜릿으로 다이 집기', scene: '콜릿(진공으로 빨아들이는 집게)으로 다이를 집어 올립니다.' },
+    { id: 'place', text: '올려 누르기 · 하중 {force}', scene: '다이를 접착제 위에 내려 놓고 눌러 접착제가 다이 아래에 고르게 퍼지게 합니다.' },
+    { id: 'inspect', text: '위치·필렛 검사', scene: '다이 위치와 가장자리로 밀려 나온 접착제(필렛)를 검사합니다.' },
+    { id: 'cure', text: '오븐 경화: {cure}', scene: '오븐에서 열을 가해 접착제를 단단하게 굳힙니다.' },
   ],
   scenarios: [
     {

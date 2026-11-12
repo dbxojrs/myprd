@@ -2310,4 +2310,192 @@ p.ms-log {
   .ms-st-fe-tilt,
   .ms-st-fe-scanmove,
   .ms-imp-src { animation: none; }
+/* 장비 단계 장면: 후공정 1 (백그라인더·다이싱·다이 본더·와이어 본더). 시간은 --step(한 단계) 기준입니다. */
+/* 백그라인더 */
+.ms-st-bg-lift { transition: transform 0.4s, opacity 0.4s; }
+.ms-st-bg-lift.up { transform: translateY(-6px); opacity: 0.45; }
+.ms-st-bg-fine { fill: var(--accent-soft); stroke: var(--accent); }
+.ms-st-bg-drop { animation: ms-st-drop calc(var(--step) * 0.6) ease-out both; }
+@keyframes ms-st-drop { from { transform: translateY(-18px); opacity: 0; } }
+.ms-st-bg-thin {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-bg-thin calc(var(--step) * var(--grind)) ease-out both;
+}
+@keyframes ms-st-bg-thin { from { transform: scaleY(var(--from)); } }
+.ms-st-bg-follow { animation: ms-st-bg-follow calc(var(--step) * var(--grind)) ease-out both; }
+@keyframes ms-st-bg-follow { from { transform: translateY(var(--drop)); } }
+.ms-st-bg-fade { animation: ms-st-fade var(--step) ease-in both; }
+@keyframes ms-st-fade { to { opacity: 0; } }
+.ms-st-bg-polish { animation: ms-st-bg-polish calc(var(--step) / 2) ease-in-out infinite alternate; }
+@keyframes ms-st-bg-polish { to { transform: translateX(46px); } }
+.ms-st-bg-probe { stroke: var(--accent); stroke-width: 1.1; stroke-dasharray: 3 2; animation: ms-flow 0.4s linear infinite; }
+.ms-st-bg-ring { fill: none; stroke: var(--muted); stroke-width: 4; }
+.ms-st-bg-peel { animation: ms-st-bg-peel var(--step) ease-in both; }
+@keyframes ms-st-bg-peel {
+  0%, 40% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(30px); opacity: 0; }
+}
+
+/* 다이싱 */
+.ms-st-sw-vac { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 2; animation: ms-flow 0.4s linear infinite reverse; }
+.ms-st-sw-drop { animation: ms-st-drop calc(var(--step) * 0.6) ease-out both; }
+.ms-st-sw-appear { animation: ms-st-appear calc(var(--step) * 0.15) ease-out both; }
+@keyframes ms-st-appear { from { opacity: 0; } }
+.ms-st-sw-arm { transition: transform 0.45s ease-in-out; }
+.ms-st-sw-arm.up { transform: translateY(-26px); }
+.ms-spin.run.ms-st-sw-spinup { animation: ms-rot calc(var(--dur) * 3) ease-in 1, ms-rot var(--dur) linear calc(var(--dur) * 3) infinite; }
+.ms-st-sw-cam { animation: ms-st-sw-cam var(--step) ease-in-out both; }
+@keyframes ms-st-sw-cam {
+  0% { transform: translateX(0); }
+  35%, 45% { transform: translateX(8px); }
+  85%, 100% { transform: translateX(34px); }
+}
+.ms-st-sw-beam { stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 2 2; }
+.ms-st-sw-turn { animation: ms-st-sw-turn var(--step) ease-in-out both; }
+@keyframes ms-st-sw-turn {
+  0%, 15% { transform: rotate(0deg); }
+  85%, 100% { transform: rotate(90deg); }
+}
+
+/* 다이 본더 */
+.ms-st-db-slide { animation: ms-st-slide calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-slide { from { transform: translateX(60px); opacity: 0; } }
+.ms-st-db-needle { animation: ms-st-db-needle calc(var(--step) / 2) ease-in-out 2 both; }
+@keyframes ms-st-db-needle {
+  0%, 100% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+}
+.ms-st-db-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-db-grow var(--step) ease-out both;
+}
+@keyframes ms-st-db-grow {
+  0%, 25% { transform: scale(0.1, 0.2); }
+  100% { transform: scale(1); }
+}
+.ms-st-db-lift { animation: ms-st-db-lift calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-db-lift { to { transform: translateY(var(--lift)); } }
+.ms-st-db-park { transform: translateY(-14px); }
+.ms-st-db-pickcol { animation: ms-st-db-pickcol var(--step) ease-in-out both; }
+@keyframes ms-st-db-pickcol {
+  0% { transform: translateY(-14px); }
+  35%, 50% { transform: translateY(0); }
+  100% { transform: translateY(-40px); }
+}
+.ms-st-db-pick { animation: ms-st-db-pick var(--step) ease-in-out both; }
+@keyframes ms-st-db-pick {
+  0%, 50% { transform: translateY(var(--lift)); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(calc(var(--lift) - 40px)); opacity: 0; }
+}
+.ms-st-db-place { animation: ms-st-db-place calc(var(--step) * 0.5) ease-in both; }
+@keyframes ms-st-db-place { from { transform: translateY(-30px); } }
+.ms-st-db-spread {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-db-spread var(--step) ease-out both;
+}
+@keyframes ms-st-db-spread {
+  0%, 45% { transform: scale(0.2, 0.3); }
+  100% { transform: scale(1); }
+}
+.ms-st-db-scan { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 2 2; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-st-db-rise { animation: ms-st-rise 0.9s ease-in-out infinite; }
+@keyframes ms-st-rise {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-6px); opacity: 0.2; }
+}
+
+/* 와이어 본더 */
+.ms-st-wb-slide { animation: ms-st-slide calc(var(--step) * 0.7) ease-out both; }
+.ms-st-wb-cap { transform: translate(0, -14px); }
+.ms-st-wb-cap.at-ball1 { animation: ms-st-wb-ball1 var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-loop { animation: ms-st-wb-loop var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-stitch { animation: ms-st-wb-stitch var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-tail { animation: ms-st-wb-tail var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-repeat { animation: ms-st-wb-repeat var(--step) ease-in-out both; }
+@keyframes ms-st-wb-ball1 {
+  0% { transform: translate(0, -14px); }
+  30%, 100% { transform: translate(0, 0); }
+}
+@keyframes ms-st-wb-loop {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(36px, -22px); }
+  100% { transform: translate(72px, -6px); }
+}
+@keyframes ms-st-wb-stitch {
+  0% { transform: translate(72px, -6px); }
+  40%, 100% { transform: translate(72px, 14px); }
+}
+@keyframes ms-st-wb-tail {
+  0%, 20% { transform: translate(72px, 14px); }
+  100% { transform: translate(72px, -14px); }
+}
+@keyframes ms-st-wb-repeat {
+  0% { transform: translate(72px, -14px); }
+  100% { transform: translate(0, -14px); }
+}
+.ms-st-wb-flat {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-wb-flat var(--step) ease-out both;
+}
+@keyframes ms-st-wb-flat {
+  0%, 30% { transform: scale(0.75, 1.5); }
+  100% { transform: scale(1); }
+}
+.ms-st-wb-ball {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: ms-st-wb-ball var(--step) ease-out both;
+}
+@keyframes ms-st-wb-ball {
+  0%, 35% { transform: scale(0.15); }
+  100% { transform: scale(1); }
+}
+.ms-st-wb-spark { fill: none; stroke: var(--warn); stroke-width: 1.4; animation: ms-st-wb-spark var(--step) linear both; }
+@keyframes ms-st-wb-spark {
+  0%, 10% { opacity: 0; }
+  12%, 18%, 24%, 30% { opacity: 1; }
+  15%, 21%, 27% { opacity: 0.2; }
+  40%, 100% { opacity: 0; }
+}
+.ms-st-wb-draw { stroke-dasharray: 1; animation: ms-st-wb-draw var(--step) ease-in-out both; }
+@keyframes ms-st-wb-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.ms-st-wb-stitch { stroke: var(--text); stroke-width: 2.2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-bg-drop,
+  .ms-st-bg-thin,
+  .ms-st-bg-follow,
+  .ms-st-bg-fade,
+  .ms-st-bg-polish,
+  .ms-st-bg-probe,
+  .ms-st-bg-peel,
+  .ms-st-sw-vac,
+  .ms-st-sw-drop,
+  .ms-st-sw-appear,
+  .ms-spin.run.ms-st-sw-spinup,
+  .ms-st-sw-cam,
+  .ms-st-sw-turn,
+  .ms-st-db-slide,
+  .ms-st-db-needle,
+  .ms-st-db-grow,
+  .ms-st-db-lift,
+  .ms-st-db-pickcol,
+  .ms-st-db-pick,
+  .ms-st-db-place,
+  .ms-st-db-spread,
+  .ms-st-db-scan,
+  .ms-st-db-rise,
+  .ms-st-wb-slide,
+  .ms-st-wb-cap,
+  .ms-st-wb-flat,
+  .ms-st-wb-ball,
+  .ms-st-wb-spark,
+  .ms-st-wb-draw { animation: none; }
+  .ms-st-bg-lift,
+  .ms-st-sw-arm { transition: none; }
 }
