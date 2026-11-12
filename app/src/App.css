@@ -2101,3 +2101,11 @@ p.ms-log {
 .il-fe-beam { stroke: var(--bad); stroke-width: 6; opacity: 0.18; }
 .il-fe-doped { fill: var(--accent); fill-opacity: 0.45; }
 .il-fe-pass { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+
+/* 움직이는 공정 그림: 설계·실장 */
+.il-ds-item { fill: var(--text); font-weight: 600; }
+.il-ds-cover { fill: var(--border); }
+.il-ds-pass { fill: none; stroke: var(--good); stroke-width: 2; }
+.il-ds-paste { fill: var(--muted); }
+.il-ds-solder { fill: var(--warn); }
+.il-ds-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }

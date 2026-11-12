@@ -3,8 +3,9 @@
 // 여기 있는 그림이 Illustrations.jsx의 멈춘 그림보다 먼저 쓰입니다.
 
 import front from './front.jsx'
+import design from './design.jsx'
 
-const groups = [front]
+const groups = [front, design]
 
 export const animDrawings = Object.assign({}, ...groups)
 export const ANIM_IDS = Object.keys(animDrawings)
