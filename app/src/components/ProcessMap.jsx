@@ -1,17 +1,29 @@
 import { useState } from 'react'
-import { findProcess, frontFlow, frontSupport, linkFlow, midFlow, MAP_INTRO, STAGE_ORDER, STAGES } from '../data/processes.js'
+import {
+  ACTORS,
+  boardFlow,
+  designFlow,
+  findProcess,
+  frontFlow,
+  frontSupport,
+  linkFlow,
+  midFlow,
+  MAP_INTRO,
+  STAGE_ORDER,
+  STAGES,
+} from '../data/processes.js'
 import { backFlowPackage, findPackage } from '../data/packages.js'
 import { findAdvanced } from '../data/advanced.js'
 import { zoomStories } from '../data/zoomStories/index.js'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term } from '../lib/terms.jsx'
 
-// 전체 공정 지도. 큰 단계(전공정 → 연결 → 중간공정 → 후공정)를 순서대로 보여주고,
+// 전체 공정 지도. 큰 단계(설계 → 전공정 → 연결 → 중간공정 → 후공정 → 보드 실장)를 순서대로 보여주고,
 // 단계를 누르면 그 안의 공정이 순서대로 펼쳐지며, 공정을 누르면 공정 설명 화면이 열립니다.
 // 후공정은 고른 패키지의 흐름을 쓰고, 흐름이 있는 패키지를 고르지 않았으면 기본 패키지(QFN) 흐름을 보여줍니다.
 
 // 단계 카드에 그릴 대표 공정 그림
-const STAGE_ICON = { front: 'metallization', link: 'wafer-map', mid: 'bumping', back: 'molding' }
+const STAGE_ICON = { design: 'physical-design', front: 'metallization', link: 'wafer-map', mid: 'bumping', back: 'molding', board: 'smt' }
 
 const usedByName = (id) => findPackage(id)?.name ?? findAdvanced(id)?.name ?? id
 
@@ -44,8 +56,8 @@ function Step({ id, index, completed, currentId, onOpenProcess, children }) {
 
 export default function ProcessMap({ pkg, completed, currentId, onOpenProcess, onChoosePackage }) {
   const backPkg = backFlowPackage(pkg)
-  const flows = { front: frontFlow, link: linkFlow, mid: midFlow, back: backPkg.flow }
-  const [open, setOpen] = useState(() => findProcess(currentId)?.stage ?? 'front')
+  const flows = { design: designFlow, front: frontFlow, link: linkFlow, mid: midFlow, back: backPkg.flow, board: boardFlow }
+  const [open, setOpen] = useState(() => findProcess(currentId)?.stage ?? STAGE_ORDER[0])
 
   const order = STAGE_ORDER.flatMap((stage) => flows[stage])
   const nextId = order.find((id) => !completed.includes(id))
@@ -85,6 +97,7 @@ export default function ProcessMap({ pkg, completed, currentId, onOpenProcess, o
                 <span className="map-stage-count">
                   공정 {ids.length}개 · 학습 {done}/{ids.length}
                 </span>
+                <span className="map-stage-who">{s.who.map((w) => ACTORS[w].name).join(' · ')}</span>
                 {s.optional && <span className="map-stage-tag">일부 패키지만</span>}
               </button>
             </li>
@@ -142,6 +155,14 @@ export default function ProcessMap({ pkg, completed, currentId, onOpenProcess, o
           })}
         </ol>
         {stage.hint && <p className="muted map-hint">{stage.hint}</p>}
+        <p className="map-who">
+          <strong>누가 하나요?</strong>{' '}
+          {stage.who.map((w) => (
+            <span key={w} className="map-who-item">
+              <b>{ACTORS[w].name}</b> {ACTORS[w].desc}
+            </span>
+          ))}
+        </p>
       </article>
     </section>
   )

@@ -662,6 +662,105 @@ const processDrawings = {
     </>
   ),
 
+  // ── 설계 단계 ──
+  spec: (c) => (
+    <>
+      <rect x="38" y="8" width="44" height="56" rx="2" className="il-die" />
+      {[18, 26, 34, 42, 50].map((y, i) => (
+        <line key={y} x1="45" y1={y} x2={i % 2 ? 66 : 75} y2={y} className="il-line" />
+      ))}
+      <path d="M86 22 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="76" compact={c}>기능·성능·전력·크기 목표를 정함</Label>
+    </>
+  ),
+  rtl: (c) => (
+    <>
+      <rect x="22" y="8" width="76" height="56" rx="3" className="il-tool" />
+      {[
+        [28, 18, 'module chip('],
+        [34, 28, 'always @(clk)'],
+        [40, 38, 'q <= a + b;'],
+        [28, 48, 'endmodule'],
+      ].map(([x, y, code]) => (
+        <text key={y} x={x} y={y} className="il-code">
+          {code}
+        </text>
+      ))}
+      <Label x="60" y="76" compact={c}>칩의 동작을 코드로 작성</Label>
+    </>
+  ),
+  verification: (c) => (
+    <>
+      {[16, 30, 44].map((y, i) => (
+        <polyline
+          key={y}
+          points={Array.from({ length: 9 }, (_, k) => `${16 + k * 11},${y + ((k + i) % 2 ? 0 : 8)} ${27 + k * 11},${y + ((k + i) % 2 ? 0 : 8)}`).join(' ')}
+          className="il-link"
+        />
+      ))}
+      <path d="M100 56 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="76" compact={c}>시뮬레이션으로 사양대로 도는지 확인</Label>
+    </>
+  ),
+  synthesis: (c) => (
+    <>
+      {[[20, 14], [20, 40], [62, 27]].map(([x, y]) => (
+        <path key={`${x}-${y}`} d={`M${x} ${y} h12 a10 10 0 0 1 0 20 h-12 z`} className="il-die" />
+      ))}
+      <line x1="42" y1="24" x2="62" y2="33" className="il-line" />
+      <line x1="42" y1="50" x2="62" y2="41" className="il-line" />
+      <line x1="84" y1="37" x2="104" y2="37" className="il-line" />
+      <Label x="60" y="76" compact={c}>코드를 표준 셀(게이트) 연결도로 바꿈</Label>
+    </>
+  ),
+  'physical-design': (c) => (
+    <>
+      <rect x="18" y="6" width="84" height="58" className="il-die" />
+      {[[24, 12, 22, 16], [52, 12, 18, 26], [76, 12, 20, 16], [24, 34, 22, 24], [76, 34, 20, 24]].map(([x, y, w, h]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} className="il-oxide" />
+      ))}
+      <polyline points="46,20 52,20" className="il-link" />
+      <polyline points="70,20 76,20" className="il-link" />
+      <polyline points="35,34 35,30 61,30 61,38 61,48 76,48" className="il-link" />
+      <Label x="60" y="76" compact={c}>셀을 칩 위에 배치하고 배선으로 이음</Label>
+    </>
+  ),
+  tapeout: (c) => (
+    <>
+      <rect x="12" y="16" width="34" height="34" className="il-die" />
+      <rect x="18" y="22" width="10" height="8" className="il-oxide" />
+      <rect x="32" y="34" width="8" height="10" className="il-oxide" />
+      <path d="M38 12 l4 4 l8 -9" className="il-check" />
+      <Arrow x1={52} y1={33} x2={72} y2={33} />
+      <path d="M78 50 V28 l10 -6 v6 l10 -6 v6 l10 -6 V50 z" className="il-tool" />
+      <Label x="60" y="70" compact={c}>규칙 검사를 통과한 도면을 파운드리로</Label>
+    </>
+  ),
+  mask: (c) => (
+    <>
+      <rect x="24" y="10" width="72" height="50" rx="2" className="il-oxide" />
+      {[[34, 18, 16, 10], [58, 18, 28, 6], [34, 36, 10, 16], [52, 32, 34, 8], [52, 46, 22, 6]].map(([x, y, w, h]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} className="il-frame" />
+      ))}
+      <Label x="60" y="74" compact={c}>층마다 회로 무늬를 유리판에 새김</Label>
+    </>
+  ),
+
+  // ── 보드 실장 ──
+  smt: (c) => (
+    <>
+      <rect x="10" y="44" width="100" height="8" className="il-substrate" />
+      {[[22, 28], [56, 24], [88, 30]].map(([x, w]) => (
+        <g key={x}>
+          <rect x={x - w / 2} y="32" width={w} height="10" rx="1" className="il-mold" />
+          <rect x={x - w / 2 + 2} y="42" width="3" height="2" className="il-cu" />
+          <rect x={x + w / 2 - 5} y="42" width="3" height="2" className="il-cu" />
+        </g>
+      ))}
+      <Label x="60" y="70" compact={c}>패키지를 제품 기판에 붙임</Label>
+    </>
+  ),
+
   // ── 전공정 사이사이 반복 공정 ──
   cleaning: (c) => (
     <>

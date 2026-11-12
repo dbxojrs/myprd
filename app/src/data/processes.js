@@ -3,13 +3,120 @@
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
 // steps: 세부 단계(순서대로). keyPoints: 알아둘 점. photos는 그 주제의 실제 사진(photo와 같은 모양). figure(하나) 또는 figures(여러 개)가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
-// stage는 front(전공정: 웨이퍼에 회로를 만듦), link(연결: 전공정 웨이퍼를 후공정으로 넘김), mid(중간공정: 웨이퍼 상태의 패키징 준비),
-// back(후공정: 칩을 패키지로 만듦) 중 하나입니다. repeatsAfter가 있는 전공정은 8대 공정 사이사이 반복되는 공정이고,
+// stage는 design(설계: 회로를 설계해 파운드리에 넘김), front(전공정: 웨이퍼에 회로를 만듦), link(연결: 전공정 웨이퍼를 후공정으로 넘김),
+// mid(중간공정: 웨이퍼 상태의 패키징 준비), back(후공정: 칩을 패키지로 만듦), board(보드 실장: 패키지를 제품 기판에 붙임) 중 하나입니다. repeatsAfter가 있는 전공정은 8대 공정 사이사이 반복되는 공정이고,
 // usedBy는 중간공정을 거치는 패키지(packages.js)·첨단 패키지(advanced.js) id입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
 
 export const processes = [
+  // ── 설계 단계: 칩이 할 일을 정하고 회로를 설계해 파운드리에 넘깁니다(웨이퍼 공정 전). ──
+  {
+    id: 'spec',
+    name: { en: 'Specification', ko: '제품 기획·사양 정의' },
+    aliases: ['사양', '스펙', '사양 정의', '제품 기획', 'specification', 'spec'],
+    group: '',
+    stage: 'design',
+    summary: '칩이 어디에 쓰이고 무엇을 해야 하는지(기능, 성능, 전력, 크기, 가격)를 정해 설계의 목표로 삼습니다.',
+    input: '시장·고객이 원하는 제품',
+    output: '칩 사양서',
+    terms: [{ en: 'Specification', ko: '사양' }, { en: 'PPA (Power, Performance, Area)', ko: '전력·성능·면적' }],
+    prerequisites: [],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'rtl',
+    name: { en: 'Front-End Design (RTL)', ko: '프론트엔드 설계(RTL)' },
+    aliases: ['프론트엔드 설계', '프런트엔드 설계', 'rtl', 'rtl 설계', '회로 설계', '논리 설계', 'front-end design', 'verilog', '베릴로그'],
+    group: '설계',
+    stage: 'design',
+    summary: '사양에 맞게 칩의 동작을 하드웨어 기술 언어(Verilog 등)로 작성합니다. 신호가 어떤 규칙으로 흐르고 계산되는지를 코드로 설계합니다.',
+    input: '칩 사양서',
+    output: 'RTL 코드(동작 설계)',
+    terms: [{ en: 'RTL (Register Transfer Level)', ko: '레지스터 전송 수준' }, { en: 'HDL', ko: '하드웨어 기술 언어' }, { en: 'IP', ko: '설계 자산' }],
+    prerequisites: ['spec'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'verification',
+    name: { en: 'Functional Verification', ko: '기능 검증' },
+    aliases: ['검증', '기능 검증', '설계 검증', 'verification', '시뮬레이션 검증'],
+    group: '',
+    stage: 'design',
+    summary: '설계한 RTL이 사양대로 동작하는지 시뮬레이션으로 수많은 경우를 시험해 오류를 찾고 고칩니다. 칩을 만든 뒤에는 고치기 어려워 설계 단계에서 철저히 확인합니다.',
+    input: 'RTL 코드',
+    output: '검증을 통과한 RTL',
+    terms: [{ en: 'Testbench', ko: '테스트벤치' }, { en: 'Simulation', ko: '시뮬레이션' }, { en: 'Coverage', ko: '커버리지' }],
+    prerequisites: ['rtl'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'synthesis',
+    name: { en: 'Logic Synthesis', ko: '논리 합성' },
+    aliases: ['합성', '논리 합성', 'synthesis', 'logic synthesis', '넷리스트', 'netlist'],
+    group: '',
+    stage: 'design',
+    summary: 'RTL 코드를 파운드리가 제공하는 기본 회로 부품(표준 셀)들의 연결도(넷리스트)로 바꿉니다.',
+    input: '검증을 통과한 RTL + 파운드리의 표준 셀 라이브러리',
+    output: '게이트 수준 넷리스트',
+    terms: [{ en: 'Netlist', ko: '넷리스트' }, { en: 'Standard Cell', ko: '표준 셀' }, { en: 'PDK', ko: '공정 설계 키트' }],
+    prerequisites: ['verification'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'physical-design',
+    name: { en: 'Back-End Design (Physical Design)', ko: '백엔드 설계(물리 설계)' },
+    aliases: ['백엔드 설계', '물리 설계', '피지컬 디자인', 'physical design', 'back-end design', '배치 배선', 'p&r', 'pnr', '레이아웃'],
+    group: '설계',
+    stage: 'design',
+    summary: '넷리스트의 셀들을 실제 칩 면적 위에 배치하고 금속 배선으로 잇습니다. 신호가 제때 도착하는지(타이밍), 전력과 열은 괜찮은지 확인하며 레이아웃을 완성합니다. 디자인하우스가 많이 맡는 단계입니다.',
+    input: '게이트 수준 넷리스트',
+    output: '칩 레이아웃(배치·배선 완료)',
+    terms: [{ en: 'Floorplan', ko: '플로어플랜' }, { en: 'Place & Route', ko: '배치·배선' }, { en: 'Timing Closure', ko: '타이밍 확보' }, { en: 'Clock Tree', ko: '클록 트리' }],
+    prerequisites: ['synthesis'],
+    steps: [
+      { name: '플로어플랜', desc: '큰 블록과 입출력 단자의 자리를 정합니다.' },
+      { name: '배치', desc: '표준 셀들을 칩 위에 놓습니다.' },
+      { name: '클록 트리', desc: '클록 신호가 모든 곳에 같은 때에 도착하도록 길을 만듭니다.' },
+      { name: '배선', desc: '셀 사이를 금속 배선으로 잇습니다. 전공정의 금속 배선 층이 이 도면대로 만들어집니다.' },
+      { name: '확인', desc: '타이밍, 전력, 열 문제를 확인하고 고칩니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'tapeout',
+    name: { en: 'Sign-off & Tape-out', ko: '사인오프·테이프아웃' },
+    aliases: ['테이프아웃', '테이프 아웃', '사인오프', 'tape-out', 'tapeout', 'signoff', 'sign-off', 'gds', 'drc', 'lvs'],
+    group: '',
+    stage: 'design',
+    summary: '레이아웃이 파운드리의 제조 규칙(DRC)과 회로 연결(LVS)에 맞는지 마지막으로 검사한 뒤, 설계 데이터(GDS)를 파운드리에 넘깁니다.',
+    input: '완성된 칩 레이아웃',
+    output: '파운드리에 넘긴 설계 데이터(GDS)',
+    terms: [{ en: 'DRC (Design Rule Check)', ko: '설계 규칙 검사' }, { en: 'LVS (Layout vs. Schematic)', ko: '레이아웃·회로 일치 검사' }, { en: 'GDS', ko: '레이아웃 데이터 파일' }],
+    prerequisites: ['physical-design'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'mask',
+    name: { en: 'Photomask Making', ko: '포토마스크 제작' },
+    aliases: ['마스크', '포토마스크', '마스크 제작', 'photomask', 'mask', 'reticle', '레티클'],
+    group: '',
+    stage: 'design',
+    summary: '설계 데이터의 층마다 회로 무늬를 유리판(마스크)에 새깁니다. 포토 공정에서 이 마스크로 빛을 비춰 웨이퍼에 회로를 옮깁니다.',
+    input: '설계 데이터(GDS)',
+    output: '층별 포토마스크 세트',
+    terms: [{ en: 'Photomask', ko: '포토마스크' }, { en: 'Reticle', ko: '레티클' }, { en: 'OPC', ko: '광 근접 보정' }],
+    prerequisites: ['tapeout'],
+    reviewed: false,
+    sources: [],
+  },
+
   {
     id: 'wafer-make',
     name: { en: 'Wafer Fabrication', ko: '웨이퍼 제조' },
@@ -56,7 +163,7 @@ export const processes = [
     input: '막이 덮인 웨이퍼',
     output: '감광액으로 회로 무늬가 그려진 웨이퍼',
     terms: [{ en: 'Photoresist', ko: '감광액' }, { en: 'Mask', ko: '마스크' }, { en: 'Exposure', ko: '노광' }, { en: 'Develop', ko: '현상' }],
-    prerequisites: ['oxidation'],
+    prerequisites: ['oxidation', 'mask'],
     reviewed: false,
     sources: [
       { title: '[반도체 8대 공정] 4탄, 웨이퍼에 회로를 그려 넣는 포토공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%9a%8c%eb%a1%9c%eb%a5%bc-%ea%b7%b8%eb%a0%a4-%eb%84%a3%eb%8a%94-%ed%8f%ac%ed%86%a0/', tier: 'explain' },
@@ -610,6 +717,27 @@ export const processes = [
     reviewed: false,
     sources: [],
   },
+  // ── 보드 실장: 완성된 패키지를 제품 기판에 붙입니다. ──
+  {
+    id: 'smt',
+    name: { en: 'Board Mounting (SMT)', ko: '보드 실장(SMT)' },
+    aliases: ['실장', '보드 실장', '기판 실장', 'smt', '표면 실장', 'surface mount'],
+    group: '',
+    stage: 'board',
+    summary: '완성된 패키지를 제품 기판(PCB)에 올리고 솔더를 녹여 붙입니다. 이렇게 붙은 기판이 스마트폰, 자동차, 서버 같은 제품에 들어갑니다.',
+    input: '출하된 패키지 + 제품 기판',
+    output: '칩이 붙은 제품 기판',
+    terms: [{ en: 'PCB', ko: '인쇄 회로 기판' }, { en: 'Solder Paste', ko: '솔더 페이스트' }, { en: 'Reflow', ko: '리플로우' }],
+    prerequisites: ['test'],
+    steps: [
+      { name: '솔더 페이스트 인쇄', desc: '기판의 패드 위에 솔더 페이스트를 찍습니다.' },
+      { name: '부품 올리기', desc: '장비가 패키지를 집어 정확한 자리에 올립니다.' },
+      { name: '리플로우', desc: '기판을 데워 솔더를 녹였다 굳혀 패키지 단자와 기판을 붙입니다.' },
+      { name: '검사', desc: '붙은 상태를 카메라나 X선으로 확인합니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
   {
     id: 'flipchip-bond',
     name: { en: 'Flip Chip Bonding', ko: '플립칩 본딩' },
@@ -642,16 +770,28 @@ export const processes = [
 
 // 단계 이름과 한 줄 소개. 화면의 단계 제목과 전체 공정 지도에 씁니다. result는 단계를 마친 결과물, hint는 지도 아래 안내입니다.
 export const STAGES = {
-  front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.', result: '회로가 완성된 웨이퍼', hint: '↻ 표시는 그 공정 뒤에 반복되는 공정입니다. 실제로는 산화·포토·식각·증착을 여러 번 되풀이하며 층을 쌓습니다.' },
-  link: { name: { en: 'Front-to-Back Handoff', ko: '연결 단계' }, note: '검사를 마친 웨이퍼와 양품·불량 지도를 후공정으로 넘깁니다.', result: '후공정에 들어온 웨이퍼' },
-  mid: { name: { en: 'Mid-End Process', ko: '중간공정' }, note: '웨이퍼 상태에서 범프·재배선·관통 전극을 만듭니다. 플립칩·WLCSP·팬아웃·첨단 패키지만 거칩니다.', result: '범프·재배선이 만들어진 웨이퍼', optional: true, hint: '공정 아래 태그는 이 공정을 거치는 패키지입니다.' },
-  back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.', result: '완성된 패키지', hint: '🔍 표시가 있는 공정은 장비 전체부터 한 부분씩 확대해서 원리를 볼 수 있습니다.' },
+  design: { name: { en: 'Chip Design', ko: '칩 설계' }, note: '칩이 할 일을 정하고, 회로를 코드로 설계해 실제 배치 도면으로 만든 뒤 파운드리에 넘깁니다.', result: '설계 데이터와 포토마스크', who: ['fabless', 'designhouse', 'idm'], hint: '프론트엔드 설계는 "무엇을 하는 회로인가", 백엔드 설계는 "칩 위에 어떻게 놓고 이을 것인가"를 정합니다.' },
+  front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.', result: '회로가 완성된 웨이퍼', who: ['foundry', 'idm'], hint: '↻ 표시는 그 공정 뒤에 반복되는 공정입니다. 실제로는 산화·포토·식각·증착을 여러 번 되풀이하며 층을 쌓습니다.' },
+  link: { name: { en: 'Front-to-Back Handoff', ko: '연결 단계' }, note: '검사를 마친 웨이퍼와 양품·불량 지도를 후공정으로 넘깁니다.', result: '후공정에 들어온 웨이퍼', who: ['foundry', 'osat'] },
+  mid: { name: { en: 'Mid-End Process', ko: '중간공정' }, note: '웨이퍼 상태에서 범프·재배선·관통 전극을 만듭니다. 플립칩·WLCSP·팬아웃·첨단 패키지만 거칩니다.', result: '범프·재배선이 만들어진 웨이퍼', optional: true, who: ['foundry', 'osat'], hint: '공정 아래 태그는 이 공정을 거치는 패키지입니다.' },
+  back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.', result: '완성된 패키지', who: ['osat', 'idm'], hint: '🔍 표시가 있는 공정은 장비 전체부터 한 부분씩 확대해서 원리를 볼 수 있습니다.' },
+  board: { name: { en: 'Board Mounting', ko: '보드 실장' }, note: '완성된 패키지를 제품 기판에 붙여 실제 제품에 들어가게 합니다.', result: '칩이 들어간 제품', who: ['ems'] },
 }
 
-export const STAGE_ORDER = ['front', 'link', 'mid', 'back']
+export const STAGE_ORDER = ['design', 'front', 'link', 'mid', 'back', 'board']
+
+// 단계를 맡는 회사 유형. 지도에서 "누가 하나요?"로 보여줍니다.
+export const ACTORS = {
+  fabless: { name: '팹리스', desc: '공장 없이 칩 설계만 하는 회사' },
+  designhouse: { name: '디자인하우스', desc: '팹리스와 파운드리 사이에서 백엔드 설계·테이프아웃을 돕는 회사' },
+  foundry: { name: '파운드리', desc: '설계를 받아 웨이퍼에 칩을 만들어 주는 위탁 생산 회사' },
+  osat: { name: 'OSAT', desc: '패키징과 테스트를 맡는 후공정 전문 회사' },
+  idm: { name: 'IDM', desc: '설계부터 생산·패키징까지 직접 하는 종합 반도체 회사' },
+  ems: { name: '세트·EMS', desc: '칩을 기판에 붙여 완제품을 만드는 회사' },
+}
 
 // 전체 공정 지도의 안내 문장
-export const MAP_INTRO = '실리콘 웨이퍼가 완성된 반도체 패키지가 되기까지의 전체 순서입니다. 단계를 누르면 그 안의 공정이 순서대로 펼쳐지고, 공정을 누르면 자세한 설명과 확대 그림으로 들어갑니다.'
+export const MAP_INTRO = '칩을 설계하는 것부터 웨이퍼에 회로를 만들고, 패키지로 완성해 제품 기판에 붙이기까지의 전체 순서입니다. 단계를 누르면 그 안의 공정이 순서대로 펼쳐지고, 공정을 누르면 자세한 설명과 확대 그림으로 들어갑니다.'
 
 const isMain = (process) => !process.repeatsAfter
 const idsOf = (stage) => processes.filter((process) => process.stage === stage && isMain(process)).map((process) => process.id)
@@ -660,6 +800,8 @@ const idsOf = (stage) => processes.filter((process) => process.stage === stage &
 export const frontFlow = idsOf('front')
 export const linkFlow = idsOf('link')
 export const midFlow = idsOf('mid')
+export const designFlow = idsOf('design')
+export const boardFlow = idsOf('board')
 
 // 8대 공정 사이사이 반복되는 공정
 export const frontSupport = processes.filter((process) => process.stage === 'front' && !isMain(process))

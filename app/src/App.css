@@ -1146,8 +1146,8 @@ input:focus-visible {
 /* 전체 공정 지도 */
 .map-stages {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 20px;
   margin: 12px 0 16px;
   padding: 0;
   list-style: none;
@@ -1183,7 +1183,7 @@ input:focus-visible {
 }
 
 .map-stage .il-compact {
-  width: 72px;
+  width: 64px;
 }
 
 .map-stage.optional {
@@ -1306,10 +1306,22 @@ input:focus-visible {
   font-size: 0.8rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 860px) {
   .map-stages {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .map-stage {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    column-gap: 10px;
+    text-align: left;
+    align-items: center;
+  }
+
+  .map-stage .il-compact {
+    grid-row: 1 / span 6;
   }
 
   .map-stages > li:not(:last-child)::after {
@@ -1489,4 +1501,24 @@ input:focus-visible {
 
 .seq-end {
   font-weight: 600;
+}
+
+.il-code { font-family: ui-monospace, monospace; font-size: 6px; fill: var(--text); }
+
+.map-stage-who {
+  font-size: 0.7rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.map-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+}
+
+.map-who-item b {
+  color: var(--accent);
 }

@@ -3,7 +3,7 @@
 // flow가 null인 패키지는 첫 버전에서 설명만 제공합니다.
 // flow는 후공정 순서만 적습니다. 전공정(frontFlow)은 모든 패키지가 같아 따로 둡니다. 전체 순서가 필요하면 fullFlow를 씁니다(검수표).
 
-import { frontFlow, linkFlow, midFlow } from './processes.js'
+import { boardFlow, designFlow, frontFlow, linkFlow, midFlow } from './processes.js'
 
 export const packages = [
   {
@@ -88,7 +88,7 @@ export function backFlowPackage(pkg) {
   return pkg?.flow ? pkg : findPackage(DEFAULT_PACKAGE_ID)
 }
 
-// 전체 학습 순서: 전공정 → 연결 단계 → 중간공정 → 후공정. 사이사이 반복 공정은 넣지 않습니다.
+// 전체 학습 순서: 설계 → 전공정 → 연결 단계 → 중간공정 → 후공정 → 보드 실장. 사이사이 반복 공정은 넣지 않습니다.
 export function wholeFlow(pkg) {
-  return [...frontFlow, ...linkFlow, ...midFlow, ...backFlowPackage(pkg).flow]
+  return [...designFlow, ...frontFlow, ...linkFlow, ...midFlow, ...backFlowPackage(pkg).flow, ...boardFlow]
 }
