@@ -5,6 +5,7 @@
 import { machines, SOURCES } from '../src/data/machineSim.js'
 import { findProcess } from '../src/data/processes.js'
 import { defaultValues, goalMet, judge } from '../src/lib/machineJudge.js'
+import { handoffs, LINES } from '../src/data/machineLine.js'
 
 let failed = 0
 const fail = (machine, message) => {
@@ -59,5 +60,29 @@ for (const m of machines) {
     if (start.grade === 'good' && !s.goal.metric) fail(m, `상황 ${s.id}가 처음부터 정상이라 할 일이 없음`)
   }
 }
+// 라인 연결 규칙: 키가 맞고, 앞 장비가 넘긴 상태로 도착해도 정상으로 끝낼 조건 조합이 있어야 합니다.
+console.log('라인 연결 규칙')
+const byId = Object.fromEntries(machines.map((m) => [m.id, m]))
+for (const line of LINES) for (const id of line.machines) if (!byId[id]) fail({ id: line.id }, `라인 장비 ${id} 없음`)
+for (const h of handoffs) {
+  const from = byId[h.from]
+  const to = h.to && byId[h.to]
+  const label = { id: `${h.from}→${h.to ?? 'final'}` }
+  if (!from) { fail(label, 'from 장비 없음'); continue }
+  const keys = new Set([...from.conditions, ...from.controls].map((c) => c.id))
+  for (const k of Object.keys(h.when.values ?? {})) if (!keys.has(k)) fail(label, `when 키 ${k} 없음`)
+  for (const w of h.when.titles ?? []) if (!from.rules.some((r) => r.title.includes(w))) fail(label, `결과 제목에 "${w}"가 들어간 규칙 없음`)
+  if (h.and && !byId[h.and.from]) fail(label, `and 장비 ${h.and.from} 없음`)
+  if (h.sets) {
+    if (!to) { fail(label, 'to 장비 없음'); continue }
+    const toKeys = new Set(to.conditions.map((c) => c.id))
+    for (const k of Object.keys(h.sets)) if (!toKeys.has(k)) fail(label, `sets 키 ${k}가 ${to.id}의 상태가 아님`)
+    let cond = { ...defaultValues(to), ...h.sets }
+    for (let k = 0; k < 3; k++) for (const a of to.actions) if (Object.entries(a.needs).every(([x, v]) => cond[x] === v)) cond = { ...cond, ...a.sets }
+    const ok = combos(to.controls).some((c) => judge(to, { ...cond, ...c }).grade === 'good')
+    console.log(`  ${label.id} ${JSON.stringify(h.sets)}: 정상으로 끝낼 조합 ${ok ? '있음' : '없음(경고 이상만 가능)'}`)
+  }
+}
+
 console.log(failed ? `\n✗ 문제 ${failed}개` : '\n✓ 모든 장비 통과')
 process.exit(failed ? 1 : 0)

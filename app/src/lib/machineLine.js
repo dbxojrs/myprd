@@ -20,7 +20,9 @@ function applies(handoff, lot) {
   const { values, titles } = handoff.when
   const valuesOk = Object.entries(values ?? {}).every(([key, levels]) => levels.includes(done.values[key]))
   const titlesOk = !titles || hasTitle(done.result, titles)
-  return valuesOk && titlesOk
+  const other = handoff.and && lot[handoff.and.from]
+  const andOk = !handoff.and || (other && Object.entries(handoff.and.values).every(([key, levels]) => levels.includes(other.values[key])))
+  return valuesOk && titlesOk && andOk
 }
 
 // 이 장비에 들어올 때의 상태: 권장값에서 시작해 앞 장비가 넘긴 상태(sets)를 덮어씁니다.
