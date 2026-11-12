@@ -2,7 +2,9 @@
 // 그림 함수는 Illustrations.jsx의 공정 그림과 같은 모양 (compact, animate) => svg 내용 이고, viewBox는 0 0 120 80입니다.
 // 여기 있는 그림이 Illustrations.jsx의 멈춘 그림보다 먼저 쓰입니다.
 
-const groups = []
+import front from './front.jsx'
+
+const groups = [front]
 
 export const animDrawings = Object.assign({}, ...groups)
 export const ANIM_IDS = Object.keys(animDrawings)

@@ -2084,3 +2084,20 @@ p.ms-log {
   .ms-cvd-glow.run,
   .ms-pvd-atom.run { animation: none; }
 }
+
+/* 움직이는 공정 그림: 전공정 */
+.il-fe-melt { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.il-fe-turn { stroke: var(--surface); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-fe-shine { stroke: var(--surface); stroke-width: 1.2; stroke-linecap: round; }
+.il-fe-chamber { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.il-fe-heat { fill: none; stroke: var(--bad); stroke-width: 1; }
+.il-fe-gas { fill: var(--accent); }
+.il-fe-open { fill: var(--bg); }
+.il-fe-lens { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.il-fe-light { stroke: var(--warn); stroke-width: 1; stroke-dasharray: 2 1.5; }
+.il-fe-exposed { fill: var(--warn); opacity: 0.6; }
+.il-fe-plasma { fill: var(--accent); opacity: 0.25; }
+.il-fe-ion { fill: var(--bad); }
+.il-fe-beam { stroke: var(--bad); stroke-width: 6; opacity: 0.18; }
+.il-fe-doped { fill: var(--accent); fill-opacity: 0.45; }
+.il-fe-pass { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
