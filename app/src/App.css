@@ -1930,3 +1930,38 @@ p.ms-log {
   font-weight: 700;
   color: var(--muted);
 }
+
+/* 장비 라인 연결 실습: 로트 진행 */
+.ms-traveler {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.ms-traveler li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.78rem;
+}
+
+.ms-traveler li.here {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.ms-traveler li.done {
+  opacity: 0.85;
+}
+
+.ms-traveler-no {
+  font-weight: 700;
+  color: var(--muted);
+}
