@@ -5,6 +5,9 @@ import SawView from './SawView.jsx'
 import DieBonderView from './DieBonderView.jsx'
 import BonderView from './BonderView.jsx'
 import MoldView from './MoldView.jsx'
+import MarkerView from './MarkerView.jsx'
+import PkgSawView from './PkgSawView.jsx'
+import TestView from './TestView.jsx'
 
 export const VIEWS = {
   'backgrind': GrinderView,
@@ -12,4 +15,7 @@ export const VIEWS = {
   'die-attach': DieBonderView,
   'wire-bond': BonderView,
   'molding': MoldView,
+  'marking': MarkerView,
+  'package-saw': PkgSawView,
+  'test': TestView,
 }
