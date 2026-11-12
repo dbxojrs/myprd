@@ -189,13 +189,14 @@ export default {
     { id: 'quality', name: '막 품질', good: 'high', base: 100, add: { method: [0, -20], clean: [0, -60], tube: [0, -40], ramp: [0, 0, -20], temp: [-30, 0, 0] } },
     { id: 'thermal', name: '열 부담', good: 'low', base: 0, add: { temp: [10, 40, 80], time: [0, 15, 35] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 보트 로딩 · 튜브 안으로 넣기' },
-    { id: 'purge', text: '튜브 안 공기 치환' },
-    { id: 'ramp', text: '승온: {ramp} → {temp}' },
-    { id: 'oxidize', text: '산화: {method} · {time}' },
-    { id: 'cool', text: '냉각 · 보트 꺼내기' },
-    { id: 'measure', text: '산화막 두께 측정' },
+    { id: 'load', text: '웨이퍼 보트 로딩 · 튜브 안으로 넣기', scene: '보트에 세운 웨이퍼를 석영 튜브 안으로 천천히 밀어 넣습니다.' },
+    { id: 'purge', text: '튜브 안 공기 치환', scene: '튜브 안에 남은 공기를 깨끗한 기체로 밀어냅니다.' },
+    { id: 'ramp', text: '승온: {ramp} → {temp}', scene: '히터 온도를 고른 속도로 목표 온도까지 올립니다.' },
+    { id: 'oxidize', text: '산화: {method} · {time}', scene: '산소(습식이면 수증기도)가 웨이퍼 표면의 실리콘과 만나 산화막이 자랍니다.' },
+    { id: 'cool', text: '냉각 · 보트 꺼내기', scene: '히터를 식힌 뒤 보트를 튜브 밖으로 꺼냅니다.' },
+    { id: 'measure', text: '산화막 두께 측정', scene: '산화막 두께를 재서 목표 두께와 비교합니다.' },
   ],
   scenarios: [
     {

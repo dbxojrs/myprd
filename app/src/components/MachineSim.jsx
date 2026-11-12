@@ -12,7 +12,8 @@ import { Term } from '../lib/terms.jsx'
 // 규칙표(data/machineSim.js)로 알람·불량·경고·정상을 판정합니다.
 // 라인 연결 실습에서는 장비를 공정 순서대로 돌리고, 앞 장비의 결과가 뒤 장비의 상태를 바꿉니다(data/machineLine.js).
 
-const STEP_MS = 800
+// 한 단계에 머무는 시간. 장비 그림이 그 단계의 움직임(로딩·가열·가공·꺼내기 등)을 보여줄 만큼 둡니다.
+const STEP_MS = 1700
 
 const STATUS_TEXT = { idle: '대기', running: '가동 중', alarm: '알람 정지', bad: '완료 · 불량', warn: '완료 · 경고', good: '완료 · 정상' }
 
@@ -23,6 +24,23 @@ function fillTemplate(text, machine, values, mode) {
     const shown = levelText(level, mode).text
     return shown ? `${level.label}(${shown})` : level.label
   })
+}
+
+// 가동 단계 표시줄: 끝난 단계 ✓, 지금 단계 강조, 알람 단계 빨강.
+function StageBar({ sequence, index, alarm }) {
+  return (
+    <ol className="ms-stages" aria-label="가동 단계">
+      {sequence.map((s, i) => {
+        const state = index === null ? '' : alarm && i === index ? 'alarm' : i < index ? 'done' : i === index ? 'now' : ''
+        return (
+          <li key={s.id} className={state} aria-current={state === 'now' ? 'step' : undefined}>
+            {state === 'done' ? '✓ ' : state === 'alarm' ? '⚠ ' : ''}
+            {s.text.split(/[:·→]/)[0].replace(/\{\w+\}/g, '').trim()}
+          </li>
+        )
+      })}
+    </ol>
+  )
 }
 
 function LevelPicker({ item, value, mode, disabled, onChange }) {
@@ -155,6 +173,11 @@ export default function MachineSim({ onOpenProcess }) {
     phase === 'finished' && result ? result.findings : running && result && step >= Math.ceil(result.stopIndex / 2) ? result.findings : []
   // 장비 그림은 조건을 바꾸는 즉시 그 조건대로 움직입니다. 알람으로 멈췄을 때만 멈춥니다.
   const moving = !(phase === 'finished' && result?.alarm)
+  // 지금 진행 중인 가동 단계(sequence id). 대기 중이면 null, START 직후는 'start', 다 끝나면 'done',
+  // 알람으로 멈추면 알람이 걸린 단계입니다. 장비 그림은 이 값에 맞춰 그 단계의 움직임을 보여줍니다.
+  const stageIndex = running ? step - 1 : phase === 'finished' && result ? (result.alarm ? result.stopIndex : machine.sequence.length) : null
+  const stage =
+    stageIndex === null ? null : stageIndex < 0 ? 'start' : stageIndex >= machine.sequence.length ? 'done' : machine.sequence[stageIndex].id
 
   const resetRun = (message) => {
     setPhase('idle')
@@ -397,7 +420,8 @@ export default function MachineSim({ onOpenProcess }) {
               <span className={`ms-status ${status}`}>{STATUS_TEXT[status]}</span>
               <TowerLamp status={status} />
             </div>
-            <MachineView machine={machine} values={values} running={moving} findings={liveFindings} />
+            <MachineView machine={machine} values={values} running={moving} findings={liveFindings} stage={stage} stepMs={STEP_MS} />
+            <StageBar sequence={machine.sequence} index={stageIndex} alarm={Boolean(phase === 'finished' && result?.alarm)} />
             <p className="muted ms-note">
               {running ? '가동 중 · 이상이 있으면 그림에 증상이 나타납니다' : phase === 'finished' ? '빨간 표시가 문제가 생긴 부위입니다' : '조건을 바꾸면 장비 움직임이 바로 바뀝니다 · START로 가동'}
             </p>

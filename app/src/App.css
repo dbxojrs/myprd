@@ -2128,3 +2128,92 @@ p.ms-log {
 .il-md-hole { fill: var(--bg); }
 .il-md-liner { fill: none; stroke: var(--accent); stroke-width: 0.8; }
 .il-md-dielectric { fill: var(--accent-soft); opacity: 0.7; }
+
+/* 장비 가동 단계: 단계 표시줄과 단계 설명. 그림은 단계마다 장면이 바뀝니다(--step = 한 단계 시간). */
+.ms-stage-wrap { position: relative; }
+.ms-stage-wrap.halt * { animation-play-state: paused !important; }
+.ms-scene {
+  margin: 2px 0 6px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  font-weight: 600;
+  animation: ms-scene-in 0.35s ease-out;
+}
+@keyframes ms-scene-in { from { opacity: 0; transform: translateY(4px); } }
+.ms-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+}
+.ms-stages li {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+}
+.ms-stages li.done { color: var(--good); border-color: var(--good); }
+.ms-stages li.now { color: var(--surface); background: var(--accent); border-color: var(--accent); font-weight: 700; }
+.ms-stages li.alarm { color: var(--surface); background: var(--bad); border-color: var(--bad); font-weight: 700; }
+
+/* 산화로 단계 장면 */
+.ms-ox-coil.hot { opacity: 0.8; }
+.ms-ox-paddle { stroke: var(--muted); stroke-width: 1.5; }
+.ms-ox-boat { transition: none; }
+.ms-ox-boat.out { transform: translateX(-46px); }
+.ms-ox-boat.loading { animation: ms-ox-in var(--step) ease-in-out both; }
+.ms-ox-boat.unloading { animation: ms-ox-in var(--step) ease-in-out reverse both; }
+@keyframes ms-ox-in {
+  0%, 15% { transform: translateX(-46px); }
+  100% { transform: translateX(0); }
+}
+.ms-ox-door { fill: var(--border); stroke: var(--muted); transition: transform 0.3s; }
+.ms-ox-door.open { transform: translateY(-24px); }
+.ms-ox-purge { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 6 6; opacity: 0.6; animation: ms-flow 0.3s linear infinite; }
+.ms-ox-air { fill: var(--muted); animation: ms-ox-out 0.9s linear infinite; }
+@keyframes ms-ox-out {
+  from { transform: translateX(0); opacity: 0.9; }
+  to { transform: translateX(40px); opacity: 0; }
+}
+.ms-ox-mol { fill: var(--accent); animation: ms-ox-mol var(--step) linear infinite; }
+.ms-ox-mol.h2o { fill: var(--good); }
+@keyframes ms-ox-mol {
+  from { transform: translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateX(160px); opacity: 0.2; }
+}
+.ms-ox-glow { stroke: var(--warn); stroke-width: 0.8; animation: ms-blink 0.6s ease-in-out infinite alternate; }
+.ms-ox-warm { animation: ms-ox-warm var(--ramp-dur, var(--step)) ease-in both; }
+.ms-ox-ramp-0 { --ramp-dur: calc(var(--step) * 0.95); }
+.ms-ox-ramp-1 { --ramp-dur: calc(var(--step) * 0.55); }
+.ms-ox-ramp-2 { --ramp-dur: calc(var(--step) * 0.15); }
+@keyframes ms-ox-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-ox-chill { animation: ms-ox-chill var(--step) ease-out both; }
+@keyframes ms-ox-chill { to { fill: var(--border); stroke: var(--muted); } }
+.ms-ox-film.growing {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-ox-grow var(--step) ease-out both;
+}
+@keyframes ms-ox-grow { from { transform: scaleY(0.05); } }
+.ms-ox-probe { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 2; animation: ms-flow 0.4s linear infinite; }
+.ms-ox-scan { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-scene,
+  .ms-ox-boat.loading,
+  .ms-ox-boat.unloading,
+  .ms-ox-purge,
+  .ms-ox-air,
+  .ms-ox-mol,
+  .ms-ox-glow,
+  .ms-ox-warm,
+  .ms-ox-chill,
+  .ms-ox-film.growing,
+  .ms-ox-probe,
+  .ms-ox-scan { animation: none; }
+}
