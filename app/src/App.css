@@ -2109,3 +2109,22 @@ p.ms-log {
 .il-ds-paste { fill: var(--muted); }
 .il-ds-solder { fill: var(--warn); }
 .il-ds-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+
+/* 움직이는 공정 그림: 반복·출하·WLP */
+.il-md-chem { stroke: var(--warn); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-md-dry { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.il-md-drop { fill: var(--accent); }
+.il-md-groove { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 4 4; }
+.il-md-slurry { fill: var(--warn); }
+.il-md-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-md-dopant { fill: var(--accent); stroke: var(--text); stroke-width: 0.4; }
+.il-md-glow { fill: var(--good); opacity: 0.35; }
+.il-md-a { fill: var(--warn); }
+.il-md-b { fill: var(--accent); }
+.il-md-good { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.6; }
+.il-md-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.il-md-waferline { stroke: var(--muted); stroke-width: 1.6; }
+.il-md-door { fill: var(--border); stroke: var(--text); stroke-width: 1; opacity: 0.9; }
+.il-md-hole { fill: var(--bg); }
+.il-md-liner { fill: none; stroke: var(--accent); stroke-width: 0.8; }
+.il-md-dielectric { fill: var(--accent-soft); opacity: 0.7; }

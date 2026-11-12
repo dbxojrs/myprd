@@ -193,7 +193,7 @@ export const processes = [
   {
     id: 'deposition',
     name: { en: 'Deposition', ko: '증착' },
-    aliases: ['증착', 'deposition', 'cvd', 'pvd', 'ald'],
+    aliases: ['증착', 'deposition', 'cvd', 'pvd'],
     group: '',
     stage: 'front',
     summary: '웨이퍼 위에 아주 얇은 막(절연막, 도체막 등)을 원하는 두께로 쌓습니다. 포토·식각과 반복하며 회로를 층층이 만듭니다.',
@@ -231,7 +231,7 @@ export const processes = [
   {
     id: 'metallization',
     name: { en: 'Metallization', ko: '금속 배선' },
-    aliases: ['금속 배선', '금속배선', '배선', 'metallization', 'cmp', '평탄화'],
+    aliases: ['금속 배선', '금속배선', '배선', 'metallization'],
     group: '',
     stage: 'front',
     summary: '알루미늄이나 구리로 트랜지스터들을 잇는 전선을 만들고, CMP로 표면을 평평하게 깎아 다음 층을 쌓을 준비를 합니다. 맨 위에는 패키징에서 연결할 패드를 만듭니다.',

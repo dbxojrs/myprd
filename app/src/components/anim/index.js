@@ -4,8 +4,9 @@
 
 import front from './front.jsx'
 import design from './design.jsx'
+import middle from './middle.jsx'
 
-const groups = [front, design]
+const groups = [front, design, middle]
 
 export const animDrawings = Object.assign({}, ...groups)
 export const ANIM_IDS = Object.keys(animDrawings)
