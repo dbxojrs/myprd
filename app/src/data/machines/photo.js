@@ -197,13 +197,14 @@ export default {
     { id: 'accuracy', name: '무늬 정확도', good: 'high', base: 100, add: { spin: [-25, 0, -10], softbake: [-45, -10, 0, -15], dose: [-45, 0, -40], develop: [-45, 0, -20], reticle: [0, -50], focus: [0, -60] } },
     { id: 'resist', name: '감광액 두께', good: 'mid', base: 0, add: { spin: [85, 50, 20] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 장비 규칙·공정 데이터 요약).
   sequence: [
-    { id: 'coat', text: '감광액 도포: {spin}' },
-    { id: 'bake', text: '소프트 베이크: {softbake}' },
-    { id: 'align', text: '마스크 정렬' },
-    { id: 'expose', text: '노광: {dose}' },
-    { id: 'develop', text: '현상: {develop}' },
-    { id: 'inspect', text: '무늬 검사 · 통과한 웨이퍼만 식각으로' },
+    { id: 'coat', text: '감광액 도포: {spin}', scene: '웨이퍼 위에 감광액을 떨어뜨리고 돌려서 얇고 고르게 폅니다. 빨리 돌릴수록 막이 얇아집니다.' },
+    { id: 'bake', text: '소프트 베이크: {softbake}', scene: '감광액을 살짝 구워 굳힙니다. 덜 구우면 무늬가 무너지고, 너무 구우면 감도가 떨어집니다.' },
+    { id: 'align', text: '마스크 정렬', scene: '마스크(레티클)를 웨이퍼 위 제자리에 맞춥니다.' },
+    { id: 'expose', text: '노광: {dose}', scene: '빛이 마스크 무늬를 지나 렌즈로 줄어든 뒤 웨이퍼의 감광액을 비춥니다.' },
+    { id: 'develop', text: '현상: {develop}', scene: '현상액으로 빛을 받은 감광액을 녹여 무늬를 드러냅니다.' },
+    { id: 'inspect', text: '무늬 검사 · 통과한 웨이퍼만 식각으로', scene: '현상된 무늬를 검사해 통과한 웨이퍼만 식각으로 보냅니다.' },
   ],
   scenarios: [
     {

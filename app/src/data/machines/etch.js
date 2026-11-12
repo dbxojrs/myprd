@@ -191,14 +191,15 @@ export default {
     { id: 'selectivity', name: '선택비', good: 'high', base: 55, add: { bias: [25, 15, -25], pressure: [-5, 0, 5] } },
     { id: 'damage', name: '기판 손상 위험', good: 'low', base: 5, add: { pressure: [30, 5, 0], bias: [0, 10, 40], time: [0, 0, 30] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 장비 규칙·공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩 · 정전척 고정' },
-    { id: 'pump', text: '진공 배기 → 압력 {pressure}' },
-    { id: 'gas', text: '식각 가스 공급: {gas}' },
-    { id: 'plasma', text: '플라즈마 점화 · 바이어스 {bias}' },
-    { id: 'etch', text: '식각: {time}' },
-    { id: 'vent', text: '배기 · 언로딩' },
-    { id: 'inspect', text: '단면 모양 검사' },
+    { id: 'load', text: '웨이퍼 로딩 · 정전척 고정', scene: '웨이퍼를 챔버에 넣고 정전척으로 고정합니다.' },
+    { id: 'pump', text: '진공 배기 → 압력 {pressure}', scene: '진공 펌프로 챔버 공기를 빼 정한 압력까지 낮춥니다.' },
+    { id: 'gas', text: '식각 가스 공급: {gas}', scene: '식각 가스를 챔버 안으로 넣습니다.' },
+    { id: 'plasma', text: '플라즈마 점화 · 바이어스 {bias}', scene: '가스를 플라즈마로 만들고, 바이어스로 이온을 웨이퍼 쪽으로 끌어당깁니다.' },
+    { id: 'etch', text: '식각: {time}', scene: '이온이 감광액이 열린 곳을 때려 막을 깎아 홈을 만듭니다.' },
+    { id: 'vent', text: '배기 · 언로딩', scene: '가스와 플라즈마를 끄고 챔버를 대기압으로 되돌린 뒤 웨이퍼를 꺼냅니다.' },
+    { id: 'inspect', text: '단면 모양 검사', scene: '깎인 홈의 단면 모양(깊이·벽 기울기)을 검사합니다.' },
   ],
   scenarios: [
     {

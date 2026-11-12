@@ -229,14 +229,15 @@ export default {
     { id: 'coverage', name: '단차 피복', good: 'high', base: 95, add: { pressure: [0, 0, -40], pattern: [0, -15], method: [0, -10] } },
     { id: 'particle', name: '파티클 위험', good: 'low', base: 5, add: { gas: [0, 0, 0, 55], chamber: [0, 45], rf: [0, 0, 20] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 장비 규칙·공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩 · 챔버 닫기' },
-    { id: 'pump', text: '진공 펌프로 감압: {pressure}' },
-    { id: 'heat', text: '기판 가열: {temp}' },
-    { id: 'gas', text: '원료 가스 공급: {gas}' },
-    { id: 'plasma', text: 'RF 출력: {rf}' },
-    { id: 'deposit', text: '막 증착 · 시간 {time}' },
-    { id: 'purge', text: '가스 배출 · 냉각 · 언로딩' },
+    { id: 'load', text: '웨이퍼 로딩 · 챔버 닫기', scene: '웨이퍼를 챔버에 넣고 문을 닫습니다.' },
+    { id: 'pump', text: '진공 펌프로 감압: {pressure}', scene: '진공 펌프로 챔버 압력을 낮춥니다. 압력이 낮을수록 막이 고르게 쌓입니다.' },
+    { id: 'heat', text: '기판 가열: {temp}', scene: '히터로 웨이퍼를 데웁니다. 열이 원료 가스의 반응을 일으킵니다.' },
+    { id: 'gas', text: '원료 가스 공급: {gas}', scene: '샤워헤드로 원료 가스를 웨이퍼 위에 고르게 내려보냅니다.' },
+    { id: 'plasma', text: 'RF 출력: {rf}', scene: 'PECVD는 RF 전기로 플라즈마를 켜서 낮은 온도에서도 반응하게 합니다. LPCVD는 플라즈마 없이 진행합니다.' },
+    { id: 'deposit', text: '막 증착 · 시간 {time}', scene: '가스가 반응해 웨이퍼 위에 얇은 막이 시간만큼 쌓입니다.' },
+    { id: 'purge', text: '가스 배출 · 냉각 · 언로딩', scene: '남은 가스를 빼고 식힌 뒤 웨이퍼를 꺼냅니다.' },
   ],
   scenarios: [
     {

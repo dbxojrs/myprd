@@ -2217,3 +2217,97 @@ p.ms-log {
   .ms-ox-probe,
   .ms-ox-scan { animation: none; }
 }
+
+/* 장비 단계 장면: 전공정 (노광·식각·CVD·이온 주입·PVD). 한 단계 시간은 --step입니다. */
+.ms-st-fe-in { animation: ms-st-fe-in var(--step) ease-in-out both; }
+.ms-st-fe-out { animation: ms-st-fe-in var(--step) ease-in-out reverse both; }
+@keyframes ms-st-fe-in {
+  0%, 10% { transform: translateX(-60px); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-inr { animation: ms-st-fe-inr var(--step) ease-in-out both; }
+.ms-st-fe-outr { animation: ms-st-fe-inr var(--step) ease-in-out reverse both; }
+@keyframes ms-st-fe-inr {
+  0%, 10% { transform: translateX(40px); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-gone { opacity: 0; }
+.ms-st-fe-ghost { opacity: 0.25; }
+.ms-st-fe-fade { animation: ms-st-fe-fade calc(var(--step) * 0.5) ease-out both; }
+@keyframes ms-st-fe-fade { from { opacity: 0; } }
+.ms-st-fe-dissolve { animation: ms-st-fe-dissolve var(--step) ease-in both; }
+@keyframes ms-st-fe-dissolve { to { opacity: 0; } }
+.ms-st-fe-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-fe-grow var(--step) ease-out both;
+}
+@keyframes ms-st-fe-grow { from { transform: scaleY(0.05); } }
+.ms-st-fe-dig {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: ms-st-fe-grow var(--step) ease-out both;
+}
+.ms-st-fe-warm { animation: ms-st-fe-warm calc(var(--step) * 0.8) ease-in both; }
+@keyframes ms-st-fe-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-st-fe-chill { animation: ms-st-fe-chill var(--step) ease-out both; }
+@keyframes ms-st-fe-chill { to { fill: var(--border); stroke: var(--muted); } }
+.ms-st-fe-heat { fill: none; stroke: var(--bad); stroke-width: 0.8; animation: ms-st-fe-heat 0.9s ease-out infinite; }
+@keyframes ms-st-fe-heat {
+  from { transform: translateY(0); opacity: 0.9; }
+  to { transform: translateY(-8px); opacity: 0; }
+}
+.ms-st-fe-drop { animation: ms-st-fe-drop 0.6s ease-in infinite; }
+@keyframes ms-st-fe-drop {
+  from { transform: translateY(-4px); opacity: 1; }
+  to { transform: translateY(14px); opacity: 0; }
+}
+.ms-st-fe-glow { stroke: var(--warn); stroke-width: 1.4; animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-fe-scan { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-st-fe-cross { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-fe-maskoff { transform: translateX(-16px); opacity: 0.6; }
+.ms-st-fe-maskin { animation: ms-st-fe-maskin var(--step) ease-in-out both; }
+@keyframes ms-st-fe-maskin {
+  0% { transform: translateX(-16px); opacity: 0.6; }
+  60% { transform: translateX(2px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-gauge { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.ms-st-fe-needle { transform-box: view-box; transform-origin: 0 0; }
+.ms-st-fe-needle line { stroke: var(--bad); stroke-width: 1.2; stroke-linecap: round; }
+.ms-st-fe-needle.pumping { animation: ms-st-fe-pump calc(var(--step) * 0.8) ease-out both; }
+.ms-st-fe-needle.venting { animation: ms-st-fe-vent calc(var(--step) * 0.6) ease-in both; }
+@keyframes ms-st-fe-pump { from { transform: rotate(var(--from)); } to { transform: rotate(var(--to)); } }
+@keyframes ms-st-fe-vent { from { transform: rotate(var(--to)); } to { transform: rotate(var(--from)); } }
+.ms-st-fe-tilt { animation: ms-st-fe-tilt var(--step) ease-in-out both; }
+@keyframes ms-st-fe-tilt { from { transform: rotate(0deg); } to { transform: rotate(var(--tilt)); } }
+.ms-st-fe-scanmove { animation: ms-st-fe-scanmove calc(var(--step) / 3) ease-in-out infinite alternate; }
+@keyframes ms-st-fe-scanmove { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
+.ms-imp-src { fill: var(--bad); animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-ph-dev { fill: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-fe-in,
+  .ms-st-fe-out,
+  .ms-st-fe-inr,
+  .ms-st-fe-outr,
+  .ms-st-fe-fade,
+  .ms-st-fe-dissolve,
+  .ms-st-fe-grow,
+  .ms-st-fe-dig,
+  .ms-st-fe-warm,
+  .ms-st-fe-chill,
+  .ms-st-fe-heat,
+  .ms-st-fe-drop,
+  .ms-st-fe-glow,
+  .ms-st-fe-scan,
+  .ms-st-fe-cross,
+  .ms-st-fe-maskin,
+  .ms-st-fe-needle.pumping,
+  .ms-st-fe-needle.venting,
+  .ms-st-fe-tilt,
+  .ms-st-fe-scanmove,
+  .ms-imp-src { animation: none; }
+}

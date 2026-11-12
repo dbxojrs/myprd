@@ -214,13 +214,14 @@ export default {
     { id: 'coverage', name: '비아 덮임', good: 'high', base: 95, add: { pattern: [0, -30], pressure: [0, 0, -35, 0] } },
     { id: 'heat', name: '기판 온도', good: 'mid', base: 0, add: { temp: [10, 45, 85], power: [0, 5, 15] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 장비 규칙·공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩' },
-    { id: 'pump', text: '진공 배기 · 아르곤 주입: {pressure}' },
-    { id: 'heat', text: '기판 가열: {temp}' },
-    { id: 'sputter', text: '플라즈마 켜기 · 타깃 스퍼터: {power}' },
-    { id: 'deposit', text: '금속막 증착 · 시간 {time}' },
-    { id: 'cool', text: '냉각 · 언로딩 → CMP' },
+    { id: 'load', text: '웨이퍼 로딩', scene: '웨이퍼를 챔버에 넣습니다.' },
+    { id: 'pump', text: '진공 배기 · 아르곤 주입: {pressure}', scene: '진공을 잡은 뒤 아르곤 가스를 정한 압력만큼 넣습니다.' },
+    { id: 'heat', text: '기판 가열: {temp}', scene: '히터로 웨이퍼를 정한 온도로 데웁니다.' },
+    { id: 'sputter', text: '플라즈마 켜기 · 타깃 스퍼터: {power}', scene: '플라즈마의 아르곤 이온이 금속 타깃을 때려 금속 원자를 떼어 냅니다.' },
+    { id: 'deposit', text: '금속막 증착 · 시간 {time}', scene: '떨어져 나온 금속 원자가 웨이퍼 위에 쌓여 금속막이 됩니다.' },
+    { id: 'cool', text: '냉각 · 언로딩 → CMP', scene: '식힌 뒤 웨이퍼를 꺼내 CMP로 보냅니다.' },
   ],
   scenarios: [
     {

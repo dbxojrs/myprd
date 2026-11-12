@@ -205,13 +205,14 @@ export default {
     { id: 'depth', name: '주입 깊이', good: 'mid', base: 10, add: { energy: [5, 30, 70, 85], dopant: [10, 0, -5], tilt: [15, 0, -5] } },
     { id: 'damage', name: '결정 손상', good: 'low', base: 5, add: { dose: [0, 15, 60], beam: [0, 0, 15, 25], energy: [0, 5, 10, 15] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 장비 규칙·공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '웨이퍼 로딩 · 진공 확인' },
-    { id: 'source', text: '이온 소스: {dopant}' },
-    { id: 'beam', text: '가속: {energy} · 빔 전류 {beam}' },
-    { id: 'tilt', text: '웨이퍼 기울기 {tilt}' },
-    { id: 'scan', text: '빔 주사 · 도즈 {dose}' },
-    { id: 'unload', text: '도즈 확인 · 언로딩 → 열처리' },
+    { id: 'load', text: '웨이퍼 로딩 · 진공 확인', scene: '웨이퍼를 넣고 진공이 잡혔는지 확인합니다.' },
+    { id: 'source', text: '이온 소스: {dopant}', scene: '이온 소스에서 넣을 불순물(붕소·인·비소)을 이온으로 만듭니다.' },
+    { id: 'beam', text: '가속: {energy} · 빔 전류 {beam}', scene: '자석으로 원하는 이온만 골라 가속관에서 에너지만큼 빠르게 만듭니다. 에너지가 클수록 깊이 들어갑니다.' },
+    { id: 'tilt', text: '웨이퍼 기울기 {tilt}', scene: '웨이퍼를 기울여, 결정 방향과 나란히 들어가 너무 깊어지는 채널링을 줄입니다.' },
+    { id: 'scan', text: '빔 주사 · 도즈 {dose}', scene: '이온 빔이 웨이퍼를 훑으며 정한 도즈만큼 불순물을 넣습니다. 감광막이 덮인 곳은 막아 줍니다.' },
+    { id: 'unload', text: '도즈 확인 · 언로딩 → 열처리', scene: '넣은 도즈를 확인하고 웨이퍼를 꺼내 열처리로 보냅니다. 손상된 결정은 열처리로 되돌립니다.' },
   ],
   scenarios: [
     {
