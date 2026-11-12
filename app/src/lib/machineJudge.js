@@ -64,6 +64,7 @@ export function goalMet(scenario, result) {
 export function levelText(level, mode) {
   if (mode === 'relative') return { text: `${level.pct}%` }
   if (mode === 'sourced') return level.sourced ? { text: level.sourced.value, sourced: true, source: level.sourced } : { text: '' }
-  if (level.sourced) return { text: level.sourced.value, sourced: true, source: level.sourced }
-  return { text: level.example ?? '', example: Boolean(level.example) }
+  // 예시 숫자가 출처 숫자와 같으면 출처 표시로, 다르면 예시 숫자를 보여주고 출처 숫자는 아래 줄(source)에 따로 보여줍니다.
+  if (level.sourced && (!level.example || level.sourced.value === level.example)) return { text: level.sourced.value, sourced: true, source: level.sourced }
+  return { text: level.example ?? '', example: Boolean(level.example), source: level.sourced }
 }
