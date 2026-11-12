@@ -2020,3 +2020,29 @@ p.ms-log {
 .ms-tt-signal { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 3 2; }
 .ms-tt-bin { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
 .ms-tt-bin.warn { stroke: var(--bad); stroke-width: 1.6; }
+/* 장비: 산화로 */
+.ms-ox-coil { stroke: var(--bad); stroke-width: 1; opacity: 0.35; }
+.ms-ox-tube { fill: var(--surface); fill-opacity: 0.75; stroke: var(--muted); stroke-width: 1; }
+.ms-ox-dirty { stroke: var(--text); stroke-width: 0.6; stroke-dasharray: 1 1.5; }
+.ms-ox-film { stroke-width: 1; }
+.ms-ox-loose { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 1.5 2; }
+.ms-ox-ring { fill: none; stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 3 2; }
+
+/* 장비: 노광 장비 + 트랙 */
+.ms-ph-cup { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.ms-ph-drop { fill: var(--warn); }
+.ms-ph-resist { fill: none; stroke: var(--warn); }
+.ms-ph-resist-fill { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.ms-ph-residue { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.ms-ph-light { fill: var(--warn); opacity: 0.45; }
+.ms-ph-light.dim { opacity: 0.18; }
+.ms-ph-light.bright { opacity: 0.75; }
+
+/* 장비: 건식 식각기 */
+.ms-et-chamber { fill: var(--bg); stroke: var(--text); stroke-width: 1.2; }
+.ms-et-coil { fill: none; stroke: var(--warn); stroke-width: 1.2; }
+.ms-et-plasma { fill: var(--accent); }
+.ms-et-ion { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.ms-et-trench { fill: var(--bg); stroke: var(--text); stroke-width: 0.6; }
+.ms-et-trench-bad { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.ms-et-over { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
