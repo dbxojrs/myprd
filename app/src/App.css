@@ -2046,3 +2046,41 @@ p.ms-log {
 .ms-et-trench { fill: var(--bg); stroke: var(--text); stroke-width: 0.6; }
 .ms-et-trench-bad { fill: none; stroke: var(--bad); stroke-width: 1.2; }
 .ms-et-over { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+/* 장비: CVD 증착 · PVD 스퍼터 (공통 챔버·막 표현) */
+.ms-cvd-wall { fill: var(--surface); stroke: var(--text); stroke-width: 1.2; }
+.ms-cvd-wall.dirty { stroke: var(--warn); stroke-width: 2.5; stroke-dasharray: 4 2; }
+.ms-cvd-film { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.ms-cvd-film.bad { fill: var(--bad-soft); stroke: var(--bad); }
+.ms-cvd-hole { fill: var(--bg); }
+.ms-cvd-glow { fill: var(--accent); opacity: 0.25; }
+.ms-cvd-glow.run { animation: ms-cvd-pulse var(--dur) ease-in-out infinite alternate; }
+
+@keyframes ms-cvd-pulse {
+  from { opacity: 0.15; }
+  to { opacity: 0.45; }
+}
+
+/* 장비: 이온 주입기 */
+.ms-imp-magnet { fill: none; stroke: var(--muted); stroke-width: 7; stroke-linecap: round; }
+.ms-imp-beam { fill: none; stroke: var(--bad); stroke-dasharray: 3 3; }
+.ms-imp-ion { stroke: var(--bad); stroke-width: 1; stroke-dasharray: 3 3; }
+.ms-imp-doped { fill: var(--accent); opacity: 0.45; }
+.ms-imp-doped.bad { fill: var(--bad); }
+
+/* 장비: PVD 스퍼터 */
+.ms-pvd-target { fill: var(--muted); stroke: var(--text); stroke-width: 0.8; }
+.ms-pvd-target.worn { stroke: var(--bad); stroke-dasharray: 2 1.5; }
+.ms-pvd-ar { fill: var(--muted); opacity: 0.6; }
+.ms-pvd-atom { fill: var(--warn); }
+.ms-pvd-atom.run { animation: ms-pvd-fall var(--dur) linear infinite; }
+
+@keyframes ms-pvd-fall {
+  0% { transform: translate(0, 0); opacity: 1; }
+  50% { transform: translate(var(--dx), 30px); }
+  100% { transform: translate(0, 62px); opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-cvd-glow.run,
+  .ms-pvd-atom.run { animation: none; }
+}

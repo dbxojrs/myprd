@@ -3,6 +3,9 @@
 import OxidationView from './OxidationView.jsx'
 import PhotoView from './PhotoView.jsx'
 import EtchView from './EtchView.jsx'
+import CvdView from './CvdView.jsx'
+import ImplantView from './ImplantView.jsx'
+import PvdView from './PvdView.jsx'
 import GrinderView from './GrinderView.jsx'
 import SawView from './SawView.jsx'
 import DieBonderView from './DieBonderView.jsx'
@@ -16,6 +19,9 @@ export const VIEWS = {
   'oxidation': OxidationView,
   'photo': PhotoView,
   'etch': EtchView,
+  'deposition': CvdView,
+  'ion-implant': ImplantView,
+  'metallization': PvdView,
   'backgrind': GrinderView,
   'wafer-saw': SawView,
   'die-attach': DieBonderView,
