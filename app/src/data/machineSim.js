@@ -1,0 +1,605 @@
+// 고급 장비 시뮬레이터 규칙표. 판정은 이 표로만 계산합니다(AI·무작위 값 없음). 모두 검수 전입니다.
+//
+// conditions: 작업물·장비 상태(로트, 블레이드 상태 등). 상황 실습에서는 상황이 정하고, 자유 조작에서는 직접 고릅니다.
+// controls: 작업자가 조작반에서 바꾸는 조건.
+// 단계(levels)마다 세 가지 값 표시를 둡니다.
+//   example: 단계형 + 예시 숫자 모드의 숫자. 출처 없는 예시값입니다.
+//   sourced: 출처 숫자만 모드의 숫자. { value, src, cite } — src는 SOURCES 키, cite는 문서 안 위치입니다. 없으면 출처 숫자가 없는 단계입니다.
+//   pct: 0~100% 상대값 모드의 숫자(장비 조정 범위 안에서의 상대 위치, 교육용).
+// best: 권장 단계 번호.
+// actions: 조작반 버튼. needs 상태일 때만 누를 수 있고, 누르면 sets로 상태를 바꿉니다.
+// rules: when의 모든 키가 맞으면 해당합니다. when 값은 해당하는 단계 번호 목록입니다.
+//   severity: alarm(장비가 at 단계에서 멈춤) | bad(불량) | warn(경고·신뢰성 위험)
+//   src·cite가 있으면 그 문서에 근거한 규칙이고, 없으면 공정 데이터(processes.js)나 교육용 가설에 근거합니다(basis).
+// metrics: 상대 지표(0~100, 교육용). 단계마다 더할 값을 적고, 합을 0~100으로 자릅니다. 알람으로 멈추면 처리 속도는 0입니다.
+// sequence: 가동 순서. {키}는 그 조건의 현재 표시값으로 바뀝니다.
+// scenarios: 상황 실습. preset으로 상태를 정하고, goal을 만족하면 성공입니다.
+//   goal.maxGrade: 허용하는 가장 나쁜 판정(good | warn), goal.metric: 넘어야 하는 지표 최소값.
+
+export const SOURCES = {
+  tpt: {
+    title: 'Wire Bonding Basics (Version 4.0, 2013)',
+    publisher: 'TPT Wire Bonder; hosted by UCSB Nanofab wiki',
+    url: 'https://protowiki.oasis.ucsb.edu/images/3/3e/Wire-Bonding-Basics.pdf',
+  },
+  discoZh05: {
+    title: 'ZH05 Electroformed Bond Hub Blade',
+    publisher: 'DISCO Corporation',
+    url: 'https://www.disco.co.jp/eg/products/blade/zh05.html',
+  },
+  discoThin: {
+    title: 'Dicing Thin Wafers | Blade Dicing | Solutions',
+    publisher: 'DISCO Corporation',
+    url: 'https://disco.co.jp/eg/solution/library/dicing/dicing_thin.html',
+  },
+}
+
+export const SEVERITY = {
+  alarm: { label: '알람 정지', rank: 3 },
+  bad: { label: '불량', rank: 2 },
+  warn: { label: '경고', rank: 1 },
+  good: { label: '정상', rank: 0 },
+}
+
+export const DISPLAY_MODES = [
+  { id: 'example', label: '단계 + 예시 숫자', note: '숫자는 이해를 돕는 예시값입니다. 📖 표시가 있는 숫자만 출처가 있습니다.' },
+  { id: 'sourced', label: '출처 숫자만', note: '출처 문서에 적힌 숫자만 보여줍니다. 출처가 없는 단계는 이름만 보입니다.' },
+  { id: 'relative', label: '0~100% 상대값', note: '장비 조정 범위 안에서의 상대 위치입니다(교육용).' },
+]
+
+export const machines = [
+  {
+    id: 'wafer-saw',
+    processId: 'wafer-saw',
+    name: '다이싱 장비 (블레이드 쏘)',
+    reviewed: false,
+    conditions: [
+      {
+        id: 'wafer',
+        name: { en: 'Wafer Thickness', ko: '웨이퍼 두께' },
+        levels: [
+          { label: '보통 두께', example: '200 µm', pct: 70 },
+          { label: '얇은 웨이퍼', example: '50 µm', pct: 15, sourced: { value: '50 µm 이하', src: 'discoThin', cite: '"finished semiconductor die 50 µm thick or less"' } },
+        ],
+        best: 0,
+      },
+      {
+        id: 'blade',
+        name: { en: 'Blade Condition', ko: '블레이드 상태' },
+        levels: [
+          { label: '새 날 (드레싱 전)', pct: 100 },
+          { label: '정상', pct: 70 },
+          { label: '마모 한계', pct: 10 },
+        ],
+        best: 1,
+      },
+    ],
+    controls: [
+      {
+        id: 'spindle',
+        name: { en: 'Spindle Speed', ko: '주축 회전수' },
+        levels: [
+          { label: '낮음', example: '20,000 min⁻¹', pct: 33 },
+          { label: '보통', example: '30,000 min⁻¹', pct: 50, sourced: { value: '30,000 min⁻¹', src: 'discoZh05', cite: '실험 조건 "Spindle revolution 30,000 min-1"' } },
+          { label: '높음', example: '40,000 min⁻¹', pct: 67 },
+          { label: '한계 초과', example: '60,000 min⁻¹', pct: 100 },
+        ],
+        best: 1,
+      },
+      {
+        id: 'feed',
+        name: { en: 'Feed Speed', ko: '이송 속도' },
+        levels: [
+          { label: '느림', example: '10 mm/s', pct: 10, sourced: { value: '10 mm/s', src: 'discoZh05', cite: '프리컷 실험 조건 "10, 20, 30 mm/s"' } },
+          { label: '보통', example: '30 mm/s', pct: 30, sourced: { value: '30 mm/s', src: 'discoZh05', cite: '프리컷 실험 조건 "10, 20, 30 mm/s"' } },
+          { label: '빠름', example: '60 mm/s', pct: 60, sourced: { value: '60 mm/s', src: 'discoZh05', cite: '마모 실험 조건 "Feed speed 60 mm/s"' } },
+          { label: '매우 빠름', example: '100 mm/s', pct: 100 },
+        ],
+        best: 1,
+      },
+      {
+        id: 'grit',
+        name: { en: 'Blade Grit', ko: '블레이드 입자 크기' },
+        levels: [
+          { label: '보통 입자', example: '#2000', pct: 40, sourced: { value: '#2000', src: 'discoThin', cite: '"Typical Grit Size" #2000' } },
+          { label: '고운 입자', example: '#4800', pct: 90, sourced: { value: '#4800', src: 'discoThin', cite: '"a #4800 blade (much finer grit)"' } },
+        ],
+        best: 0,
+      },
+      {
+        id: 'depth',
+        name: { en: 'Cut Depth', ko: '절단 깊이' },
+        levels: [
+          { label: '테이프 위에서 멈춤', example: '웨이퍼 바닥 10 µm 위', pct: 35 },
+          { label: '테이프까지 살짝', example: '테이프 속 20 µm', pct: 60 },
+          { label: '테이프 깊이', example: '테이프 속 80 µm', pct: 95 },
+        ],
+        best: 1,
+      },
+      {
+        id: 'coolant',
+        name: { en: 'Coolant Flow', ko: '냉각수' },
+        levels: [
+          { label: '끔', example: '0 L/min', pct: 0 },
+          { label: '적음', example: '0.5 L/min', pct: 30 },
+          { label: '충분', example: '1.5 L/min', pct: 80 },
+        ],
+        best: 2,
+      },
+    ],
+    actions: [
+      { id: 'dress', label: '드레싱 실행', needs: { blade: 0 }, sets: { blade: 1 }, log: '드레싱 보드를 몇 번 잘라 새 다이아몬드 입자를 드러냄' },
+      { id: 'replace', label: '블레이드 교체', needs: { blade: 2 }, sets: { blade: 0 }, log: '새 블레이드로 교체함 (드레싱 필요)' },
+    ],
+    rules: [
+      {
+        when: { coolant: [0] },
+        severity: 'alarm',
+        at: 'spin',
+        title: '냉각수 부족 · 장비 정지',
+        cause: '물 없이 자르면 블레이드와 웨이퍼가 뜨거워지고 실리콘 가루가 씻겨 나가지 않습니다.',
+        fix: '냉각수를 "충분"으로 켜고 다시 시작합니다.',
+        src: 'discoZh05',
+        cite: '주의 문구 "Always USE water or coolant to prevent precision tooling damage"',
+      },
+      {
+        when: { spindle: [3] },
+        severity: 'alarm',
+        at: 'spin',
+        title: '회전수 한계 초과 · 장비 정지',
+        cause: '블레이드마다 정해진 최고 회전수가 있고, 넘으면 블레이드가 깨질 수 있습니다.',
+        fix: '주축 회전수를 블레이드 허용 범위 안("보통")으로 낮춥니다.',
+        src: 'discoZh05',
+        cite: '주의 문구 "DO NOT EXCEED the specified rpm limit"',
+      },
+      {
+        when: { depth: [0] },
+        severity: 'bad',
+        title: '미절단: 칩이 다 나뉘지 않음',
+        cause: '블레이드가 테이프까지 내려가지 않아 웨이퍼 바닥이 이어진 채 남습니다.',
+        fix: '절단 깊이를 "테이프까지 살짝"으로 맞춥니다.',
+        basis: '공정 데이터: 1방향 절단 "블레이드를 테이프까지 살짝 내려"',
+        figure: 'saw-cut',
+      },
+      {
+        when: { feed: [3] },
+        severity: 'bad',
+        title: '가장자리 깨짐(칩핑)이 큼',
+        cause: '너무 빨리 밀면 절단면에 힘이 몰려 다이 가장자리가 깨집니다.',
+        fix: '이송 속도를 "보통" 이하로 낮춥니다.',
+        basis: '라인 실습 규칙표(lineSim.js)의 이송 속도 규칙',
+      },
+      {
+        when: { feed: [2], wafer: [1] },
+        severity: 'bad',
+        title: '얇은 웨이퍼 뒷면 깨짐',
+        cause: '웨이퍼가 얇을수록 뒷면 칩핑이 커지기 쉬운데, 빠른 이송이 충격을 더합니다.',
+        fix: '이송 속도를 낮추고, 고운 입자 블레이드를 씁니다.',
+        src: 'discoThin',
+        cite: '"As a workpiece grows thinner, backside chipping ... also tends to increase."',
+      },
+      {
+        when: { feed: [2], wafer: [0] },
+        severity: 'warn',
+        title: '칩핑 증가',
+        cause: '빠르게 자르면 생산량은 늘지만 절단면 가장자리가 깨질 가능성이 커집니다.',
+        fix: '품질이 우선이면 "보통"으로 낮춥니다.',
+        basis: '라인 실습 규칙표(lineSim.js)의 이송 속도 규칙',
+      },
+      {
+        when: { grit: [0], wafer: [1] },
+        severity: 'warn',
+        title: '뒷면 칩핑 증가 (입자가 굵음)',
+        cause: '얇은 웨이퍼를 보통 입자 블레이드로 자르면 충격이 커서 뒷면이 깨지기 쉽습니다.',
+        fix: '"고운 입자" 블레이드로 바꿉니다.',
+        src: 'discoThin',
+        cite: '"a #4800 blade (much finer grit) was employed; backside chipping has been greatly reduced."',
+      },
+      {
+        when: { grit: [1], wafer: [0] },
+        severity: 'warn',
+        title: '눈막힘(로딩) 위험',
+        cause: '고운 입자 블레이드는 절삭력이 약해, 막이나 패턴이 있는 웨이퍼에서 날이 막힐 수 있습니다.',
+        fix: '보통 두께 웨이퍼에는 보통 입자 블레이드를 씁니다.',
+        src: 'discoThin',
+        cite: '"these blades have reduced cutting power ... Clogging can result"',
+      },
+      {
+        when: { blade: [0] },
+        severity: 'warn',
+        title: '드레싱하지 않은 새 날',
+        cause: '새 날은 표면 금속을 걷어 내야 다이아몬드 입자가 드러나 절단면이 깨끗합니다.',
+        fix: '"드레싱 실행"을 누릅니다.',
+        basis: '공정 데이터: 알아둘 점 "드레싱"',
+      },
+      {
+        when: { blade: [2] },
+        severity: 'bad',
+        title: '블레이드 마모 한계',
+        cause: '날이 한계까지 닳아 칩핑이 늘고 절단 깊이를 유지하기 어렵습니다.',
+        fix: '"블레이드 교체" 후 드레싱합니다.',
+        basis: '공정 데이터: 알아둘 점 "마모와 교체"',
+        figure: 'blade-sem',
+      },
+      {
+        when: { coolant: [1] },
+        severity: 'warn',
+        title: '냉각 부족',
+        cause: '물이 적으면 열이 덜 빠지고 실리콘 가루가 표면에 남을 수 있습니다.',
+        fix: '냉각수를 "충분"으로 올립니다.',
+        basis: '공정 데이터: "물을 뿌려 열을 식히고 가루를 씻어 냄"',
+      },
+      {
+        when: { spindle: [0], feed: [2, 3] },
+        severity: 'warn',
+        title: '날에 걸리는 부하 증가',
+        cause: '회전이 느린데 빨리 밀면 입자 하나가 깎아야 할 양이 늘어 날에 부하가 커집니다.',
+        fix: '회전수를 "보통"으로 올리거나 이송을 낮춥니다.',
+        basis: '교육용 가설(검수 전). 출처는 이송·회전·입자 크기가 "closely interrelated"라고만 설명합니다.',
+      },
+      {
+        when: { depth: [2] },
+        severity: 'warn',
+        title: '테이프 과절단',
+        cause: '테이프를 깊이 자르면 칩을 잡아 주는 힘이 약해지고 블레이드에 테이프가 묻을 수 있습니다.',
+        fix: '절단 깊이를 "테이프까지 살짝"으로 줄입니다.',
+        basis: '교육용 가설(검수 전)',
+      },
+    ],
+    metrics: [
+      { id: 'throughput', name: '처리 속도', good: 'high', add: { feed: [25, 50, 80, 100] } },
+      { id: 'chipping', name: '칩핑 위험', good: 'low', base: 5, add: { feed: [0, 10, 35, 70], wafer: [0, 20], grit: [0, 0], blade: [15, 0, 45], spindle: [15, 0, 0, 0] }, extra: [{ when: { grit: [0], wafer: [1] }, add: 25 }, { when: { grit: [1], wafer: [1] }, add: -15 }] },
+      { id: 'load', name: '블레이드 부하', good: 'low', base: 10, add: { feed: [0, 15, 35, 60], grit: [0, 15], blade: [20, 0, 30], spindle: [20, 0, 0, 0] } },
+      { id: 'heat', name: '절단부 온도', good: 'low', base: 10, add: { coolant: [80, 40, 0], feed: [0, 5, 15, 25] } },
+    ],
+    sequence: [
+      { id: 'load', text: '웨이퍼 로딩 · 진공 척 고정' },
+      { id: 'spin', text: '주축 회전 시작: {spindle}' },
+      { id: 'align', text: '카메라 정렬: 스크라이브 라인 확인' },
+      { id: 'cut1', text: '1방향 절단 · 이송 {feed} · 깊이 {depth}' },
+      { id: 'rotate', text: '웨이퍼 90° 회전' },
+      { id: 'cut2', text: '2방향 절단' },
+      { id: 'clean', text: '세정·건조' },
+    ],
+    scenarios: [
+      {
+        id: 'thin',
+        title: '얇은 웨이퍼 로트가 들어왔다',
+        brief: '아주 얇게 간 웨이퍼 로트입니다. 뒷면이 깨지지 않게 조건을 맞춰 자르세요.',
+        preset: { wafer: 1 },
+        goal: { maxGrade: 'good' },
+        hint: '얇은 웨이퍼는 입자 크기와 이송 속도가 중요합니다.',
+      },
+      {
+        id: 'worn',
+        title: '블레이드가 다 닳았다',
+        brief: '앞 로트에서 칩핑이 늘었다는 보고가 있습니다. 블레이드를 점검하고 정상 품질로 자르세요.',
+        preset: { blade: 2 },
+        goal: { maxGrade: 'good' },
+        hint: '블레이드를 바꾼 뒤에도 바로 쓸 수 있는지 생각해 보세요.',
+      },
+      {
+        id: 'coolant',
+        title: '시작하자마자 알람이 울린다',
+        brief: '앞 작업자가 조건을 바꿔 두고 퇴근했습니다. 시작하면 장비가 멈춥니다. 원인을 찾아 정상으로 돌리세요.',
+        preset: { coolant: 0, spindle: 3 },
+        goal: { maxGrade: 'good' },
+        hint: '알람은 한 번에 하나씩 보입니다. 알람을 해결하고 다시 시작해 보세요.',
+      },
+      {
+        id: 'speed',
+        title: '생산량을 올려야 한다',
+        brief: '주문이 몰려 처리 속도를 80 이상으로 올려야 합니다. 불량 없이(경고까지는 허용) 가능한 조건을 찾으세요.',
+        preset: {},
+        goal: { maxGrade: 'warn', metric: { throughput: 80 } },
+        hint: '처리 속도와 칩핑 위험은 서로 맞바꾸는 관계입니다.',
+      },
+    ],
+  },
+
+  {
+    id: 'wire-bond',
+    processId: 'wire-bond',
+    name: '와이어 본더 (열초음파 볼 본딩)',
+    reviewed: false,
+    conditions: [
+      {
+        id: 'pad',
+        name: { en: 'Bond Pad', ko: '패드 상태' },
+        levels: [
+          { label: '깨끗함', pct: 100 },
+          { label: '산화막·오염 있음', pct: 40 },
+          { label: '얇은 패드 금속층', pct: 60 },
+        ],
+        best: 0,
+      },
+      {
+        id: 'tool',
+        name: { en: 'Capillary', ko: '캐필러리 상태' },
+        levels: [
+          { label: '정상', pct: 100 },
+          { label: '마모·오염', pct: 20 },
+        ],
+        best: 0,
+      },
+      {
+        id: 'wire',
+        name: { en: 'Wire Material', ko: '와이어 재료' },
+        levels: [
+          { label: '금(Au)', pct: 50 },
+          { label: '구리(Cu)', pct: 50 },
+        ],
+        best: 0,
+      },
+    ],
+    controls: [
+      {
+        id: 'temp',
+        name: { en: 'Bond Temperature', ko: '본딩 온도' },
+        levels: [
+          { label: '낮음', example: '80 °C', pct: 25, sourced: { value: '100 °C 미만 (범위 아래)', src: 'tpt', cite: 'Page 4 "Work piece Heat 100°C - 150°C"' } },
+          { label: '적정', example: '130 °C', pct: 55, sourced: { value: '100–150 °C', src: 'tpt', cite: 'Page 4 "Work piece Heat 100°C - 150°C"' } },
+          { label: '높음', example: '200 °C', pct: 90, sourced: { value: '150 °C 초과 (범위 위)', src: 'tpt', cite: 'Page 4 "Work piece Heat 100°C - 150°C"' } },
+        ],
+        best: 1,
+      },
+      {
+        id: 'force',
+        name: { en: 'Bond Force', ko: '본딩 하중' },
+        levels: [
+          { label: '약함', example: '10 g', pct: 10, sourced: { value: '20 gm 미만 (범위 아래)', src: 'tpt', cite: 'Page 4 "Force 20-200 gm"' } },
+          { label: '적정', example: '40 g', pct: 40, sourced: { value: '20–200 gm', src: 'tpt', cite: 'Page 4 "Force 20-200 gm"' } },
+          { label: '강함', example: '250 g', pct: 95, sourced: { value: '200 gm 초과 (범위 위)', src: 'tpt', cite: 'Page 4 "Force 20-200 gm"' } },
+        ],
+        best: 1,
+      },
+      {
+        id: 'power',
+        name: { en: 'Ultrasonic Power', ko: '초음파 출력' },
+        levels: [
+          { label: '약함', example: '0.5 W', pct: 10, sourced: { value: '1 W 미만 (범위 아래)', src: 'tpt', cite: 'Page 4 "Ultrasonic Energy 60 K Hz / 1 – 5 Watt"' } },
+          { label: '적정', example: '2 W', pct: 40, sourced: { value: '60 kHz · 1–5 W', src: 'tpt', cite: 'Page 4 "Ultrasonic Energy 60 K Hz / 1 – 5 Watt"' } },
+          { label: '강함', example: '6 W', pct: 95, sourced: { value: '5 W 초과 (범위 위)', src: 'tpt', cite: 'Page 4 "Ultrasonic Energy 60 K Hz / 1 – 5 Watt"' } },
+        ],
+        best: 1,
+      },
+      {
+        id: 'time',
+        name: { en: 'Bond Time', ko: '본딩 시간' },
+        levels: [
+          { label: '짧음', example: '10 ms', pct: 10, sourced: { value: '20 ms 미만 (범위 아래)', src: 'tpt', cite: 'Page 4 "Time 20-200 ms"' } },
+          { label: '적정', example: '50 ms', pct: 40, sourced: { value: '20–200 ms', src: 'tpt', cite: 'Page 4 "Time 20-200 ms"' } },
+          { label: '김', example: '300 ms', pct: 95, sourced: { value: '200 ms 초과 (범위 위)', src: 'tpt', cite: 'Page 4 "Time 20-200 ms"' } },
+        ],
+        best: 1,
+      },
+    ],
+    actions: [
+      { id: 'clean', label: '패드 세정', needs: { pad: 1 }, sets: { pad: 0 }, log: '패드 표면의 오염을 세정함' },
+      { id: 'tool', label: '캐필러리 교체', needs: { tool: 1 }, sets: { tool: 0 }, log: '새 캐필러리로 교체함' },
+    ],
+    rules: [
+      {
+        when: { pad: [1] },
+        severity: 'alarm',
+        at: 'ball1',
+        title: '볼이 패드에 붙지 않음 · 장비 정지',
+        cause: '패드 표면에 남은 산화막이나 오염이 금속끼리 맞닿는 것을 막습니다.',
+        fix: '"패드 세정" 후 다시 시작합니다.',
+        src: 'tpt',
+        cite: 'Page 22, 17.2 "residual silicon oxide or contamination on the bonding pad"',
+      },
+      {
+        when: { tool: [1] },
+        severity: 'alarm',
+        at: 'ball1',
+        title: '볼이 패드에 붙지 않음 · 장비 정지',
+        cause: '닳거나 더러운 캐필러리는 볼을 고르게 누르고 문지르지 못합니다.',
+        fix: '"캐필러리 교체" 후 다시 시작합니다.',
+        src: 'tpt',
+        cite: 'Page 22, 17.2 "Defective, worn or dirty bonding tool"',
+      },
+      {
+        when: { power: [0] },
+        severity: 'alarm',
+        at: 'ball1',
+        title: '볼이 패드에 붙지 않음 · 장비 정지',
+        cause: '초음파가 약하면 산화막을 깨지 못해 금속끼리 붙지 않습니다.',
+        fix: '초음파 출력을 "적정"으로 올립니다.',
+        src: 'tpt',
+        cite: 'Page 22, 17.2 "Ultrasonics too low or high"',
+        figure: 'ultrasonic',
+      },
+      {
+        when: { time: [0] },
+        severity: 'alarm',
+        at: 'ball1',
+        title: '볼이 패드에 붙지 않음 · 장비 정지',
+        cause: '본딩 시간이 짧아 접합이 완성되기 전에 캐필러리가 올라갑니다.',
+        fix: '본딩 시간을 "적정"으로 늘립니다.',
+        src: 'tpt',
+        cite: 'Page 22, 17.2 "Time too short"',
+      },
+      {
+        when: { force: [0] },
+        severity: 'alarm',
+        at: 'tail',
+        title: '2차 본드 뒤 와이어가 끊기지 않음 · 장비 정지',
+        cause: '하중이 약해 스티치가 충분히 눌리지 않아, 들어 올릴 때 와이어가 끊어지지 않고 따라 올라옵니다.',
+        fix: '본딩 하중을 "적정"으로 올립니다.',
+        src: 'tpt',
+        cite: 'Page 23, 17.8 "Force too low"',
+      },
+      {
+        when: { force: [0] },
+        severity: 'warn',
+        title: '볼이 덜 눌림 · 볼 위 목이 가늘어짐',
+        cause: '하중이 약하면 접촉 면적이 작고, 문지르는 동안 볼이 흔들려 목 부분이 약해집니다.',
+        fix: '본딩 하중을 "적정"으로 올립니다.',
+        src: 'tpt',
+        cite: 'Page 21, 16.1 "insufficient force", 16.4 "Insufficient force on the tool"',
+      },
+      {
+        when: { force: [2] },
+        severity: 'bad',
+        title: '패드 아래 손상(크레이터링)',
+        cause: '하중이 지나치면 본딩 헤드가 패드를 세게 때려 패드 아래 층이 깨집니다.',
+        fix: '본딩 하중을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "excessive bond head force"',
+      },
+      {
+        when: { power: [2] },
+        severity: 'bad',
+        title: '패드 아래 손상(크레이터링)',
+        cause: '초음파 출력이 지나치면 패드 아래 층에 균열이 생깁니다.',
+        fix: '초음파 출력을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Excessive power setting"',
+        figure: 'ultrasonic',
+      },
+      {
+        when: { force: [2], power: [2] },
+        severity: 'alarm',
+        at: 'tail',
+        title: '꼬리(테일)가 남지 않음 · 장비 정지',
+        cause: '2차 본드를 지나치게 눌러 와이어가 캐필러리 안에서 끊겨, 다음 볼을 만들 꼬리가 없습니다.',
+        fix: '하중과 초음파 출력을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 23, 17.7 "Overbonding at second bond ... Force too high ... Ultrasonics too high"',
+      },
+      {
+        when: { force: [2] },
+        severity: 'warn',
+        title: '볼이 패드보다 커짐',
+        cause: '너무 세게 누르면 볼이 넓게 퍼져 작은 패드를 벗어날 수 있습니다.',
+        fix: '본딩 하중을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 16.2 "excessive force and/or power setting"',
+      },
+      {
+        when: { time: [2] },
+        severity: 'bad',
+        title: '패드 아래 손상(크레이터링)',
+        cause: '본딩 시간이 너무 길면 패드가 오래 진동과 힘을 받습니다.',
+        fix: '본딩 시간을 "적정"으로 줄입니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Bond time too long"',
+      },
+      {
+        when: { temp: [2] },
+        severity: 'bad',
+        title: '패드 아래 손상(크레이터링)',
+        cause: '스테이지 온도가 너무 높으면 패드 아래가 손상되기 쉽습니다.',
+        fix: '본딩 온도를 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Bond stage temp is too high"',
+      },
+      {
+        when: { temp: [0] },
+        severity: 'warn',
+        title: '접합 불안정 (논스틱 위험)',
+        cause: '온도가 범위보다 낮으면 접합이 약하게 되어 일부 볼이 떨어질 수 있습니다.',
+        fix: '본딩 온도를 "적정"으로 올립니다.',
+        src: 'tpt',
+        cite: 'Page 22, 17.2 "Temperature too high or low"',
+      },
+      {
+        when: { pad: [2], force: [2] },
+        severity: 'bad',
+        title: '얇은 패드가 깨짐',
+        cause: '패드 금속층이 얇으면 같은 힘에도 아래 층이 쉽게 깨집니다.',
+        fix: '하중을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Bond pad metalization is too hard and/or thin"',
+      },
+      {
+        when: { pad: [2], power: [2] },
+        severity: 'bad',
+        title: '얇은 패드가 깨짐',
+        cause: '패드 금속층이 얇으면 강한 초음파에 아래 층이 쉽게 깨집니다.',
+        fix: '초음파 출력을 "적정"으로 낮춥니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Bond pad metalization is too hard and/or thin"',
+      },
+      {
+        when: { pad: [2] },
+        severity: 'warn',
+        title: '패드가 약해 조건 여유가 작음',
+        cause: '얇은 패드 금속층은 하중·초음파가 조금만 커져도 깨질 수 있습니다.',
+        fix: '모든 조건을 "적정"으로 유지하고, 결과를 자주 확인합니다.',
+        src: 'tpt',
+        cite: 'Page 21, 17.1 "Bond pad metalization is too hard and/or thin"',
+      },
+      {
+        when: { wire: [1], force: [0, 2] },
+        severity: 'warn',
+        title: '구리 와이어 조건 벗어남',
+        cause: '구리는 금보다 단단해 하중이 조금만 맞지 않아도 접합 품질이 흔들립니다.',
+        fix: '구리 와이어는 하중을 "적정"에 정확히 맞춥니다.',
+        basis: '공정 데이터: 알아둘 점 "와이어 재료"',
+      },
+      {
+        when: { wire: [1], power: [0, 2] },
+        severity: 'warn',
+        title: '구리 와이어 조건 벗어남',
+        cause: '구리는 금보다 단단해 초음파 출력이 조금만 맞지 않아도 접합 품질이 흔들립니다.',
+        fix: '구리 와이어는 초음파 출력을 "적정"에 정확히 맞춥니다.',
+        basis: '공정 데이터: 알아둘 점 "와이어 재료"',
+      },
+    ],
+    metrics: [
+      { id: 'throughput', name: '처리 속도', good: 'high', base: 10, add: { time: [90, 60, 15] } },
+      { id: 'strength', name: '접합 강도', good: 'high', base: 100, add: { force: [-45, 0, -15], power: [-60, 0, -20], time: [-50, 0, -10], temp: [-25, 0, -10], pad: [0, -60, -10], tool: [0, -50], wire: [0, -5] } },
+      { id: 'damage', name: '패드 손상 위험', good: 'low', base: 5, add: { force: [0, 0, 45], power: [0, 0, 45], time: [0, 0, 30], temp: [0, 0, 25], pad: [0, 0, 25] } },
+      { id: 'heat', name: '스테이지 온도', good: 'mid', base: 0, add: { temp: [25, 55, 90] } },
+    ],
+    sequence: [
+      { id: 'load', text: '리드프레임 로딩 · 히터 가열: {temp}' },
+      { id: 'efo', text: '전기 불꽃으로 와이어 끝에 볼 만들기' },
+      { id: 'ball1', text: '1차 본드: 하중 {force} · 초음파 {power} · 시간 {time}' },
+      { id: 'loop', text: '루프 만들기' },
+      { id: 'stitch', text: '2차 본드(스티치)' },
+      { id: 'tail', text: '와이어 끊고 꼬리 남기기' },
+      { id: 'repeat', text: '다음 와이어 반복' },
+    ],
+    scenarios: [
+      {
+        id: 'dirty',
+        title: '오염된 패드 로트',
+        brief: '앞 공정에서 패드가 오염된 로트가 넘어왔습니다. 볼이 붙지 않는 원인을 해결하세요.',
+        preset: { pad: 1 },
+        goal: { maxGrade: 'good' },
+        hint: '조건을 올리기 전에 패드 상태부터 보세요.',
+      },
+      {
+        id: 'thin-pad',
+        title: '패드 금속층이 얇은 칩',
+        brief: '패드 금속층이 얇은 새 제품입니다. 패드 아래가 깨지지 않게(불량 없이) 본딩하세요.',
+        preset: { pad: 2 },
+        goal: { maxGrade: 'warn' },
+        hint: '하중과 초음파를 키우면 붙기는 잘 붙지만 패드가 버티지 못합니다.',
+      },
+      {
+        id: 'copper',
+        title: '구리 와이어로 바꿨다',
+        brief: '원가 절감으로 금 와이어 대신 구리 와이어를 씁니다. 경고 없이 정상으로 본딩하세요.',
+        preset: { wire: 1, force: 2 },
+        goal: { maxGrade: 'good' },
+        hint: '구리는 단단해 조건 여유가 작습니다.',
+      },
+      {
+        id: 'tool',
+        title: '오래 쓴 캐필러리',
+        brief: '캐필러리를 오래 썼습니다. 볼이 붙지 않는 원인을 찾아 해결하세요.',
+        preset: { tool: 1, power: 2 },
+        goal: { maxGrade: 'good' },
+        hint: '출력을 올려서 해결하려 하면 다른 불량이 생깁니다.',
+      },
+    ],
+  },
+]
+
+export function findMachine(id) {
+  return machines.find((machine) => machine.id === id)
+}

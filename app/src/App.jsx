@@ -8,6 +8,7 @@ import ProcessMap from './components/ProcessMap.jsx'
 import FrontFlow from './components/FrontFlow.jsx'
 import ProcessQuery from './components/ProcessQuery.jsx'
 import ProcessSim from './components/ProcessSim.jsx'
+import MachineSim from './components/MachineSim.jsx'
 import AdvancedPackage from './components/AdvancedPackage.jsx'
 import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
@@ -128,6 +129,7 @@ export default function App() {
           />
         )}
         {screen === 'sim' && <ProcessSim />}
+        {screen === 'machine' && <MachineSim onOpenProcess={openProcess} />}
         {screen === 'line' && (
           <LineSim
             key={packageId}
