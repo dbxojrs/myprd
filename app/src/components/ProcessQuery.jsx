@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { findProcess, frontFlow, linkFlow, midFlow, STAGES } from '../data/processes.js'
+import { findProcess } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
@@ -10,9 +10,10 @@ import VideoLinks from './VideoLinks.jsx'
 import ProcessDetails from './ProcessDetails.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
 import ZoomStory from './ZoomStory.jsx'
+import ProcessSequence, { ProcessBreadcrumb } from './ProcessSequence.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
-export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onReport }) {
+export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onReport }) {
   const [query, setQuery] = useState('')
   const [result, setResult] = useState(() =>
     initialId ? { status: 'found', process: findProcess(initialId) } : null,
@@ -32,17 +33,12 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
     onOpenProcess(id)
     setResult({ status: 'found', process: findProcess(id) })
     setReported(false)
+    setQuery('')
+    window.scrollTo({ top: 0 })
   }
 
   const process = result?.status === 'found' ? result.process : null
   const prereqs = process ? recommendPrerequisites(process.id, completed) : []
-  const isBack = process?.stage === 'back'
-  const stageFlows = { front: frontFlow, link: linkFlow, mid: midFlow, back: pkg?.flow }
-  const flow = process && !process.repeatsAfter ? stageFlows[process.stage] : null
-  const flowIndex = process && flow ? flow.indexOf(process.id) : -1
-  const prev = flowIndex > 0 ? findProcess(flow[flowIndex - 1]) : null
-  const next = flowIndex >= 0 && flowIndex < flow.length - 1 ? findProcess(flow[flowIndex + 1]) : null
-
   return (
     <section className="screen">
       <form className="search" onSubmit={submit}>
@@ -76,6 +72,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
 
       {process && (
         <article className="card">
+          <ProcessBreadcrumb process={process} pkg={pkg} onOpenMap={onOpenMap} />
           <h3>
             <Term value={process.name} />
           </h3>
@@ -102,26 +99,6 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             </details>
           )}
 
-          {flowIndex >= 0 && (
-            <p className="position">
-              {isBack && <Term value={pkg.name} />} <Term value={STAGES[process.stage].name} /> 흐름에서 {flowIndex + 1}번째 공정 · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
-              {next ? <Term value={next.name} /> : '없음'}
-            </p>
-          )}
-
-          {process.repeatsAfter && (
-            <p className="position">
-              <Term value={STAGES.front.name} /> 사이사이 반복되는 공정 · 주로{' '}
-              {process.repeatsAfter.map((id, i) => (
-                <span key={id}>
-                  {i > 0 && ', '}
-                  <Term value={findProcess(id).name} compact />
-                </span>
-              ))}{' '}
-              뒤에 합니다
-            </p>
-          )}
-
           <h4>먼저 볼 공정</h4>
           {prereqs.length === 0 ? (
             <p className="muted">앞 공정을 모두 학습했거나 첫 공정입니다.</p>
@@ -134,6 +111,8 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
               ))}
             </div>
           )}
+
+          <ProcessSequence process={process} pkg={pkg} completed={completed} onOpen={open} onComplete={onComplete} />
 
           <div className="screen-foot">
             <button

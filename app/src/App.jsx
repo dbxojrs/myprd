@@ -11,22 +11,12 @@ import ProcessSim from './components/ProcessSim.jsx'
 import AdvancedPackage from './components/AdvancedPackage.jsx'
 import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
+import Home from './components/Home.jsx'
+import { MENU_GROUPS } from './components/menu.js'
 import { TermModeSwitch } from './lib/terms.jsx'
 
-// 메뉴는 실제 공정 순서(전공정 → 패키지 고르기 → 후공정)를 따릅니다.
-const NAV = [
-  { id: 'map', label: '전체 지도' },
-  { id: 'front', label: '전공정' },
-  { id: 'package', label: '패키지' },
-  { id: 'flow', label: '후공정 흐름도' },
-  { id: 'query', label: '공정 질문' },
-  { id: 'sim', label: '시뮬레이션' },
-  { id: 'line', label: '라인 실습' },
-  { id: 'advanced', label: 'Advanced' },
-]
-
 export default function App() {
-  const [screen, setScreen] = useState('map')
+  const [screen, setScreen] = useState('home')
   const [packageId, setPackageId] = useState(null)
   const [processId, setProcessId] = useState(null)
   const [lineProcessId, setLineProcessId] = useState(null)
@@ -58,28 +48,43 @@ export default function App() {
           <TermModeSwitch />
         </div>
         <nav className="nav">
-          {NAV.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={screen === item.id ? 'nav-item nav-active' : 'nav-item'}
-              aria-current={screen === item.id ? 'page' : undefined}
-              onClick={() => setScreen(item.id)}
-            >
-              {item.label}
-            </button>
+          <button
+            type="button"
+            className={screen === 'home' ? 'nav-item nav-active' : 'nav-item'}
+            aria-current={screen === 'home' ? 'page' : undefined}
+            onClick={() => setScreen('home')}
+          >
+            🏠 홈
+          </button>
+          {MENU_GROUPS.map((group) => (
+            <div key={group.id} className="nav-group" role="group" aria-label={group.label}>
+              <span className="nav-group-label">{group.label}</span>
+              {group.items.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={screen === item.id ? 'nav-item nav-active' : 'nav-item'}
+                  aria-current={screen === item.id ? 'page' : undefined}
+                  onClick={() => setScreen(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
       </header>
 
-      <FlowBar
-        pkg={pkg}
-        activeId={activeId}
-        mode={flowMode}
-        completed={completed}
-        onOpenProcess={openProcess}
-        onChoosePackage={() => setScreen('package')}
-      />
+      {screen !== 'home' && (
+        <FlowBar
+          pkg={pkg}
+          activeId={activeId}
+          mode={flowMode}
+          completed={completed}
+          onOpenProcess={openProcess}
+          onChoosePackage={() => setScreen('package')}
+        />
+      )}
 
       <p className="disclaimer">
         모든 설명과 시뮬레이션 규칙은 검수 전 교육용 초안입니다. 출처가 등록되기 전까지 학습 참고용으로만 쓰세요.
@@ -89,6 +94,7 @@ export default function App() {
         {screen === 'package' && (
           <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} />
         )}
+        {screen === 'home' && <Home pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} />}
         {screen === 'map' && (
           <ProcessMap
             pkg={pkg}
@@ -117,6 +123,7 @@ export default function App() {
             completed={completed}
             onComplete={(id) => setCompleted((list) => (list.includes(id) ? list : [...list, id]))}
             onOpenProcess={setProcessId}
+            onOpenMap={() => setScreen('map')}
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
         )}

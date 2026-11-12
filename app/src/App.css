@@ -1321,3 +1321,172 @@ input:focus-visible {
     transform: translateX(-50%);
   }
 }
+
+/* 위쪽 메뉴: 카테고리별 묶음 */
+.nav {
+  align-items: center;
+  row-gap: 8px;
+}
+
+.nav-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.nav-group-label {
+  padding: 0 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* 홈 화면 */
+.home-hero h2 {
+  margin-top: 0;
+}
+
+.home-progress {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  font-size: 0.85rem;
+}
+
+.home-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+}
+
+.home-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--good);
+}
+
+.home-group {
+  margin: 20px 0;
+}
+
+.home-group h3 {
+  margin: 0 0 2px;
+}
+
+.home-group > p {
+  margin: 0 0 8px;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.home-card:hover {
+  border-color: var(--accent);
+}
+
+.home-card span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* 공정 화면: 경로와 전체 순서 이동 */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.crumb-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: inherit;
+  text-decoration: underline;
+}
+
+.seq {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--accent-soft);
+}
+
+.seq-title {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.seq-bar {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.seq-bar li {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.seq-bar li.here {
+  background: var(--surface);
+}
+
+.seq-bar span {
+  flex: 1;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.seq-bar span.done { background: var(--good); }
+.seq-bar span.now { background: var(--accent); }
+
+.seq-cross {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
+.seq-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.seq-end {
+  font-weight: 600;
+}

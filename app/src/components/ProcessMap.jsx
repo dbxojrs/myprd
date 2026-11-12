@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { findProcess, frontFlow, frontSupport, linkFlow, midFlow, MAP_INTRO, STAGE_ORDER, STAGES } from '../data/processes.js'
-import { findPackage } from '../data/packages.js'
+import { backFlowPackage, findPackage } from '../data/packages.js'
 import { findAdvanced } from '../data/advanced.js'
 import { zoomStories } from '../data/zoomStories/index.js'
 import { ProcessIllustration } from './Illustrations.jsx'
@@ -8,9 +8,8 @@ import { Term } from '../lib/terms.jsx'
 
 // 전체 공정 지도. 큰 단계(전공정 → 연결 → 중간공정 → 후공정)를 순서대로 보여주고,
 // 단계를 누르면 그 안의 공정이 순서대로 펼쳐지며, 공정을 누르면 공정 설명 화면이 열립니다.
-// 후공정은 고른 패키지의 흐름을 쓰고, 흐름이 있는 패키지를 고르지 않았으면 QFN 흐름을 보여줍니다.
+// 후공정은 고른 패키지의 흐름을 쓰고, 흐름이 있는 패키지를 고르지 않았으면 기본 패키지(QFN) 흐름을 보여줍니다.
 
-const DEFAULT_PACKAGE = 'qfn'
 // 단계 카드에 그릴 대표 공정 그림
 const STAGE_ICON = { front: 'metallization', link: 'wafer-map', mid: 'bumping', back: 'molding' }
 
@@ -44,7 +43,7 @@ function Step({ id, index, completed, currentId, onOpenProcess, children }) {
 }
 
 export default function ProcessMap({ pkg, completed, currentId, onOpenProcess, onChoosePackage }) {
-  const backPkg = pkg?.flow ? pkg : findPackage(DEFAULT_PACKAGE)
+  const backPkg = backFlowPackage(pkg)
   const flows = { front: frontFlow, link: linkFlow, mid: midFlow, back: backPkg.flow }
   const [open, setOpen] = useState(() => findProcess(currentId)?.stage ?? 'front')
 
