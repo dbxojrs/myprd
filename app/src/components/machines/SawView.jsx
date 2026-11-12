@@ -47,8 +47,13 @@ export default function SawView({ values, running, findings }) {
         Array.from({ length: values.coolant === 2 ? 3 : 1 }, (_, i) => (
           <line key={i} x1={170 + i * 3} y1={77} x2={142 + i * 3} y2={100} className={running ? 'il-water ms-flow run' : 'il-water ms-flow'} />
         ))}
+      {/* 이송이 빠를수록 가루가 많이 튀고, 냉각수가 적을수록 절단부가 달아오릅니다. */}
       {running &&
-        [0, 1, 2].map((i) => <circle key={i} cx="138" cy="100" r="1.1" className="il-dust ms-dust" style={{ animationDelay: `${i * 0.25}s` }} />)}
+        Array.from({ length: [2, 3, 5, 8][values.feed] }, (_, i) => (
+          <circle key={i} cx="138" cy="100" r={values.feed >= 2 ? 1.4 : 1.1} className="il-dust ms-dust" style={{ animationDelay: `${i * 0.12}s` }} />
+        ))}
+      <circle cx="122" cy={cutBottom - 6} r="9" className="ms-heat-glow" style={{ opacity: [0.75, 0.35, 0][values.coolant] }} />
+      {values.coolant === 0 && <Label x={122} y={cutBottom - 18}>과열</Label>}
       {values.blade === 0 && <Label x={60} y={40}>새 날 (드레싱 전)</Label>}
       {values.blade === 2 && <Label x={60} y={40}>날이 닳아 지름이 줄었음</Label>}
       <Label x={60} y={52}>{values.wafer === 1 ? '얇은 웨이퍼' : '보통 두께 웨이퍼'}</Label>

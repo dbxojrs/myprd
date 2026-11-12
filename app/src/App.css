@@ -1965,3 +1965,5 @@ p.ms-log {
   font-weight: 700;
   color: var(--muted);
 }
+
+.ms-heat-glow { fill: var(--bad); transition: opacity 0.4s; }

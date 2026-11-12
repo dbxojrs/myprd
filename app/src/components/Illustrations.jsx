@@ -4,45 +4,14 @@
 // false이면 공정이 끝난 모습을 멈춘 그림으로 그립니다.
 
 import { useState } from 'react'
+import { Anim, Arrow, Label, Move, StepCaption, Visible } from './illustrationKit.jsx'
+import { animDrawings, ANIM_IDS } from './anim/index.js'
 
-export const Arrow = ({ x1, y1, x2, y2 }) => (
-  <g className="il-arrow">
-    <line x1={x1} y1={y1} x2={x2} y2={y2} />
-    <polygon
-      points={(() => {
-        const angle = Math.atan2(y2 - y1, x2 - x1)
-        const s = 5
-        const p1 = [x2 - s * Math.cos(angle - 0.5), y2 - s * Math.sin(angle - 0.5)]
-        const p2 = [x2 - s * Math.cos(angle + 0.5), y2 - s * Math.sin(angle + 0.5)]
-        return `${x2},${y2} ${p1.join(',')} ${p2.join(',')}`
-      })()}
-    />
-  </g>
-)
+export { Anim, Arrow, Label, Move, StepCaption, Visible }
+
 
 // ── 쏘잉 그림: 옆에서 본 모습(왼쪽)과 위에서 본 모습(오른쪽)을 같은 시간에 맞춰 움직입니다. ──
 // 블레이드는 자르는 방향(왼쪽 → 오른쪽)으로 돌며 나아가고, 한 줄을 다 자르면 들어 올려 다음 줄로 옮깁니다.
-
-// [시각(0–1), 값] 목록을 SMIL의 values·keyTimes로 바꿉니다. 같은 시각은 아주 조금씩 밀어 순서를 지킵니다.
-function track(points) {
-  const pts = [...points]
-  if (pts[0][0] > 0) pts.unshift([0, pts[0][1]])
-  if (pts[pts.length - 1][0] < 1) pts.push([1, pts[pts.length - 1][1]])
-  const times = []
-  pts.forEach(([t], i) => times.push(i > 0 && t <= times[i - 1] ? times[i - 1] + 0.0005 : t))
-  return {
-    values: pts.map(([, v]) => v).join(';'),
-    keyTimes: times.map((t) => +Math.min(t, 1).toFixed(4)).join(';'),
-  }
-}
-
-export const Anim = ({ attr, points, dur }) => (
-  <animate attributeName={attr} {...track(points)} dur={dur} repeatCount="indefinite" />
-)
-
-export const Move = ({ points, dur }) => (
-  <animateTransform attributeName="transform" type="translate" {...track(points)} dur={dur} repeatCount="indefinite" />
-)
 
 // 옆에서 본 블레이드: 원판 면이 보입니다. 회전을 보여주려고 살 두 개를 돌립니다.
 const SideBlade = ({ cy, r, animate }) => (
@@ -181,48 +150,6 @@ function sawDrawing({ layers, cutBottom, topShape, streets, gridLines, cutClass 
     )
   }
 }
-
-export const Label = ({ x, y, children, compact }) =>
-  compact ? null : (
-    <text x={x} y={y} className="il-label" textAnchor="middle">
-      {children}
-    </text>
-  )
-
-// 움직이는 동안 지금 어느 세부 단계인지 아래에 자막으로 보여줍니다. items: [시작, 끝, 글자] (0–1)
-export const StepCaption = ({ items, dur, x = 60, y = 76 }) =>
-  items.map(([from, to, text]) => (
-    <text key={text} x={x} y={y} className="il-label il-step" textAnchor="middle" opacity="0">
-      {text}
-      <Anim
-        attr="opacity"
-        points={[
-          [from, 0],
-          [from + 0.005, 1],
-          [to, 1],
-          ...(to < 1 ? [[to + 0.005, 0]] : []),
-        ]}
-        dur={dur}
-      />
-    </text>
-  ))
-
-// 일정 시간 동안만 보이는 묶음
-export const Visible = ({ from, to, dur, children }) => (
-  <g opacity="0">
-    {children}
-    <Anim
-      attr="opacity"
-      points={[
-        [from, 0],
-        [from + 0.005, 1],
-        [to, 1],
-        ...(to < 1 ? [[to + 0.005, 0]] : []),
-      ]}
-      dur={dur}
-    />
-  </g>
-)
 
 const processDrawings = {
   'wafer-make': (c) => (
@@ -1061,7 +988,7 @@ export function AdvancedIllustration({ id }) {
 }
 
 // 움직이는 개념도가 있는 공정
-const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test'])
+const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test', ...ANIM_IDS])
 
 // 옆·위 두 모습을 나란히 그리는 공정(작게 그릴 때는 옆에서 본 모습만)
 const WIDE = new Set(['wafer-saw', 'package-saw'])
@@ -1088,7 +1015,7 @@ export function Playable({ enabled, render }) {
 
 // still이 true이면 버튼 없이 멈춘 그림만 그립니다(검수표 그림 내보내기용).
 export function ProcessIllustration({ id, compact = false, still = false }) {
-  const draw = processDrawings[id]
+  const draw = animDrawings[id] ?? processDrawings[id]
   if (!draw) return null
 
   return (

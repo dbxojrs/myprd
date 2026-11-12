@@ -150,7 +150,11 @@ export default function MachineSim({ onOpenProcess }) {
   const arrivals = line ? incoming(machineId, lot).notes : []
   const running = phase === 'running'
   const status = running ? 'running' : phase === 'finished' && result ? result.grade : 'idle'
-  const liveFindings = phase === 'finished' && result ? result.findings : []
+  // 그림에 보여줄 결과: 가동 중에는 공정이 절반쯤 진행됐을 때부터 증상이 나타나고, 끝나면 모두 보입니다.
+  const liveFindings =
+    phase === 'finished' && result ? result.findings : running && result && step >= Math.ceil(result.stopIndex / 2) ? result.findings : []
+  // 장비 그림은 조건을 바꾸는 즉시 그 조건대로 움직입니다. 알람으로 멈췄을 때만 멈춥니다.
+  const moving = !(phase === 'finished' && result?.alarm)
 
   const resetRun = (message) => {
     setPhase('idle')
@@ -393,7 +397,10 @@ export default function MachineSim({ onOpenProcess }) {
               <span className={`ms-status ${status}`}>{STATUS_TEXT[status]}</span>
               <TowerLamp status={status} />
             </div>
-            <MachineView machine={machine} values={values} running={running} findings={liveFindings} />
+            <MachineView machine={machine} values={values} running={moving} findings={liveFindings} />
+            <p className="muted ms-note">
+              {running ? '가동 중 · 이상이 있으면 그림에 증상이 나타납니다' : phase === 'finished' ? '빨간 표시가 문제가 생긴 부위입니다' : '조건을 바꾸면 장비 움직임이 바로 바뀝니다 · START로 가동'}
+            </p>
             <div className="ms-gauges">
               {machine.metrics.map((m) => (
                 <Gauge key={m.id} metric={m} value={metrics[m.id]} />
