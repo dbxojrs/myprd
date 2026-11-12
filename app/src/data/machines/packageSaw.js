@@ -195,14 +195,15 @@ export default {
     { id: 'melt', name: '리드 녹음 위험', good: 'low', base: 0, add: { plating: [0, 30], spindle: [0, 20, 45], coolant: [30, 15, -15] } },
     { id: 'dimension', name: '치수 정확도', good: 'high', base: 100, add: { blade: [0, -50], bladeType: [0, 0, -30], strip: [0, -60] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '스트립 로딩 · 진공 고정' },
-    { id: 'spin', text: '주축 회전 시작: {spindle} · 냉각수 {coolant}' },
-    { id: 'align', text: '카메라 정렬: 절단 위치 인덱스 확인' },
-    { id: 'cut1', text: '1방향 절단: {bladeType} · 이송 {feed}' },
-    { id: 'rotate', text: '스트립 90° 회전' },
-    { id: 'cut2', text: '2방향 절단' },
-    { id: 'clean', text: '세정·건조 후 외관 검사' },
+    { id: 'load', text: '스트립 로딩 · 진공 고정', scene: '몰딩이 끝난 스트립을 지그에 올려 진공으로 고정합니다.' },
+    { id: 'spin', text: '주축 회전 시작: {spindle} · 냉각수 {coolant}', scene: '블레이드를 돌리기 시작하고 냉각수를 뿌립니다.' },
+    { id: 'align', text: '카메라 정렬: 절단 위치 인덱스 확인', scene: '카메라로 패키지 사이 절단 위치를 찾습니다.' },
+    { id: 'cut1', text: '1방향 절단: {bladeType} · 이송 {feed}', scene: '블레이드가 몰딩 수지와 구리 리드프레임을 함께 한 줄씩 자릅니다.' },
+    { id: 'rotate', text: '스트립 90° 회전', scene: '스트립을 90° 돌려 나머지 방향을 자를 준비를 합니다.' },
+    { id: 'cut2', text: '2방향 절단', scene: '나머지 방향을 잘라 개별 패키지로 나눕니다.' },
+    { id: 'clean', text: '세정·건조 후 외관 검사', scene: '가루를 씻어 내고 말린 뒤, 패키지 외관을 확인합니다.' },
   ],
   scenarios: [
     {

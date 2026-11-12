@@ -163,14 +163,15 @@ export default {
     { id: 'yieldLoss', name: '수율 손실', good: 'low', base: 0, add: { limit: [0, 5, 45], force: [25, 0, 10], socket: [0, 40] } },
     { id: 'contact', name: '접촉 안정도', good: 'high', base: 100, add: { force: [-40, 0, -10], socket: [0, -60] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'pick', text: '핸들러가 패키지 집기' },
-    { id: 'insert', text: '소켓에 넣고 누르기: {force}' },
-    { id: 'contact', text: '접촉 확인' },
-    { id: 'test', text: '전기 검사: {items} · 기준 {limit}' },
-    { id: 'temp', text: '온도 바꿔 검사: {temp}' },
-    { id: 'sort', text: '분류: 양품·불량' },
-    { id: 'pack', text: '외관 검사·포장' },
+    { id: 'pick', text: '핸들러가 패키지 집기', scene: '핸들러(자동 운반 장비)가 검사할 패키지를 집습니다.' },
+    { id: 'insert', text: '소켓에 넣고 누르기: {force}', scene: '패키지를 테스트 소켓에 넣고 눌러 단자를 맞닿게 합니다.' },
+    { id: 'contact', text: '접촉 확인', scene: '단자와 소켓 핀이 제대로 맞닿았는지 확인합니다.' },
+    { id: 'test', text: '전기 검사: {items} · 기준 {limit}', scene: '테스터가 전원을 넣고 신호를 보내, 칩이 규격대로 동작하는지 확인합니다.' },
+    { id: 'temp', text: '온도 바꿔 검사: {temp}', scene: '필요하면 뜨겁거나 차가운 조건에서 다시 검사해 실제 사용 환경에서도 동작하는지 봅니다.' },
+    { id: 'sort', text: '분류: 양품·불량', scene: '검사 결과에 따라 양품과 불량으로 나눕니다.' },
+    { id: 'pack', text: '외관 검사·포장', scene: '단자 모양과 표시를 확인한 뒤 트레이나 릴 테이프에 담아 포장합니다.' },
   ],
   scenarios: [
     {

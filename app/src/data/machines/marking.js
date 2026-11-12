@@ -175,13 +175,14 @@ export default {
     { id: 'depth', name: '새긴 깊이', good: 'mid', base: 0, add: { power: [10, 35, 65], passes: [0, 25, 45], speed: [15, 0, -10] } },
     { id: 'chipRisk', name: '칩 손상 위험', good: 'low', base: 0, add: { power: [0, 5, 40], passes: [0, 20, 35], margin: [0, 30] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '몰딩된 스트립 로딩' },
-    { id: 'align', text: '카메라로 패키지 위치 맞추기 · 초점 {focus}' },
-    { id: 'power-check', text: '레이저 출력 확인: {power}' },
-    { id: 'mark', text: '마킹: 출력 {power} · 속도 {speed} · {passes}' },
-    { id: 'inspect', text: '판독 검사: 빠진 글자·번짐 확인' },
-    { id: 'unload', text: '스트립 배출' },
+    { id: 'load', text: '몰딩된 스트립 로딩', scene: '몰딩이 끝난 스트립을 마킹 장비에 올립니다.' },
+    { id: 'align', text: '카메라로 패키지 위치 맞추기 · 초점 {focus}', scene: '카메라로 스트립의 위치를 확인해 패키지마다 새길 자리를 맞춥니다.' },
+    { id: 'power-check', text: '레이저 출력 확인: {power}', scene: '새기기 전에 레이저 출력이 고른 세기로 나오는지 확인합니다.' },
+    { id: 'mark', text: '마킹: 출력 {power} · 속도 {speed} · {passes}', scene: '레이저를 패키지 표면에 비추며 움직여 수지를 얇게 태우거나 녹여 글자를 새깁니다.' },
+    { id: 'inspect', text: '판독 검사: 빠진 글자·번짐 확인', scene: '카메라로 글자가 잘 읽히는지, 빠진 글자나 번짐이 없는지 확인합니다.' },
+    { id: 'unload', text: '스트립 배출', scene: '다 새긴 스트립을 장비 밖으로 내보냅니다.' },
   ],
   scenarios: [
     {

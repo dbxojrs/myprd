@@ -1,7 +1,16 @@
-import { has, Label } from './parts.jsx'
+import { has, Label, stageTools } from './parts.jsx'
 
 // 레이저 마커 그림. 왼쪽은 장비 옆모습, 오른쪽은 새긴 자리 단면입니다.
-export default function MarkerView({ values, running, findings }) {
+// 가동 중에는 단계(stage)마다 장면이 바뀝니다(단계 설명 글은 data/machines/marking.js의 sequence.scene):
+//   load 스트립이 들어옴 → align 카메라 십자선이 패키지마다 자리를 맞춤(초점이 어긋나면 흐림)
+//   → power-check 출력계에 레이저를 쏴 세기를 확인 → mark 빔이 지나가며 글자가 한 자씩 새겨지고 홈이 파임
+//   → inspect 카메라가 글자를 읽음 → unload 스트립이 나감
+const ORDER = ['load', 'align', 'power-check', 'mark', 'inspect', 'unload']
+const PACKS = [14, 46, 78, 110]
+const LETTERS = ['P', 'K', 'G']
+
+export default function MarkerView({ values, running, findings, stage = null }) {
+  const s = stageTools(stage, ORDER)
   const scan = ['3s', '1.8s', '0.9s'][values.speed]
   const beamW = [1, 2, 3][values.power]
   const spot = values.focus === 1 ? 2 : 6
@@ -11,7 +20,21 @@ export default function MarkerView({ values, running, findings }) {
   const chipDamage = has(findings, ['칩 손상'])
   const broken = has(findings, ['끊김', '흐림', '번짐'])
   const weak = has(findings, ['강도 저하', '깊게 파임', '깊어짐'])
+  const lowPower = has(findings, ['출력 부족'])
   const markClass = broken ? 'ms-mk-mark faint' : 'ms-mk-mark'
+
+  // 단계별 상태
+  const strip = s.at('load') ? 'coming' : s.at('unload') ? 'going' : s.at('start') || s.done('unload') ? 'away' : ''
+  const aligning = s.at('align')
+  const checking = s.at('power-check')
+  const marking = s.at('mark')
+  const inspecting = s.at('inspect')
+  const marked = s.idle || s.done('mark')
+  // 새기기: 빔이 패키지 4개를 지나가는 시간(속도가 빠를수록 짧음), 겹쳐 새기기 횟수만큼 되풀이
+  const sweepK = [0.9, 0.7, 0.45][values.speed]
+  const passes = values.passes + 1
+  const showResult = s.idle || s.done('mark')
+
   return (
     <svg viewBox="0 0 240 140" className="ms-view" role="img" aria-label="레이저 마커 그림">
       {/* 레이저 헤드와 렌즈 */}
@@ -20,21 +43,80 @@ export default function MarkerView({ values, running, findings }) {
       <rect x="54" y="32" width="26" height="5" rx="2" className="il-oxide" />
       {values.lens === 1 && [58, 64, 71, 76].map((x) => <circle key={x} cx={x} cy="34.5" r="1.2" className="ms-dirt" />)}
       <Label x={100} y={38} anchor="start">{values.lens === 1 ? '렌즈 오염' : '렌즈'}</Label>
-      {/* 빔: 가공 중에만 켜지고, 좌우로 훑습니다 */}
-      <g className={running ? 'ms-table run' : 'ms-table'} style={{ '--dur': scan }}>
-        {running && <line x1="67" y1="37" x2="67" y2={94 - spot} className="il-laser" style={{ strokeWidth: beamW }} />}
-        {running && <ellipse cx="67" cy="94" rx={spot} ry="1.6" className="ms-mk-spot" />}
-      </g>
-      {/* 스트립과 패키지 */}
-      <rect x="10" y="100" width="130" height="8" className="il-frame" />
-      {[14, 46, 78, 110].map((x) => (
-        <g key={x}>
-          <rect x={x} y="94" width="28" height="6" className="il-mold" />
-          <text x={x + 14} y="98.8" textAnchor="middle" className={markClass}>
-            {broken ? 'P K' : 'PKG'}
-          </text>
+
+      {/* 대기 중 미리보기: 빔이 좌우로 훑습니다 */}
+      {s.idle && (
+        <g className={running ? 'ms-table run' : 'ms-table'} style={{ '--dur': scan }}>
+          {running && <line x1="67" y1="37" x2="67" y2={94 - spot} className="il-laser" style={{ strokeWidth: beamW }} />}
+          {running && <ellipse cx="67" cy="94" rx={spot} ry="1.6" className="ms-mk-spot" />}
         </g>
-      ))}
+      )}
+
+      {/* 출력 확인: 출력계에 빔을 쏘아 세기 막대가 차오름 */}
+      {checking && (
+        <g>
+          <line x1="67" y1="37" x2="67" y2="58" className="il-laser" style={{ strokeWidth: beamW }} />
+          <rect x="52" y="58" width="30" height="12" rx="2" className="il-tool" />
+          <rect x="55" y="62" width="24" height="4" className="ms-st-mk-meter" />
+          <rect
+            x="55"
+            y="62"
+            width={24 * [0.35, 0.65, 0.95][values.power] * (values.lens === 1 ? 0.55 : 1)}
+            height="4"
+            className={`ms-st-mk-level${lowPower ? ' low' : ''}`}
+          />
+          <Label x={86} y={66} anchor="start">출력계 · {['약함', '적정', '강함'][values.power]}</Label>
+        </g>
+      )}
+
+      {/* 새기기: 렌즈에서 나온 빔이 기울어지며 패키지를 따라 지나감 */}
+      {marking && (
+        <g style={{ '--sweep': `calc(var(--step) * ${sweepK / passes})`, '--passes': passes }}>
+          <line x1="67" y1="37" x2="67" y2="94" className="il-laser ms-st-mk-fan" style={{ strokeWidth: beamW }} />
+          <ellipse cx="28" cy="94" rx={spot} ry="1.6" className="ms-mk-spot ms-st-mk-beam" />
+        </g>
+      )}
+
+      {/* 스트립과 패키지 */}
+      <g className={`ms-st-mk-strip ${strip}`}>
+        <rect x="10" y="100" width="130" height="8" className="il-frame" />
+        {PACKS.map((x, i) => (
+          <g key={x}>
+            <rect x={x} y="94" width="28" height="6" className="il-mold" />
+            {(marked || marking) && (
+              <text x={x + 14} y="98.8" textAnchor="middle" className={markClass}>
+                {LETTERS.map((ch, j) => (
+                  <tspan
+                    key={j}
+                    className={marking ? 'ms-st-mk-letter' : undefined}
+                    style={marking ? { animationDelay: `calc(var(--step) * ${(sweepK / passes) * ((i * 3 + j + 0.5) / 12)})` } : undefined}
+                  >
+                    {broken && j === 1 ? ' ' : ch}
+                  </tspan>
+                ))}
+              </text>
+            )}
+            {inspecting && broken && <rect x={x - 1} y="92.5" width="30" height="9" rx="1.5" className="ms-st-mk-bad" />}
+          </g>
+        ))}
+      </g>
+
+      {/* 카메라: 정렬·판독 검사 때 십자선이 패키지마다 지나감 */}
+      {(aligning || inspecting) && (
+        <g className="ms-st-mk-cam">
+          <g className={values.focus === 1 || inspecting ? '' : 'ms-st-mk-blur'}>
+            <circle cx="28" cy="97" r={values.focus === 1 || inspecting ? 5 : 8} className="ms-st-mk-cross" />
+            <line x1="20" y1="97" x2="36" y2="97" className="ms-st-mk-cross" />
+            <line x1="28" y1="89" x2="28" y2="105" className="ms-st-mk-cross" />
+          </g>
+        </g>
+      )}
+      {(aligning || inspecting) && <rect x="100" y="12" width="20" height="12" rx="2" className="il-tool" />}
+      {(aligning || inspecting) && <Label x={110} y={9}>카메라</Label>}
+      {aligning && <Label x={75} y={86}>자리 맞추는 중 · 초점 {values.focus === 1 ? '맞음' : '어긋남'}</Label>}
+      {inspecting && <Label x={75} y={86}>{broken ? '판독 실패 · 글자가 흐리거나 끊김' : '판독 검사 · 글자 읽힘'}</Label>}
+      {marking && <Label x={75} y={86}>새기는 중 · {['느림', '적정', '빠름'][values.speed]} · {passes}회</Label>}
+
       <Label x={75} y={120}>몰딩된 스트립 · 초점 {values.focus === 1 ? '맞음' : '어긋남'}</Label>
 
       {/* 단면: 몰드, 칩, 새긴 홈 */}
@@ -42,13 +124,21 @@ export default function MarkerView({ values, running, findings }) {
       <rect x="156" y={moldTop} width="80" height={100 - moldTop} className="il-mold" />
       <rect x="168" y={chipTop} width="56" height="10" className="il-die" />
       <path d="M 176 92 C 180 70, 214 70, 218 92" className="il-wire" />
-      <rect x="184" y={moldTop} width="24" height={depth} className={weak ? 'ms-mk-groove deep' : 'ms-mk-groove'} />
+      {(marked || marking) && (
+        <rect
+          x="184"
+          y={moldTop}
+          width="24"
+          height={depth}
+          className={`${weak && showResult ? 'ms-mk-groove deep' : 'ms-mk-groove'}${marking ? ' ms-st-mk-dig' : ''}`}
+        />
+      )}
       <line x1="230" y1={moldTop} x2="230" y2={chipTop} className="il-dim" />
       <Label x={233} y={moldTop - 3} anchor="end">{values.margin === 1 ? '얇은 몰드' : '몰드 여유'}</Label>
       <rect x="156" y="100" width="80" height="6" className="il-frame" />
-      {chipDamage && <path d="M190 82 l3 4 l3 -3 l3 5 l3 -4" className="ms-defect-line" />}
-      {chipDamage && <circle cx="196" cy="84" r="8" className="il-warn-ring" />}
-      {weak && !chipDamage && <circle cx="196" cy={moldTop + depth / 2} r="10" className="il-warn-ring" />}
+      {chipDamage && showResult && <path d="M190 82 l3 4 l3 -3 l3 5 l3 -4" className="ms-defect-line" />}
+      {chipDamage && showResult && <circle cx="196" cy="84" r="8" className="il-warn-ring" />}
+      {weak && !chipDamage && showResult && <circle cx="196" cy={moldTop + depth / 2} r="10" className="il-warn-ring" />}
     </svg>
   )
 }

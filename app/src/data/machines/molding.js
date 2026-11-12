@@ -216,14 +216,15 @@ export default {
     { id: 'void', name: '보이드·미충전 위험', good: 'low', base: 5, add: { ram: [30, 0, 0, 5], pressure: [30, 0, 0], temp: [20, 0, 15], emc: [0, 30, 40] } },
     { id: 'heat', name: '금형 온도', good: 'mid', base: 0, add: { temp: [30, 55, 85] } },
   ],
+  // scene: 가동 중 장비 그림 아래에 보여주는 그 단계 설명(검수 전, 공정 데이터 요약).
   sequence: [
-    { id: 'load', text: '스트립 로딩 · 금형 닫기' },
-    { id: 'preheat', text: '금형 가열: {temp}' },
-    { id: 'melt', text: 'EMC 태블릿 넣고 녹이기' },
-    { id: 'transfer', text: '플런저로 밀어 넣기 · 속도 {ram} · 압력 {pressure}' },
-    { id: 'cure', text: '금형 안에서 경화: {cureTime}' },
-    { id: 'open', text: '금형 열고 꺼내기' },
-    { id: 'postcure', text: '오븐 후경화' },
+    { id: 'load', text: '스트립 로딩 · 금형 닫기', scene: '와이어 본딩이 끝난 스트립을 금형 아래판에 올리고 금형을 닫습니다.' },
+    { id: 'preheat', text: '금형 가열: {temp}', scene: '금형을 고른 온도로 데웁니다.' },
+    { id: 'melt', text: 'EMC 태블릿 넣고 녹이기', scene: 'EMC 태블릿을 포트에 넣으면 금형 열에 녹아 끈적한 액체가 됩니다.' },
+    { id: 'transfer', text: '플런저로 밀어 넣기 · 속도 {ram} · 압력 {pressure}', scene: '플런저가 녹은 수지를 통로(런너)를 따라 칩이 있는 빈 공간(캐비티)으로 밀어 넣습니다.' },
+    { id: 'cure', text: '금형 안에서 경화: {cureTime}', scene: '금형 안에서 잠시 기다리면 수지가 열로 굳습니다.' },
+    { id: 'open', text: '금형 열고 꺼내기', scene: '금형을 열어 수지로 감싼 스트립을 꺼냅니다.' },
+    { id: 'postcure', text: '오븐 후경화', scene: '오븐에서 몇 시간 더 데워 수지를 완전히 굳힙니다.' },
   ],
   scenarios: [
     {

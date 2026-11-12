@@ -2498,4 +2498,194 @@ p.ms-log {
   .ms-st-wb-draw { animation: none; }
   .ms-st-bg-lift,
   .ms-st-sw-arm { transition: none; }
+/* 장비 단계 장면: 후공정 2 (몰딩 · 레이저 마킹 · 패키지 쏘잉 · 최종 테스트) */
+/* 몰딩 프레스 */
+.ms-st-mp-warm { animation: ms-st-warm calc(var(--step) * 0.8) ease-in both; }
+@keyframes ms-st-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-st-mp-top.up { transform: translateY(-14px); }
+.ms-st-mp-top.closing { animation: ms-st-mp-close calc(var(--step) * 0.8) ease-in-out both; }
+.ms-st-mp-top.opening { animation: ms-st-mp-close calc(var(--step) * 0.8) ease-in-out reverse both; }
+@keyframes ms-st-mp-close {
+  0%, 20% { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
+}
+.ms-st-mp-strip.lifting { animation: ms-st-mp-lift calc(var(--step) * 0.6) ease-out 0.4s both; }
+.ms-st-mp-strip.lifted { transform: translateY(-8px); }
+@keyframes ms-st-mp-lift { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+.ms-st-mp-filling { animation: ms-st-mp-fill calc(var(--step) * var(--push)) linear both; }
+@keyframes ms-st-mp-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ms-st-mp-full { transform: scaleX(1); }
+.ms-st-mp-curing { animation: ms-st-mp-cure var(--step) ease-in both; }
+@keyframes ms-st-mp-cure { to { opacity: 0.8; fill: var(--muted); } }
+.ms-st-mp-cured { opacity: 0.8; fill: var(--muted); }
+.ms-st-mp-heat { animation: ms-st-rise 0.9s ease-out infinite; }
+@keyframes ms-st-rise {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-6px); opacity: 0; }
+}
+.ms-st-mp-melt {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-mp-melt var(--step) ease-in both;
+}
+@keyframes ms-st-mp-melt { to { transform: scaleY(0.3); opacity: 0.4; } }
+.ms-st-mp-pool { animation: ms-st-fadein var(--step) ease-in both; }
+@keyframes ms-st-fadein { from { opacity: 0; } }
+.ms-st-mp-push { animation: ms-st-mp-push calc(var(--step) * var(--push)) linear both; }
+.ms-st-mp-pushed { transform: translateY(18px); }
+@keyframes ms-st-mp-push { from { transform: translateY(0); } to { transform: translateY(18px); } }
+.ms-st-mp-runflow { stroke: var(--muted); stroke-dasharray: 3 2; animation: ms-flow 0.3s linear infinite; }
+.ms-st-mp-oven { fill: var(--warn-soft); fill-opacity: 0.35; stroke: var(--warn); stroke-width: 1.2; stroke-dasharray: 4 2; }
+
+/* 레이저 마커 */
+.ms-st-mk-strip.away { transform: translateX(-150px); }
+.ms-st-mk-strip.coming { animation: ms-st-mk-in calc(var(--step) * 0.8) ease-out both; }
+.ms-st-mk-strip.going { animation: ms-st-mk-in calc(var(--step) * 0.8) ease-in reverse both; }
+@keyframes ms-st-mk-in { from { transform: translateX(-150px); } to { transform: translateX(0); } }
+.ms-st-mk-cross { fill: none; stroke: var(--accent); stroke-width: 0.8; }
+.ms-st-mk-blur .ms-st-mk-cross { stroke-dasharray: 2 1.5; opacity: 0.6; }
+.ms-st-mk-cam { animation: ms-st-mk-cam var(--step) ease-in-out both; }
+@keyframes ms-st-mk-cam {
+  0%, 12% { transform: translateX(0); }
+  25%, 37% { transform: translateX(32px); }
+  50%, 62% { transform: translateX(64px); }
+  75%, 100% { transform: translateX(96px); }
+}
+.ms-st-mk-meter { fill: var(--border); }
+.ms-st-mk-level {
+  fill: var(--good);
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  animation: ms-st-grow-x calc(var(--step) * 0.6) ease-out 0.2s both;
+}
+.ms-st-mk-level.low { fill: var(--bad); }
+@keyframes ms-st-grow-x { from { transform: scaleX(0); } }
+.ms-st-mk-beam { animation: ms-st-mk-sweep var(--sweep) linear var(--passes) both; }
+@keyframes ms-st-mk-sweep {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(24px); }
+  50% { transform: translateX(48px); }
+  75% { transform: translateX(72px); }
+  100% { transform: translateX(96px); }
+}
+/* 빔은 렌즈(67, 37)를 축으로 기울어 아래 끝이 빛 점과 같은 자리(x 28→124)를 지납니다. */
+.ms-st-mk-fan {
+  transform-box: view-box;
+  transform-origin: 67px 37px;
+  animation: ms-st-mk-fan var(--sweep) linear var(--passes) both;
+}
+@keyframes ms-st-mk-fan {
+  0% { transform: skewX(-34.4deg); }
+  25% { transform: skewX(-14.7deg); }
+  50% { transform: skewX(9deg); }
+  75% { transform: skewX(30.1deg); }
+  100% { transform: skewX(45deg); }
+}
+.ms-st-mk-letter { animation: ms-st-mk-letter 0.12s linear both; }
+@keyframes ms-st-mk-letter { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+.ms-st-mk-dig {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: ms-st-mk-dig calc(var(--step) * 0.9) linear both;
+}
+@keyframes ms-st-mk-dig { from { transform: scaleY(0); } }
+.ms-st-mk-bad { fill: none; stroke: var(--bad); stroke-width: 1; }
+
+/* 패키지 쏘 */
+.ms-st-ps-load.above { transform: translateY(-24px); }
+.ms-st-ps-load.landing { animation: ms-st-ps-land calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-ps-land { from { transform: translateY(-24px); } to { transform: translateY(0); } }
+.ms-st-ps-vac { fill: none; stroke: var(--accent); stroke-width: 0.8; animation: ms-blink 0.4s ease-in-out 0.6s infinite alternate; }
+.ms-st-ps-slot { animation: ms-st-pop 0.2s linear both; }
+@keyframes ms-st-pop { from { opacity: 0; } to { opacity: 1; } }
+.ms-st-ps-cam { animation: ms-st-ps-cam var(--step) ease-in-out both; }
+@keyframes ms-st-ps-cam {
+  0%, 12% { transform: translateX(0); }
+  25%, 37% { transform: translateX(42px); }
+  50%, 62% { transform: translateX(84px); }
+  75%, 100% { transform: translateX(126px); }
+}
+.ms-st-ps-rinse { animation: ms-flow 0.3s linear infinite; }
+.ms-st-ps-top { transform-box: view-box; transform-origin: 26px 30px; }
+.ms-st-ps-top.turned { transform: rotate(90deg); }
+.ms-st-ps-top.turning { animation: ms-st-ps-turn calc(var(--step) * 0.8) ease-in-out both; }
+@keyframes ms-st-ps-turn { from { transform: rotate(0deg); } to { transform: rotate(90deg); } }
+.ms-st-ps-cutline { stroke: var(--accent); stroke-width: 0.9; }
+.ms-st-ps-cutline.drawing { stroke-dasharray: 40; animation: ms-st-ps-draw var(--cut) linear both; }
+@keyframes ms-st-ps-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+
+/* 테스트 핸들러 */
+.ms-st-tt-arm.up { transform: translateY(-22px); }
+.ms-st-tt-arm.picking { animation: ms-st-tt-pick var(--step) ease-in-out both; }
+@keyframes ms-st-tt-pick {
+  0% { transform: translateY(-22px); }
+  45%, 60% { transform: translateY(-8px); }
+  100% { transform: translateY(-22px); }
+}
+.ms-st-tt-arm.pressing { animation: ms-st-tt-press calc(var(--step) * 0.6) ease-in both; }
+@keyframes ms-st-tt-press { from { transform: translateY(-22px); } to { transform: translateY(0); } }
+.ms-st-tt-arm.lifting { animation: ms-st-tt-press calc(var(--step) * 0.4) ease-out reverse both; }
+.ms-st-tt-grab { animation: ms-st-tt-grab var(--step) linear both; }
+@keyframes ms-st-tt-grab {
+  0%, 50% { opacity: 0; }
+  56%, 100% { opacity: 1; }
+}
+.ms-st-tt-ok { stroke: var(--good); animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-tt-fail { stroke: var(--bad); animation: ms-blink 0.25s ease-in-out infinite alternate; }
+.ms-st-tt-pulse { fill: var(--good); animation: ms-blink 1s ease-in-out infinite alternate; }
+.ms-st-tt-warm { animation: ms-st-warm calc(var(--step) * 0.7) ease-in both; }
+.ms-st-tt-rise { animation: ms-st-rise 0.9s ease-out infinite; }
+.ms-st-tt-sort.good { animation: ms-st-tt-good var(--step) ease-in-out both; }
+.ms-st-tt-sort.bad { animation: ms-st-tt-bad var(--step) ease-in-out both; }
+@keyframes ms-st-tt-good {
+  0%, 15% { transform: translate(0, 0); }
+  40% { transform: translate(0, -20px); }
+  80%, 100% { transform: translate(95px, 34px); }
+}
+@keyframes ms-st-tt-bad {
+  0%, 15% { transform: translate(0, 0); }
+  40% { transform: translate(0, -20px); }
+  80%, 100% { transform: translate(131px, 34px); }
+}
+.ms-st-tt-tape { stroke: var(--muted); stroke-width: 4; stroke-dasharray: 6 3; animation: ms-flow 0.6s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-mp-warm,
+  .ms-st-mp-top.closing,
+  .ms-st-mp-top.opening,
+  .ms-st-mp-strip.lifting,
+  .ms-st-mp-filling,
+  .ms-st-mp-curing,
+  .ms-st-mp-heat,
+  .ms-st-mp-melt,
+  .ms-st-mp-pool,
+  .ms-st-mp-push,
+  .ms-st-mp-runflow,
+  .ms-st-mk-strip.coming,
+  .ms-st-mk-strip.going,
+  .ms-st-mk-cam,
+  .ms-st-mk-level,
+  .ms-st-mk-beam,
+  .ms-st-mk-fan,
+  .ms-st-mk-letter,
+  .ms-st-mk-dig,
+  .ms-st-ps-load.landing,
+  .ms-st-ps-vac,
+  .ms-st-ps-slot,
+  .ms-st-ps-cam,
+  .ms-st-ps-rinse,
+  .ms-st-ps-top.turning,
+  .ms-st-ps-cutline.drawing,
+  .ms-st-tt-arm.picking,
+  .ms-st-tt-arm.pressing,
+  .ms-st-tt-arm.lifting,
+  .ms-st-tt-grab,
+  .ms-st-tt-ok,
+  .ms-st-tt-fail,
+  .ms-st-tt-pulse,
+  .ms-st-tt-warm,
+  .ms-st-tt-rise,
+  .ms-st-tt-sort,
+  .ms-st-tt-tape { animation: none; }
+  .ms-st-mp-filling { transform: scaleX(1); }
 }
