@@ -33,6 +33,11 @@ export default function ConceptFigures({ processId }) {
                     원본 그림 보기 · 삼성전자 반도체 뉴스룸 「{a.title}」({a.date}) ↗
                   </a>
                 )}
+                {c.also && ARTICLES[c.also] && (
+                  <a href={ARTICLES[c.also].url} target="_blank" rel="noreferrer" className="cf-origin">
+                    함께 참고 · 「{ARTICLES[c.also].title}」({ARTICLES[c.also].date}) ↗
+                  </a>
+                )}
                 <small className="muted">글 내용을 바탕으로 이 앱이 새로 그린 그림 · 설명 출처 · 검수 전</small>
               </figcaption>
             </figure>

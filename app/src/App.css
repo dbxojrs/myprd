@@ -3376,3 +3376,47 @@ a.eq-src { color: var(--accent); }
   .eq-ba-spindle, .eq-ba-blade, .eq-ba-pin, .eq-ba-die, .eq-ba-head, .eq-ba-collet, .eq-ba-cap, .eq-ba-syringe { transition: none; }
 }
 .eq-result .eq-dim.strong { paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+
+/* 개념 그림: 증착·배선·EDS·패키징 */
+.cf-sub.strong { font-weight: 700; fill: var(--text); }
+.cf-sub.dark { fill: var(--text); }
+.cf-b-metal { fill: #d8b25a; stroke: #8a6a1f; stroke-width: 0.6; }
+.cf-b-ins { fill: #8fc3ef; stroke: #3d7fc4; stroke-width: 0.6; }
+.cf-b-note { fill: var(--surface); stroke: var(--accent); stroke-width: 1; }
+.cf-b-target { fill: #8a6a1f; }
+.cf-b-atom { fill: #c9a24a; }
+.cf-b-spark { fill: #f6c344; opacity: 0.85; }
+.cf-b-particle { fill: #3d7fc4; }
+.cf-b-mask { fill: #e8a24a; stroke: #9a5c12; stroke-width: 0.5; }
+.cf-b-n { fill: #3d7fc4; }
+.cf-b-p { fill: #d0504a; }
+.cf-b-n-region { fill: #3d7fc4; fill-opacity: 0.7; }
+.cf-b-p-region { fill: #d0504a; fill-opacity: 0.7; }
+.cf-b-type { font-size: 10px; font-weight: 800; fill: #fff; }
+.cf-b-device { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.cf-b-line { fill: none; stroke: #c9a24a; stroke-width: 3; stroke-linejoin: round; }
+.cf-b-row { fill: var(--surface); stroke: var(--border); stroke-width: 0.8; }
+.cf-b-check { font-size: 11px; font-weight: 800; fill: var(--good); }
+.cf-b-barrier { fill: none; stroke: #7a5cc8; stroke-width: 3; }
+.cf-b-w { fill: #6c7a8c; }
+.cf-b-al { fill: #c9ced6; stroke: #7d8592; stroke-width: 0.6; }
+.cf-b-lead { stroke: var(--muted); stroke-width: 0.6; }
+.cf-b-card { fill: #4a5565; }
+.cf-b-pin { stroke: #c9a24a; stroke-width: 1.4; }
+.cf-b-die { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.4; }
+.cf-b-die.good { fill: #7fcf9a; }
+.cf-b-die.bad { fill: #e57373; }
+.cf-b-ink { fill: #1c2330; }
+.cf-b-step { fill: var(--surface); stroke: var(--border); stroke-width: 0.8; }
+.cf-b-step.on { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
+.cf-b-wafer { fill: #a3acba; stroke: var(--text); stroke-width: 0.6; }
+.cf-b-yield { font-size: 10.5px; font-weight: 800; fill: var(--accent); }
+.cf-b-scribe { stroke: #fff; stroke-width: 1; stroke-dasharray: 3 2; }
+.cf-b-blade { fill: #d9dde3; stroke: var(--text); stroke-width: 1; stroke-dasharray: 2 2; }
+.cf-b-lf { fill: #c58b4a; stroke: #7a4f1d; stroke-width: 0.5; }
+.cf-b-chip { fill: #4a5565; stroke: var(--text); stroke-width: 0.5; }
+.cf-b-wire { fill: none; stroke: #d4a72c; stroke-width: 1.6; }
+.cf-b-mold { fill: #2d333d; fill-opacity: 0.88; }
+.cf-b-socket { fill: #7d8592; }
+.cf-b-bump { fill: #b8bec8; stroke: var(--text); stroke-width: 0.5; }
+.cf-grid > .cf-card:only-child { max-width: 640px; }
