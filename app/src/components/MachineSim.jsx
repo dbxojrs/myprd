@@ -5,6 +5,7 @@ import { defaultValues, findFindings, goalMet, judge, levelText } from '../lib/m
 import { LINES } from '../data/machineLine.js'
 import { finalVerdict, incoming, lineMachines } from '../lib/machineLine.js'
 import MachineView, { TowerLamp } from './MachineView.jsx'
+import EquipmentTour from './EquipmentTour.jsx'
 import { DetailIllustration } from './DetailIllustration.jsx'
 import { Term } from '../lib/terms.jsx'
 
@@ -411,6 +412,11 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
         </article>
       )}
       {line && lineDone && <LineVerdict verdict={finalVerdict(line.id, lot)} onRestart={() => chooseLine(line)} />}
+
+      {/* 장비 알아보기: 장비 둘러보기 → 조작 순서 → 결과물(지금 조건 기준) → 용어 */}
+      {!(mode === 'line' && (!line || lineDone)) && (
+        <EquipmentTour key={machineId} machineId={machineId} values={values} result={phase === 'finished' && result ? result : judge(machine, values)} />
+      )}
 
       {(mode === 'scenario' && !scenario) || (mode === 'line' && (!line || lineDone)) ? (
         mode === 'scenario' || !line ? <p className="placeholder">위에서 {mode === 'line' ? '라인을' : '상황을'} 하나 고르세요.</p> : null
