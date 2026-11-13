@@ -9,6 +9,7 @@ import FrontFlow from './components/FrontFlow.jsx'
 import ProcessQuery from './components/ProcessQuery.jsx'
 import ProcessSim from './components/ProcessSim.jsx'
 import MachineSim from './components/MachineSim.jsx'
+import QuizPage from './components/QuizPage.jsx'
 import AdvancedPackage from './components/AdvancedPackage.jsx'
 import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
@@ -22,6 +23,7 @@ export default function App() {
   const [processId, setProcessId] = useState(null)
   const [lineProcessId, setLineProcessId] = useState(null)
   const [queryKey, setQueryKey] = useState(0)
+  const [machineFocus, setMachineFocus] = useState(null)
   const [completed, setCompleted] = useStoredState('tutor.completed', [])
   const [, setReports] = useStoredState('tutor.reports', [])
 
@@ -37,6 +39,12 @@ export default function App() {
     setProcessId(id)
     setQueryKey((key) => key + 1)
     setScreen('query')
+  }
+
+  // 다른 화면(시험 해설 등)에서 특정 장비 시뮬레이터를 바로 엽니다.
+  const openMachine = (id) => {
+    setMachineFocus(id)
+    setScreen('machine')
   }
 
   const openPackage = (id) => {
@@ -141,7 +149,8 @@ export default function App() {
           />
         )}
         {screen === 'sim' && <ProcessSim />}
-        {screen === 'machine' && <MachineSim onOpenProcess={openProcess} />}
+        {screen === 'machine' && <MachineSim key={machineFocus ?? 'default'} initialId={machineFocus} onOpenProcess={openProcess} />}
+        {(screen === 'quiz' || screen === 'wrong') && <QuizPage view={screen} onOpenProcess={openProcess} onOpenMachine={openMachine} />}
         {screen === 'line' && (
           <LineSim
             key={packageId}

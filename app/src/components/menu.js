@@ -26,6 +26,16 @@ export const MENU_GROUPS = [
     ],
   },
   {
+    id: 'exam',
+    label: '시험',
+    icon: '📝',
+    desc: '배운 내용을 문제로 확인하고 틀린 문제를 다시 풉니다.',
+    items: [
+      { id: 'quiz', label: '문제 풀기', desc: '공정·장비 범위를 골라 연습하거나 시험을 봅니다. 해설과 관련 화면으로 바로 갑니다.' },
+      { id: 'wrong', label: '오답 노트', desc: '틀린 문제만 모아 다시 풉니다. 맞히면 목록에서 빠집니다.' },
+    ],
+  },
+  {
     id: 'deep',
     label: '심화',
     icon: '🚀',

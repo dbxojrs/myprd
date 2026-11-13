@@ -145,13 +145,14 @@ function LineVerdict({ verdict, onRestart }) {
   )
 }
 
-export default function MachineSim({ onOpenProcess }) {
-  const [machineId, setMachineId] = useState(machines[0].id)
+export default function MachineSim({ onOpenProcess, initialId = null }) {
+  const first = machines.find((m) => m.id === initialId) ?? machines[0]
+  const [machineId, setMachineId] = useState(first.id)
   const machine = machines.find((m) => m.id === machineId)
   const [mode, setMode] = useState('free')
   const [display, setDisplay] = useState('example')
   const [scenarioId, setScenarioId] = useState(null)
-  const [values, setValues] = useState(() => defaultValues(machines[0]))
+  const [values, setValues] = useState(() => defaultValues(first))
   const [phase, setPhase] = useState('idle') // idle | running | finished
   const [step, setStep] = useState(0)
   const [log, setLog] = useState([])
