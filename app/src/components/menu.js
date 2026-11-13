@@ -33,6 +33,7 @@ export const MENU_GROUPS = [
     items: [
       { id: 'quiz', label: '문제 풀기', desc: '공정·장비 범위를 골라 연습하거나 시험을 봅니다. 해설과 관련 화면으로 바로 갑니다.' },
       { id: 'wrong', label: '오답 노트', desc: '틀린 문제만 모아 다시 풉니다. 맞히면 목록에서 빠집니다.' },
+      { id: 'ai', label: 'AI 문제 만들기', desc: '내 Claude API 키로 고른 범위의 앱 자료에서 새 문제를 만들고, 문제마다 AI 해설을 듣습니다(선택).' },
     ],
   },
   {

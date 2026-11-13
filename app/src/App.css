@@ -2947,3 +2947,18 @@ footer.disclaimer {
 .quiz-mine { color: var(--bad); }
 .quiz-misses { float: right; font-size: 0.8rem; color: var(--bad); }
 @media (prefers-reduced-motion: reduce) { .quiz-card { animation: none; } .quiz-choice { transition: none; } }
+
+/* AI 해설·문제 (선택 기능) */
+.ai-key { display: grid; gap: 8px; max-width: 560px; padding: 12px 14px; margin: 10px 0; border: 1px dashed var(--border); border-radius: 12px; background: var(--surface); }
+.ai-key.compact { border-style: solid; }
+.ai-key label { display: grid; gap: 4px; font-weight: 600; font-size: 0.9rem; }
+.ai-key input[type='password'] { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.ai-key .ai-remember { display: flex; gap: 6px; align-items: center; font-weight: 400; }
+.ai-key button.primary { justify-self: start; }
+.ai-key.ok { display: flex; justify-content: space-between; align-items: center; border-color: var(--good); color: var(--good); }
+.ai-optional summary { cursor: pointer; font-weight: 700; }
+.ai-explain { margin-top: 8px; }
+.ai-answer { margin-top: 6px; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); }
+.ai-answer p { white-space: pre-line; margin: 6px 0 0; }
+.ai-badge { display: inline-block; padding: 0 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font-size: 0.75rem; font-weight: 700; }
+.ai-error { color: var(--bad); }

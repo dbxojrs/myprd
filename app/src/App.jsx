@@ -150,7 +150,7 @@ export default function App() {
         )}
         {screen === 'sim' && <ProcessSim />}
         {screen === 'machine' && <MachineSim key={machineFocus ?? 'default'} initialId={machineFocus} onOpenProcess={openProcess} />}
-        {(screen === 'quiz' || screen === 'wrong') && <QuizPage view={screen} onOpenProcess={openProcess} onOpenMachine={openMachine} />}
+        {['quiz', 'wrong', 'ai'].includes(screen) && <QuizPage view={screen} onOpenProcess={openProcess} onOpenMachine={openMachine} />}
         {screen === 'line' && (
           <LineSim
             key={packageId}

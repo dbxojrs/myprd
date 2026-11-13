@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { makeQuiz, QUIZ_SCOPES, topicLabel } from '../lib/quiz.js'
 import { useStoredState } from '../lib/storage.js'
+import { AiExplain, AiKeyBox, AiQuizMaker } from './AiTutor.jsx'
 
 // 시험 화면. 문제는 공정 데이터와 장비 규칙표로 만듭니다(lib/quiz.js).
 // 연습 모드는 한 문제씩 바로 채점하고 해설을 보여주며, 시험 모드는 끝난 뒤 한꺼번에 채점합니다.
@@ -24,8 +25,8 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
   // 메뉴에서 다른 화면(문제 풀기 ↔ 오답 노트)으로 바꾸면 풀던 시험을 닫습니다.
   useEffect(() => setRun(null), [view])
 
-  const start = (questions, fromWrong, scopeLabel) =>
-    setRun({ questions, answers: Array(questions.length).fill(null), index: 0, fromWrong, scopeLabel, mode: fromWrong ? 'practice' : mode })
+  const start = (questions, fromWrong, scopeLabel, forceMode) =>
+    setRun({ questions, answers: Array(questions.length).fill(null), index: 0, fromWrong, scopeLabel, mode: forceMode ?? (fromWrong ? 'practice' : mode) })
 
   const startNew = () => {
     const seed = attempt + 1
@@ -56,6 +57,8 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
   }
 
   if (run) return <QuizRun run={run} setRun={setRun} finish={finish} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+
+  if (view === 'ai') return <AiQuizMaker onStart={(questions, label) => start(questions, false, label, 'practice')} />
 
   if (view === 'wrong')
     return (
@@ -135,6 +138,11 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
           시작하기
         </button>
       </article>
+      <details className="card ai-optional">
+        <summary>🤖 AI 해설 쓰기 (선택 · 내 API 키 필요)</summary>
+        <p className="muted">키를 연결하면 문제마다 "AI로 더 깊게 설명 듣기" 버튼이 생기고, "AI 문제 만들기"에서 새 문제를 만들 수 있습니다.</p>
+        <AiKeyBox compact />
+      </details>
 
       {history.length > 0 && (
         <article className="card">
@@ -233,6 +241,7 @@ function QuizRun({ run, setRun, finish, onOpenProcess, onOpenMachine }) {
               </p>
               <p className="quiz-explain">{x.explain}</p>
               <RefLink q={x} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+              <AiExplain question={x} picked={answers[i]} />
             </li>
           ))}
         </ol>
@@ -276,6 +285,7 @@ function QuizRun({ run, setRun, finish, onOpenProcess, onOpenMachine }) {
             <strong>{picked === q.answer ? '정답입니다' : '틀렸습니다'}</strong>
             <p className="quiz-explain">{q.explain}</p>
             <RefLink q={q} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+            <AiExplain key={q.id} question={q} picked={picked} />
           </div>
         )}
         <div className="quiz-nav">
