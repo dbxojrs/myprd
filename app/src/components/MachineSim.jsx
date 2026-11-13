@@ -35,7 +35,7 @@ function StageBar({ sequence, index, alarm }) {
         return (
           <li key={s.id} className={state} aria-current={state === 'now' ? 'step' : undefined}>
             {state === 'done' ? '✓ ' : state === 'alarm' ? '⚠ ' : ''}
-            {s.text.split(/[:·→]/)[0].replace(/\{\w+\}/g, '').trim()}
+            {s.text.split(/:| · |→/)[0].replace(/\{\w+\}/g, '').trim()}
           </li>
         )
       })}
@@ -267,8 +267,9 @@ export default function MachineSim({ onOpenProcess }) {
     if (!running || !result) return undefined
     const timer = setTimeout(() => {
       const seq = machine.sequence
-      if (step === result.stopIndex && result.alarm) {
-        setLog((lines) => [...lines, fillTemplate(seq[step].text, machine, values, display), `⚠ ALARM · ${result.alarm.title}`])
+      // 알람 단계도 먼저 그 단계 장면을 보여준 뒤, 다음 틱에 알람으로 멈춥니다.
+      if (result.alarm && step > result.stopIndex) {
+        setLog((lines) => [...lines, `⚠ ALARM · ${result.alarm.title}`])
         setPhase('finished')
       } else if (step >= seq.length) {
         setLog((lines) => [...lines, `■ 완료 · ${SEVERITY[result.grade].label}`])

@@ -2518,8 +2518,8 @@ p.ms-log {
 .ms-st-mp-curing { animation: ms-st-mp-cure var(--step) ease-in both; }
 @keyframes ms-st-mp-cure { to { opacity: 0.8; fill: var(--muted); } }
 .ms-st-mp-cured { opacity: 0.8; fill: var(--muted); }
-.ms-st-mp-heat { animation: ms-st-rise 0.9s ease-out infinite; }
-@keyframes ms-st-rise {
+.ms-st-mp-heat { animation: ms-st-rise-out 0.9s ease-out infinite; }
+@keyframes ms-st-rise-out {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-6px); opacity: 0; }
 }
@@ -2634,7 +2634,7 @@ p.ms-log {
 .ms-st-tt-fail { stroke: var(--bad); animation: ms-blink 0.25s ease-in-out infinite alternate; }
 .ms-st-tt-pulse { fill: var(--good); animation: ms-blink 1s ease-in-out infinite alternate; }
 .ms-st-tt-warm { animation: ms-st-warm calc(var(--step) * 0.7) ease-in both; }
-.ms-st-tt-rise { animation: ms-st-rise 0.9s ease-out infinite; }
+.ms-st-tt-rise { animation: ms-st-rise-out 0.9s ease-out infinite; }
 .ms-st-tt-sort.good { animation: ms-st-tt-good var(--step) ease-in-out both; }
 .ms-st-tt-sort.bad { animation: ms-st-tt-bad var(--step) ease-in-out both; }
 @keyframes ms-st-tt-good {
