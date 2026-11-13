@@ -59,7 +59,7 @@ function ResultZoom({ machineId, values, phase, result, preview, liveFindings, r
   return (
     <section className="ms-zoom" aria-label="결과물 확대">
       <h4>
-        🔍 결과물 확대 <span className="muted">{running ? '· 가동 중 — 막이 자라는 중' : phase === 'finished' ? '· 이번 가동 결과' : '· 지금 조건으로 만들면'}</span>
+        🔍 결과물 확대 <span className="muted">{running ? '· 가동 중 — 결과물이 만들어지는 중' : phase === 'finished' ? '· 이번 가동 결과' : '· 지금 조건으로 만들면'}</span>
       </h4>
       <div className="ms-zoom-body" key={key} style={{ '--grow': running ? `${runMs}ms` : '2.2s' }}>
         <Result values={values} result={shown} />
