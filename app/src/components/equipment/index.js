@@ -3,11 +3,27 @@
 //   RESULT: { values, result } → viewBox 0 0 400 240 svg. 지금 조건으로 만든 결과물을 확대해 보여줍니다.
 import OxidationIso from './OxidationIso.jsx'
 import OxidationResult from './OxidationResult.jsx'
+import MoldingIso from './MoldingIso.jsx'
+import MoldingResult from './MoldingResult.jsx'
+import MarkerIso from './MarkerIso.jsx'
+import MarkingResult from './MarkingResult.jsx'
+import PkgSawIso from './PkgSawIso.jsx'
+import PkgSawResult from './PkgSawResult.jsx'
+import TestIso from './TestIso.jsx'
+import TestResult from './TestResult.jsx'
 
 export const ISO = {
   oxidation: OxidationIso,
+  molding: MoldingIso,
+  marking: MarkerIso,
+  'package-saw': PkgSawIso,
+  test: TestIso,
 }
 
 export const RESULT = {
   oxidation: OxidationResult,
+  molding: MoldingResult,
+  marking: MarkingResult,
+  'package-saw': PkgSawResult,
+  test: TestResult,
 }

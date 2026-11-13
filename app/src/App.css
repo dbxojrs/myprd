@@ -3156,3 +3156,118 @@ a.eq-src { color: var(--accent); }
 .cf-divider { stroke: var(--border); stroke-dasharray: 3 3; }
 .cf-vs { font-size: 8px; fill: var(--muted); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
 .cf-card svg.il { max-width: none; }
+/* 장비 알아보기: 후공정 2 (몰딩 프레스 · 레이저 마커 · 패키지 쏘 · 테스트 핸들러) */
+/* 입체 그림 색 */
+.eq-tone-bb-emc .f-top, .eq-tone-bb-emc .f-left { fill: #2c2f36; }
+.eq-tone-bb-mold .f-top { fill: #d9dee6; } .eq-tone-bb-mold .f-left { fill: #aab3c0; } .eq-tone-bb-mold .f-right { fill: #8e98a7; }
+.eq-tone-bb-film .f-top { fill: #bfe3c9; fill-opacity: 0.75; } .eq-tone-bb-film .f-left, .eq-tone-bb-film .f-right { fill: #8fcb9f; fill-opacity: 0.7; }
+.eq-tone-bb-strip .f-top { fill: #3a3f48; } .eq-tone-bb-strip .f-left { fill: #c98b4a; } .eq-tone-bb-strip .f-right { fill: #a86f35; }
+.eq-tone-bb-laser .f-top { fill: #f6d0d0; } .eq-tone-bb-laser .f-left { fill: #e7a3a3; } .eq-tone-bb-laser .f-right { fill: #cf7f7f; }
+.eq-tone-bb-jig .f-top { fill: #cfe3f5; } .eq-tone-bb-jig .f-left { fill: #a9c8e8; } .eq-tone-bb-jig .f-right { fill: #86aedb; }
+.eq-tone-bb-tray .f-top { fill: #7a8496; } .eq-tone-bb-tray .f-left, .eq-tone-bb-tray .f-right { fill: #5d6676; }
+.eq-tone-bb-good .f-top { fill: #bfe6cc; } .eq-tone-bb-good .f-left { fill: #8fd1a5; } .eq-tone-bb-good .f-right { fill: #6dbb88; }
+.eq-tone-bb-bad .f-top { fill: #f5c7c3; } .eq-tone-bb-bad .f-left { fill: #eb9c95; } .eq-tone-bb-bad .f-right { fill: #d97a72; }
+.eq-tone-bb-dashed polygon { fill: var(--accent); fill-opacity: 0.05; stroke-dasharray: 4 3; }
+
+/* 입체 그림 움직임 */
+.eq-bb-upper { transition: transform 1.2s ease-in-out; }
+.eq-bb-upper.closed { transform: translateY(var(--close)); }
+.eq-bb-plunger { transition: transform 1s ease-in-out; }
+.eq-bb-plunger.push { transform: translateY(-10px); }
+.eq-bb-hot polygon { fill: #f08a4b; fill-opacity: 0.8; animation: eq-glow 1.2s ease-in-out infinite alternate; }
+.eq-bb-feed { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.eq-bb-feed.run { stroke: #2c2f36; stroke-dasharray: 4 4; animation: ms-flow 0.4s linear infinite; }
+.eq-bb-duct { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 2 2; }
+.eq-bb-sheet { animation: eq-bb-fade 0.8s ease-out both; }
+@keyframes eq-bb-fade { from { opacity: 0; } }
+.eq-bb-arm.moving { animation: eq-arm 1.2s ease-in-out infinite alternate; }
+.eq-bb-strip { transition: transform 1.2s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-bb-resin circle { fill: #2c2f36; animation: eq-bb-flow 1.2s linear infinite; }
+@keyframes eq-bb-flow { from { transform: translate(-16px, -9px); opacity: 0; } 40% { opacity: 1; } to { transform: translate(16px, 9px); opacity: 0; } }
+.eq-bb-rail { fill: none; stroke: var(--text); stroke-width: 0.7; }
+.eq-bb-slot { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.eq-bb-slot.lit { stroke: var(--good); stroke-width: 1.6; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.eq-bb-view { fill: var(--accent); fill-opacity: 0.18; stroke: var(--accent); stroke-width: 0.6; animation: ms-blink 0.6s ease-in-out infinite alternate; }
+.eq-bb-beam line { stroke: #e0352b; stroke-width: 2; animation: eq-bb-zap 0.25s linear infinite alternate; }
+.eq-bb-spark { fill: #ffd25c; animation: ms-blink 0.15s linear infinite alternate; }
+@keyframes eq-bb-zap { from { stroke-opacity: 0.4; } to { stroke-opacity: 1; } }
+.eq-bb-pkgmark { fill: #555b66; }
+.eq-bb-pkgmark.on { fill: #e8e2cf; }
+.eq-bb-disc { fill: #d7dbe1; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.eq-bb-spoke { stroke: var(--text); stroke-width: 0.8; }
+.eq-bb-blade.spin { animation: ms-rot 0.3s linear infinite; }
+.eq-bb-water polyline { fill: none; stroke: #4a90d9; stroke-width: 2; stroke-dasharray: 3 3; animation: ms-flow 0.3s linear infinite; }
+.eq-bb-laserline { fill: none; stroke: #e0352b; stroke-width: 1; stroke-dasharray: 2 2; animation: ms-flow 0.4s linear infinite; }
+.eq-bb-vac polygon { stroke: var(--accent); stroke-width: 1.6; }
+.eq-bb-cut { fill: none; stroke: #f5f7fa; stroke-width: 1.4; stroke-dasharray: 60; animation: eq-bb-draw 0.6s ease-out both; }
+@keyframes eq-bb-draw { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+.eq-bb-drop { animation: eq-bb-fall 0.6s ease-out both; }
+@keyframes eq-bb-fall { from { transform: translateY(-12px); opacity: 0; } }
+.eq-bb-cable { fill: none; stroke: var(--muted); stroke-width: 2.4; stroke-linecap: round; }
+.eq-bb-cable.run { stroke: var(--accent); stroke-dasharray: 5 4; animation: ms-flow 0.3s linear infinite; }
+.eq-bb-pulse polygon { stroke: var(--accent); stroke-width: 1.6; animation: ms-blink 0.3s ease-in-out infinite alternate; }
+.eq-bb-reel { fill: #e9edf2; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 6 3; }
+.eq-bb-reel.spin { animation: ms-flow 0.6s linear infinite; }
+.eq-bb-head { transition: transform 1s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-bb-nozzle { transition: transform 0.6s ease-in-out; }
+.eq-bb-nozzle.down { transform: translateY(var(--down)); }
+
+/* 결과물 그림. 공정 중에 생기는 부분(.grow)은 --grow(가동 시간, 기본 2.2초)에 맞춰 자랍니다. */
+.eq-bb-lf { fill: #b5793c; }
+.eq-bb-lead, .eq-bb-pad { fill: #d39a5c; stroke: #8a5a2a; stroke-width: 0.6; }
+.eq-bb-die { fill: #6d7686; stroke: var(--text); stroke-width: 0.6; }
+.eq-bb-die.hurt { fill: #b4544c; }
+.eq-bb-wire { fill: none; stroke: #d4a52c; stroke-width: 1.8; }
+.eq-bb-wire.swept { stroke: var(--bad); }
+.eq-bb-ring { fill: none; stroke: var(--bad); stroke-width: 1.6; stroke-dasharray: 4 3; animation: ms-blink 0.7s ease-in-out infinite alternate; }
+.eq-bb-emc { fill: #2c2f36; fill-opacity: 0.55; transform-box: fill-box; transform-origin: 0 50%; animation: eq-bb-fill var(--grow, 2.2s) ease-out both; }
+.eq-bb-emc.soft { fill-opacity: 0.35; stroke: var(--bad); stroke-dasharray: 4 3; }
+@keyframes eq-bb-fill { from { transform: scaleX(0.02); } }
+.eq-bb-empty { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.eq-bb-void { fill: var(--surface); stroke: var(--bad); stroke-width: 1.2; animation: eq-bb-fade 0.5s ease-out both; }
+.eq-bb-flash { fill: #2c2f36; stroke: var(--bad); stroke-width: 1; }
+.eq-bb-emc-label { font-size: 11px; font-weight: 700; fill: var(--surface); paint-order: stroke; stroke: #2c2f36; stroke-width: 2px; }
+.eq-bb-cav { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.eq-dim.eq-bb-bad { fill: var(--bad); font-weight: 700; }
+.eq-dim.eq-bb-light { fill: #5a3a18; font-weight: 700; }
+.eq-bb-pkgtop { fill: #2c2f36; stroke: var(--text); stroke-width: 0.8; }
+.eq-bb-pkgtop.uncut { fill-opacity: 0.6; }
+.eq-bb-pkgtop.cut { animation: eq-bb-fade 0.4s ease-out both; }
+.eq-bb-pin1 { fill: #555b66; }
+.eq-bb-letter { font-size: 52px; font-weight: 800; fill: none; stroke: #e8e2cf; stroke-linejoin: round; animation: eq-bb-fade 0.3s ease-out both; }
+.eq-bb-letter.broken { stroke-dasharray: 7 6; }
+.eq-bb-letter.faint { stroke-opacity: 0.35; }
+.eq-bb-moldx { fill: #3a3f48; }
+.eq-bb-groove { fill: var(--surface); stroke: #e0352b; stroke-width: 0.6; transform-box: fill-box; transform-origin: 50% 0; animation: eq-bb-dig var(--grow, 2.2s) ease-out both; }
+@keyframes eq-bb-dig { from { transform: scaleY(0.02); } }
+.eq-bb-crack { fill: none; stroke: var(--bad); stroke-width: 1.6; }
+.eq-bb-targetbox { fill: none; stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.eq-bb-burr { fill: #e0b07a; stroke: var(--bad); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 0; animation: eq-bb-dig var(--grow, 2.2s) ease-out both; }
+.eq-bb-melt { fill: #c9c9c9; stroke: var(--bad); stroke-width: 1; }
+.eq-bb-epad { fill: #9aa3b0; fill-opacity: 0.4; stroke: var(--muted); stroke-width: 0.6; }
+.eq-bb-chip { fill: var(--surface); stroke: var(--bad); stroke-width: 1.2; }
+.eq-bb-sweep { stroke: #e0352b; stroke-width: 2; animation: eq-bb-sweep var(--grow, 2.2s) linear both; }
+.eq-bb-sweep.v { animation-name: eq-bb-sweep-v; }
+@keyframes eq-bb-sweep { from { transform: translateY(150px); opacity: 1; } 95% { opacity: 1; } to { transform: translateY(0); opacity: 0; } }
+@keyframes eq-bb-sweep-v { from { transform: translateX(-150px); opacity: 1; } 95% { opacity: 1; } to { transform: translateX(0); opacity: 0; } }
+.eq-bb-cellg { animation: eq-bb-fade 0.25s ease-out both; }
+.eq-bb-cell { stroke: var(--text); stroke-width: 0.5; }
+.eq-bb-cell.good { fill: #8fd1a5; }
+.eq-bb-cell.bad { fill: #eb9c95; }
+.eq-bb-cell.retest { fill: #f2cf6b; }
+.eq-bb-cell.missed { fill: #8fd1a5; stroke: var(--bad); stroke-width: 2; stroke-dasharray: 3 2; }
+.eq-bb-cell.scrap { fill: #eb9c95; stroke: #c8932a; stroke-width: 2; stroke-dasharray: 3 2; }
+.eq-bb-bar { transform-box: fill-box; transform-origin: 0 50%; animation: eq-bb-fill var(--grow, 2.2s) ease-out both; }
+.eq-bb-leadhurt { fill: none; stroke: var(--bad); stroke-width: 1.4; }
+.eq-bb-temp { fill: var(--bg); stroke: var(--border); stroke-width: 1; }
+.eq-bb-temp.on { fill: var(--accent); stroke: var(--accent); }
+.eq-bb-temp-t { font-size: 10px; font-weight: 700; fill: var(--muted); }
+.eq-bb-temp-t.on { fill: var(--accent-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bb-hot polygon, .eq-bb-feed.run, .eq-bb-sheet, .eq-bb-arm.moving, .eq-bb-resin circle, .eq-bb-slot.lit, .eq-bb-view,
+  .eq-bb-beam line, .eq-bb-spark, .eq-bb-blade.spin, .eq-bb-water polyline, .eq-bb-laserline, .eq-bb-cut, .eq-bb-drop,
+  .eq-bb-cable.run, .eq-bb-pulse polygon, .eq-bb-reel.spin, .eq-bb-ring, .eq-bb-emc, .eq-bb-void, .eq-bb-pkgtop.cut,
+  .eq-bb-letter, .eq-bb-groove, .eq-bb-burr, .eq-bb-sweep, .eq-bb-cellg, .eq-bb-bar { animation: none; }
+  .eq-bb-upper, .eq-bb-plunger, .eq-bb-strip, .eq-bb-head, .eq-bb-nozzle { transition: none; }
+}
