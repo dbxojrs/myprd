@@ -3071,3 +3071,9 @@ a.eq-src { color: var(--accent); }
 .eq-zoombox { fill: var(--surface); stroke: var(--accent); stroke-width: 1.2; }
 .eq-dim.strong { font-weight: 700; fill: #2f6fb3; font-size: 10px; }
 .eq-dim.goal { fill: var(--good); font-weight: 700; }
+
+/* 가동 화면의 결과물 확대 패널 */
+.ms-zoom { margin: 8px 0 10px; padding: 8px 10px 4px; border: 2px solid var(--accent); border-radius: 12px; background: var(--surface); }
+.ms-zoom h4 { margin: 0 0 4px; font-size: 1rem; }
+.ms-zoom-body svg { width: 100%; height: auto; display: block; }
+.ms-zoom-body .eq-oxide.grow, .ms-zoom-body .grow { animation-duration: var(--grow, 2.2s); }

@@ -6,6 +6,7 @@ import { LINES } from '../data/machineLine.js'
 import { finalVerdict, incoming, lineMachines } from '../lib/machineLine.js'
 import MachineView, { TowerLamp } from './MachineView.jsx'
 import EquipmentTour from './EquipmentTour.jsx'
+import { RESULT } from './equipment/index.js'
 import { DetailIllustration } from './DetailIllustration.jsx'
 import { Term } from '../lib/terms.jsx'
 
@@ -41,6 +42,29 @@ function StageBar({ sequence, index, alarm }) {
         )
       })}
     </ol>
+  )
+}
+
+// 결과물 확대 패널: 가동 화면 아래에 크게 보여줍니다(그림은 components/equipment의 RESULT).
+// 대기 중: 지금 조건으로 만들면 나올 결과(조건을 바꿀 때마다 다시 자람)
+// 가동 중: 가동 시간 전체에 걸쳐 천천히 자라고, 증상은 공정 중간부터 표시
+// 끝나면: 판정 결과 그대로 멈춰 있음. 알람이면 만들어지지 않은 상태
+function ResultZoom({ machineId, values, phase, result, preview, liveFindings, runKey, runMs }) {
+  const Result = RESULT[machineId]
+  if (!Result) return null
+  const running = phase === 'running'
+  const shown =
+    phase === 'finished' && result ? result : running ? { grade: 'good', findings: liveFindings } : preview
+  const key = phase === 'idle' ? `idle-${JSON.stringify(values)}` : `run-${runKey}`
+  return (
+    <section className="ms-zoom" aria-label="결과물 확대">
+      <h4>
+        🔍 결과물 확대 <span className="muted">{running ? '· 가동 중 — 막이 자라는 중' : phase === 'finished' ? '· 이번 가동 결과' : '· 지금 조건으로 만들면'}</span>
+      </h4>
+      <div className="ms-zoom-body" key={key} style={{ '--grow': running ? `${runMs}ms` : '2.2s' }}>
+        <Result values={values} result={shown} />
+      </div>
+    </section>
   )
 }
 
@@ -157,6 +181,7 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
   const [phase, setPhase] = useState('idle') // idle | running | finished
   const [step, setStep] = useState(0)
   const [log, setLog] = useState([])
+  const [runId, setRunId] = useState(0)
   const [result, setResult] = useState(null)
   const [history, setHistory] = useState([])
   const [lineId, setLineId] = useState(null)
@@ -252,6 +277,7 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
 
   const start = () => {
     const r = judge(machine, values)
+    setRunId((n) => n + 1)
     setResult(r)
     setStep(0)
     setPhase('running')
@@ -430,6 +456,16 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
             </div>
             <MachineView machine={machine} values={values} running={moving} findings={liveFindings} stage={stage} stepMs={STEP_MS} />
             <StageBar sequence={machine.sequence} index={stageIndex} alarm={Boolean(phase === 'finished' && result?.alarm)} />
+            <ResultZoom
+              machineId={machineId}
+              values={values}
+              phase={phase}
+              result={result}
+              preview={judge(machine, values)}
+              liveFindings={liveFindings}
+              runKey={runId}
+              runMs={machine.sequence.length * STEP_MS}
+            />
             <p className="muted ms-note">
               {running ? '가동 중 · 이상이 있으면 그림에 증상이 나타납니다' : phase === 'finished' ? '빨간 표시가 문제가 생긴 부위입니다' : '조건을 바꾸면 장비 움직임이 바로 바뀝니다 · START로 가동'}
             </p>

@@ -17,9 +17,15 @@ export default function OxidationResult({ values, result }) {
   const loose = has(findings, ['밀도'])
   const warped = has(findings, ['휨'])
   const stopped = result?.grade === 'alarm'
-  const k = 2.5 // 확대 배율(그림용). 가장 두꺼운 막도 확대 상자 안에 들어가게 합니다.
-  const film = (oxide / 2.4) * k
-  const goal = (target / 2.4) * k
+  // 확대 배율: 목표 두께가 확대 상자 높이의 절반쯤 오도록 맞춥니다(얇은 게이트 막도 크게 보이게).
+  // 상자를 넘을 만큼 두꺼우면 잘라 그리고 "화면 밖"으로 표시합니다.
+  const units = oxide / 2.4
+  const goalUnits = target / 2.4
+  const k = 44 / goalUnits
+  const room = 84
+  const film = Math.min(units * k, room)
+  const over = units * k > room
+  const goal = goalUnits * k
   const base = 186
   const top = base - film
 
@@ -47,15 +53,19 @@ export default function OxidationResult({ values, result }) {
           <rect x="24" y={top} width="222" height={film} className={`eq-oxide grow${loose ? ' loose' : ''}`} key={`${film}-${values.method}`} />
           {dirty && [60, 105, 150, 200].map((x) => <circle key={x} cx={x} cy={top + film / 2} r="3" className="eq-dirt" />)}
           {(thin || thick) && <rect x="22" y={top - 3} width="226" height={film + 6} rx="3" className="eq-bad-ring" />}
-          <text x="135" y={Math.max(108, top - 6)} textAnchor="middle" className="eq-dim strong">
+          <text x="135" y={Math.max(124, top - 6)} textAnchor="middle" className="eq-dim strong">
             산화막 SiO₂ {wet ? '(습식)' : '(건식)'}
             {thin ? ' · 목표보다 얇음' : thick ? ' · 목표보다 두꺼움' : ''}
+            {over ? ' ↑ 화면 밖까지 자람' : ''}
           </text>
         </>
       )}
       <line x1="24" y1={base - goal} x2="246" y2={base - goal} className="eq-target" />
       <text x="244" y={base - goal - 3} textAnchor="end" className="eq-dim goal">
         목표
+      </text>
+      <text x="246" y="232" textAnchor="end" className="eq-dim">
+        확대 배율: 목표 두께 기준
       </text>
       <text x="135" y="208" textAnchor="middle" className="eq-si-label">
         실리콘(Si) 기판
@@ -67,7 +77,7 @@ export default function OxidationResult({ values, result }) {
       </text>
       {['더미', '제품', '제품', '제품', '더미'].map((kind, i) => {
         const y = 44 + i * 32
-        const t = stopped ? 0 : (kind === '더미' ? 0.8 : 1) * Math.min(14, film * 0.25 + 2)
+        const t = stopped ? 0 : (kind === '더미' ? 0.8 : 1) * Math.min(16, film * 0.18 + 2)
         return (
           <g key={i} className={kind === '더미' ? 'eq-boatpos dummy' : 'eq-boatpos'}>
             <rect x="300" y={y + 10} width="80" height="8" className="eq-si" />
