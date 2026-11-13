@@ -4,6 +4,9 @@ import { NpDoping, PvdCvd, ThinFilmStack } from './depo.jsx'
 import { AlBarrier, MetalConditions } from './metal.jsx'
 import { EdsFlow, WaferMapYield } from './eds.jsx'
 import { PkgFlow, WbVsFlipchip } from './pkg.jsx'
+import { WaferDieDevice, WaferParts, WaferSteps } from './wafer.jsx'
+import { DevelopPN, Exposure, Photomask, PrCoat } from './photo.jsx'
+import { EtchPrinciple, PlasmaGen, WetDry } from './etch.jsx'
 
 export const CONCEPT_DRAWINGS = {
   'oxide-roles': OxideRoles,
@@ -17,4 +20,14 @@ export const CONCEPT_DRAWINGS = {
   'wafer-map-yield': WaferMapYield,
   'pkg-flow': PkgFlow,
   'wb-vs-flipchip': WbVsFlipchip,
+  'wafer-steps': WaferSteps,
+  'wafer-parts': WaferParts,
+  'wafer-die-device': WaferDieDevice,
+  photomask: Photomask,
+  'pr-coat': PrCoat,
+  exposure: Exposure,
+  'develop-pn': DevelopPN,
+  'etch-principle': EtchPrinciple,
+  'wet-dry': WetDry,
+  'plasma-gen': PlasmaGen,
 }

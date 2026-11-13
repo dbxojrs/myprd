@@ -3485,3 +3485,81 @@ a.eq-src { color: var(--accent); }
   .eq-fe-rise, .eq-fe-rise-down, .eq-fe-dig, .eq-fe-fadein { animation: none; }
   .eq-fe-platen { transition: none; }
 }
+
+/* 개념 그림: 웨이퍼·포토·식각 */
+.cf-a .il-step { font-size: 9px; }
+.cf-a-label { font-size: 7.5px; fill: var(--muted); }
+.cf-a-cap { font-size: 9px; font-weight: 700; fill: var(--accent); }
+.cf-a-result { font-size: 9.5px; font-weight: 700; fill: var(--good); }
+.cf-a-lead { stroke: var(--muted); stroke-width: 0.6; }
+.cf-a-lead.dust { stroke-dasharray: 2 2; }
+.cf-a-crucible { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.cf-a-melt { fill: #f2a36f; opacity: 0.85; }
+.cf-a-heat { fill: none; stroke: var(--bad); stroke-width: 1; }
+.cf-a-rod { stroke: var(--text); stroke-width: 1.2; }
+.cf-a-seed { fill: var(--accent); }
+.cf-a-ingot { fill: #a9b1bd; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-ingot-end { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-saw { fill: #e7eaef; stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.cf-a-kerf { stroke: var(--bg); stroke-width: 3; }
+.cf-a-slice { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-wafer { fill: #b6bdc8; stroke: var(--text); stroke-width: 1; }
+.cf-a-rough path { fill: none; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-pad { fill: #f6d58a; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-shaft { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.6; }
+.cf-a-slurry { fill: #6aa8d8; }
+.cf-a-shine { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; }
+.cf-a-die { fill: #e7eaef; stroke: #8a93a3; stroke-width: 0.5; }
+.cf-a-die.extra { fill: var(--good-soft); stroke: var(--good); stroke-width: 1; }
+.cf-a-extra-text { fill: var(--good); }
+.cf-a-hl { fill: none; stroke: var(--accent); stroke-width: 2; }
+.cf-a-scribe line { stroke: var(--accent); stroke-width: 1.4; }
+.cf-a-mark { stroke: var(--bad); stroke-width: 3; stroke-linecap: round; }
+.cf-a-notchcut { fill: var(--bg); stroke: var(--text); stroke-width: 0.6; }
+.cf-a-ring { fill: none; stroke: var(--bad); stroke-width: 1.6; stroke-dasharray: 3 2; }
+.cf-a-zoom { stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.cf-a-chip { fill: #e9eef7; stroke: var(--text); stroke-width: 1.2; }
+.cf-a-block { fill: #bcd0ef; stroke: #4c6fae; stroke-width: 0.6; }
+.cf-a-cell { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+.cf-a-wire { fill: none; stroke: var(--text); stroke-width: 1.4; stroke-linejoin: round; }
+.cf-a-switch { stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.cf-a-dot { fill: var(--text); }
+.cf-a-plate { stroke: var(--text); stroke-width: 2.4; }
+.cf-a-charge { font-size: 8px; font-weight: 700; fill: var(--bad); }
+.cf-a-elec { fill: #e0b100; stroke: var(--text); stroke-width: 0.4; }
+.cf-a-diode { fill: var(--accent-soft); stroke: var(--text); stroke-width: 1; }
+.cf-a-lamp { fill: #fff3b0; stroke: #c9a20a; stroke-width: 1; }
+.cf-a-ray { stroke: #e0b100; stroke-width: 1.2; stroke-dasharray: 5 4; }
+.cf-a-ray.pass { stroke-width: 1.6; }
+.cf-a-quartz { fill: #dff1fb; stroke: #6aa8d8; stroke-width: 0.8; }
+.cf-a-chrome { fill: #3b4250; }
+.cf-a-pr { fill: #f3c27a; stroke: #b9822d; stroke-width: 0.6; }
+.cf-a-exposed { fill: #8e6bd8; opacity: 0.85; }
+.cf-a-nozzle { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-prdrop { fill: #f3c27a; stroke: #b9822d; stroke-width: 0.6; }
+.cf-a-spin { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.cf-a-spin-head { fill: var(--accent); }
+.cf-a-dust { fill: var(--text); }
+.cf-a-beam { fill: #fff3b0; opacity: 0.6; }
+.cf-a-lens { fill: #dff1fb; stroke: #6aa8d8; stroke-width: 1; }
+.cf-a-field { fill: #8e6bd8; stroke: var(--surface); stroke-width: 0.6; }
+.cf-a-shot { fill: none; stroke: #e0b100; stroke-width: 2; }
+.cf-a-dev { fill: #6aa8d8; }
+.cf-a-etchant { fill: #2fae7a; }
+.cf-a-hole { fill: var(--bg); }
+.cf-a-tank { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.cf-a-liquid { fill: #bfe6d6; opacity: 0.7; }
+.cf-a-bubble { fill: none; stroke: #2fae7a; stroke-width: 1; }
+.cf-a-chamber { fill: var(--surface); stroke: var(--text); stroke-width: 1.2; }
+.cf-a-electrode { fill: #a9b1bd; }
+.cf-a-glow { fill: #b48cf0; }
+.cf-a-inlet { stroke: var(--accent); stroke-width: 2; }
+.cf-a-inlet-head { fill: var(--accent); }
+.cf-a-gas { fill: #8fb3e8; stroke: #4c6fae; stroke-width: 0.5; }
+.cf-a-ion, .cf-a-k-ion { fill: var(--bad); }
+.cf-a-plus { font-size: 10px; font-weight: 800; fill: var(--bad); }
+.cf-a-radical, .cf-a-k-rad { fill: #2fae7a; }
+.cf-a-k-elec { fill: #e0b100; }
+.cf-a-k-gas { fill: #8fb3e8; }
+.cf-a-plasma { fill: #b48cf0; }
+.cf-a-film-atom { fill: #3d7fc4; }

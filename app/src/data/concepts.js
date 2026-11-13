@@ -15,9 +15,101 @@ export const ARTICLES = {
   b7: { title: '반도체 8대 공정 7탄. 전기를 통하게 하는 마지막 작업, 금속 배선 공정', date: '2012.12.05', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-7%ed%83%84-%ec%a0%84%ea%b8%b0%eb%a5%bc-%ed%86%b5%ed%95%98%ea%b2%8c-%ed%95%98%eb%8a%94-%eb%a7%88%ec%a7%80%eb%a7%89-%ec%9e%91%ec%97%85/' },
   a8: { title: '[반도체 8대 공정] 8탄, 완벽한 반도체로 태어나기 위한 첫 번째 테스트 ‘EDS공정’', date: '2018.05.09', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-8%ed%83%84-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a1%9c-%ed%83%9c%ec%96%b4%eb%82%98%ea%b8%b0-%ec%9c%84%ed%95%9c/' },
   a9: { title: '[반도체 8대 공정] 9탄, 외부환경으로부터 반도체를 보호하는 패키징 (Packaging) 공정', date: '2018.10.12', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-9%ed%83%84-%ec%99%b8%eb%b6%80%ed%99%98%ea%b2%bd%ec%9c%bc%eb%a1%9c%eb%b6%80%ed%84%b0-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a5%bc-%eb%b3%b4%ed%98%b8/' },
+  b1: { title: '반도체 8대 공정 1탄. 반도체 집적회로의 핵심재료, 웨이퍼란 무엇일까요?', date: '2012.08.02', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-1%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ec%a7%91%ec%a0%81%ed%9a%8c%eb%a1%9c%ec%9d%98-%ed%95%b5%ec%8b%ac%ec%9e%ac%eb%a3%8c-%ec%9b%a8%ec%9d%b4/' },
+  a3: { title: '[반도체 8대 공정] 3탄, 전자산업의 혁명! 집적회로', date: '2017.07.19', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-3%ed%83%84-%ec%a0%84%ec%9e%90%ec%82%b0%ec%97%85%ec%9d%98-%ed%98%81%eb%aa%85-%ec%a7%91%ec%a0%81%ed%9a%8c%eb%a1%9c/' },
+  a4: { title: '[반도체 8대 공정] 4탄, 웨이퍼에 회로를 그려 넣는 포토공정', date: '2017.09.22', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%9a%8c%eb%a1%9c%eb%a5%bc-%ea%b7%b8%eb%a0%a4-%eb%84%a3%eb%8a%94-%ed%8f%ac%ed%86%a0/' },
+  b4: { title: '반도체 8대 공정 4탄. 웨이퍼에 한 폭의 세밀화를 그려 넣는 포토공정(Photo)', date: '2012.09.26', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%95%9c-%ed%8f%ad%ec%9d%98-%ec%84%b8%eb%b0%80%ed%99%94%eb%a5%bc-%ea%b7%b8%eb%a0%a4/' },
+  a5: { title: '[반도체 8대 공정] 5탄, 반도체 회로패턴의 완성 ‘식각 공정’', date: '2018.01.04', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-5%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ed%9a%8c%eb%a1%9c%ed%8c%a8%ed%84%b4%ec%9d%98-%ec%99%84%ec%84%b1-%ec%8b%9d%ea%b0%81-%ea%b3%b5/' },
 }
 
 export const CONCEPTS = {
+  'wafer-make': [
+    {
+      id: 'wafer-steps',
+      title: '웨이퍼가 만들어지는 3단계',
+      teach: '실리콘 원료를 녹여 결정 성장시킨 기둥(잉곳)을 다이아몬드 톱으로 얇게 썰고, 연마액과 연마 장비로 표면을 매끄럽게 갈아냅니다.',
+      points: [
+        '① 잉곳(Ingot): 녹인 실리콘 표면에 단결정 실리콘(seed)을 접촉시키고 천천히 끌어올려 키움',
+        '② 슬라이싱(Wafer Slicing): 다이아몬드 톱으로 균일한 두께로 얇게 썲 · 잉곳 지름이 웨이퍼 크기를 결정',
+        '③ 연마(Lapping & Polishing): 연마액과 연마 장비로 표면을 매끄럽게',
+        '가공 전의 웨이퍼 = 베어 웨이퍼(Bare wafer)',
+      ],
+      article: 'a1',
+      also: 'b1', // seed를 끌어올리는 과정은 B판 1탄 원문
+    },
+    {
+      id: 'wafer-parts',
+      title: '웨이퍼 부위 이름',
+      teach: '웨이퍼 위 사각형 하나하나가 IC칩인 다이(Die)이고, 다이 사이에는 다이아몬드 톱으로 잘라낼 폭인 스크라이브 라인을 둡니다. 플랫존과 노치는 가공할 때의 기준입니다.',
+      points: [
+        '다이(Die): 전자 회로가 집적된 IC칩 하나',
+        '스크라이브 라인(Scribe Line): 다이를 잘라낼 수 있게 둔 폭',
+        '플랫존(Flat Zone): 웨이퍼 가공 시 기준선',
+        '노치(Notch): 노치 웨이퍼가 플랫존 웨이퍼보다 다이를 더 많이 만들 수 있어 효율이 높음',
+      ],
+      article: 'a1',
+    },
+    {
+      id: 'wafer-die-device',
+      title: '웨이퍼 → 다이 → 소자',
+      teach: '작은 반도체 칩(다이) 안에는 다이오드, 트랜지스터, 캐패시터, 저항 같은 전자 부품이 수천 개에서 수백만 개 이상 들어 있습니다.',
+      points: ['트랜지스터: 전원을 켜고 끄는 스위치', '캐패시터: 전하를 충전해 보관하는 창고', '저항: 전류의 흐름을 조절', '다이오드: 신호를 고르게 전함'],
+      article: 'a3',
+    },
+  ],
+  photo: [
+    {
+      id: 'photomask',
+      title: '포토마스크(Photo Mask)',
+      teach: '순도가 높은 석영(Quartz) 기판 위에 크롬(Cr)으로 미세 회로를 그린 것이 포토마스크입니다. 세밀한 패터닝을 위해 회로보다 크게 만들고, 렌즈로 빛을 축소해 비춥니다.',
+      points: ['석영 기판: 빛이 통과하는 판', '크롬(Cr) 회로: 빛을 가리는 무늬', '마스크는 실제 회로보다 크게 제작'],
+      article: 'a4',
+    },
+    {
+      id: 'pr-coat',
+      title: '① 감광액 도포',
+      teach: '산화막이 생긴 웨이퍼 표면에 빛에 민감한 물질인 감광액(PR, Photo Resist)을 골고루 바릅니다. 웨이퍼를 인화지로 만드는 단계입니다.',
+      points: ['감광액(PR): 빛에 민감한 물질', '포토공정 = 감광액 도포 → 노광 → 현상', '흑백 사진의 인화지와 비슷한 역할'],
+      article: 'a4',
+    },
+    {
+      id: 'exposure',
+      title: '② 노광: 축소해서 찍고 반복',
+      teach: '노광장비(Stepper)로 회로 패턴이 담긴 마스크에 빛을 통과시켜 웨이퍼에 회로를 찍어냅니다. 마스크를 웨이퍼보다 크게 만들어 먼지 크기도 함께 축소되게 하고, 한 칩씩 축소 촬영을 반복해 웨이퍼 전면을 찍습니다.',
+      points: ['노광: 빛을 선택적으로 비추는 과정', '마스크가 크면 마스크 위 먼지도 함께 작아짐', '반복 축소 촬영으로 웨이퍼 전면을 주사'],
+      article: 'b4',
+    },
+    {
+      id: 'develop-pn',
+      title: '③ 현상: 양성 vs 음성 감광액',
+      teach: '웨이퍼에 현상액을 뿌려 노광된 영역과 노광되지 않은 영역을 선택적으로 제거해 회로 패턴을 만듭니다. 양성 감광액은 노광되지 않은 영역을 남기고, 음성 감광액은 노광된 영역만 남깁니다.',
+      points: ['양성(Positive) 감광액: 빛 받은 곳이 제거됨', '음성(Negative) 감광액: 빛 받은 곳만 남음', '필름의 상을 인화지에 인화하는 것과 비슷'],
+      article: 'a4',
+    },
+  ],
+  etch: [
+    {
+      id: 'etch-principle',
+      title: '식각 원리: 감광액이 덮은 곳만 남긴다',
+      teach: '포토공정에서 만든 감광액 부분은 남겨 둔 채 나머지를 부식액(etchant)으로 벗겨 내 회로를 만듭니다. 식각이 끝나면 감광액도 제거합니다.',
+      points: ['부식액(etchant): 액체 또는 기체', '감광액(PR)이 덮은 곳은 보호됨', '식각 후 감광액 제거 → 회로 패턴 완성'],
+      article: 'a5',
+    },
+    {
+      id: 'wet-dry',
+      title: '습식 식각 vs 건식 식각',
+      teach: '습식 식각(Wet Etching)은 용액의 화학 반응으로, 건식 식각(Dry Etching)은 반응성 기체·이온 등으로 특정 부위를 제거합니다. 건식은 비용이 비싸고 방법이 까다롭지만 쓰임이 늘고 있습니다.',
+      points: ['습식: 용액 + 화학 반응', '건식: 반응성 기체·이온', '건식은 습식보다 비싸고 까다롭지만 확대되는 추세'],
+      article: 'a5',
+    },
+    {
+      id: 'plasma-gen',
+      title: '플라즈마가 생기는 과정',
+      teach: '대기압보다 낮은 압력의 진공 챔버에 가스를 넣고 전기 에너지를 주면 플라즈마가 생깁니다. 플라즈마에서 해리된 반응성 원자(라디칼)가 막질 원자와 만나 휘발성을 띠며 표면에서 떨어져 나갑니다.',
+      points: ['진공 챔버 + 가스 + 전기 에너지', '자유전자 충돌 → 이온화 → 연쇄 반응(Avalanche)', '라디칼이 막과 반응해 휘발되어 떨어져 나감'],
+      article: 'a5',
+    },
+  ],
   oxidation: [
     {
       id: 'oxide-roles',
