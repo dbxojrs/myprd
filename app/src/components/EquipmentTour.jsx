@@ -57,7 +57,9 @@ export default function EquipmentTour({ machineId, values, result }) {
   const module = eq.modules[mod]
   const step = eq.operation[op]
   const pickModule = (id) => {
-    setMod(eq.modules.findIndex((m) => m.id === id))
+    const index = eq.modules.findIndex((m) => m.id === id)
+    if (index < 0) return // 그림에만 있고 설명이 없는 부위는 무시합니다.
+    setMod(index)
     setPlaying(false)
     setTab('tour')
   }

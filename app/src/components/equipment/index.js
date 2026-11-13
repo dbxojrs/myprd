@@ -3,6 +3,16 @@
 //   RESULT: { values, result } → viewBox 0 0 400 240 svg. 지금 조건으로 만든 결과물을 확대해 보여줍니다.
 import OxidationIso from './OxidationIso.jsx'
 import OxidationResult from './OxidationResult.jsx'
+import PhotoIso from './PhotoIso.jsx'
+import PhotoResult from './PhotoResult.jsx'
+import EtchIso from './EtchIso.jsx'
+import EtchResult from './EtchResult.jsx'
+import CvdIso from './CvdIso.jsx'
+import CvdResult from './CvdResult.jsx'
+import ImplantIso from './ImplantIso.jsx'
+import ImplantResult from './ImplantResult.jsx'
+import PvdIso from './PvdIso.jsx'
+import PvdResult from './PvdResult.jsx'
 import GrinderIso from './GrinderIso.jsx'
 import GrinderResult from './GrinderResult.jsx'
 import SawIso from './SawIso.jsx'
@@ -22,6 +32,11 @@ import TestResult from './TestResult.jsx'
 
 export const ISO = {
   oxidation: OxidationIso,
+  photo: PhotoIso,
+  etch: EtchIso,
+  deposition: CvdIso,
+  'ion-implant': ImplantIso,
+  metallization: PvdIso,
   backgrind: GrinderIso,
   'wafer-saw': SawIso,
   'die-attach': DieBonderIso,
@@ -34,6 +49,11 @@ export const ISO = {
 
 export const RESULT = {
   oxidation: OxidationResult,
+  photo: PhotoResult,
+  etch: EtchResult,
+  deposition: CvdResult,
+  'ion-implant': ImplantResult,
+  metallization: PvdResult,
   backgrind: GrinderResult,
   'wafer-saw': SawResult,
   'die-attach': DieBonderResult,
