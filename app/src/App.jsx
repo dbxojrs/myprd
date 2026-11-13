@@ -10,6 +10,7 @@ import ProcessQuery from './components/ProcessQuery.jsx'
 import ProcessSim from './components/ProcessSim.jsx'
 import MachineSim from './components/MachineSim.jsx'
 import QuizPage from './components/QuizPage.jsx'
+import { machines } from './data/machineSim.js'
 import AdvancedPackage from './components/AdvancedPackage.jsx'
 import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
@@ -31,9 +32,13 @@ export default function App() {
   const studyingFront = screen === 'front' || screen === 'map' || (screen === 'query' && findProcess(processId)?.stage === 'front')
   const flowMode = screen === 'line' ? 'line' : studyingFront ? 'front' : 'learn'
   const activeId = flowMode === 'line' ? lineProcessId : processId
-  const activeGroup = MENU_GROUPS.find((group) => group.items.some((item) => item.id === screen))
+  // 공정 상세 화면은 그 공정의 단계에 맞는 영역 탭을 켭니다(전공정 공정이면 FAB 탭).
+  const queryStage = screen === 'query' ? findProcess(processId)?.stage : null
+  const activeGroup =
+    (queryStage && MENU_GROUPS.find((group) => group.stages.includes(queryStage))) ||
+    MENU_GROUPS.find((group) => group.items.some((item) => item.id === screen))
   // 공정 흐름 막대는 공정을 따라가는 화면에서만 보여줍니다.
-  const showFlowBar = ['map', 'front', 'flow', 'query', 'line'].includes(screen)
+  const showFlowBar = ['front', 'flow', 'query', 'line'].includes(screen)
 
   const openProcess = (id) => {
     setProcessId(id)
@@ -44,7 +49,7 @@ export default function App() {
   // 다른 화면(시험 해설 등)에서 특정 장비 시뮬레이터를 바로 엽니다.
   const openMachine = (id) => {
     setMachineFocus(id)
-    setScreen('machine')
+    setScreen(machines.find((m) => m.id === id)?.stage === 'front' ? 'machine-fab' : 'machine-pkg')
   }
 
   const openPackage = (id) => {
@@ -53,7 +58,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className="app" data-area={activeGroup?.id ?? 'home'}>
       <header className="app-header">
         <div className="app-bar">
           <button type="button" className="app-brand" onClick={() => setScreen('home')}>
@@ -81,8 +86,13 @@ export default function App() {
           </nav>
           <TermModeSwitch />
         </div>
-        {activeGroup && (
+        <div className="app-subbar">
+        {activeGroup ? (
           <nav className="subtabs" aria-label={`${activeGroup.label} 화면`}>
+            <span className="area-label">
+              <span aria-hidden="true">{activeGroup.icon}</span> {activeGroup.label}
+              <small>{activeGroup.en}</small>
+            </span>
             {activeGroup.items.map((item) => (
               <button
                 key={item.id}
@@ -96,7 +106,10 @@ export default function App() {
               </button>
             ))}
           </nav>
+        ) : (
+          <p className="subbar-note">칩 설계부터 FAB · PKG·TEST · 보드 실장까지</p>
         )}
+        </div>
       </header>
 
       <div className="app-body">
@@ -149,7 +162,14 @@ export default function App() {
           />
         )}
         {screen === 'sim' && <ProcessSim />}
-        {screen === 'machine' && <MachineSim key={machineFocus ?? 'default'} initialId={machineFocus} onOpenProcess={openProcess} />}
+        {(screen === 'machine-fab' || screen === 'machine-pkg') && (
+          <MachineSim
+            key={`${screen}-${machineFocus ?? 'default'}`}
+            area={screen === 'machine-fab' ? 'front' : 'back'}
+            initialId={machineFocus}
+            onOpenProcess={openProcess}
+          />
+        )}
         {['quiz', 'wrong', 'ai'].includes(screen) && <QuizPage view={screen} onOpenProcess={openProcess} onOpenMachine={openMachine} />}
         {screen === 'line' && (
           <LineSim

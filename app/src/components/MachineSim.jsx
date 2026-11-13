@@ -170,8 +170,10 @@ function LineVerdict({ verdict, onRestart }) {
   )
 }
 
-export default function MachineSim({ onOpenProcess, initialId = null }) {
-  const first = machines.find((m) => m.id === initialId) ?? machines[0]
+export default function MachineSim({ onOpenProcess, initialId = null, area = null }) {
+  // area: 'front'이면 전공정(FAB) 설비만, 'back'이면 후공정(PKG·TEST) 설비만 보여줍니다.
+  const pool = area ? machines.filter((m) => m.stage === area) : machines
+  const first = pool.find((m) => m.id === initialId) ?? pool[0]
   const [machineId, setMachineId] = useState(first.id)
   const machine = machines.find((m) => m.id === machineId)
   const [mode, setMode] = useState('free')
@@ -334,19 +336,19 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
 
   return (
     <section className="screen">
-      <h2>고급 장비 시뮬레이터</h2>
+      <h2>{area === 'front' ? 'FAB 설비 실습 (EQ)' : area === 'back' ? 'PKG 설비 실습 (EQ)' : '설비 실습 (EQ)'}</h2>
       <p className="muted">
         실제 장비 조작반처럼 상태를 확인하고 조건을 정한 뒤 START를 누르세요. 가동 순서대로 진행하다가 문제가 있으면 알람으로 멈추고,
         끝나면 불량·경고·정상을 판정합니다. 판정은 규칙표로만 계산하며 검수 전입니다.
       </p>
 
       <div className="ms-toolbar">
-        {mode !== 'line' && STAGE_ORDER.filter((stage) => machines.some((m) => m.stage === stage)).map((stage) => (
+        {mode !== 'line' && STAGE_ORDER.filter((stage) => pool.some((m) => m.stage === stage)).map((stage) => (
           <div key={stage} className="button-row ms-machine-row" role="group" aria-label={STAGES[stage].name.ko}>
             <span className="ms-machine-stage">
               <Term value={STAGES[stage].name} compact />
             </span>
-            {machines
+            {pool
               .filter((m) => m.stage === stage)
               .map((m) => (
                 <button key={m.id} type="button" className={m.id === machineId ? 'chip chip-active' : 'chip'} aria-pressed={m.id === machineId} onClick={() => chooseMachine(m.id)}>
@@ -400,7 +402,7 @@ export default function MachineSim({ onOpenProcess, initialId = null }) {
 
       {mode === 'line' && (
         <div className="ms-scenarios">
-          {LINES.map((l) => (
+          {LINES.filter((l) => !area || l.id === area).map((l) => (
             <button key={l.id} type="button" className={`ms-scenario${l.id === lineId ? ' on' : ''}`} disabled={lineMachines(l.id).length === 0} onClick={() => chooseLine(l)}>
               <strong>{l.name}</strong>
               <span>

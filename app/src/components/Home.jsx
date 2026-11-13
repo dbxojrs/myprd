@@ -40,8 +40,8 @@ export default function Home({ pkg, completed, onGo, onOpenProcess }) {
                 {done === 0 ? '처음부터 학습' : '이어서 학습'}: <Term value={findProcess(nextId).name} compact /> →
               </button>
             )}
-            <button type="button" onClick={() => onGo('machine')}>
-              장비 시뮬레이터 열기
+            <button type="button" onClick={() => onGo('machine-fab')}>
+              FAB 설비 실습 열기
             </button>
           </div>
         </div>

@@ -3077,3 +3077,53 @@ a.eq-src { color: var(--accent); }
 .ms-zoom h4 { margin: 0 0 4px; font-size: 1rem; }
 .ms-zoom-body svg { width: 100%; height: auto; display: block; }
 .ms-zoom-body .eq-oxide.grow, .ms-zoom-body .grow { animation-duration: var(--grow, 2.2s); }
+
+/* 영역별 색: 지금 어느 공부 영역(전체·FAB·PKG·시험·첨단)에 있는지 색으로 구분합니다. */
+.app[data-area='fab'] { --accent: #5b3fd1; --accent-soft: #ece8fb; }
+.app[data-area='pkg'] { --accent: #0b7a6d; --accent-soft: #e0f3f0; }
+.app[data-area='exam'] { --accent: #b25200; --accent-soft: #fbeedf; }
+.app[data-area='deep'] { --accent: #a3285f; --accent-soft: #f8e4ee; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .app[data-area='fab'] { --accent: #a796f5; --accent-soft: #2a2347; }
+  :root:not([data-theme='light']) .app[data-area='pkg'] { --accent: #5fd1c1; --accent-soft: #15302c; }
+  :root:not([data-theme='light']) .app[data-area='exam'] { --accent: #f0a860; --accent-soft: #3a2a17; }
+  :root:not([data-theme='light']) .app[data-area='deep'] { --accent: #ef8fb9; --accent-soft: #3a1c2a; }
+}
+.area-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 12px 4px 0;
+  margin-right: 4px;
+  border-right: 2px solid var(--accent);
+  font-weight: 800;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.area-label small { font-weight: 600; color: var(--muted); font-size: 0.75rem; }
+.app[data-area]:not([data-area='home']) .app-header { border-bottom: 3px solid var(--accent); }
+/* 두 번째 줄: 영역의 세부 화면 + 용어 표시 전환 */
+.app-subbar {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-subbar .subtabs { flex: 1; min-width: 0; max-width: none; margin: 0; padding: 0; align-items: center; }
+.subbar-note { flex: 1; margin: 0; color: var(--muted); font-size: 0.85rem; }
+.app-subbar .term-switch { flex: none; }
+@media (max-width: 760px) {
+  .app-subbar { flex-wrap: wrap; }
+  .app-subbar .subtabs { flex-basis: 100%; }
+}
+/* 메뉴가 넘치면 잘리지 않고 다음 줄로 내려갑니다. */
+.app-subbar .subtabs { flex-wrap: wrap; overflow: visible; row-gap: 6px; }
+.top-tab { padding: 10px 11px; }
+.app-bar .term-switch .muted { display: none; }
+.app-bar .term-switch .term-option { padding: 3px 8px; font-size: 0.75rem; }
+@media (max-width: 760px) {
+  .app-bar .top-tabs { flex-wrap: wrap; overflow: visible; }
+  .area-label { display: none; }
+}
