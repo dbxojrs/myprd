@@ -11,11 +11,15 @@
 //   terms: [{ id, ko, en, short, deep, src }] 더 알아보기 용어
 //   sources: { key: { title, publisher, url, status } } status: 읽음 · PDF 추출 · 검색 요약 등
 import oxidation from './oxidation.js'
+import backgrind from './backgrind.js'
+import waferSaw from './waferSaw.js'
+import dieAttach from './dieAttach.js'
+import wireBond from './wireBond.js'
 import molding from './molding.js'
 import marking from './marking.js'
 import packageSaw from './packageSaw.js'
 import test from './test.js'
 
-const list = [oxidation, molding, marking, packageSaw, test]
+const list = [oxidation, backgrind, waferSaw, dieAttach, wireBond, molding, marking, packageSaw, test]
 
 export const EQUIPMENT = Object.fromEntries(list.map((e) => [e.id, e]))

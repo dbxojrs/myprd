@@ -3271,3 +3271,108 @@ a.eq-src { color: var(--accent); }
   .eq-bb-letter, .eq-bb-groove, .eq-bb-burr, .eq-bb-sweep, .eq-bb-cellg, .eq-bb-bar { animation: none; }
   .eq-bb-upper, .eq-bb-plunger, .eq-bb-strip, .eq-bb-head, .eq-bb-nozzle { transition: none; }
 }
+/* 장비 알아보기: 후공정 1 (백그라인더 · 다이싱 소 · 다이 본더 · 와이어 본더) */
+.eq-dim.bad { fill: var(--bad); font-weight: 700; }
+.eq-ba-axis { font-size: 8px; font-weight: 800; fill: var(--accent); paint-order: stroke; stroke: var(--surface); stroke-width: 2.5px; }
+.eq-ba-wafer { fill: #8d97a8; stroke: var(--text); stroke-width: 0.4; }
+.eq-ba-ring { fill: #d9dde3; stroke: var(--text); stroke-width: 0.5; }
+.eq-ba-tape { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.4; }
+.eq-ba-frame { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.eq-ba-spin { fill: none; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.5; }
+.eq-ba-spin.run { opacity: 1; animation: ms-flow 0.25s linear infinite; }
+.eq-ba-roll .f-top { animation: eq-glow 0.8s ease-in-out infinite alternate; }
+.eq-ba-spindle { transition: transform 0.8s ease-in-out; }
+.eq-ba-spindle.down { transform: translateY(7px); }
+.eq-ba-water { fill: #6db3e8; animation: eq-ba-splash 0.6s ease-out infinite; }
+@keyframes eq-ba-splash { from { opacity: 1; transform: translate(0, 0); } to { opacity: 0; transform: translate(0, 8px); } }
+.eq-ba-xtable.run { animation: eq-ba-xmove 1.4s ease-in-out infinite alternate; }
+@keyframes eq-ba-xmove { from { transform: translate(-12px, -7px); } to { transform: translate(12px, 7px); } }
+.eq-ba-cut { fill: none; stroke: var(--text); stroke-width: 1.2; }
+.eq-ba-cut.draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: eq-ba-draw 0.6s ease-out forwards; }
+@keyframes eq-ba-draw { to { stroke-dashoffset: 0; } }
+.eq-ba-blade { transition: transform 0.6s ease-in-out; }
+.eq-ba-blade.down { transform: translateY(8px); }
+.eq-ba-bladedisc { fill: #e7eaef; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 2 2; }
+.eq-ba-bladedisc.run { animation: ms-flow 0.15s linear infinite; }
+.eq-ba-cable { fill: none; stroke: var(--muted); stroke-width: 1; }
+.eq-ba-screen { fill: #233046; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-screen.on { fill: #3d7fc4; animation: eq-glow 0.8s ease-in-out infinite alternate; }
+.eq-ba-beam { fill: var(--accent); fill-opacity: 0.18; stroke: var(--accent); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.eq-ba-pin { transition: transform 0.5s ease-out; }
+.eq-ba-pin.up { transform: translateY(-6px); }
+.eq-ba-die { fill: #8d97a8; stroke: var(--surface); stroke-width: 0.5; transition: transform 0.5s; }
+.eq-ba-die.lifted { transform: translateY(-6px); fill: #6d7a90; }
+.eq-ba-strip.run { animation: eq-ba-index 0.9s ease-in-out infinite; }
+@keyframes eq-ba-index { 0%, 40% { transform: translate(0, 0); } 100% { transform: translate(12px, 7px); } }
+.eq-ba-epoxy { fill: #d9e8c7; stroke: #6c8a3c; stroke-width: 0.6; }
+.eq-ba-syringe { transition: transform 0.5s; }
+.eq-ba-syringe.run { animation: eq-ba-dab 0.7s ease-in-out infinite; }
+@keyframes eq-ba-dab { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(2px); } }
+.eq-ba-head { transition: transform 1s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-ba-collet { transition: transform 0.5s; }
+.eq-ba-collet.down { transform: translateY(8px); }
+.eq-ba-cap { transition: transform 0.9s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-ba-press.run { animation: eq-ba-press 0.8s ease-in-out infinite; }
+@keyframes eq-ba-press { 0%, 100% { transform: translateY(-5px); } 45%, 65% { transform: translateY(2px); } }
+.eq-ba-wire { fill: none; stroke: #c9a227; stroke-width: 1; }
+.eq-ba-hot .f-top, .eq-ba-hot .f-left { fill: #f08a4b; fill-opacity: 0.55; animation: eq-glow 1.2s ease-in-out infinite alternate; }
+.eq-ba-lead { fill: #d9b25c; stroke: var(--text); stroke-width: 0.3; }
+.eq-ba-loop { fill: none; stroke: #c9a227; stroke-width: 1.1; }
+.eq-ba-loop.draw { stroke-dasharray: 60; stroke-dashoffset: 60; animation: eq-ba-loopdraw 1.6s ease-out forwards; }
+@keyframes eq-ba-loopdraw { to { stroke-dashoffset: 0; } }
+.eq-ba-fab { fill: #e2bf4a; stroke: var(--text); stroke-width: 0.4; }
+.eq-ba-spark { fill: none; stroke: #6db3e8; stroke-width: 1.4; animation: ms-blink 0.15s linear infinite alternate; }
+
+/* 결과물 확대 (자라는 부분은 .grow + var(--grow)) */
+.eq-ba-bgtape { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.6; }
+.eq-ba-circuit { fill: #3d7fc4; }
+.eq-ba-thin { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-thin var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-thin { from { transform: scaleY(var(--from, 1)); } }
+.eq-ba-damage { fill: #c95b4a; fill-opacity: 0.35; stroke: var(--bad); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.eq-ba-rough { fill: none; stroke: var(--text); stroke-width: 1; }
+.eq-ba-burn { fill: #6b3a1e; fill-opacity: 0.6; }
+.eq-ba-crack { fill: none; stroke: var(--bad); stroke-width: 1.8; stroke-linejoin: round; }
+.eq-ba-dimline { stroke: var(--accent); stroke-width: 1; marker-start: none; }
+.eq-ba-chip { fill: var(--bad); fill-opacity: 0.85; }
+.eq-ba-chiptop { fill: #8d97a8; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-kerf { fill: #e8edf3; stroke: var(--muted); stroke-width: 0.5; }
+.eq-ba-kerf.grow-x { transform-box: fill-box; transform-origin: 0 50%; animation: eq-ba-growx var(--grow, 2.2s) ease-out both; }
+.eq-ba-kerf.grow-y { transform-box: fill-box; transform-origin: 50% 0; animation: eq-ba-growy var(--grow, 2.2s) ease-out both; animation-delay: calc(var(--grow, 2.2s) * 0.15); }
+@keyframes eq-ba-growx { from { transform: scaleX(0); } }
+@keyframes eq-ba-growy { from { transform: scaleY(0); } }
+.eq-ba-chips { animation: ms-scene-in 0.4s ease-out both; animation-delay: 1.4s; }
+.eq-ba-bridge { fill: #8d97a8; fill-opacity: 0.7; stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.eq-ba-tape-sec { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.6; }
+.eq-ba-groove { fill: #f6f7f9; stroke: var(--muted); stroke-width: 0.5; transform-box: fill-box; transform-origin: 50% 0; animation: eq-ba-growy var(--grow, 2.2s) ease-out both; }
+.eq-ba-leadframe { fill: #d9b25c; stroke: #8a6a1d; stroke-width: 0.8; }
+.eq-ba-glue { fill: #d9e8c7; stroke: #6c8a3c; stroke-width: 0.8; }
+.eq-ba-glue.daf { fill: #f3d9a8; stroke: #a67a1e; }
+.eq-ba-glue.soft { fill-opacity: 0.55; stroke-dasharray: 3 2; }
+.eq-ba-squeeze { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-squeeze var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-squeeze { 0%, 40% { transform: scaleX(0.55); opacity: 0.6; } }
+.eq-ba-drop { animation: eq-ba-drop var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-drop { 0% { transform: translateY(-40px); opacity: 0.3; } 40% { transform: translateY(0); opacity: 1; } }
+.eq-ba-diesec { fill: #8d97a8; stroke: var(--text); stroke-width: 0.8; }
+.eq-ba-void { fill: var(--surface); stroke: var(--bad); stroke-width: 1; }
+.eq-ba-gap { stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.eq-ba-pad { fill: #b9c0cb; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-pad.dirty { fill: #9b8a6a; }
+.eq-ba-loopwire { fill: none; stroke: #c9a227; stroke-width: 2.4; stroke-linecap: round; }
+.eq-ba-loopwire.cu, .eq-ba-tail.cu { stroke: #c26a3c; }
+.eq-ba-loopwire.grow { stroke-dasharray: 420; stroke-dashoffset: 420; animation: eq-ba-wiredraw var(--grow, 2.2s) ease-out forwards; }
+@keyframes eq-ba-wiredraw { to { stroke-dashoffset: 0; } }
+.eq-ba-ball { fill: #e2bf4a; stroke: #8a6a1d; stroke-width: 0.8; }
+.eq-ba-ball.cu { fill: #d98a5c; stroke: #8a4420; }
+.eq-ba-ball.pop { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-pop 0.6s ease-out both; }
+@keyframes eq-ba-pop { from { transform: scale(1, 1.5); opacity: 0.4; } }
+.eq-ba-tail { stroke: #c9a227; stroke-width: 2.4; stroke-linecap: round; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-ba-spin.run, .eq-ba-roll .f-top, .eq-ba-water, .eq-ba-xtable.run, .eq-ba-cut.draw, .eq-ba-bladedisc.run, .eq-ba-screen.on,
+  .eq-ba-strip.run, .eq-ba-syringe.run, .eq-ba-press.run, .eq-ba-hot .f-top, .eq-ba-hot .f-left, .eq-ba-loop.draw, .eq-ba-spark,
+  .eq-ba-thin, .eq-ba-kerf.grow-x, .eq-ba-kerf.grow-y, .eq-ba-chips, .eq-ba-groove, .eq-ba-squeeze, .eq-ba-drop,
+  .eq-ba-loopwire.grow, .eq-ba-ball.pop { animation: none; }
+  .eq-ba-cut.draw, .eq-ba-loop.draw, .eq-ba-loopwire.grow { stroke-dashoffset: 0; }
+  .eq-ba-spindle, .eq-ba-blade, .eq-ba-pin, .eq-ba-die, .eq-ba-head, .eq-ba-collet, .eq-ba-cap, .eq-ba-syringe { transition: none; }
+}
+.eq-result .eq-dim.strong { paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }

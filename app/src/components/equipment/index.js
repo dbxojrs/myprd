@@ -3,6 +3,14 @@
 //   RESULT: { values, result } → viewBox 0 0 400 240 svg. 지금 조건으로 만든 결과물을 확대해 보여줍니다.
 import OxidationIso from './OxidationIso.jsx'
 import OxidationResult from './OxidationResult.jsx'
+import GrinderIso from './GrinderIso.jsx'
+import GrinderResult from './GrinderResult.jsx'
+import SawIso from './SawIso.jsx'
+import SawResult from './SawResult.jsx'
+import DieBonderIso from './DieBonderIso.jsx'
+import DieBonderResult from './DieBonderResult.jsx'
+import WireBonderIso from './WireBonderIso.jsx'
+import WireBonderResult from './WireBonderResult.jsx'
 import MoldingIso from './MoldingIso.jsx'
 import MoldingResult from './MoldingResult.jsx'
 import MarkerIso from './MarkerIso.jsx'
@@ -14,6 +22,10 @@ import TestResult from './TestResult.jsx'
 
 export const ISO = {
   oxidation: OxidationIso,
+  backgrind: GrinderIso,
+  'wafer-saw': SawIso,
+  'die-attach': DieBonderIso,
+  'wire-bond': WireBonderIso,
   molding: MoldingIso,
   marking: MarkerIso,
   'package-saw': PkgSawIso,
@@ -22,6 +34,10 @@ export const ISO = {
 
 export const RESULT = {
   oxidation: OxidationResult,
+  backgrind: GrinderResult,
+  'wafer-saw': SawResult,
+  'die-attach': DieBonderResult,
+  'wire-bond': WireBonderResult,
   molding: MoldingResult,
   marking: MarkingResult,
   'package-saw': PkgSawResult,
