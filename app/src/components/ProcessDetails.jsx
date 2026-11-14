@@ -24,20 +24,25 @@ export default function ProcessDetails({ steps, keyPoints }) {
         <>
           <h4>알아둘 점</h4>
           <div className="key-points">
-            {keyPoints.map((point) => (
+            {keyPoints.map((point) => {
+              const figures = point.figures ?? (point.figure ? [point.figure] : [])
+              return (
               <details key={point.title} className="key-point">
                 <summary>
                   {point.title}
-                  {point.figure && <span className="muted"> · 그림</span>}
+                  {figures.length > 0 && <span className="muted"> · 그림</span>}
                   {point.photos?.length > 0 && <span className="muted"> · 사진</span>}
                 </summary>
-                {point.figure && <DetailIllustration id={point.figure} />}
+                {figures.map((figure) => (
+                  <DetailIllustration key={figure} id={figure} />
+                ))}
                 <p>{point.body}</p>
                 {point.photos?.map((photo) => (
                   <PhotoExample key={photo.url} photo={photo} />
                 ))}
               </details>
-            ))}
+              )
+            })}
           </div>
         </>
       )}

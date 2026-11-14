@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { findProcess, frontFlow, STAGES } from '../data/processes.js'
+import { findProcess } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
@@ -9,9 +9,12 @@ import PhotoExample from './PhotoExample.jsx'
 import VideoLinks from './VideoLinks.jsx'
 import ProcessDetails from './ProcessDetails.jsx'
 import { ProcessIllustration } from './Illustrations.jsx'
+import ZoomStory from './ZoomStory.jsx'
+import ConceptFigures from './ConceptFigures.jsx'
+import ProcessSequence, { ProcessBreadcrumb } from './ProcessSequence.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 
-export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onReport }) {
+export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onReport }) {
   const [query, setQuery] = useState('')
   const [result, setResult] = useState(() =>
     initialId ? { status: 'found', process: findProcess(initialId) } : null,
@@ -31,16 +34,12 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
     onOpenProcess(id)
     setResult({ status: 'found', process: findProcess(id) })
     setReported(false)
+    setQuery('')
+    window.scrollTo({ top: 0 })
   }
 
   const process = result?.status === 'found' ? result.process : null
   const prereqs = process ? recommendPrerequisites(process.id, completed) : []
-  const isFront = process?.stage === 'front'
-  const flow = isFront ? frontFlow : pkg?.flow
-  const flowIndex = process && flow ? flow.indexOf(process.id) : -1
-  const prev = flowIndex > 0 ? findProcess(flow[flowIndex - 1]) : null
-  const next = flowIndex >= 0 && flowIndex < flow.length - 1 ? findProcess(flow[flowIndex + 1]) : null
-
   return (
     <section className="screen">
       <form className="search" onSubmit={submit}>
@@ -74,12 +73,15 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
 
       {process && (
         <article className="card">
+          <ProcessBreadcrumb process={process} pkg={pkg} onOpenMap={onOpenMap} />
           <h3>
             <Term value={process.name} />
           </h3>
           <ProcessIllustration id={process.id} />
           <VideoLinks videos={process.videos} />
           <p>{process.summary}</p>
+          <ZoomStory key={`zoom-${process.id}`} id={process.id} />
+          <ConceptFigures processId={process.id} />
           <dl className="facts">
             <dt>입력</dt>
             <dd>{process.input}</dd>
@@ -99,13 +101,6 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             </details>
           )}
 
-          {flowIndex >= 0 && (
-            <p className="position">
-              {!isFront && <Term value={pkg.name} />} <Term value={STAGES[process.stage].name} /> 흐름에서 {flowIndex + 1}번째 공정 · 앞: {prev ? <Term value={prev.name} /> : '없음'} · 뒤:{' '}
-              {next ? <Term value={next.name} /> : '없음'}
-            </p>
-          )}
-
           <h4>먼저 볼 공정</h4>
           {prereqs.length === 0 ? (
             <p className="muted">앞 공정을 모두 학습했거나 첫 공정입니다.</p>
@@ -118,6 +113,8 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
               ))}
             </div>
           )}
+
+          <ProcessSequence process={process} pkg={pkg} completed={completed} onOpen={open} onComplete={onComplete} />
 
           <div className="screen-foot">
             <button

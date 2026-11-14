@@ -872,3 +872,2694 @@ input:focus-visible {
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
 .il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+
+/* SEM 사진처럼 그린 그림: 현미경 사진은 흑백이라 화면 테마와 관계없이 같은 색을 씁니다. */
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }
+
+/* 확대해서 보기: 장비 전체에서 한 부분씩 확대하며 설명하는 장면 */
+.zs {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.zs-title {
+  margin: 0 0 8px;
+}
+
+.zs-ladder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.zs-ladder li:not(:last-child)::after {
+  content: '›';
+  margin-left: 4px;
+  color: var(--muted);
+}
+
+.zs-rung {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.zs-rung.done {
+  color: var(--muted);
+}
+
+.zs-rung.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.zs-stage {
+  position: relative;
+  aspect-ratio: 200 / 120;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.zs-stage:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.zs-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+}
+
+.zs-level {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.75rem;
+}
+
+/* 앞으로: 나가는 장면은 확대할 곳으로 빨려 들어가고, 들어오는 장면은 작게 시작해 커집니다. */
+.zs-out-zoom { animation: zs-out-zoom 1.4s ease-in forwards; pointer-events: none; }
+.zs-in-grow { animation: zs-in-grow 1.4s ease-out both; }
+/* 뒤로: 반대로 움직입니다. */
+.zs-out-shrink { animation: zs-out-shrink 1.2s ease-in forwards; pointer-events: none; }
+.zs-in-unzoom { animation: zs-in-unzoom 1.4s ease-out both; }
+.zs-out-fade { animation: zs-fade-out 0.9s ease forwards; pointer-events: none; }
+.zs-in-fade { animation: zs-fade-in 0.9s ease both; }
+
+@keyframes zs-out-zoom {
+  0% { transform: scale(1); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: scale(var(--k)); opacity: 0; }
+}
+@keyframes zs-in-grow {
+  0% { transform: scale(0.35); opacity: 0; }
+  45% { opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes zs-out-shrink {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.35); opacity: 0; }
+}
+@keyframes zs-in-unzoom {
+  0% { transform: scale(var(--k)); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes zs-fade-out { to { opacity: 0; } }
+@keyframes zs-fade-in { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-scene { animation-duration: 0.01s !important; }
+}
+
+.zs-progress {
+  height: 3px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.zs-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.1s linear;
+}
+
+.zs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.zs-caption h5 {
+  margin: 4px 0 6px;
+  font-size: 1rem;
+}
+
+.zs-beats {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.zs-beats li {
+  margin-bottom: 4px;
+  padding-left: 4px;
+  border-left: 3px solid transparent;
+  opacity: 0.3;
+  transition: opacity 0.5s;
+}
+
+.zs-beats li.shown { opacity: 1; }
+.zs-beats li.current { border-left-color: var(--accent); font-weight: 600; }
+
+.zs-disclaimer {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+}
+
+/* 장면 그림 */
+.zs-note {
+  font-size: 5.5px;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 1.8px;
+  stroke-linejoin: round;
+}
+.zs-note-hot { fill: var(--bad); }
+.zs-pointer { stroke: var(--muted); stroke-width: 0.5; }
+.zs-pointer-dot { fill: var(--muted); }
+.zs-focus { cursor: pointer; }
+.zs-focus rect { fill: var(--accent); fill-opacity: 0.08; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.zs-focus-text { fill: var(--accent); font-weight: 700; }
+.zs-ring { fill: none; stroke: var(--muted); stroke-width: 3; }
+.zs-die-top { fill: var(--surface); opacity: 0.55; }
+.zs-cut { stroke: var(--bg); stroke-width: 1.6; }
+.zs-street-hi { stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.zs-crosshair { fill: none; stroke: var(--accent); stroke-width: 0.9; }
+.zs-kerf { fill: var(--surface); stroke: var(--muted); stroke-width: 0.4; stroke-dasharray: 2 1.5; }
+.zs-blade-disc { fill: var(--border); stroke: var(--text); stroke-width: 0.8; }
+.zs-spoke { stroke: var(--text); stroke-width: 1; }
+.zs-bond { fill: var(--border); stroke: var(--muted); stroke-width: 0.6; }
+.zs-diamond { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.7; stroke-linejoin: round; }
+.zs-diamond-dim { opacity: 0.55; }
+.zs-grit-main { stroke-width: 1.2; }
+.zs-dull { stroke: var(--muted); }
+.zs-debris { fill: var(--muted); stroke: var(--text); stroke-width: 0.3; }
+.zs-heat { fill: var(--bad); opacity: 0.3; }
+.zs-original { stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.zs-dress { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+
+/* 확대 스토리: 와이어 본딩 */
+.zs-pad { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.zs-wire-thin { fill: none; stroke: var(--warn); stroke-width: 0.9; }
+.zs-wire-thick { stroke: var(--warn); stroke-width: 2.6; }
+.zs-wire-fill { fill: var(--warn); }
+.zs-spark { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-linejoin: round; }
+.zs-heat-line { fill: none; stroke: var(--bad); stroke-width: 0.9; opacity: 0.7; }
+.zs-ball-metal { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.8; }
+.zs-ball-fill { fill: var(--warn-soft); }
+.zs-grain { fill: none; stroke: var(--muted); stroke-width: 0.5; stroke-dasharray: 2 1.5; }
+.zs-bonded { stroke: var(--good); stroke-width: 1.6; }
+.zs-note-good { fill: var(--good); font-weight: 700; }
+
+/* 확대 스토리: 몰딩 */
+.zs-resin { fill: var(--muted); opacity: 0.55; }
+.zs-resin-cured { fill: var(--text); opacity: 0.7; }
+.zs-plunger { fill: var(--surface); stroke: var(--text); stroke-width: 1; }
+.zs-cavity { fill: var(--surface); stroke: var(--text); stroke-width: 0.6; }
+.zs-front { fill: none; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.zs-bad-wire { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.zs-epoxy { fill: var(--warn-soft); }
+.zs-epoxy-cured { fill: var(--border); }
+.zs-filler { fill: var(--surface); stroke: var(--muted); stroke-width: 0.7; }
+.zs-link { stroke: var(--muted); stroke-width: 0.5; stroke-dasharray: 1.5 1.5; }
+.zs-oven { fill: var(--border); stroke: var(--text); stroke-width: 1; }
+.zs-oven-window { fill: var(--surface); stroke: var(--muted); stroke-width: 0.6; }
+/* 확대 스토리: 백그라인딩 */
+.zs-damage { fill: var(--bad); opacity: 0.15; }
+.zs-removed { fill: var(--bg); }
+
+/* 확대 스토리: 다이 어태치 */
+.zs-cure-oven { fill: var(--surface); stroke: var(--text); stroke-width: 1; }
+.zs-cure-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.zs-heat-path .il-arrow line { stroke: var(--bad); }
+.zs-heat-path .il-arrow polygon { fill: var(--bad); }
+/* 확대 스토리: 마킹 */
+.zs-engrave { font-size: 5px; font-weight: 700; fill: var(--text); opacity: 0.75; }
+.zs-beam { fill: var(--bad); opacity: 0.16; }
+.zs-glow { fill: var(--bad); opacity: 0.45; }
+.zs-smoke { fill: var(--muted); }
+.zs-x { stroke: var(--bad); stroke-width: 2.4; stroke-linecap: round; }
+
+/* 확대 스토리: 패키지 쏘잉 */
+.zs-clean { stroke: var(--good); stroke-width: 1.6; }
+.zs-board-pad { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.zs-lens { fill: var(--accent); fill-opacity: 0.06; stroke: var(--accent); stroke-width: 1.2; }
+
+/* 확대 스토리: 최종 테스트 */
+.zs-rail { stroke: var(--muted); stroke-width: 1.5; }
+.zs-nozzle { stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
+.zs-tray { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.zs-bin { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+.zs-bin-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.8; }
+.zs-socket-cavity { fill: var(--bg); stroke: var(--muted); stroke-width: 0.5; }
+.zs-contact-ring { fill: none; stroke: var(--good); stroke-width: 1.2; }
+.zs-pin { stroke: var(--text); stroke-width: 2.4; stroke-linecap: round; }
+.zs-contact { fill: var(--good); }
+.zs-test-line { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.zs-wave { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.zs-wave-expect { fill: none; stroke: var(--good); stroke-width: 1; stroke-dasharray: 2 1.5; }
+.zs-hot { fill: var(--bad); }
+.zs-cold { fill: var(--accent); }
+.zs-note-cold { fill: var(--accent); }
+
+/* 전체 공정 지도 */
+.map-stages {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 20px;
+  margin: 12px 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.map-stages > li {
+  position: relative;
+}
+
+/* 단계 사이 화살표 */
+.map-stages > li:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.map-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.map-stage .il-compact {
+  width: 64px;
+}
+
+.map-stage.optional {
+  border-style: dashed;
+}
+
+.map-stage.open {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.map-stage-no {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.map-stage-result {
+  font-size: 0.8rem;
+}
+
+.map-stage-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.map-stage-tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.7rem;
+}
+
+.map-chain {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.map-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.map-step.done {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+
+.map-step.current {
+  border: 2px solid var(--accent);
+}
+
+.map-step-index {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.map-step-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.map-step-badges {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  font-size: 0.75rem;
+}
+
+.map-support {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.map-support-chip {
+  padding: 1px 8px;
+  font-size: 0.75rem;
+}
+
+.map-usedby {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+}
+
+.map-usedby-tag {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-size: 0.7rem;
+}
+
+.map-hint {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 860px) {
+  .map-stages {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .map-stage {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    column-gap: 10px;
+    text-align: left;
+    align-items: center;
+  }
+
+  .map-stage .il-compact {
+    grid-row: 1 / span 6;
+  }
+
+  .map-stages > li:not(:last-child)::after {
+    content: '↓';
+    top: auto;
+    right: auto;
+    bottom: -19px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* 위쪽 메뉴: 카테고리별 묶음 */
+.nav {
+  align-items: center;
+  row-gap: 8px;
+}
+
+.nav-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.nav-group-label {
+  padding: 0 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* 홈 화면 */
+.home-hero h2 {
+  margin-top: 0;
+}
+
+.home-progress {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  font-size: 0.85rem;
+}
+
+.home-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+}
+
+.home-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--good);
+}
+
+.home-group {
+  margin: 20px 0;
+}
+
+.home-group h3 {
+  margin: 0 0 2px;
+}
+
+.home-group > p {
+  margin: 0 0 8px;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.home-card:hover {
+  border-color: var(--accent);
+}
+
+.home-card span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* 공정 화면: 경로와 전체 순서 이동 */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.crumb-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: inherit;
+  text-decoration: underline;
+}
+
+.seq {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--accent-soft);
+}
+
+.seq-title {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.seq-bar {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.seq-bar li {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.seq-bar li.here {
+  background: var(--surface);
+}
+
+.seq-bar span {
+  flex: 1;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.seq-bar span.done { background: var(--good); }
+.seq-bar span.now { background: var(--accent); }
+
+.seq-cross {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
+.seq-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.seq-end {
+  font-weight: 600;
+}
+
+.il-code { font-family: ui-monospace, monospace; font-size: 6px; fill: var(--text); }
+
+.map-stage-who {
+  font-size: 0.7rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.map-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+}
+
+.map-who-item b {
+  color: var(--accent);
+}
+
+/* 고급 장비 시뮬레이터 */
+.ms-toolbar {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 12px;
+}
+
+.ms-note {
+  margin: 2px 0;
+  font-size: 0.78rem;
+}
+
+.ms-scenarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ms-scenario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.ms-scenario span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.ms-scenario.on {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.ms-order {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--warn);
+  border-radius: 8px;
+  background: var(--warn-soft);
+}
+
+.ms-order p {
+  margin: 4px 0;
+}
+
+.ms-hmi {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .ms-hmi {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ms-screen,
+.ms-panel {
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.ms-panel h3 {
+  margin: 4px 0 6px;
+  font-size: 0.95rem;
+}
+
+.ms-screen-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ms-screen-head strong {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.ms-status {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--border);
+}
+
+.ms-status.running,
+.ms-status.good { background: var(--good-soft); color: var(--good); }
+.ms-status.warn { background: var(--warn-soft); color: var(--warn); }
+.ms-status.alarm,
+.ms-status.bad { background: var(--bad-soft); color: var(--bad); }
+
+.ms-lamp {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 4px;
+  background: var(--text);
+}
+
+.ms-lamp span {
+  width: 10px;
+  height: 8px;
+  border-radius: 2px;
+  opacity: 0.2;
+}
+
+.ms-lamp-red { background: #e5484d; }
+.ms-lamp-yellow { background: #f5b301; }
+.ms-lamp-green { background: #30a46c; }
+.ms-lamp .on { opacity: 1; }
+.ms-lamp .blink { animation: ms-blink 0.6s steps(2) infinite; }
+
+@keyframes ms-blink {
+  0% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+
+.ms-view {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* 가동 중 움직임: 속도는 조건에 따라 --dur·--amp로 바뀝니다. */
+.ms-spin { transform-box: view-box; }
+.ms-spin.run { animation: ms-rot var(--dur) linear infinite; }
+.ms-table.run { animation: ms-slide var(--dur) ease-in-out infinite alternate; }
+.ms-flow.run { animation: ms-flow 0.4s linear infinite; }
+.ms-dust { animation: ms-dust 0.8s linear infinite; }
+.ms-bond.run { animation: ms-press var(--dur) ease-in-out infinite; }
+.ms-shake.run { animation: ms-shake 0.06s linear infinite; }
+
+@keyframes ms-rot { to { transform: rotate(360deg); } }
+@keyframes ms-slide { from { transform: translateX(-24px); } to { transform: translateX(24px); } }
+@keyframes ms-flow { to { stroke-dashoffset: -12; } }
+@keyframes ms-dust {
+  from { transform: translate(0, 0); opacity: 1; }
+  to { transform: translate(-30px, -14px); opacity: 0; }
+}
+@keyframes ms-press {
+  0%, 100% { transform: translateY(-14px); }
+  40%, 70% { transform: translateY(0); }
+}
+@keyframes ms-shake {
+  0% { transform: translateX(calc(var(--amp) * -1)); }
+  50% { transform: translateX(var(--amp)); }
+  100% { transform: translateX(calc(var(--amp) * -1)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-spin.run,
+  .ms-table.run,
+  .ms-flow.run,
+  .ms-dust,
+  .ms-bond.run,
+  .ms-shake.run { animation: none; }
+}
+
+.ms-worn { stroke: var(--bad); stroke-dasharray: 2 1.5; }
+.ms-defect-line { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.ms-dirt { fill: var(--text); opacity: 0.7; }
+.ms-heater-low { fill: var(--border); stroke: var(--muted); }
+.ms-heater-mid { fill: var(--warn-soft); stroke: var(--warn); }
+.ms-heater-high { fill: var(--bad-soft); stroke: var(--bad); }
+.ms-wire-cu { fill: none; stroke: #c26a3c; stroke-width: 1.5; }
+.ms-ball-cu { fill: #c26a3c; }
+
+.ms-gauges {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.ms-gauge {
+  display: grid;
+  grid-template-columns: 90px 1fr 30px;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.ms-gauge b {
+  text-align: right;
+}
+
+.ms-gauge-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+}
+
+.ms-gauge-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.ms-gauge-bar span.good { background: var(--good); }
+.ms-gauge-bar span.warn { background: var(--warn); }
+.ms-gauge-bar span.bad { background: var(--bad); }
+
+.ms-log {
+  height: 150px;
+  box-sizing: border-box;
+  margin: 6px 0 0;
+  padding: 6px 8px 6px 28px;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: var(--bg);
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.ms-control {
+  margin-bottom: 8px;
+}
+
+.ms-control-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 0.82rem;
+}
+
+.ms-control-name {
+  font-weight: 600;
+}
+
+.ms-lcd {
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--text);
+  color: var(--surface);
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.ms-lcd small {
+  opacity: 0.7;
+}
+
+.ms-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.ms-step {
+  flex: 1;
+  min-width: 64px;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+}
+
+.ms-step.best {
+  border-style: dashed;
+}
+
+.ms-step.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ms-source-line {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.ms-run {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.ms-run button {
+  flex: 1;
+  font-weight: 700;
+}
+
+.ms-start:not(:disabled) {
+  background: var(--good);
+  border-color: var(--good);
+  color: var(--surface);
+}
+
+.ms-stop:not(:disabled) {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: var(--surface);
+}
+
+.ms-result {
+  margin-top: 12px;
+  border-width: 2px;
+}
+
+.ms-result.good { border-color: var(--good); }
+.ms-result.warn { border-color: var(--warn); }
+.ms-result.bad,
+.ms-result.alarm { border-color: var(--bad); }
+
+.ms-goal {
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.ms-goal.ok { background: var(--good-soft); color: var(--good); }
+.ms-goal.no { background: var(--bad-soft); color: var(--bad); }
+
+.ms-findings {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.ms-findings li {
+  padding: 8px 12px;
+  border-left: 4px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.ms-findings li.alarm,
+.ms-findings li.bad { border-left-color: var(--bad); }
+.ms-findings li.warn { border-left-color: var(--warn); }
+
+.ms-findings p {
+  margin: 3px 0;
+}
+
+.ms-finding-title {
+  font-weight: 700;
+}
+
+.ms-badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ms-badge.good { background: var(--good-soft); color: var(--good); }
+.ms-badge.warn { background: var(--warn-soft); color: var(--warn); }
+.ms-badge.bad,
+.ms-badge.alarm { background: var(--bad-soft); color: var(--bad); }
+
+.ms-basis {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.ms-history {
+  margin-top: 12px;
+}
+
+.ms-history table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.ms-history th,
+.ms-history td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+p.ms-log {
+  padding-left: 8px;
+}
+
+.ms-machine-row {
+  align-items: center;
+}
+
+.ms-machine-stage {
+  min-width: 90px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* 장비 라인 연결 실습: 로트 진행 */
+.ms-traveler {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.ms-traveler li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.78rem;
+}
+
+.ms-traveler li.here {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.ms-traveler li.done {
+  opacity: 0.85;
+}
+
+.ms-traveler-no {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.ms-heat-glow { fill: var(--bad); transition: opacity 0.4s; }
+/* 장비: 백그라인더 */
+.ms-bg-wheel { fill: none; stroke: var(--border); stroke-width: 8; }
+.ms-bg-segment { fill: var(--muted); stroke: var(--text); stroke-width: 0.5; }
+.ms-bg-loaded { fill: var(--warn-soft); stroke: var(--warn); stroke-dasharray: 1.5 1; }
+.ms-bg-damage { stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 2 1.5; }
+.ms-bg-burn { fill: var(--warn); }
+
+/* 장비: 다이 본더 */
+.ms-db-pin { fill: var(--muted); stroke: var(--text); stroke-width: 0.5; }
+.ms-db-vacuum { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 2; }
+.ms-db-force { stroke: var(--accent); stroke-width: 2; }
+.ms-db-force-head { fill: var(--accent); }
+.ms-db-spill { stroke: var(--bad); stroke-width: 1; }
+.ms-db-hot { stroke: var(--bad); }
+
+/* 장비: 몰딩 프레스 */
+.ms-mp-cavity { fill: var(--surface); stroke: var(--muted); stroke-width: 0.6; }
+.ms-mp-fill { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); }
+.ms-mp-fill.run { animation: ms-mp-fill var(--dur) linear infinite; }
+.ms-mp-runner { stroke: var(--muted); stroke-width: 3; }
+.ms-mp-uneven { stroke: var(--warn); stroke-dasharray: 3 2; }
+.ms-mp-old { fill: var(--text); }
+.ms-mp-flash { fill: var(--bad); }
+
+@keyframes ms-mp-fill {
+  0% { transform: scaleX(0); }
+  80%,
+  100% { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-mp-fill.run { animation: none; transform: scaleX(1); }
+}
+/* 장비: 레이저 마커 */
+.ms-mk-mark { font-size: 4.5px; font-weight: 700; fill: var(--surface); letter-spacing: 0.5px; }
+.ms-mk-mark.faint { opacity: 0.35; }
+.ms-mk-spot { fill: var(--bad); opacity: 0.6; }
+.ms-mk-groove { fill: var(--bg); stroke: var(--muted); stroke-width: 0.6; }
+.ms-mk-groove.deep { stroke: var(--bad); stroke-width: 1; }
+
+/* 장비: 패키지 쏘 */
+.ms-ps-copper { fill: #c26a3c; }
+.ms-ps-kerf { fill: var(--bg); }
+.ms-ps-melt { fill: var(--bad); opacity: 0.75; }
+.ms-ps-sintered { fill: var(--muted); }
+.ms-ps-electro { stroke-dasharray: 3 2; }
+
+/* 장비: 테스트 핸들러 */
+.ms-tt-pin { stroke: var(--text); stroke-width: 1.4; }
+.ms-tt-pin.dirty { stroke: var(--bad); stroke-dasharray: 1.5 1; }
+.ms-tt-signal { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.ms-tt-bin { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.ms-tt-bin.warn { stroke: var(--bad); stroke-width: 1.6; }
+/* 장비: 산화로 */
+.ms-ox-coil { stroke: var(--bad); stroke-width: 1; opacity: 0.35; }
+.ms-ox-tube { fill: var(--surface); fill-opacity: 0.75; stroke: var(--muted); stroke-width: 1; }
+.ms-ox-dirty { stroke: var(--text); stroke-width: 0.6; stroke-dasharray: 1 1.5; }
+.ms-ox-film { stroke-width: 1; }
+.ms-ox-loose { fill: none; stroke: var(--bad); stroke-width: 0.8; stroke-dasharray: 1.5 2; }
+.ms-ox-ring { fill: none; stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 3 2; }
+
+/* 장비: 노광 장비 + 트랙 */
+.ms-ph-cup { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.ms-ph-drop { fill: var(--warn); }
+.ms-ph-resist { fill: none; stroke: var(--warn); }
+.ms-ph-resist-fill { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 0.6; }
+.ms-ph-residue { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.ms-ph-light { fill: var(--warn); opacity: 0.45; }
+.ms-ph-light.dim { opacity: 0.18; }
+.ms-ph-light.bright { opacity: 0.75; }
+
+/* 장비: 건식 식각기 */
+.ms-et-chamber { fill: var(--bg); stroke: var(--text); stroke-width: 1.2; }
+.ms-et-coil { fill: none; stroke: var(--warn); stroke-width: 1.2; }
+.ms-et-plasma { fill: var(--accent); }
+.ms-et-ion { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.ms-et-trench { fill: var(--bg); stroke: var(--text); stroke-width: 0.6; }
+.ms-et-trench-bad { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.ms-et-over { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+/* 장비: CVD 증착 · PVD 스퍼터 (공통 챔버·막 표현) */
+.ms-cvd-wall { fill: var(--surface); stroke: var(--text); stroke-width: 1.2; }
+.ms-cvd-wall.dirty { stroke: var(--warn); stroke-width: 2.5; stroke-dasharray: 4 2; }
+.ms-cvd-film { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.6; }
+.ms-cvd-film.bad { fill: var(--bad-soft); stroke: var(--bad); }
+.ms-cvd-hole { fill: var(--bg); }
+.ms-cvd-glow { fill: var(--accent); opacity: 0.25; }
+.ms-cvd-glow.run { animation: ms-cvd-pulse var(--dur) ease-in-out infinite alternate; }
+
+@keyframes ms-cvd-pulse {
+  from { opacity: 0.15; }
+  to { opacity: 0.45; }
+}
+
+/* 장비: 이온 주입기 */
+.ms-imp-magnet { fill: none; stroke: var(--muted); stroke-width: 7; stroke-linecap: round; }
+.ms-imp-beam { fill: none; stroke: var(--bad); stroke-dasharray: 3 3; }
+.ms-imp-ion { stroke: var(--bad); stroke-width: 1; stroke-dasharray: 3 3; }
+.ms-imp-doped { fill: var(--accent); opacity: 0.45; }
+.ms-imp-doped.bad { fill: var(--bad); }
+
+/* 장비: PVD 스퍼터 */
+.ms-pvd-target { fill: var(--muted); stroke: var(--text); stroke-width: 0.8; }
+.ms-pvd-target.worn { stroke: var(--bad); stroke-dasharray: 2 1.5; }
+.ms-pvd-ar { fill: var(--muted); opacity: 0.6; }
+.ms-pvd-atom { fill: var(--warn); }
+.ms-pvd-atom.run { animation: ms-pvd-fall var(--dur) linear infinite; }
+
+@keyframes ms-pvd-fall {
+  0% { transform: translate(0, 0); opacity: 1; }
+  50% { transform: translate(var(--dx), 30px); }
+  100% { transform: translate(0, 62px); opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-cvd-glow.run,
+  .ms-pvd-atom.run { animation: none; }
+}
+
+/* 움직이는 공정 그림: 전공정 */
+.il-fe-melt { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.il-fe-turn { stroke: var(--surface); stroke-width: 1; stroke-dasharray: 2 2; }
+.il-fe-shine { stroke: var(--surface); stroke-width: 1.2; stroke-linecap: round; }
+.il-fe-chamber { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+.il-fe-heat { fill: none; stroke: var(--bad); stroke-width: 1; }
+.il-fe-gas { fill: var(--accent); }
+.il-fe-open { fill: var(--bg); }
+.il-fe-lens { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.8; }
+.il-fe-light { stroke: var(--warn); stroke-width: 1; stroke-dasharray: 2 1.5; }
+.il-fe-exposed { fill: var(--warn); opacity: 0.6; }
+.il-fe-plasma { fill: var(--accent); opacity: 0.25; }
+.il-fe-ion { fill: var(--bad); }
+.il-fe-beam { stroke: var(--bad); stroke-width: 6; opacity: 0.18; }
+.il-fe-doped { fill: var(--accent); fill-opacity: 0.45; }
+.il-fe-pass { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.8; }
+
+/* 움직이는 공정 그림: 설계·실장 */
+.il-ds-item { fill: var(--text); font-weight: 600; }
+.il-ds-cover { fill: var(--border); }
+.il-ds-pass { fill: none; stroke: var(--good); stroke-width: 2; }
+.il-ds-paste { fill: var(--muted); }
+.il-ds-solder { fill: var(--warn); }
+.il-ds-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+
+/* 움직이는 공정 그림: 반복·출하·WLP */
+.il-md-chem { stroke: var(--warn); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.il-md-dry { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.il-md-drop { fill: var(--accent); }
+.il-md-groove { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 4 4; }
+.il-md-slurry { fill: var(--warn); }
+.il-md-heat { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-md-dopant { fill: var(--accent); stroke: var(--text); stroke-width: 0.4; }
+.il-md-glow { fill: var(--good); opacity: 0.35; }
+.il-md-a { fill: var(--warn); }
+.il-md-b { fill: var(--accent); }
+.il-md-good { fill: var(--good-soft); stroke: var(--good); stroke-width: 0.6; }
+.il-md-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 0.6; }
+.il-md-waferline { stroke: var(--muted); stroke-width: 1.6; }
+.il-md-door { fill: var(--border); stroke: var(--text); stroke-width: 1; opacity: 0.9; }
+.il-md-hole { fill: var(--bg); }
+.il-md-liner { fill: none; stroke: var(--accent); stroke-width: 0.8; }
+.il-md-dielectric { fill: var(--accent-soft); opacity: 0.7; }
+
+/* 장비 가동 단계: 단계 표시줄과 단계 설명. 그림은 단계마다 장면이 바뀝니다(--step = 한 단계 시간). */
+.ms-stage-wrap { position: relative; }
+.ms-stage-wrap.halt * { animation-play-state: paused !important; }
+.ms-scene {
+  margin: 2px 0 6px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  font-weight: 600;
+  animation: ms-scene-in 0.35s ease-out;
+}
+@keyframes ms-scene-in { from { opacity: 0; transform: translateY(4px); } }
+.ms-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+}
+.ms-stages li {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+}
+.ms-stages li.done { color: var(--good); border-color: var(--good); }
+.ms-stages li.now { color: var(--surface); background: var(--accent); border-color: var(--accent); font-weight: 700; }
+.ms-stages li.alarm { color: var(--surface); background: var(--bad); border-color: var(--bad); font-weight: 700; }
+
+/* 산화로 단계 장면 */
+.ms-ox-coil.hot { opacity: 0.8; }
+.ms-ox-paddle { stroke: var(--muted); stroke-width: 1.5; }
+.ms-ox-boat { transition: none; }
+.ms-ox-boat.out { transform: translateX(-46px); }
+.ms-ox-boat.loading { animation: ms-ox-in var(--step) ease-in-out both; }
+.ms-ox-boat.unloading { animation: ms-ox-in var(--step) ease-in-out reverse both; }
+@keyframes ms-ox-in {
+  0%, 15% { transform: translateX(-46px); }
+  100% { transform: translateX(0); }
+}
+.ms-ox-door { fill: var(--border); stroke: var(--muted); transition: transform 0.3s; }
+.ms-ox-door.open { transform: translateY(-24px); }
+.ms-ox-purge { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 6 6; opacity: 0.6; animation: ms-flow 0.3s linear infinite; }
+.ms-ox-air { fill: var(--muted); animation: ms-ox-out 0.9s linear infinite; }
+@keyframes ms-ox-out {
+  from { transform: translateX(0); opacity: 0.9; }
+  to { transform: translateX(40px); opacity: 0; }
+}
+.ms-ox-mol { fill: var(--accent); animation: ms-ox-mol var(--step) linear infinite; }
+.ms-ox-mol.h2o { fill: var(--good); }
+@keyframes ms-ox-mol {
+  from { transform: translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateX(160px); opacity: 0.2; }
+}
+.ms-ox-glow { stroke: var(--warn); stroke-width: 0.8; animation: ms-blink 0.6s ease-in-out infinite alternate; }
+.ms-ox-warm { animation: ms-ox-warm var(--ramp-dur, var(--step)) ease-in both; }
+.ms-ox-ramp-0 { --ramp-dur: calc(var(--step) * 0.95); }
+.ms-ox-ramp-1 { --ramp-dur: calc(var(--step) * 0.55); }
+.ms-ox-ramp-2 { --ramp-dur: calc(var(--step) * 0.15); }
+@keyframes ms-ox-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-ox-chill { animation: ms-ox-chill var(--step) ease-out both; }
+@keyframes ms-ox-chill { to { fill: var(--border); stroke: var(--muted); } }
+.ms-ox-film.growing {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-ox-grow var(--step) ease-out both;
+}
+@keyframes ms-ox-grow { from { transform: scaleY(0.05); } }
+.ms-ox-probe { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 2; animation: ms-flow 0.4s linear infinite; }
+.ms-ox-scan { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-scene,
+  .ms-ox-boat.loading,
+  .ms-ox-boat.unloading,
+  .ms-ox-purge,
+  .ms-ox-air,
+  .ms-ox-mol,
+  .ms-ox-glow,
+  .ms-ox-warm,
+  .ms-ox-chill,
+  .ms-ox-film.growing,
+  .ms-ox-probe,
+  .ms-ox-scan { animation: none; }
+}
+
+/* 장비 단계 장면: 전공정 (노광·식각·CVD·이온 주입·PVD). 한 단계 시간은 --step입니다. */
+.ms-st-fe-in { animation: ms-st-fe-in var(--step) ease-in-out both; }
+.ms-st-fe-out { animation: ms-st-fe-in var(--step) ease-in-out reverse both; }
+@keyframes ms-st-fe-in {
+  0%, 10% { transform: translateX(-60px); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-inr { animation: ms-st-fe-inr var(--step) ease-in-out both; }
+.ms-st-fe-outr { animation: ms-st-fe-inr var(--step) ease-in-out reverse both; }
+@keyframes ms-st-fe-inr {
+  0%, 10% { transform: translateX(40px); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-gone { opacity: 0; }
+.ms-st-fe-ghost { opacity: 0.25; }
+.ms-st-fe-fade { animation: ms-st-fe-fade calc(var(--step) * 0.5) ease-out both; }
+@keyframes ms-st-fe-fade { from { opacity: 0; } }
+.ms-st-fe-dissolve { animation: ms-st-fe-dissolve var(--step) ease-in both; }
+@keyframes ms-st-fe-dissolve { to { opacity: 0; } }
+.ms-st-fe-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-fe-grow var(--step) ease-out both;
+}
+@keyframes ms-st-fe-grow { from { transform: scaleY(0.05); } }
+.ms-st-fe-dig {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: ms-st-fe-grow var(--step) ease-out both;
+}
+.ms-st-fe-warm { animation: ms-st-fe-warm calc(var(--step) * 0.8) ease-in both; }
+@keyframes ms-st-fe-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-st-fe-chill { animation: ms-st-fe-chill var(--step) ease-out both; }
+@keyframes ms-st-fe-chill { to { fill: var(--border); stroke: var(--muted); } }
+.ms-st-fe-heat { fill: none; stroke: var(--bad); stroke-width: 0.8; animation: ms-st-fe-heat 0.9s ease-out infinite; }
+@keyframes ms-st-fe-heat {
+  from { transform: translateY(0); opacity: 0.9; }
+  to { transform: translateY(-8px); opacity: 0; }
+}
+.ms-st-fe-drop { animation: ms-st-fe-drop 0.6s ease-in infinite; }
+@keyframes ms-st-fe-drop {
+  from { transform: translateY(-4px); opacity: 1; }
+  to { transform: translateY(14px); opacity: 0; }
+}
+.ms-st-fe-glow { stroke: var(--warn); stroke-width: 1.4; animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-fe-scan { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-st-fe-cross { fill: none; stroke: var(--accent); stroke-width: 1; animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-fe-maskoff { transform: translateX(-16px); opacity: 0.6; }
+.ms-st-fe-maskin { animation: ms-st-fe-maskin var(--step) ease-in-out both; }
+@keyframes ms-st-fe-maskin {
+  0% { transform: translateX(-16px); opacity: 0.6; }
+  60% { transform: translateX(2px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.ms-st-fe-gauge { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.ms-st-fe-needle { transform-box: view-box; transform-origin: 0 0; }
+.ms-st-fe-needle line { stroke: var(--bad); stroke-width: 1.2; stroke-linecap: round; }
+.ms-st-fe-needle.pumping { animation: ms-st-fe-pump calc(var(--step) * 0.8) ease-out both; }
+.ms-st-fe-needle.venting { animation: ms-st-fe-vent calc(var(--step) * 0.6) ease-in both; }
+@keyframes ms-st-fe-pump { from { transform: rotate(var(--from)); } to { transform: rotate(var(--to)); } }
+@keyframes ms-st-fe-vent { from { transform: rotate(var(--to)); } to { transform: rotate(var(--from)); } }
+.ms-st-fe-tilt { animation: ms-st-fe-tilt var(--step) ease-in-out both; }
+@keyframes ms-st-fe-tilt { from { transform: rotate(0deg); } to { transform: rotate(var(--tilt)); } }
+.ms-st-fe-scanmove { animation: ms-st-fe-scanmove calc(var(--step) / 3) ease-in-out infinite alternate; }
+@keyframes ms-st-fe-scanmove { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
+.ms-imp-src { fill: var(--bad); animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-ph-dev { fill: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-fe-in,
+  .ms-st-fe-out,
+  .ms-st-fe-inr,
+  .ms-st-fe-outr,
+  .ms-st-fe-fade,
+  .ms-st-fe-dissolve,
+  .ms-st-fe-grow,
+  .ms-st-fe-dig,
+  .ms-st-fe-warm,
+  .ms-st-fe-chill,
+  .ms-st-fe-heat,
+  .ms-st-fe-drop,
+  .ms-st-fe-glow,
+  .ms-st-fe-scan,
+  .ms-st-fe-cross,
+  .ms-st-fe-maskin,
+  .ms-st-fe-needle.pumping,
+  .ms-st-fe-needle.venting,
+  .ms-st-fe-tilt,
+  .ms-st-fe-scanmove,
+  .ms-imp-src { animation: none; }
+}
+
+/* 장비 단계 장면: 후공정 1 (백그라인더·다이싱·다이 본더·와이어 본더). 시간은 --step(한 단계) 기준입니다. */
+/* 백그라인더 */
+.ms-st-bg-lift { transition: transform 0.4s, opacity 0.4s; }
+.ms-st-bg-lift.up { transform: translateY(-6px); opacity: 0.45; }
+.ms-st-bg-fine { fill: var(--accent-soft); stroke: var(--accent); }
+.ms-st-bg-drop { animation: ms-st-drop calc(var(--step) * 0.6) ease-out both; }
+@keyframes ms-st-drop { from { transform: translateY(-18px); opacity: 0; } }
+.ms-st-bg-thin {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-bg-thin calc(var(--step) * var(--grind)) ease-out both;
+}
+@keyframes ms-st-bg-thin { from { transform: scaleY(var(--from)); } }
+.ms-st-bg-follow { animation: ms-st-bg-follow calc(var(--step) * var(--grind)) ease-out both; }
+@keyframes ms-st-bg-follow { from { transform: translateY(var(--drop)); } }
+.ms-st-bg-fade { animation: ms-st-fade var(--step) ease-in both; }
+@keyframes ms-st-fade { to { opacity: 0; } }
+.ms-st-bg-polish { animation: ms-st-bg-polish calc(var(--step) / 2) ease-in-out infinite alternate; }
+@keyframes ms-st-bg-polish { to { transform: translateX(46px); } }
+.ms-st-bg-probe { stroke: var(--accent); stroke-width: 1.1; stroke-dasharray: 3 2; animation: ms-flow 0.4s linear infinite; }
+.ms-st-bg-ring { fill: none; stroke: var(--muted); stroke-width: 4; }
+.ms-st-bg-peel { animation: ms-st-bg-peel var(--step) ease-in both; }
+@keyframes ms-st-bg-peel {
+  0%, 40% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(30px); opacity: 0; }
+}
+
+/* 다이싱 */
+.ms-st-sw-vac { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 2; animation: ms-flow 0.4s linear infinite reverse; }
+.ms-st-sw-drop { animation: ms-st-drop calc(var(--step) * 0.6) ease-out both; }
+.ms-st-sw-appear { animation: ms-st-appear calc(var(--step) * 0.15) ease-out both; }
+@keyframes ms-st-appear { from { opacity: 0; } }
+.ms-st-sw-arm { transition: transform 0.45s ease-in-out; }
+.ms-st-sw-arm.up { transform: translateY(-26px); }
+.ms-spin.run.ms-st-sw-spinup { animation: ms-rot calc(var(--dur) * 3) ease-in 1, ms-rot var(--dur) linear calc(var(--dur) * 3) infinite; }
+.ms-st-sw-cam { animation: ms-st-sw-cam var(--step) ease-in-out both; }
+@keyframes ms-st-sw-cam {
+  0% { transform: translateX(0); }
+  35%, 45% { transform: translateX(8px); }
+  85%, 100% { transform: translateX(34px); }
+}
+.ms-st-sw-beam { stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 2 2; }
+.ms-st-sw-turn { animation: ms-st-sw-turn var(--step) ease-in-out both; }
+@keyframes ms-st-sw-turn {
+  0%, 15% { transform: rotate(0deg); }
+  85%, 100% { transform: rotate(90deg); }
+}
+
+/* 다이 본더 */
+.ms-st-db-slide { animation: ms-st-slide calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-slide { from { transform: translateX(60px); opacity: 0; } }
+.ms-st-db-needle { animation: ms-st-db-needle calc(var(--step) / 2) ease-in-out 2 both; }
+@keyframes ms-st-db-needle {
+  0%, 100% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+}
+.ms-st-db-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-db-grow var(--step) ease-out both;
+}
+@keyframes ms-st-db-grow {
+  0%, 25% { transform: scale(0.1, 0.2); }
+  100% { transform: scale(1); }
+}
+.ms-st-db-lift { animation: ms-st-db-lift calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-db-lift { to { transform: translateY(var(--lift)); } }
+.ms-st-db-park { transform: translateY(-14px); }
+.ms-st-db-pickcol { animation: ms-st-db-pickcol var(--step) ease-in-out both; }
+@keyframes ms-st-db-pickcol {
+  0% { transform: translateY(-14px); }
+  35%, 50% { transform: translateY(0); }
+  100% { transform: translateY(-40px); }
+}
+.ms-st-db-pick { animation: ms-st-db-pick var(--step) ease-in-out both; }
+@keyframes ms-st-db-pick {
+  0%, 50% { transform: translateY(var(--lift)); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(calc(var(--lift) - 40px)); opacity: 0; }
+}
+.ms-st-db-place { animation: ms-st-db-place calc(var(--step) * 0.5) ease-in both; }
+@keyframes ms-st-db-place { from { transform: translateY(-30px); } }
+.ms-st-db-spread {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-db-spread var(--step) ease-out both;
+}
+@keyframes ms-st-db-spread {
+  0%, 45% { transform: scale(0.2, 0.3); }
+  100% { transform: scale(1); }
+}
+.ms-st-db-scan { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 2 2; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.ms-st-db-rise { animation: ms-st-rise 0.9s ease-in-out infinite; }
+@keyframes ms-st-rise {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-6px); opacity: 0.2; }
+}
+
+/* 와이어 본더 */
+.ms-st-wb-slide { animation: ms-st-slide calc(var(--step) * 0.7) ease-out both; }
+.ms-st-wb-cap { transform: translate(0, -14px); }
+.ms-st-wb-cap.at-ball1 { animation: ms-st-wb-ball1 var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-loop { animation: ms-st-wb-loop var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-stitch { animation: ms-st-wb-stitch var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-tail { animation: ms-st-wb-tail var(--step) ease-in-out both; }
+.ms-st-wb-cap.at-repeat { animation: ms-st-wb-repeat var(--step) ease-in-out both; }
+@keyframes ms-st-wb-ball1 {
+  0% { transform: translate(0, -14px); }
+  30%, 100% { transform: translate(0, 0); }
+}
+@keyframes ms-st-wb-loop {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(36px, -22px); }
+  100% { transform: translate(72px, -6px); }
+}
+@keyframes ms-st-wb-stitch {
+  0% { transform: translate(72px, -6px); }
+  40%, 100% { transform: translate(72px, 14px); }
+}
+@keyframes ms-st-wb-tail {
+  0%, 20% { transform: translate(72px, 14px); }
+  100% { transform: translate(72px, -14px); }
+}
+@keyframes ms-st-wb-repeat {
+  0% { transform: translate(72px, -14px); }
+  100% { transform: translate(0, -14px); }
+}
+.ms-st-wb-flat {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-wb-flat var(--step) ease-out both;
+}
+@keyframes ms-st-wb-flat {
+  0%, 30% { transform: scale(0.75, 1.5); }
+  100% { transform: scale(1); }
+}
+.ms-st-wb-ball {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: ms-st-wb-ball var(--step) ease-out both;
+}
+@keyframes ms-st-wb-ball {
+  0%, 35% { transform: scale(0.15); }
+  100% { transform: scale(1); }
+}
+.ms-st-wb-spark { fill: none; stroke: var(--warn); stroke-width: 1.4; animation: ms-st-wb-spark var(--step) linear both; }
+@keyframes ms-st-wb-spark {
+  0%, 10% { opacity: 0; }
+  12%, 18%, 24%, 30% { opacity: 1; }
+  15%, 21%, 27% { opacity: 0.2; }
+  40%, 100% { opacity: 0; }
+}
+.ms-st-wb-draw { stroke-dasharray: 1; animation: ms-st-wb-draw var(--step) ease-in-out both; }
+@keyframes ms-st-wb-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.ms-st-wb-stitch { stroke: var(--text); stroke-width: 2.2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-bg-drop,
+  .ms-st-bg-thin,
+  .ms-st-bg-follow,
+  .ms-st-bg-fade,
+  .ms-st-bg-polish,
+  .ms-st-bg-probe,
+  .ms-st-bg-peel,
+  .ms-st-sw-vac,
+  .ms-st-sw-drop,
+  .ms-st-sw-appear,
+  .ms-spin.run.ms-st-sw-spinup,
+  .ms-st-sw-cam,
+  .ms-st-sw-turn,
+  .ms-st-db-slide,
+  .ms-st-db-needle,
+  .ms-st-db-grow,
+  .ms-st-db-lift,
+  .ms-st-db-pickcol,
+  .ms-st-db-pick,
+  .ms-st-db-place,
+  .ms-st-db-spread,
+  .ms-st-db-scan,
+  .ms-st-db-rise,
+  .ms-st-wb-slide,
+  .ms-st-wb-cap,
+  .ms-st-wb-flat,
+  .ms-st-wb-ball,
+  .ms-st-wb-spark,
+  .ms-st-wb-draw { animation: none; }
+  .ms-st-bg-lift,
+  .ms-st-sw-arm { transition: none; }
+}
+
+/* 장비 단계 장면: 후공정 2 (몰딩 · 레이저 마킹 · 패키지 쏘잉 · 최종 테스트) */
+/* 몰딩 프레스 */
+.ms-st-mp-warm { animation: ms-st-warm calc(var(--step) * 0.8) ease-in both; }
+@keyframes ms-st-warm { from { fill: var(--border); stroke: var(--muted); } }
+.ms-st-mp-top.up { transform: translateY(-14px); }
+.ms-st-mp-top.closing { animation: ms-st-mp-close calc(var(--step) * 0.8) ease-in-out both; }
+.ms-st-mp-top.opening { animation: ms-st-mp-close calc(var(--step) * 0.8) ease-in-out reverse both; }
+@keyframes ms-st-mp-close {
+  0%, 20% { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
+}
+.ms-st-mp-strip.lifting { animation: ms-st-mp-lift calc(var(--step) * 0.6) ease-out 0.4s both; }
+.ms-st-mp-strip.lifted { transform: translateY(-8px); }
+@keyframes ms-st-mp-lift { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+.ms-st-mp-filling { animation: ms-st-mp-fill calc(var(--step) * var(--push)) linear both; }
+@keyframes ms-st-mp-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ms-st-mp-full { transform: scaleX(1); }
+.ms-st-mp-curing { animation: ms-st-mp-cure var(--step) ease-in both; }
+@keyframes ms-st-mp-cure { to { opacity: 0.8; fill: var(--muted); } }
+.ms-st-mp-cured { opacity: 0.8; fill: var(--muted); }
+.ms-st-mp-heat { animation: ms-st-rise-out 0.9s ease-out infinite; }
+@keyframes ms-st-rise-out {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-6px); opacity: 0; }
+}
+.ms-st-mp-melt {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ms-st-mp-melt var(--step) ease-in both;
+}
+@keyframes ms-st-mp-melt { to { transform: scaleY(0.3); opacity: 0.4; } }
+.ms-st-mp-pool { animation: ms-st-fadein var(--step) ease-in both; }
+@keyframes ms-st-fadein { from { opacity: 0; } }
+.ms-st-mp-push { animation: ms-st-mp-push calc(var(--step) * var(--push)) linear both; }
+.ms-st-mp-pushed { transform: translateY(18px); }
+@keyframes ms-st-mp-push { from { transform: translateY(0); } to { transform: translateY(18px); } }
+.ms-st-mp-runflow { stroke: var(--muted); stroke-dasharray: 3 2; animation: ms-flow 0.3s linear infinite; }
+.ms-st-mp-oven { fill: var(--warn-soft); fill-opacity: 0.35; stroke: var(--warn); stroke-width: 1.2; stroke-dasharray: 4 2; }
+
+/* 레이저 마커 */
+.ms-st-mk-strip.away { transform: translateX(-150px); }
+.ms-st-mk-strip.coming { animation: ms-st-mk-in calc(var(--step) * 0.8) ease-out both; }
+.ms-st-mk-strip.going { animation: ms-st-mk-in calc(var(--step) * 0.8) ease-in reverse both; }
+@keyframes ms-st-mk-in { from { transform: translateX(-150px); } to { transform: translateX(0); } }
+.ms-st-mk-cross { fill: none; stroke: var(--accent); stroke-width: 0.8; }
+.ms-st-mk-blur .ms-st-mk-cross { stroke-dasharray: 2 1.5; opacity: 0.6; }
+.ms-st-mk-cam { animation: ms-st-mk-cam var(--step) ease-in-out both; }
+@keyframes ms-st-mk-cam {
+  0%, 12% { transform: translateX(0); }
+  25%, 37% { transform: translateX(32px); }
+  50%, 62% { transform: translateX(64px); }
+  75%, 100% { transform: translateX(96px); }
+}
+.ms-st-mk-meter { fill: var(--border); }
+.ms-st-mk-level {
+  fill: var(--good);
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  animation: ms-st-grow-x calc(var(--step) * 0.6) ease-out 0.2s both;
+}
+.ms-st-mk-level.low { fill: var(--bad); }
+@keyframes ms-st-grow-x { from { transform: scaleX(0); } }
+.ms-st-mk-beam { animation: ms-st-mk-sweep var(--sweep) linear var(--passes) both; }
+@keyframes ms-st-mk-sweep {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(24px); }
+  50% { transform: translateX(48px); }
+  75% { transform: translateX(72px); }
+  100% { transform: translateX(96px); }
+}
+/* 빔은 렌즈(67, 37)를 축으로 기울어 아래 끝이 빛 점과 같은 자리(x 28→124)를 지납니다. */
+.ms-st-mk-fan {
+  transform-box: view-box;
+  transform-origin: 67px 37px;
+  animation: ms-st-mk-fan var(--sweep) linear var(--passes) both;
+}
+@keyframes ms-st-mk-fan {
+  0% { transform: skewX(-34.4deg); }
+  25% { transform: skewX(-14.7deg); }
+  50% { transform: skewX(9deg); }
+  75% { transform: skewX(30.1deg); }
+  100% { transform: skewX(45deg); }
+}
+.ms-st-mk-letter { animation: ms-st-mk-letter 0.12s linear both; }
+@keyframes ms-st-mk-letter { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+.ms-st-mk-dig {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: ms-st-mk-dig calc(var(--step) * 0.9) linear both;
+}
+@keyframes ms-st-mk-dig { from { transform: scaleY(0); } }
+.ms-st-mk-bad { fill: none; stroke: var(--bad); stroke-width: 1; }
+
+/* 패키지 쏘 */
+.ms-st-ps-load.above { transform: translateY(-24px); }
+.ms-st-ps-load.landing { animation: ms-st-ps-land calc(var(--step) * 0.7) ease-out both; }
+@keyframes ms-st-ps-land { from { transform: translateY(-24px); } to { transform: translateY(0); } }
+.ms-st-ps-vac { fill: none; stroke: var(--accent); stroke-width: 0.8; animation: ms-blink 0.4s ease-in-out 0.6s infinite alternate; }
+.ms-st-ps-slot { animation: ms-st-pop 0.2s linear both; }
+@keyframes ms-st-pop { from { opacity: 0; } to { opacity: 1; } }
+.ms-st-ps-cam { animation: ms-st-ps-cam var(--step) ease-in-out both; }
+@keyframes ms-st-ps-cam {
+  0%, 12% { transform: translateX(0); }
+  25%, 37% { transform: translateX(42px); }
+  50%, 62% { transform: translateX(84px); }
+  75%, 100% { transform: translateX(126px); }
+}
+.ms-st-ps-rinse { animation: ms-flow 0.3s linear infinite; }
+.ms-st-ps-top { transform-box: view-box; transform-origin: 26px 30px; }
+.ms-st-ps-top.turned { transform: rotate(90deg); }
+.ms-st-ps-top.turning { animation: ms-st-ps-turn calc(var(--step) * 0.8) ease-in-out both; }
+@keyframes ms-st-ps-turn { from { transform: rotate(0deg); } to { transform: rotate(90deg); } }
+.ms-st-ps-cutline { stroke: var(--accent); stroke-width: 0.9; }
+.ms-st-ps-cutline.drawing { stroke-dasharray: 40; animation: ms-st-ps-draw var(--cut) linear both; }
+@keyframes ms-st-ps-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+
+/* 테스트 핸들러 */
+.ms-st-tt-arm.up { transform: translateY(-22px); }
+.ms-st-tt-arm.picking { animation: ms-st-tt-pick var(--step) ease-in-out both; }
+@keyframes ms-st-tt-pick {
+  0% { transform: translateY(-22px); }
+  45%, 60% { transform: translateY(-8px); }
+  100% { transform: translateY(-22px); }
+}
+.ms-st-tt-arm.pressing { animation: ms-st-tt-press calc(var(--step) * 0.6) ease-in both; }
+@keyframes ms-st-tt-press { from { transform: translateY(-22px); } to { transform: translateY(0); } }
+.ms-st-tt-arm.lifting { animation: ms-st-tt-press calc(var(--step) * 0.4) ease-out reverse both; }
+.ms-st-tt-grab { animation: ms-st-tt-grab var(--step) linear both; }
+@keyframes ms-st-tt-grab {
+  0%, 50% { opacity: 0; }
+  56%, 100% { opacity: 1; }
+}
+.ms-st-tt-ok { stroke: var(--good); animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.ms-st-tt-fail { stroke: var(--bad); animation: ms-blink 0.25s ease-in-out infinite alternate; }
+.ms-st-tt-pulse { fill: var(--good); animation: ms-blink 1s ease-in-out infinite alternate; }
+.ms-st-tt-warm { animation: ms-st-warm calc(var(--step) * 0.7) ease-in both; }
+.ms-st-tt-rise { animation: ms-st-rise-out 0.9s ease-out infinite; }
+.ms-st-tt-sort.good { animation: ms-st-tt-good var(--step) ease-in-out both; }
+.ms-st-tt-sort.bad { animation: ms-st-tt-bad var(--step) ease-in-out both; }
+@keyframes ms-st-tt-good {
+  0%, 15% { transform: translate(0, 0); }
+  40% { transform: translate(0, -20px); }
+  80%, 100% { transform: translate(95px, 34px); }
+}
+@keyframes ms-st-tt-bad {
+  0%, 15% { transform: translate(0, 0); }
+  40% { transform: translate(0, -20px); }
+  80%, 100% { transform: translate(131px, 34px); }
+}
+.ms-st-tt-tape { stroke: var(--muted); stroke-width: 4; stroke-dasharray: 6 3; animation: ms-flow 0.6s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-st-mp-warm,
+  .ms-st-mp-top.closing,
+  .ms-st-mp-top.opening,
+  .ms-st-mp-strip.lifting,
+  .ms-st-mp-filling,
+  .ms-st-mp-curing,
+  .ms-st-mp-heat,
+  .ms-st-mp-melt,
+  .ms-st-mp-pool,
+  .ms-st-mp-push,
+  .ms-st-mp-runflow,
+  .ms-st-mk-strip.coming,
+  .ms-st-mk-strip.going,
+  .ms-st-mk-cam,
+  .ms-st-mk-level,
+  .ms-st-mk-beam,
+  .ms-st-mk-fan,
+  .ms-st-mk-letter,
+  .ms-st-mk-dig,
+  .ms-st-ps-load.landing,
+  .ms-st-ps-vac,
+  .ms-st-ps-slot,
+  .ms-st-ps-cam,
+  .ms-st-ps-rinse,
+  .ms-st-ps-top.turning,
+  .ms-st-ps-cutline.drawing,
+  .ms-st-tt-arm.picking,
+  .ms-st-tt-arm.pressing,
+  .ms-st-tt-arm.lifting,
+  .ms-st-tt-grab,
+  .ms-st-tt-ok,
+  .ms-st-tt-fail,
+  .ms-st-tt-pulse,
+  .ms-st-tt-warm,
+  .ms-st-tt-rise,
+  .ms-st-tt-sort,
+  .ms-st-tt-tape { animation: none; }
+  .ms-st-mp-filling { transform: scaleX(1); }
+}
+
+/* ── 화면 구성: 위쪽 탭 + 큰 첫 화면 ── */
+.app {
+  max-width: none;
+  padding: 0;
+}
+.app-body {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.app-bar {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.app-brand {
+  border: none;
+  background: none;
+  padding: 4px 0;
+  font-weight: 800;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+.app-brand span { color: var(--accent); }
+.top-tabs {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.top-tab {
+  border: none;
+  background: none;
+  border-radius: 0;
+  padding: 10px 14px;
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+.top-tab:hover { color: var(--text); }
+.top-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.subtabs {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px 8px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.subtab {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+.subtab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+footer.disclaimer {
+  margin-top: 32px;
+  font-size: 0.78rem;
+}
+
+/* 첫 화면 */
+.home-hero {
+  padding: 28px 4px 8px;
+}
+.home-eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+.home-hero h2 {
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  line-height: 1.3;
+  margin: 6px 0 8px;
+  max-width: 22em;
+}
+.home-hero .home-progress { max-width: 420px; }
+.home-stages {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 12px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  counter-reset: none;
+}
+.home-stages li { position: relative; display: flex; }
+.home-stages li + li::before {
+  content: '→';
+  position: absolute;
+  left: -10px;
+  top: 38%;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.home-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 14px;
+  text-align: center;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.home-stage:hover { transform: translateY(-2px); border-color: var(--accent); }
+.home-stage.open {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.home-stage.optional { border-style: dashed; }
+.home-stage-no {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.home-stage-icon { width: 100%; max-width: 110px; }
+.home-stage-icon svg { width: 100%; height: auto; display: block; }
+.home-stage strong { font-size: 0.9rem; line-height: 1.3; }
+.home-stage-result { font-size: 0.75rem; color: var(--muted); line-height: 1.35; }
+.home-stage-panel { animation: ms-scene-in 0.25s ease-out; }
+.home-stage-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.home-stage-panel h3 { margin: 0; }
+.home-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+.home-facts div {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+}
+.home-facts dt { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+.home-facts dd { margin: 2px 0 0; }
+.home-actor {
+  display: inline-block;
+  margin: 2px 6px 2px 0;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  cursor: help;
+}
+.home-hint { font-size: 0.88rem; }
+.home-sub { margin: 10px 0 4px; font-weight: 700; font-size: 0.9rem; }
+.home-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.home-chip { padding: 4px 12px; border-radius: 999px; font-size: 0.88rem; }
+.home-chip:hover { border-color: var(--accent); color: var(--accent); }
+.home-chip.done { border-color: var(--good); color: var(--good); }
+.home-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.home-groups .home-group { margin: 0; }
+.home-groups .home-cards { grid-template-columns: 1fr; }
+.home-card { transition: border-color 0.15s, transform 0.15s; }
+.home-card:hover { transform: translateX(2px); }
+
+@media (max-width: 760px) {
+  .home-stages { grid-template-columns: repeat(2, 1fr); }
+  .home-stages li + li::before { display: none; }
+  .app-bar { gap: 4px 8px; flex-wrap: wrap; justify-content: space-between; }
+  .app-bar .top-tabs { order: 3; flex-basis: 100%; }
+  .app-header { position: static; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-stage, .home-card { transition: none; }
+  .home-stage-panel { animation: none; }
+}
+
+/* 시험 */
+.quiz-setup { display: grid; gap: 14px; max-width: 560px; }
+.quiz-field { display: grid; gap: 6px; }
+.quiz-field > span { font-weight: 700; font-size: 0.9rem; }
+.quiz-field select { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.quiz-start { justify-self: start; padding: 10px 28px; font-weight: 700; }
+.quiz-history { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.quiz-history li { display: grid; grid-template-columns: 9em 1fr auto; gap: 8px; font-size: 0.9rem; }
+.quiz-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin: 8px 0 12px; font-weight: 700; }
+.quiz-card { max-width: 760px; animation: ms-scene-in 0.25s ease-out; }
+.quiz-tag { display: inline-block; padding: 1px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-text); font-size: 0.75rem; font-weight: 700; }
+.quiz-tag.soft { background: var(--accent-soft); color: var(--accent); }
+.quiz-prompt { white-space: pre-line; font-weight: 600; margin: 10px 0; }
+.quiz-prompt.big { font-size: 1.08rem; line-height: 1.55; }
+.quiz-choices { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.quiz-choice { width: 100%; display: flex; gap: 10px; align-items: flex-start; text-align: left; padding: 10px 12px; border-radius: 10px; transition: border-color 0.15s, background 0.15s; }
+.quiz-choice:hover { border-color: var(--accent); }
+.quiz-no { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; }
+.quiz-choice.picked { border-color: var(--accent); background: var(--accent-soft); }
+.quiz-choice.correct { border-color: var(--good); background: var(--good-soft); }
+.quiz-choice.correct .quiz-no { background: var(--good); color: var(--surface); border-color: var(--good); }
+.quiz-choice.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.quiz-choice.wrong .quiz-no { background: var(--bad); color: var(--surface); border-color: var(--bad); }
+.quiz-choice.dim { opacity: 0.6; }
+.quiz-feedback { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border-left: 4px solid; }
+.quiz-feedback.ok { border-color: var(--good); background: var(--good-soft); }
+.quiz-feedback.ng { border-color: var(--bad); background: var(--bad-soft); }
+.quiz-explain { white-space: pre-line; margin: 4px 0; }
+.quiz-nav { display: flex; justify-content: space-between; margin-top: 14px; }
+.quiz-keys { font-size: 0.78rem; margin: 8px 0 0; }
+.quiz-result { text-align: center; max-width: 560px; }
+.quiz-result h2 { font-size: 2.4rem; margin: 4px 0 10px; }
+.quiz-topics { list-style: none; padding: 0; margin: 14px 0; display: grid; gap: 4px; text-align: left; }
+.quiz-topics li { display: flex; justify-content: space-between; padding: 4px 10px; border-radius: 8px; background: var(--bg); }
+.quiz-topics .ok { color: var(--good); }
+.quiz-topics .ng { color: var(--bad); }
+.quiz-review, .quiz-wrong-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.quiz-review li.ok { border-left: 4px solid var(--good); }
+.quiz-review li.ng { border-left: 4px solid var(--bad); }
+.quiz-mine { color: var(--bad); }
+.quiz-misses { float: right; font-size: 0.8rem; color: var(--bad); }
+@media (prefers-reduced-motion: reduce) { .quiz-card { animation: none; } .quiz-choice { transition: none; } }
+
+/* AI 해설·문제 (선택 기능) */
+.ai-key { display: grid; gap: 8px; max-width: 560px; padding: 12px 14px; margin: 10px 0; border: 1px dashed var(--border); border-radius: 12px; background: var(--surface); }
+.ai-key.compact { border-style: solid; }
+.ai-key label { display: grid; gap: 4px; font-weight: 600; font-size: 0.9rem; }
+.ai-key input[type='password'] { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.ai-key .ai-remember { display: flex; gap: 6px; align-items: center; font-weight: 400; }
+.ai-key button.primary { justify-self: start; }
+.ai-key.ok { display: flex; justify-content: space-between; align-items: center; border-color: var(--good); color: var(--good); }
+.ai-optional summary { cursor: pointer; font-weight: 700; }
+.ai-explain { margin-top: 8px; }
+.ai-answer { margin-top: 6px; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); }
+.ai-answer p { white-space: pre-line; margin: 6px 0 0; }
+.ai-badge { display: inline-block; padding: 0 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font-size: 0.75rem; font-weight: 700; }
+.ai-error { color: var(--bad); }
+
+/* ── 장비 알아보기 (입체 장비 그림 · 조작 순서 · 결과물 · 용어) ── */
+.eq-tour { margin: 12px 0; }
+.eq-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.eq-summary { margin: 4px 0 8px; }
+.eq-badge { flex: none; padding: 2px 10px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font-size: 0.75rem; font-weight: 700; }
+.eq-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 12px; }
+.eq-stage { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.eq-drawing { border-radius: 12px; background: linear-gradient(180deg, var(--bg), var(--surface)); border: 1px solid var(--border); padding: 6px; }
+.eq-iso, .eq-result { display: block; width: 100%; height: auto; }
+.eq-play { display: flex; justify-content: center; gap: 6px; padding: 4px 0 2px; }
+.eq-play button { padding: 3px 12px; font-size: 0.85rem; }
+.eq-side h4 { margin: 10px 0 4px; }
+.eq-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.eq-list button { width: 100%; text-align: left; padding: 6px 10px; border-radius: 8px; font-size: 0.9rem; }
+.eq-list button.active { border-color: var(--accent); background: var(--accent-soft); }
+.eq-ops li.done button { color: var(--muted); }
+.eq-no { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); font-size: 0.72rem; font-weight: 700; margin-right: 4px; }
+.eq-list button.active .eq-no { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.eq-who { display: inline-block; padding: 0 6px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; background: var(--bg); border: 1px solid var(--border); }
+.eq-who.who-작업자 { color: var(--accent); border-color: var(--accent); }
+.eq-who.who-OHT { color: var(--good); border-color: var(--good); }
+.eq-explain { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--bg); animation: ms-scene-in 0.3s ease-out; }
+.eq-explain h4 { margin: 0 0 4px; }
+.eq-explain p { margin: 0 0 6px; }
+.eq-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.eq-src { display: inline-block; font-size: 0.75rem; color: var(--muted); }
+a.eq-src { color: var(--accent); }
+.eq-verdict { padding: 10px 12px; border-radius: 10px; border-left: 4px solid var(--good); background: var(--good-soft); }
+.eq-verdict.warn { border-color: var(--warn); background: var(--warn-soft); }
+.eq-verdict.bad, .eq-verdict.alarm { border-color: var(--bad); background: var(--bad-soft); }
+.eq-verdict ul { margin: 4px 0; padding-left: 18px; }
+.eq-verdict p { margin: 4px 0 0; }
+.eq-note { font-size: 0.88rem; }
+.eq-terms { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.eq-terms button { width: 100%; text-align: left; display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: baseline; }
+.eq-terms .eq-term-short { grid-column: 1 / 3; font-size: 0.85rem; color: var(--muted); }
+.eq-terms .eq-more { grid-column: 3; grid-row: 1 / 3; align-self: center; font-size: 0.8rem; color: var(--accent); }
+.eq-terms li.open button { border-color: var(--accent); }
+.eq-deep { padding: 8px 12px; margin-top: 4px; border-left: 3px solid var(--accent); background: var(--bg); border-radius: 0 8px 8px 0; animation: ms-scene-in 0.25s ease-out; }
+.eq-deep p { margin: 0 0 4px; }
+.eq-foot { margin-top: 12px; font-size: 0.9rem; }
+.eq-foot summary { cursor: pointer; font-weight: 600; }
+
+/* 입체 그림 색 */
+.eq-floor { fill: var(--border); opacity: 0.35; }
+.eq-box polygon, .eq-cyl path, .eq-cyl ellipse { stroke: var(--text); stroke-width: 0.6; stroke-linejoin: round; }
+.eq-box.glass polygon { fill: var(--accent); fill-opacity: 0.03; stroke: var(--muted); stroke-dasharray: 3 3; stroke-width: 0.6; }
+.eq-tone-metal .f-top { fill: #e7eaef; } .eq-tone-metal .f-left { fill: #c7cdd6; } .eq-tone-metal .f-right { fill: #a9b1bd; }
+.eq-tone-rack .f-top { fill: #eef0f3; } .eq-tone-rack .f-left { fill: #d9dde3; fill-opacity: 0.7; } .eq-tone-rack .f-right { fill: #c3c9d1; fill-opacity: 0.7; }
+.eq-tone-foup .f-top { fill: #f6d58a; } .eq-tone-foup .f-left { fill: #e3b24a; } .eq-tone-foup .f-right { fill: #c8932a; }
+.eq-tone-gas .f-top { fill: #dfe9f7; } .eq-tone-gas .f-left { fill: #b9cdee; } .eq-tone-gas .f-right { fill: #95b1e0; }
+.eq-tone-heater .f-top { fill: #f3d9c9; fill-opacity: 0.6; } .eq-tone-heater .f-left { fill: #e7b79c; fill-opacity: 0.55; }
+.eq-tone-glass .f-top { fill: #dff1fb; fill-opacity: 0.5; } .eq-tone-glass .f-left { fill: #cfe8f6; fill-opacity: 0.35; }
+.eq-cyl.hot .f-left, .eq-cyl.hot .f-top { fill: #f08a4b; fill-opacity: 0.75; animation: eq-glow 1.2s ease-in-out infinite alternate; }
+.eq-cyl.cooling .f-left { fill: #e7b79c; transition: fill 2s; }
+@keyframes eq-glow { from { fill-opacity: 0.55; } to { fill-opacity: 0.9; } }
+.eq-wafer { fill: #8d97a8; stroke: var(--text); stroke-width: 0.4; }
+.eq-wafer.dummy { fill: #c8ced8; stroke-dasharray: 2 1.5; }
+.eq-wafer.hot { fill: #f2a36f; }
+.eq-wafer.cooling { fill: #b98d78; }
+.eq-pipe { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.eq-pipe.flow { stroke-dasharray: 5 5; animation: ms-flow 0.4s linear infinite; }
+.eq-ox-boat { transition: transform 1.6s ease-in-out; }
+.eq-ox-boat.up { transform: translateY(var(--rise)); }
+.eq-ox-arm.moving { animation: eq-arm 1.2s ease-in-out infinite alternate; }
+@keyframes eq-arm { to { transform: translate(14px, 7px); } }
+.eq-part { cursor: pointer; transition: opacity 0.3s; }
+.eq-part.dim { opacity: 0.35; }
+.eq-part.hl polygon, .eq-part.hl path, .eq-part.hl ellipse { stroke: var(--accent); stroke-width: 1.6; }
+.eq-part.hl { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.eq-part:focus-visible { outline: none; }
+.eq-part:focus-visible polygon { stroke: var(--accent); stroke-width: 2; }
+.eq-tag line { stroke: var(--muted); stroke-width: 0.6; }
+.eq-tag text { font-size: 9px; fill: var(--text); font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+.eq-lot { transition: transform 1s cubic-bezier(0.5, 0, 0.3, 1); pointer-events: none; }
+.eq-lot rect { fill: var(--accent); stroke: var(--surface); stroke-width: 1; }
+.eq-lot text { font-size: 7px; font-weight: 800; fill: var(--accent-text); }
+.eq-lot-dot { fill: var(--accent); animation: ms-blink 0.6s ease-in-out infinite alternate; }
+
+/* 결과물 그림 */
+.eq-result-title { font-size: 11px; font-weight: 700; fill: var(--text); }
+.eq-si { fill: #8a93a3; }
+.eq-si-label { font-size: 10px; fill: var(--surface); font-weight: 700; }
+.eq-oxide { fill: #8fc3ef; stroke: #3d7fc4; stroke-width: 0.8; }
+.eq-oxide.loose { fill-opacity: 0.55; stroke-dasharray: 3 2; }
+.eq-oxide.grow { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-grow 2.2s ease-out both; }
+@keyframes eq-grow { from { transform: scaleY(0.02); } }
+.eq-dirt { fill: var(--text); }
+.eq-bad-ring { fill: none; stroke: var(--bad); stroke-width: 1.6; stroke-dasharray: 4 3; animation: ms-blink 0.7s ease-in-out infinite alternate; }
+.eq-target { stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.eq-dim { font-size: 9px; fill: var(--muted); }
+.eq-result-alarm { font-size: 11px; fill: var(--bad); font-weight: 700; }
+
+@media (max-width: 760px) {
+  .eq-stage { grid-template-columns: 1fr; }
+  .eq-head { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq-cyl.hot .f-left, .eq-cyl.hot .f-top, .eq-pipe.flow, .eq-ox-arm.moving, .eq-lot-dot, .eq-oxide.grow, .eq-bad-ring, .eq-explain, .eq-deep { animation: none; }
+  .eq-ox-boat, .eq-lot, .eq-part { transition: none; }
+}
+.eq-wafer-top { fill: #a3acba; stroke: var(--text); stroke-width: 0.6; }
+.eq-wafer-top.done { fill: #9fc9ef; }
+.eq-lens { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.eq-zoomline { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.eq-zoombox { fill: var(--surface); stroke: var(--accent); stroke-width: 1.2; }
+.eq-dim.strong { font-weight: 700; fill: #2f6fb3; font-size: 10px; }
+.eq-dim.goal { fill: var(--good); font-weight: 700; }
+
+/* 가동 화면의 결과물 확대 패널 */
+.ms-zoom { margin: 8px 0 10px; padding: 8px 10px 4px; border: 2px solid var(--accent); border-radius: 12px; background: var(--surface); }
+.ms-zoom h4 { margin: 0 0 4px; font-size: 1rem; }
+.ms-zoom-body svg { width: 100%; height: auto; display: block; }
+.ms-zoom-body .eq-oxide.grow, .ms-zoom-body .grow { animation-duration: var(--grow, 2.2s); }
+
+/* 영역별 색: 지금 어느 공부 영역(전체·FAB·PKG·시험·첨단)에 있는지 색으로 구분합니다. */
+.app[data-area='fab'] { --accent: #5b3fd1; --accent-soft: #ece8fb; }
+.app[data-area='pkg'] { --accent: #0b7a6d; --accent-soft: #e0f3f0; }
+.app[data-area='exam'] { --accent: #b25200; --accent-soft: #fbeedf; }
+.app[data-area='deep'] { --accent: #a3285f; --accent-soft: #f8e4ee; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .app[data-area='fab'] { --accent: #a796f5; --accent-soft: #2a2347; }
+  :root:not([data-theme='light']) .app[data-area='pkg'] { --accent: #5fd1c1; --accent-soft: #15302c; }
+  :root:not([data-theme='light']) .app[data-area='exam'] { --accent: #f0a860; --accent-soft: #3a2a17; }
+  :root:not([data-theme='light']) .app[data-area='deep'] { --accent: #ef8fb9; --accent-soft: #3a1c2a; }
+}
+.area-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 12px 4px 0;
+  margin-right: 4px;
+  border-right: 2px solid var(--accent);
+  font-weight: 800;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.area-label small { font-weight: 600; color: var(--muted); font-size: 0.75rem; }
+.app[data-area]:not([data-area='home']) .app-header { border-bottom: 3px solid var(--accent); }
+/* 두 번째 줄: 영역의 세부 화면 + 용어 표시 전환 */
+.app-subbar {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-subbar .subtabs { flex: 1; min-width: 0; max-width: none; margin: 0; padding: 0; align-items: center; }
+.subbar-note { flex: 1; margin: 0; color: var(--muted); font-size: 0.85rem; }
+.app-subbar .term-switch { flex: none; }
+@media (max-width: 760px) {
+  .app-subbar { flex-wrap: wrap; }
+  .app-subbar .subtabs { flex-basis: 100%; }
+}
+/* 메뉴가 넘치면 잘리지 않고 다음 줄로 내려갑니다. */
+.app-subbar .subtabs { flex-wrap: wrap; overflow: visible; row-gap: 6px; }
+.top-tab { padding: 10px 11px; }
+.app-bar .term-switch .muted { display: none; }
+.app-bar .term-switch .term-option { padding: 3px 8px; font-size: 0.75rem; }
+@media (max-width: 760px) {
+  .app-bar .top-tabs { flex-wrap: wrap; overflow: visible; }
+  .area-label { display: none; }
+}
+
+/* 개념 그림 (삼성 뉴스룸 「반도체 8대 공정」 개념을 새로 그린 움직이는 그림) */
+.cf-section { margin: 14px 0; }
+.cf-section h4 { margin: 0 0 8px; }
+.cf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.cf-card { margin: 0; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.cf-card svg { display: block; width: 100%; height: auto; border-radius: 8px; background: var(--bg); }
+.cf-card figcaption { margin-top: 8px; }
+.cf-card figcaption p { margin: 4px 0; }
+.cf-card ul { margin: 4px 0 6px; padding-left: 18px; font-size: 0.88rem; }
+.cf-origin { display: block; font-size: 0.82rem; margin: 4px 0 2px; }
+.cf-si { fill: #8a93a3; }
+.cf-oxide { fill: #8fc3ef; stroke: #3d7fc4; stroke-width: 0.8; }
+.cf-oxide.loose { fill-opacity: 0.6; stroke-dasharray: 3 2; }
+.cf-on-dark { font-size: 9px; fill: #fff; font-weight: 700; }
+.cf-tag { font-size: 8px; fill: #3d7fc4; font-weight: 700; }
+.cf-title { font-size: 9.5px; font-weight: 700; fill: var(--text); }
+.cf-sub { font-size: 8.5px; fill: var(--muted); }
+.cf-metal { fill: #c9a24a; stroke: var(--text); stroke-width: 0.5; }
+.cf-current { stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 4 3; fill: none; }
+.cf-x { font-size: 16px; fill: var(--bad); font-weight: 800; }
+.cf-open { fill: var(--bg); stroke: var(--muted); stroke-dasharray: 2 2; stroke-width: 0.6; }
+.cf-ion { fill: var(--bad); }
+.cf-hole { fill: var(--bg); }
+.cf-o2 { fill: #3d7fc4; }
+.cf-h2o { fill: #1f9d8a; }
+.cf-divider { stroke: var(--border); stroke-dasharray: 3 3; }
+.cf-vs { font-size: 8px; fill: var(--muted); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
+.cf-card svg.il { max-width: none; }
+/* 장비 알아보기: 후공정 2 (몰딩 프레스 · 레이저 마커 · 패키지 쏘 · 테스트 핸들러) */
+/* 입체 그림 색 */
+.eq-tone-bb-emc .f-top, .eq-tone-bb-emc .f-left { fill: #2c2f36; }
+.eq-tone-bb-mold .f-top { fill: #d9dee6; } .eq-tone-bb-mold .f-left { fill: #aab3c0; } .eq-tone-bb-mold .f-right { fill: #8e98a7; }
+.eq-tone-bb-film .f-top { fill: #bfe3c9; fill-opacity: 0.75; } .eq-tone-bb-film .f-left, .eq-tone-bb-film .f-right { fill: #8fcb9f; fill-opacity: 0.7; }
+.eq-tone-bb-strip .f-top { fill: #3a3f48; } .eq-tone-bb-strip .f-left { fill: #c98b4a; } .eq-tone-bb-strip .f-right { fill: #a86f35; }
+.eq-tone-bb-laser .f-top { fill: #f6d0d0; } .eq-tone-bb-laser .f-left { fill: #e7a3a3; } .eq-tone-bb-laser .f-right { fill: #cf7f7f; }
+.eq-tone-bb-jig .f-top { fill: #cfe3f5; } .eq-tone-bb-jig .f-left { fill: #a9c8e8; } .eq-tone-bb-jig .f-right { fill: #86aedb; }
+.eq-tone-bb-tray .f-top { fill: #7a8496; } .eq-tone-bb-tray .f-left, .eq-tone-bb-tray .f-right { fill: #5d6676; }
+.eq-tone-bb-good .f-top { fill: #bfe6cc; } .eq-tone-bb-good .f-left { fill: #8fd1a5; } .eq-tone-bb-good .f-right { fill: #6dbb88; }
+.eq-tone-bb-bad .f-top { fill: #f5c7c3; } .eq-tone-bb-bad .f-left { fill: #eb9c95; } .eq-tone-bb-bad .f-right { fill: #d97a72; }
+.eq-tone-bb-dashed polygon { fill: var(--accent); fill-opacity: 0.05; stroke-dasharray: 4 3; }
+
+/* 입체 그림 움직임 */
+.eq-bb-upper { transition: transform 1.2s ease-in-out; }
+.eq-bb-upper.closed { transform: translateY(var(--close)); }
+.eq-bb-plunger { transition: transform 1s ease-in-out; }
+.eq-bb-plunger.push { transform: translateY(-10px); }
+.eq-bb-hot polygon { fill: #f08a4b; fill-opacity: 0.8; animation: eq-glow 1.2s ease-in-out infinite alternate; }
+.eq-bb-feed { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.eq-bb-feed.run { stroke: #2c2f36; stroke-dasharray: 4 4; animation: ms-flow 0.4s linear infinite; }
+.eq-bb-duct { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 2 2; }
+.eq-bb-sheet { animation: eq-bb-fade 0.8s ease-out both; }
+@keyframes eq-bb-fade { from { opacity: 0; } }
+.eq-bb-arm.moving { animation: eq-arm 1.2s ease-in-out infinite alternate; }
+.eq-bb-strip { transition: transform 1.2s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-bb-resin circle { fill: #2c2f36; animation: eq-bb-flow 1.2s linear infinite; }
+@keyframes eq-bb-flow { from { transform: translate(-16px, -9px); opacity: 0; } 40% { opacity: 1; } to { transform: translate(16px, 9px); opacity: 0; } }
+.eq-bb-rail { fill: none; stroke: var(--text); stroke-width: 0.7; }
+.eq-bb-slot { fill: none; stroke: var(--muted); stroke-width: 0.8; }
+.eq-bb-slot.lit { stroke: var(--good); stroke-width: 1.6; animation: ms-blink 0.5s ease-in-out infinite alternate; }
+.eq-bb-view { fill: var(--accent); fill-opacity: 0.18; stroke: var(--accent); stroke-width: 0.6; animation: ms-blink 0.6s ease-in-out infinite alternate; }
+.eq-bb-beam line { stroke: #e0352b; stroke-width: 2; animation: eq-bb-zap 0.25s linear infinite alternate; }
+.eq-bb-spark { fill: #ffd25c; animation: ms-blink 0.15s linear infinite alternate; }
+@keyframes eq-bb-zap { from { stroke-opacity: 0.4; } to { stroke-opacity: 1; } }
+.eq-bb-pkgmark { fill: #555b66; }
+.eq-bb-pkgmark.on { fill: #e8e2cf; }
+.eq-bb-disc { fill: #d7dbe1; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.eq-bb-spoke { stroke: var(--text); stroke-width: 0.8; }
+.eq-bb-blade.spin { animation: ms-rot 0.3s linear infinite; }
+.eq-bb-water polyline { fill: none; stroke: #4a90d9; stroke-width: 2; stroke-dasharray: 3 3; animation: ms-flow 0.3s linear infinite; }
+.eq-bb-laserline { fill: none; stroke: #e0352b; stroke-width: 1; stroke-dasharray: 2 2; animation: ms-flow 0.4s linear infinite; }
+.eq-bb-vac polygon { stroke: var(--accent); stroke-width: 1.6; }
+.eq-bb-cut { fill: none; stroke: #f5f7fa; stroke-width: 1.4; stroke-dasharray: 60; animation: eq-bb-draw 0.6s ease-out both; }
+@keyframes eq-bb-draw { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+.eq-bb-drop { animation: eq-bb-fall 0.6s ease-out both; }
+@keyframes eq-bb-fall { from { transform: translateY(-12px); opacity: 0; } }
+.eq-bb-cable { fill: none; stroke: var(--muted); stroke-width: 2.4; stroke-linecap: round; }
+.eq-bb-cable.run { stroke: var(--accent); stroke-dasharray: 5 4; animation: ms-flow 0.3s linear infinite; }
+.eq-bb-pulse polygon { stroke: var(--accent); stroke-width: 1.6; animation: ms-blink 0.3s ease-in-out infinite alternate; }
+.eq-bb-reel { fill: #e9edf2; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 6 3; }
+.eq-bb-reel.spin { animation: ms-flow 0.6s linear infinite; }
+.eq-bb-head { transition: transform 1s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-bb-nozzle { transition: transform 0.6s ease-in-out; }
+.eq-bb-nozzle.down { transform: translateY(var(--down)); }
+
+/* 결과물 그림. 공정 중에 생기는 부분(.grow)은 --grow(가동 시간, 기본 2.2초)에 맞춰 자랍니다. */
+.eq-bb-lf { fill: #b5793c; }
+.eq-bb-lead, .eq-bb-pad { fill: #d39a5c; stroke: #8a5a2a; stroke-width: 0.6; }
+.eq-bb-die { fill: #6d7686; stroke: var(--text); stroke-width: 0.6; }
+.eq-bb-die.hurt { fill: #b4544c; }
+.eq-bb-wire { fill: none; stroke: #d4a52c; stroke-width: 1.8; }
+.eq-bb-wire.swept { stroke: var(--bad); }
+.eq-bb-ring { fill: none; stroke: var(--bad); stroke-width: 1.6; stroke-dasharray: 4 3; animation: ms-blink 0.7s ease-in-out infinite alternate; }
+.eq-bb-emc { fill: #2c2f36; fill-opacity: 0.55; transform-box: fill-box; transform-origin: 0 50%; animation: eq-bb-fill var(--grow, 2.2s) ease-out both; }
+.eq-bb-emc.soft { fill-opacity: 0.35; stroke: var(--bad); stroke-dasharray: 4 3; }
+@keyframes eq-bb-fill { from { transform: scaleX(0.02); } }
+.eq-bb-empty { fill: none; stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.eq-bb-void { fill: var(--surface); stroke: var(--bad); stroke-width: 1.2; animation: eq-bb-fade 0.5s ease-out both; }
+.eq-bb-flash { fill: #2c2f36; stroke: var(--bad); stroke-width: 1; }
+.eq-bb-emc-label { font-size: 11px; font-weight: 700; fill: var(--surface); paint-order: stroke; stroke: #2c2f36; stroke-width: 2px; }
+.eq-bb-cav { fill: var(--surface); stroke: var(--text); stroke-width: 0.8; }
+.eq-dim.eq-bb-bad { fill: var(--bad); font-weight: 700; }
+.eq-dim.eq-bb-light { fill: #5a3a18; font-weight: 700; }
+.eq-bb-pkgtop { fill: #2c2f36; stroke: var(--text); stroke-width: 0.8; }
+.eq-bb-pkgtop.uncut { fill-opacity: 0.6; }
+.eq-bb-pkgtop.cut { animation: eq-bb-fade 0.4s ease-out both; }
+.eq-bb-pin1 { fill: #555b66; }
+.eq-bb-letter { font-size: 52px; font-weight: 800; fill: none; stroke: #e8e2cf; stroke-linejoin: round; animation: eq-bb-fade 0.3s ease-out both; }
+.eq-bb-letter.broken { stroke-dasharray: 7 6; }
+.eq-bb-letter.faint { stroke-opacity: 0.35; }
+.eq-bb-moldx { fill: #3a3f48; }
+.eq-bb-groove { fill: var(--surface); stroke: #e0352b; stroke-width: 0.6; transform-box: fill-box; transform-origin: 50% 0; animation: eq-bb-dig var(--grow, 2.2s) ease-out both; }
+@keyframes eq-bb-dig { from { transform: scaleY(0.02); } }
+.eq-bb-crack { fill: none; stroke: var(--bad); stroke-width: 1.6; }
+.eq-bb-targetbox { fill: none; stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.eq-bb-burr { fill: #e0b07a; stroke: var(--bad); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 0; animation: eq-bb-dig var(--grow, 2.2s) ease-out both; }
+.eq-bb-melt { fill: #c9c9c9; stroke: var(--bad); stroke-width: 1; }
+.eq-bb-epad { fill: #9aa3b0; fill-opacity: 0.4; stroke: var(--muted); stroke-width: 0.6; }
+.eq-bb-chip { fill: var(--surface); stroke: var(--bad); stroke-width: 1.2; }
+.eq-bb-sweep { stroke: #e0352b; stroke-width: 2; animation: eq-bb-sweep var(--grow, 2.2s) linear both; }
+.eq-bb-sweep.v { animation-name: eq-bb-sweep-v; }
+@keyframes eq-bb-sweep { from { transform: translateY(150px); opacity: 1; } 95% { opacity: 1; } to { transform: translateY(0); opacity: 0; } }
+@keyframes eq-bb-sweep-v { from { transform: translateX(-150px); opacity: 1; } 95% { opacity: 1; } to { transform: translateX(0); opacity: 0; } }
+.eq-bb-cellg { animation: eq-bb-fade 0.25s ease-out both; }
+.eq-bb-cell { stroke: var(--text); stroke-width: 0.5; }
+.eq-bb-cell.good { fill: #8fd1a5; }
+.eq-bb-cell.bad { fill: #eb9c95; }
+.eq-bb-cell.retest { fill: #f2cf6b; }
+.eq-bb-cell.missed { fill: #8fd1a5; stroke: var(--bad); stroke-width: 2; stroke-dasharray: 3 2; }
+.eq-bb-cell.scrap { fill: #eb9c95; stroke: #c8932a; stroke-width: 2; stroke-dasharray: 3 2; }
+.eq-bb-bar { transform-box: fill-box; transform-origin: 0 50%; animation: eq-bb-fill var(--grow, 2.2s) ease-out both; }
+.eq-bb-leadhurt { fill: none; stroke: var(--bad); stroke-width: 1.4; }
+.eq-bb-temp { fill: var(--bg); stroke: var(--border); stroke-width: 1; }
+.eq-bb-temp.on { fill: var(--accent); stroke: var(--accent); }
+.eq-bb-temp-t { font-size: 10px; font-weight: 700; fill: var(--muted); }
+.eq-bb-temp-t.on { fill: var(--accent-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bb-hot polygon, .eq-bb-feed.run, .eq-bb-sheet, .eq-bb-arm.moving, .eq-bb-resin circle, .eq-bb-slot.lit, .eq-bb-view,
+  .eq-bb-beam line, .eq-bb-spark, .eq-bb-blade.spin, .eq-bb-water polyline, .eq-bb-laserline, .eq-bb-cut, .eq-bb-drop,
+  .eq-bb-cable.run, .eq-bb-pulse polygon, .eq-bb-reel.spin, .eq-bb-ring, .eq-bb-emc, .eq-bb-void, .eq-bb-pkgtop.cut,
+  .eq-bb-letter, .eq-bb-groove, .eq-bb-burr, .eq-bb-sweep, .eq-bb-cellg, .eq-bb-bar { animation: none; }
+  .eq-bb-upper, .eq-bb-plunger, .eq-bb-strip, .eq-bb-head, .eq-bb-nozzle { transition: none; }
+}
+/* 장비 알아보기: 후공정 1 (백그라인더 · 다이싱 소 · 다이 본더 · 와이어 본더) */
+.eq-dim.bad { fill: var(--bad); font-weight: 700; }
+.eq-ba-axis { font-size: 8px; font-weight: 800; fill: var(--accent); paint-order: stroke; stroke: var(--surface); stroke-width: 2.5px; }
+.eq-ba-wafer { fill: #8d97a8; stroke: var(--text); stroke-width: 0.4; }
+.eq-ba-ring { fill: #d9dde3; stroke: var(--text); stroke-width: 0.5; }
+.eq-ba-tape { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.4; }
+.eq-ba-frame { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.eq-ba-spin { fill: none; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.5; }
+.eq-ba-spin.run { opacity: 1; animation: ms-flow 0.25s linear infinite; }
+.eq-ba-roll .f-top { animation: eq-glow 0.8s ease-in-out infinite alternate; }
+.eq-ba-spindle { transition: transform 0.8s ease-in-out; }
+.eq-ba-spindle.down { transform: translateY(7px); }
+.eq-ba-water { fill: #6db3e8; animation: eq-ba-splash 0.6s ease-out infinite; }
+@keyframes eq-ba-splash { from { opacity: 1; transform: translate(0, 0); } to { opacity: 0; transform: translate(0, 8px); } }
+.eq-ba-xtable.run { animation: eq-ba-xmove 1.4s ease-in-out infinite alternate; }
+@keyframes eq-ba-xmove { from { transform: translate(-12px, -7px); } to { transform: translate(12px, 7px); } }
+.eq-ba-cut { fill: none; stroke: var(--text); stroke-width: 1.2; }
+.eq-ba-cut.draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: eq-ba-draw 0.6s ease-out forwards; }
+@keyframes eq-ba-draw { to { stroke-dashoffset: 0; } }
+.eq-ba-blade { transition: transform 0.6s ease-in-out; }
+.eq-ba-blade.down { transform: translateY(8px); }
+.eq-ba-bladedisc { fill: #e7eaef; stroke: var(--text); stroke-width: 0.8; stroke-dasharray: 2 2; }
+.eq-ba-bladedisc.run { animation: ms-flow 0.15s linear infinite; }
+.eq-ba-cable { fill: none; stroke: var(--muted); stroke-width: 1; }
+.eq-ba-screen { fill: #233046; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-screen.on { fill: #3d7fc4; animation: eq-glow 0.8s ease-in-out infinite alternate; }
+.eq-ba-beam { fill: var(--accent); fill-opacity: 0.18; stroke: var(--accent); stroke-width: 0.5; stroke-dasharray: 2 2; }
+.eq-ba-pin { transition: transform 0.5s ease-out; }
+.eq-ba-pin.up { transform: translateY(-6px); }
+.eq-ba-die { fill: #8d97a8; stroke: var(--surface); stroke-width: 0.5; transition: transform 0.5s; }
+.eq-ba-die.lifted { transform: translateY(-6px); fill: #6d7a90; }
+.eq-ba-strip.run { animation: eq-ba-index 0.9s ease-in-out infinite; }
+@keyframes eq-ba-index { 0%, 40% { transform: translate(0, 0); } 100% { transform: translate(12px, 7px); } }
+.eq-ba-epoxy { fill: #d9e8c7; stroke: #6c8a3c; stroke-width: 0.6; }
+.eq-ba-syringe { transition: transform 0.5s; }
+.eq-ba-syringe.run { animation: eq-ba-dab 0.7s ease-in-out infinite; }
+@keyframes eq-ba-dab { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(2px); } }
+.eq-ba-head { transition: transform 1s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-ba-collet { transition: transform 0.5s; }
+.eq-ba-collet.down { transform: translateY(8px); }
+.eq-ba-cap { transition: transform 0.9s cubic-bezier(0.5, 0, 0.3, 1); }
+.eq-ba-press.run { animation: eq-ba-press 0.8s ease-in-out infinite; }
+@keyframes eq-ba-press { 0%, 100% { transform: translateY(-5px); } 45%, 65% { transform: translateY(2px); } }
+.eq-ba-wire { fill: none; stroke: #c9a227; stroke-width: 1; }
+.eq-ba-hot .f-top, .eq-ba-hot .f-left { fill: #f08a4b; fill-opacity: 0.55; animation: eq-glow 1.2s ease-in-out infinite alternate; }
+.eq-ba-lead { fill: #d9b25c; stroke: var(--text); stroke-width: 0.3; }
+.eq-ba-loop { fill: none; stroke: #c9a227; stroke-width: 1.1; }
+.eq-ba-loop.draw { stroke-dasharray: 60; stroke-dashoffset: 60; animation: eq-ba-loopdraw 1.6s ease-out forwards; }
+@keyframes eq-ba-loopdraw { to { stroke-dashoffset: 0; } }
+.eq-ba-fab { fill: #e2bf4a; stroke: var(--text); stroke-width: 0.4; }
+.eq-ba-spark { fill: none; stroke: #6db3e8; stroke-width: 1.4; animation: ms-blink 0.15s linear infinite alternate; }
+
+/* 결과물 확대 (자라는 부분은 .grow + var(--grow)) */
+.eq-ba-bgtape { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.6; }
+.eq-ba-circuit { fill: #3d7fc4; }
+.eq-ba-thin { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-thin var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-thin { from { transform: scaleY(var(--from, 1)); } }
+.eq-ba-damage { fill: #c95b4a; fill-opacity: 0.35; stroke: var(--bad); stroke-width: 0.6; stroke-dasharray: 2 2; }
+.eq-ba-rough { fill: none; stroke: var(--text); stroke-width: 1; }
+.eq-ba-burn { fill: #6b3a1e; fill-opacity: 0.6; }
+.eq-ba-crack { fill: none; stroke: var(--bad); stroke-width: 1.8; stroke-linejoin: round; }
+.eq-ba-dimline { stroke: var(--accent); stroke-width: 1; marker-start: none; }
+.eq-ba-chip { fill: var(--bad); fill-opacity: 0.85; }
+.eq-ba-chiptop { fill: #8d97a8; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-kerf { fill: #e8edf3; stroke: var(--muted); stroke-width: 0.5; }
+.eq-ba-kerf.grow-x { transform-box: fill-box; transform-origin: 0 50%; animation: eq-ba-growx var(--grow, 2.2s) ease-out both; }
+.eq-ba-kerf.grow-y { transform-box: fill-box; transform-origin: 50% 0; animation: eq-ba-growy var(--grow, 2.2s) ease-out both; animation-delay: calc(var(--grow, 2.2s) * 0.15); }
+@keyframes eq-ba-growx { from { transform: scaleX(0); } }
+@keyframes eq-ba-growy { from { transform: scaleY(0); } }
+.eq-ba-chips { animation: ms-scene-in 0.4s ease-out both; animation-delay: 1.4s; }
+.eq-ba-bridge { fill: #8d97a8; fill-opacity: 0.7; stroke: var(--bad); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.eq-ba-tape-sec { fill: #cfe3f5; stroke: var(--muted); stroke-width: 0.6; }
+.eq-ba-groove { fill: #f6f7f9; stroke: var(--muted); stroke-width: 0.5; transform-box: fill-box; transform-origin: 50% 0; animation: eq-ba-growy var(--grow, 2.2s) ease-out both; }
+.eq-ba-leadframe { fill: #d9b25c; stroke: #8a6a1d; stroke-width: 0.8; }
+.eq-ba-glue { fill: #d9e8c7; stroke: #6c8a3c; stroke-width: 0.8; }
+.eq-ba-glue.daf { fill: #f3d9a8; stroke: #a67a1e; }
+.eq-ba-glue.soft { fill-opacity: 0.55; stroke-dasharray: 3 2; }
+.eq-ba-squeeze { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-squeeze var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-squeeze { 0%, 40% { transform: scaleX(0.55); opacity: 0.6; } }
+.eq-ba-drop { animation: eq-ba-drop var(--grow, 2.2s) ease-out both; }
+@keyframes eq-ba-drop { 0% { transform: translateY(-40px); opacity: 0.3; } 40% { transform: translateY(0); opacity: 1; } }
+.eq-ba-diesec { fill: #8d97a8; stroke: var(--text); stroke-width: 0.8; }
+.eq-ba-void { fill: var(--surface); stroke: var(--bad); stroke-width: 1; }
+.eq-ba-gap { stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.eq-ba-pad { fill: #b9c0cb; stroke: var(--text); stroke-width: 0.6; }
+.eq-ba-pad.dirty { fill: #9b8a6a; }
+.eq-ba-loopwire { fill: none; stroke: #c9a227; stroke-width: 2.4; stroke-linecap: round; }
+.eq-ba-loopwire.cu, .eq-ba-tail.cu { stroke: #c26a3c; }
+.eq-ba-loopwire.grow { stroke-dasharray: 420; stroke-dashoffset: 420; animation: eq-ba-wiredraw var(--grow, 2.2s) ease-out forwards; }
+@keyframes eq-ba-wiredraw { to { stroke-dashoffset: 0; } }
+.eq-ba-ball { fill: #e2bf4a; stroke: #8a6a1d; stroke-width: 0.8; }
+.eq-ba-ball.cu { fill: #d98a5c; stroke: #8a4420; }
+.eq-ba-ball.pop { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-ba-pop 0.6s ease-out both; }
+@keyframes eq-ba-pop { from { transform: scale(1, 1.5); opacity: 0.4; } }
+.eq-ba-tail { stroke: #c9a227; stroke-width: 2.4; stroke-linecap: round; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-ba-spin.run, .eq-ba-roll .f-top, .eq-ba-water, .eq-ba-xtable.run, .eq-ba-cut.draw, .eq-ba-bladedisc.run, .eq-ba-screen.on,
+  .eq-ba-strip.run, .eq-ba-syringe.run, .eq-ba-press.run, .eq-ba-hot .f-top, .eq-ba-hot .f-left, .eq-ba-loop.draw, .eq-ba-spark,
+  .eq-ba-thin, .eq-ba-kerf.grow-x, .eq-ba-kerf.grow-y, .eq-ba-chips, .eq-ba-groove, .eq-ba-squeeze, .eq-ba-drop,
+  .eq-ba-loopwire.grow, .eq-ba-ball.pop { animation: none; }
+  .eq-ba-cut.draw, .eq-ba-loop.draw, .eq-ba-loopwire.grow { stroke-dashoffset: 0; }
+  .eq-ba-spindle, .eq-ba-blade, .eq-ba-pin, .eq-ba-die, .eq-ba-head, .eq-ba-collet, .eq-ba-cap, .eq-ba-syringe { transition: none; }
+}
+.eq-result .eq-dim.strong { paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+
+/* 개념 그림: 증착·배선·EDS·패키징 */
+.cf-sub.strong { font-weight: 700; fill: var(--text); }
+.cf-sub.dark { fill: var(--text); }
+.cf-b-metal { fill: #d8b25a; stroke: #8a6a1f; stroke-width: 0.6; }
+.cf-b-ins { fill: #8fc3ef; stroke: #3d7fc4; stroke-width: 0.6; }
+.cf-b-note { fill: var(--surface); stroke: var(--accent); stroke-width: 1; }
+.cf-b-target { fill: #8a6a1f; }
+.cf-b-atom { fill: #c9a24a; }
+.cf-b-spark { fill: #f6c344; opacity: 0.85; }
+.cf-b-particle { fill: #3d7fc4; }
+.cf-b-mask { fill: #e8a24a; stroke: #9a5c12; stroke-width: 0.5; }
+.cf-b-n { fill: #3d7fc4; }
+.cf-b-p { fill: #d0504a; }
+.cf-b-n-region { fill: #3d7fc4; fill-opacity: 0.7; }
+.cf-b-p-region { fill: #d0504a; fill-opacity: 0.7; }
+.cf-b-type { font-size: 10px; font-weight: 800; fill: #fff; }
+.cf-b-device { fill: var(--surface); stroke: var(--muted); stroke-width: 0.8; }
+.cf-b-line { fill: none; stroke: #c9a24a; stroke-width: 3; stroke-linejoin: round; }
+.cf-b-row { fill: var(--surface); stroke: var(--border); stroke-width: 0.8; }
+.cf-b-check { font-size: 11px; font-weight: 800; fill: var(--good); }
+.cf-b-barrier { fill: none; stroke: #7a5cc8; stroke-width: 3; }
+.cf-b-w { fill: #6c7a8c; }
+.cf-b-al { fill: #c9ced6; stroke: #7d8592; stroke-width: 0.6; }
+.cf-b-lead { stroke: var(--muted); stroke-width: 0.6; }
+.cf-b-card { fill: #4a5565; }
+.cf-b-pin { stroke: #c9a24a; stroke-width: 1.4; }
+.cf-b-die { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.4; }
+.cf-b-die.good { fill: #7fcf9a; }
+.cf-b-die.bad { fill: #e57373; }
+.cf-b-ink { fill: #1c2330; }
+.cf-b-step { fill: var(--surface); stroke: var(--border); stroke-width: 0.8; }
+.cf-b-step.on { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
+.cf-b-wafer { fill: #a3acba; stroke: var(--text); stroke-width: 0.6; }
+.cf-b-yield { font-size: 10.5px; font-weight: 800; fill: var(--accent); }
+.cf-b-scribe { stroke: #fff; stroke-width: 1; stroke-dasharray: 3 2; }
+.cf-b-blade { fill: #d9dde3; stroke: var(--text); stroke-width: 1; stroke-dasharray: 2 2; }
+.cf-b-lf { fill: #c58b4a; stroke: #7a4f1d; stroke-width: 0.5; }
+.cf-b-chip { fill: #4a5565; stroke: var(--text); stroke-width: 0.5; }
+.cf-b-wire { fill: none; stroke: #d4a72c; stroke-width: 1.6; }
+.cf-b-mold { fill: #2d333d; fill-opacity: 0.88; }
+.cf-b-socket { fill: #7d8592; }
+.cf-b-bump { fill: #b8bec8; stroke: var(--text); stroke-width: 0.5; }
+.cf-grid > .cf-card:only-child { max-width: 640px; }
+/* 장비 알아보기: 전공정 (노광·식각·CVD·이온 주입·PVD 입체 그림과 결과물) */
+.eq-tone-hot .f-top { fill: #f6d3c0; } .eq-tone-hot .f-left { fill: #e9b195; } .eq-tone-hot .f-right { fill: #d6957a; }
+.eq-fe-hot .f-top, .eq-fe-hot .f-left, .eq-fe-hot .f-right { fill: #f08a4b; animation: eq-glow 0.9s ease-in-out infinite alternate; }
+.eq-fe-glow { stroke: none; animation: eq-fe-pulse 0.8s ease-in-out infinite alternate; }
+.eq-fe-glow-etch { fill: #b48cf0; }
+.eq-fe-glow-dep { fill: #7fc7e8; }
+.eq-fe-glow-pvd { fill: #f0a6d8; }
+.eq-fe-epd { animation-duration: 0.3s; }
+@keyframes eq-fe-pulse { from { opacity: 0.45; } to { opacity: 0.95; } }
+.eq-fe-coil { fill: none; stroke: #c26a3c; stroke-width: 1.4; }
+.eq-fe-station { fill: #8d97a8; stroke: var(--text); stroke-width: 0.4; }
+.eq-fe-spin { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 4 3; animation: ms-flow 0.3s linear infinite; }
+.eq-fe-pumping polygon { animation: eq-fe-pump 0.6s ease-in-out infinite alternate; }
+@keyframes eq-fe-pump { to { fill-opacity: 0.25; } }
+.eq-fe-heat { fill: #f08a4b; opacity: 0.5; animation: eq-fe-pulse 0.7s ease-in-out infinite alternate; }
+.eq-fe-light { fill: #c9a4ff; opacity: 0.7; animation: eq-fe-pulse 0.25s ease-in-out infinite alternate; }
+.eq-fe-blink polygon { stroke: var(--accent); stroke-width: 1.6; animation: ms-blink 0.4s ease-in-out infinite alternate; }
+.eq-fe-blink-soft polygon { animation: eq-fe-pump 0.8s ease-in-out infinite alternate; }
+.eq-fe-scanstage { animation: eq-fe-scan 1.2s ease-in-out infinite alternate; }
+@keyframes eq-fe-scan { from { transform: translate(-8px, -4px); } to { transform: translate(8px, 4px); } }
+.eq-fe-exposed { fill: #a77ce0; }
+.eq-fe-spray { stroke: #2f8fd8; stroke-width: 2; stroke-dasharray: 2 3; animation: ms-flow 0.3s linear infinite; }
+.eq-fe-platen { transform-box: fill-box; transform-origin: center; transition: transform 1s ease-in-out; }
+.eq-fe-platen.tilted { transform: rotate(-14deg); }
+.eq-fe-spot { fill: #ffd84a; stroke: #c26a3c; stroke-width: 0.8; animation: eq-fe-raster 0.9s ease-in-out infinite alternate; }
+@keyframes eq-fe-raster { from { transform: translateY(-9px); } to { transform: translateY(9px); } }
+.eq-fe-beam { fill: none; stroke: #ffb02e; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 6 4; animation: ms-flow 0.25s linear infinite; filter: drop-shadow(0 0 3px #ffb02e); }
+
+/* 전공정 결과물. 공정 중 생기는 부분은 --grow(가동 중엔 전체 가동 시간, 아니면 2.2s) 동안 자랍니다. */
+.eq-fe-film { fill: #c8b6e8; stroke: #7a5fb0; stroke-width: 0.6; }
+.eq-fe-ild { fill: #cfe3d2; stroke: #5f8a66; stroke-width: 0.6; }
+.eq-fe-resist { fill: #f2c46d; stroke: #a5741c; stroke-width: 0.8; }
+.eq-fe-resist.blur { filter: blur(1.2px); }
+.eq-fe-resist.residue { fill: #e9a94a; }
+.eq-fe-cd { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 2; }
+.eq-fe-die { fill: #9fc9ef; stroke: #3d7fc4; stroke-width: 0.5; }
+.eq-fe-die.empty { fill: #a3acba; }
+.eq-dirt.bad { fill: var(--bad); animation: ms-blink 0.6s ease-in-out infinite alternate; }
+.eq-fe-void { fill: var(--surface); stroke: #7a5fb0; stroke-width: 0.6; }
+.eq-fe-damage { fill: none; stroke: var(--bad); stroke-width: 1.6; }
+.eq-fe-cvd { fill: #8fc3ef; stroke: #3d7fc4; stroke-width: 0.6; }
+.eq-fe-depo.stressed { transform-box: fill-box; transform-origin: center; transform: skewY(-1.5deg); }
+.eq-fe-contam { fill: #c26a3c; }
+.eq-fe-dope.n { fill: #4f8fe0; }
+.eq-fe-dope.p { fill: #e0664f; }
+.eq-fe-amorph { fill: none; stroke: var(--surface); stroke-width: 1; stroke-dasharray: 1.5 2.5; }
+.eq-fe-axis { stroke: var(--muted); stroke-width: 0.8; }
+.eq-fe-curve { fill: none; stroke-width: 2; }
+.eq-fe-curve.n { stroke: #4f8fe0; }
+.eq-fe-curve.p { stroke: #e0664f; }
+.eq-fe-metal { fill: #d8a35a; stroke: #8a5a1c; stroke-width: 0.6; }
+.eq-fe-metal.porous { fill-opacity: 0.55; stroke-dasharray: 2 2; }
+.eq-fe-rise { transform-box: fill-box; transform-origin: 50% 100%; animation: eq-grow var(--grow, 2.2s) ease-out both; }
+.eq-fe-rise-down { transform-box: fill-box; transform-origin: 50% 0%; animation: eq-grow var(--grow, 2.2s) ease-out both; }
+.eq-fe-dig { transform-box: fill-box; transform-origin: 50% 0%; animation: eq-grow var(--grow, 2.2s) ease-in-out both; }
+.eq-fe-fadein { animation: eq-fe-fade var(--grow, 2.2s) ease-out both; }
+@keyframes eq-fe-fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-fe-hot .f-top, .eq-fe-hot .f-left, .eq-fe-hot .f-right,
+  .eq-fe-glow, .eq-fe-spin, .eq-fe-pumping polygon, .eq-fe-heat, .eq-fe-light, .eq-fe-blink polygon, .eq-fe-blink-soft polygon,
+  .eq-fe-scanstage, .eq-fe-spray, .eq-fe-spot, .eq-fe-beam, .eq-dirt.bad,
+  .eq-fe-rise, .eq-fe-rise-down, .eq-fe-dig, .eq-fe-fadein { animation: none; }
+  .eq-fe-platen { transition: none; }
+}
+
+/* 개념 그림: 웨이퍼·포토·식각 */
+.cf-a .il-step { font-size: 9px; }
+.cf-a-label { font-size: 7.5px; fill: var(--muted); }
+.cf-a-cap { font-size: 9px; font-weight: 700; fill: var(--accent); }
+.cf-a-result { font-size: 9.5px; font-weight: 700; fill: var(--good); }
+.cf-a-lead { stroke: var(--muted); stroke-width: 0.6; }
+.cf-a-lead.dust { stroke-dasharray: 2 2; }
+.cf-a-crucible { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.cf-a-melt { fill: #f2a36f; opacity: 0.85; }
+.cf-a-heat { fill: none; stroke: var(--bad); stroke-width: 1; }
+.cf-a-rod { stroke: var(--text); stroke-width: 1.2; }
+.cf-a-seed { fill: var(--accent); }
+.cf-a-ingot { fill: #a9b1bd; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-ingot-end { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-saw { fill: #e7eaef; stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.cf-a-kerf { stroke: var(--bg); stroke-width: 3; }
+.cf-a-slice { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-wafer { fill: #b6bdc8; stroke: var(--text); stroke-width: 1; }
+.cf-a-rough path { fill: none; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-pad { fill: #f6d58a; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-shaft { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.6; }
+.cf-a-slurry { fill: #6aa8d8; }
+.cf-a-shine { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; }
+.cf-a-die { fill: #e7eaef; stroke: #8a93a3; stroke-width: 0.5; }
+.cf-a-die.extra { fill: var(--good-soft); stroke: var(--good); stroke-width: 1; }
+.cf-a-extra-text { fill: var(--good); }
+.cf-a-hl { fill: none; stroke: var(--accent); stroke-width: 2; }
+.cf-a-scribe line { stroke: var(--accent); stroke-width: 1.4; }
+.cf-a-mark { stroke: var(--bad); stroke-width: 3; stroke-linecap: round; }
+.cf-a-notchcut { fill: var(--bg); stroke: var(--text); stroke-width: 0.6; }
+.cf-a-ring { fill: none; stroke: var(--bad); stroke-width: 1.6; stroke-dasharray: 3 2; }
+.cf-a-zoom { stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 3 2; }
+.cf-a-chip { fill: #e9eef7; stroke: var(--text); stroke-width: 1.2; }
+.cf-a-block { fill: #bcd0ef; stroke: #4c6fae; stroke-width: 0.6; }
+.cf-a-cell { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+.cf-a-wire { fill: none; stroke: var(--text); stroke-width: 1.4; stroke-linejoin: round; }
+.cf-a-switch { stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.cf-a-dot { fill: var(--text); }
+.cf-a-plate { stroke: var(--text); stroke-width: 2.4; }
+.cf-a-charge { font-size: 8px; font-weight: 700; fill: var(--bad); }
+.cf-a-elec { fill: #e0b100; stroke: var(--text); stroke-width: 0.4; }
+.cf-a-diode { fill: var(--accent-soft); stroke: var(--text); stroke-width: 1; }
+.cf-a-lamp { fill: #fff3b0; stroke: #c9a20a; stroke-width: 1; }
+.cf-a-ray { stroke: #e0b100; stroke-width: 1.2; stroke-dasharray: 5 4; }
+.cf-a-ray.pass { stroke-width: 1.6; }
+.cf-a-quartz { fill: #dff1fb; stroke: #6aa8d8; stroke-width: 0.8; }
+.cf-a-chrome { fill: #3b4250; }
+.cf-a-pr { fill: #f3c27a; stroke: #b9822d; stroke-width: 0.6; }
+.cf-a-exposed { fill: #8e6bd8; opacity: 0.85; }
+.cf-a-nozzle { fill: #c7cdd6; stroke: var(--text); stroke-width: 0.8; }
+.cf-a-prdrop { fill: #f3c27a; stroke: #b9822d; stroke-width: 0.6; }
+.cf-a-spin { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.cf-a-spin-head { fill: var(--accent); }
+.cf-a-dust { fill: var(--text); }
+.cf-a-beam { fill: #fff3b0; opacity: 0.6; }
+.cf-a-lens { fill: #dff1fb; stroke: #6aa8d8; stroke-width: 1; }
+.cf-a-field { fill: #8e6bd8; stroke: var(--surface); stroke-width: 0.6; }
+.cf-a-shot { fill: none; stroke: #e0b100; stroke-width: 2; }
+.cf-a-dev { fill: #6aa8d8; }
+.cf-a-etchant { fill: #2fae7a; }
+.cf-a-hole { fill: var(--bg); }
+.cf-a-tank { fill: none; stroke: var(--text); stroke-width: 1.4; }
+.cf-a-liquid { fill: #bfe6d6; opacity: 0.7; }
+.cf-a-bubble { fill: none; stroke: #2fae7a; stroke-width: 1; }
+.cf-a-chamber { fill: var(--surface); stroke: var(--text); stroke-width: 1.2; }
+.cf-a-electrode { fill: #a9b1bd; }
+.cf-a-glow { fill: #b48cf0; }
+.cf-a-inlet { stroke: var(--accent); stroke-width: 2; }
+.cf-a-inlet-head { fill: var(--accent); }
+.cf-a-gas { fill: #8fb3e8; stroke: #4c6fae; stroke-width: 0.5; }
+.cf-a-ion, .cf-a-k-ion { fill: var(--bad); }
+.cf-a-plus { font-size: 10px; font-weight: 800; fill: var(--bad); }
+.cf-a-radical, .cf-a-k-rad { fill: #2fae7a; }
+.cf-a-k-elec { fill: #e0b100; }
+.cf-a-k-gas { fill: #8fb3e8; }
+.cf-a-plasma { fill: #b48cf0; }
+.cf-a-film-atom { fill: #3d7fc4; }

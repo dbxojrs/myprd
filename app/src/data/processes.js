@@ -2,12 +2,121 @@
 // sources의 tier: evidence(근거 출처) | explain(설명 출처). sourceDate는 링크를 확인한 날짜입니다.
 // photo: 실제 사진 예시. kind가 attach이면 public/에 둔 재사용 허락 사진, link이면 원본 페이지 링크만 둡니다.
 // videos: 공식 채널 영상 링크(앱 안에 넣지 않고 링크만 둡니다). checked는 링크를 확인한 날짜입니다.
-// steps: 세부 단계(순서대로). keyPoints: 알아둘 점. figure가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
-// stage는 front(전공정: 웨이퍼에 회로를 만듦) 또는 back(후공정: 칩을 패키지로 만듦)입니다.
+// steps: 세부 단계(순서대로). keyPoints: 알아둘 점. photos는 그 주제의 실제 사진(photo와 같은 모양). figure(하나) 또는 figures(여러 개)가 있으면 그 이름의 상세 그림을 함께 보여줍니다.
+// stage는 design(설계: 회로를 설계해 파운드리에 넘김), front(전공정: 웨이퍼에 회로를 만듦), link(팹 아웃·웨이퍼 출하/입고: 전공정 웨이퍼를 후공정으로 넘김),
+// mid(웨이퍼 레벨 패키징: 웨이퍼 상태에서 범프·재배선·관통 전극을 만듦), back(후공정: 칩을 패키지로 만듦), board(보드 실장: 패키지를 제품 기판에 붙임) 중 하나입니다. repeatsAfter가 있는 전공정은 8대 공정 사이사이 반복되는 공정이고,
+// usedBy는 웨이퍼 레벨 패키징 공정을 거치는 패키지(packages.js)·첨단 패키지(advanced.js) id입니다.
 // name과 terms는 { en, ko } 용어 쌍입니다. 화면의 용어 표시 설정에 따라 보여줍니다.
 // prerequisites는 바로 앞에서 알아야 하는 공정만 적고, 더 앞의 공정은 거슬러 올라가며 찾습니다.
 
 export const processes = [
+  // ── 설계 단계: 칩이 할 일을 정하고 회로를 설계해 파운드리에 넘깁니다(웨이퍼 공정 전). ──
+  {
+    id: 'spec',
+    name: { en: 'Specification', ko: '제품 기획·사양 정의' },
+    aliases: ['사양', '스펙', '사양 정의', '제품 기획', 'specification', 'spec'],
+    group: '',
+    stage: 'design',
+    summary: '칩이 어디에 쓰이고 무엇을 해야 하는지(기능, 성능, 전력, 크기, 가격)를 정해 설계의 목표로 삼습니다.',
+    input: '시장·고객이 원하는 제품',
+    output: '칩 사양서',
+    terms: [{ en: 'Specification', ko: '사양' }, { en: 'PPA (Power, Performance, Area)', ko: '전력·성능·면적' }],
+    prerequisites: [],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'rtl',
+    name: { en: 'Front-End Design (RTL)', ko: '프론트엔드 설계(RTL)' },
+    aliases: ['프론트엔드 설계', '프런트엔드 설계', 'rtl', 'rtl 설계', '회로 설계', '논리 설계', 'front-end design', 'verilog', '베릴로그'],
+    group: '설계',
+    stage: 'design',
+    summary: '사양에 맞게 칩의 동작을 하드웨어 기술 언어(Verilog 등)로 작성합니다. 신호가 어떤 규칙으로 흐르고 계산되는지를 코드로 설계합니다.',
+    input: '칩 사양서',
+    output: 'RTL 코드(동작 설계)',
+    terms: [{ en: 'RTL (Register Transfer Level)', ko: '레지스터 전송 수준' }, { en: 'HDL', ko: '하드웨어 기술 언어' }, { en: 'IP', ko: '설계 자산' }],
+    prerequisites: ['spec'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'verification',
+    name: { en: 'Functional Verification', ko: '기능 검증' },
+    aliases: ['검증', '기능 검증', '설계 검증', 'verification', '시뮬레이션 검증'],
+    group: '',
+    stage: 'design',
+    summary: '설계한 RTL이 사양대로 동작하는지 시뮬레이션으로 수많은 경우를 시험해 오류를 찾고 고칩니다. 칩을 만든 뒤에는 고치기 어려워 설계 단계에서 철저히 확인합니다.',
+    input: 'RTL 코드',
+    output: '검증을 통과한 RTL',
+    terms: [{ en: 'Testbench', ko: '테스트벤치' }, { en: 'Simulation', ko: '시뮬레이션' }, { en: 'Coverage', ko: '커버리지' }],
+    prerequisites: ['rtl'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'synthesis',
+    name: { en: 'Logic Synthesis', ko: '논리 합성' },
+    aliases: ['합성', '논리 합성', 'synthesis', 'logic synthesis', '넷리스트', 'netlist'],
+    group: '',
+    stage: 'design',
+    summary: 'RTL 코드를 파운드리가 제공하는 기본 회로 부품(표준 셀)들의 연결도(넷리스트)로 바꿉니다.',
+    input: '검증을 통과한 RTL + 파운드리의 표준 셀 라이브러리',
+    output: '게이트 수준 넷리스트',
+    terms: [{ en: 'Netlist', ko: '넷리스트' }, { en: 'Standard Cell', ko: '표준 셀' }, { en: 'PDK', ko: '공정 설계 키트' }],
+    prerequisites: ['verification'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'physical-design',
+    name: { en: 'Back-End Design (Physical Design)', ko: '백엔드 설계(물리 설계)' },
+    aliases: ['백엔드 설계', '물리 설계', '피지컬 디자인', 'physical design', 'back-end design', '배치 배선', 'p&r', 'pnr', '레이아웃'],
+    group: '설계',
+    stage: 'design',
+    summary: '넷리스트의 셀들을 실제 칩 면적 위에 배치하고 금속 배선으로 잇습니다. 신호가 제때 도착하는지(타이밍), 전력과 열은 괜찮은지 확인하며 레이아웃을 완성합니다. 디자인하우스가 많이 맡는 단계입니다.',
+    input: '게이트 수준 넷리스트',
+    output: '칩 레이아웃(배치·배선 완료)',
+    terms: [{ en: 'Floorplan', ko: '플로어플랜' }, { en: 'Place & Route', ko: '배치·배선' }, { en: 'Timing Closure', ko: '타이밍 확보' }, { en: 'Clock Tree', ko: '클록 트리' }],
+    prerequisites: ['synthesis'],
+    steps: [
+      { name: '플로어플랜', desc: '큰 블록과 입출력 단자의 자리를 정합니다.' },
+      { name: '배치', desc: '표준 셀들을 칩 위에 놓습니다.' },
+      { name: '클록 트리', desc: '클록 신호가 모든 곳에 같은 때에 도착하도록 길을 만듭니다.' },
+      { name: '배선', desc: '셀 사이를 금속 배선으로 잇습니다. 전공정의 금속 배선 층이 이 도면대로 만들어집니다.' },
+      { name: '확인', desc: '타이밍, 전력, 열 문제를 확인하고 고칩니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'tapeout',
+    name: { en: 'Sign-off & Tape-out', ko: '사인오프·테이프아웃' },
+    aliases: ['테이프아웃', '테이프 아웃', '사인오프', 'tape-out', 'tapeout', 'signoff', 'sign-off', 'gds', 'drc', 'lvs'],
+    group: '',
+    stage: 'design',
+    summary: '레이아웃이 파운드리의 제조 규칙(DRC)과 회로 연결(LVS)에 맞는지 마지막으로 검사한 뒤, 설계 데이터(GDS)를 파운드리에 넘깁니다.',
+    input: '완성된 칩 레이아웃',
+    output: '파운드리에 넘긴 설계 데이터(GDS)',
+    terms: [{ en: 'DRC (Design Rule Check)', ko: '설계 규칙 검사' }, { en: 'LVS (Layout vs. Schematic)', ko: '레이아웃·회로 일치 검사' }, { en: 'GDS', ko: '레이아웃 데이터 파일' }],
+    prerequisites: ['physical-design'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'mask',
+    name: { en: 'Photomask Making', ko: '포토마스크 제작' },
+    aliases: ['마스크', '포토마스크', '마스크 제작', 'photomask', 'mask', 'reticle', '레티클'],
+    group: '',
+    stage: 'design',
+    summary: '설계 데이터의 층마다 회로 무늬를 유리판(마스크)에 새깁니다. 포토 공정에서 이 마스크로 빛을 비춰 웨이퍼에 회로를 옮깁니다.',
+    input: '설계 데이터(GDS)',
+    output: '층별 포토마스크 세트',
+    terms: [{ en: 'Photomask', ko: '포토마스크' }, { en: 'Reticle', ko: '레티클' }, { en: 'OPC', ko: '광 근접 보정' }],
+    prerequisites: ['tapeout'],
+    reviewed: false,
+    sources: [],
+  },
+
   {
     id: 'wafer-make',
     name: { en: 'Wafer Fabrication', ko: '웨이퍼 제조' },
@@ -54,7 +163,7 @@ export const processes = [
     input: '막이 덮인 웨이퍼',
     output: '감광액으로 회로 무늬가 그려진 웨이퍼',
     terms: [{ en: 'Photoresist', ko: '감광액' }, { en: 'Mask', ko: '마스크' }, { en: 'Exposure', ko: '노광' }, { en: 'Develop', ko: '현상' }],
-    prerequisites: ['oxidation'],
+    prerequisites: ['oxidation', 'mask'],
     reviewed: false,
     sources: [
       { title: '[반도체 8대 공정] 4탄, 웨이퍼에 회로를 그려 넣는 포토공정', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-4%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%ec%97%90-%ed%9a%8c%eb%a1%9c%eb%a5%bc-%ea%b7%b8%eb%a0%a4-%eb%84%a3%eb%8a%94-%ed%8f%ac%ed%86%a0/', tier: 'explain' },
@@ -84,7 +193,7 @@ export const processes = [
   {
     id: 'deposition',
     name: { en: 'Deposition', ko: '증착' },
-    aliases: ['증착', 'deposition', 'cvd', 'pvd', 'ald'],
+    aliases: ['증착', 'deposition', 'cvd', 'pvd'],
     group: '',
     stage: 'front',
     summary: '웨이퍼 위에 아주 얇은 막(절연막, 도체막 등)을 원하는 두께로 쌓습니다. 포토·식각과 반복하며 회로를 층층이 만듭니다.',
@@ -122,7 +231,7 @@ export const processes = [
   {
     id: 'metallization',
     name: { en: 'Metallization', ko: '금속 배선' },
-    aliases: ['금속 배선', '금속배선', '배선', 'metallization', 'cmp', '평탄화'],
+    aliases: ['금속 배선', '금속배선', '배선', 'metallization'],
     group: '',
     stage: 'front',
     summary: '알루미늄이나 구리로 트랜지스터들을 잇는 전선을 만들고, CMP로 표면을 평평하게 깎아 다음 층을 쌓을 준비를 합니다. 맨 위에는 패키징에서 연결할 패드를 만듭니다.',
@@ -165,7 +274,7 @@ export const processes = [
     input: '회로가 형성된 웨이퍼',
     output: '얇아진 웨이퍼',
     terms: [{ en: 'Wafer Thickness', ko: '웨이퍼 두께' }, { en: 'Warpage', ko: '휨' }, { en: 'Protective Tape', ko: '보호 테이프' }],
-    prerequisites: ['eds'],
+    prerequisites: ['incoming-inspection'],
     steps: [
       { name: '보호 테이프 붙이기', desc: '회로가 있는 앞면에 보호 테이프를 붙여, 연마하는 동안 회로가 긁히거나 오염되지 않게 합니다.' },
       { name: '거친 연마', desc: '굵은 다이아몬드 입자가 박힌 휠로 뒷면을 빠르게 많이 갈아냅니다.' },
@@ -176,7 +285,9 @@ export const processes = [
     keyPoints: [
       { title: '연마 휠의 생김새', body: '둥근 휠의 아랫면 가장자리에 다이아몬드 입자를 굳힌 날(세그먼트)이 빙 둘러 붙어 있습니다. 휠과 웨이퍼가 함께 돌면서 날이 뒷면을 조금씩 갈아냅니다.' },
       { title: '왜 얇게 만들까', body: '패키지 두께 규격을 맞추고, 칩의 열을 잘 빼며, 여러 칩을 쌓을 수 있게 하려고 얇게 만듭니다.' },
-      { title: '너무 얇으면', body: '웨이퍼가 휘거나 다루는 중에 깨지기 쉽습니다. 그래서 얇을수록 손상층 제거와 조심스러운 운반이 중요합니다.', figure: 'thin-wafer' },
+      { title: '너무 얇으면', body: '웨이퍼가 휘거나 다루는 중에 깨지기 쉽습니다. 그래서 얇을수록 손상층 제거와 조심스러운 운반이 중요합니다.', figure: 'thin-wafer', photos: [
+        { kind: 'link', title: 'DISCO: 연삭 손상으로 생기는 웨이퍼 휨 설명 그림', url: 'https://www.disco.co.jp/eg/solution/library/grinder/warpage.html' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -205,8 +316,13 @@ export const processes = [
       { name: '세정·건조', desc: '절단 찌꺼기(실리콘 가루)를 물로 씻어 내고 말립니다.' },
     ],
     keyPoints: [
-      { title: '블레이드의 생김새', body: '알루미늄 허브에 아주 얇은 원판 날이 붙은 모양입니다. 날 가장자리에는 작은 다이아몬드 입자가 니켈 같은 금속에 박혀 있고, 이 가장자리 일부만 허브 밖으로 나와(날 노출) 웨이퍼를 자릅니다.', figure: 'saw-blade' },
-      { title: '자르는 원리', body: '칼처럼 베는 것이 아니라, 매우 빠르게 도는 날의 다이아몬드 입자들이 실리콘을 조금씩 갈아내며 홈을 만듭니다. 절단하는 동안 물을 뿌려 열을 식히고 가루를 씻어 냅니다. 날 두께만큼 깎여 나간 홈을 커프(kerf)라고 합니다.', figure: 'saw-cut' },
+      { title: '블레이드의 생김새', body: '알루미늄 허브에 아주 얇은 원판 날이 붙은 모양입니다. 날 가장자리에는 작은 다이아몬드 입자가 니켈 같은 금속에 박혀 있고, 이 가장자리 일부만 허브 밖으로 나와(날 노출) 웨이퍼를 자릅니다.', figures: ['saw-blade', 'blade-sem'], photos: [
+        { kind: 'attach', title: '다이싱 블레이드 날 끝 SEM 사진: 금속 결합재에 박힌 다이아몬드 입자와 기공', src: 'photos/detail-blade-sem.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9694500/', author: 'Feng Y 외, Materials 15, 8083 (2022) 그림 6', license: 'CC BY 4.0' },
+        { kind: 'link', title: 'DISCO 허브 블레이드 날 표면 SEM 사진', url: 'https://www.disco.co.jp/eg/products/blade/zh05.html' },
+      ] },
+      { title: '자르는 원리', body: '칼처럼 베는 것이 아니라, 매우 빠르게 도는 날의 다이아몬드 입자들이 실리콘을 조금씩 갈아내며 홈을 만듭니다. 절단하는 동안 물을 뿌려 열을 식히고 가루를 씻어 냅니다. 날 두께만큼 깎여 나간 홈을 커프(kerf)라고 합니다.', figure: 'saw-cut', photos: [
+        { kind: 'attach', title: '블레이드로 자른 홈(커프)과 가장자리 깨짐 비교 (Si·SiC·사파이어)', src: 'photos/detail-dicing-kerf.png', url: 'https://www.nature.com/articles/s41598-020-69399-9', author: 'Chu JP 외, Scientific Reports 10, 12432 (2020) 그림 6', license: 'CC BY 4.0' },
+      ] },
       { title: '마모와 교체', body: '자를수록 날 가장자리가 닳아 지름이 줄고, 다이아몬드 입자도 무뎌집니다. 장비는 날 높이를 주기적으로 재서 줄어든 만큼 더 내려 보정합니다. 노출된 날이 한계까지 줄거나 칩핑(가장자리 깨짐)이 늘면 블레이드를 교체합니다.', figure: 'saw-blade-wear' },
       { title: '드레싱', body: '새 날이나 무뎌진 날은 드레싱 보드를 몇 번 잘라 표면의 금속을 걷어 내고 새 다이아몬드 입자가 드러나게 합니다. 이렇게 날을 "세워야" 절단면이 깨끗합니다.' },
     ],
@@ -241,7 +357,9 @@ export const processes = [
       { name: '경화', desc: '오븐에서 열을 가해 접착제를 단단하게 굳힙니다.' },
     ],
     keyPoints: [
-      { title: '필렛', body: '다이를 누르면 접착제가 가장자리로 살짝 올라온 모양(필렛)이 생깁니다. 적당한 필렛은 잘 붙었다는 표시이고, 너무 많으면 넘쳐서 패드를 더럽힙니다.', figure: 'die-fillet' },
+      { title: '필렛', body: '다이를 누르면 접착제가 가장자리로 살짝 올라온 모양(필렛)이 생깁니다. 적당한 필렛은 잘 붙었다는 표시이고, 너무 많으면 넘쳐서 패드를 더럽힙니다.', figure: 'die-fillet', photos: [
+        { kind: 'attach', title: 'QFN 리드프레임 위 다이 둘레 접착제 검사 사진 (위에서 본 모습, 양호·불량)', src: 'photos/detail-die-fillet.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12694084/', author: 'Chang BR 외, Sensors 25, 7358 (2025) 그림 A2', license: 'CC BY 4.0' },
+      ] },
       { title: '보이드', body: '접착제 속에 공기 방울이 갇히면 열이 잘 빠지지 않고 나중에 들뜰 수 있습니다. 바르는 모양과 누르는 힘이 중요합니다.', figure: 'die-void' },
       { title: '접착 필름(DAF)', body: '얇은 칩에는 액체 접착제 대신 웨이퍼 뒷면에 미리 붙여 둔 접착 필름을 쓰기도 합니다. 두께가 일정하고 넘치지 않습니다.', figure: 'daf' },
     ],
@@ -272,7 +390,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: '캐필러리', body: '가운데에 와이어가 지나가는 구멍이 뚫린 세라믹 관입니다. 끝 모양이 볼을 누르는 모양과 스티치를 만드는 모양을 정합니다.' },
-      { title: '초음파의 역할', body: '초음파 진동이 표면의 얇은 산화막을 문질러 깨고 금속끼리 맞닿게 해, 낮은 온도에서도 단단히 붙게 합니다.', figure: 'ultrasonic' },
+      { title: '초음파의 역할', body: '초음파 진동이 표면의 얇은 산화막을 문질러 깨고 금속끼리 맞닿게 해, 낮은 온도에서도 단단히 붙게 합니다.', figure: 'ultrasonic', photos: [
+        { kind: 'attach', title: '패드 위 볼 본드 SEM 사진 (초음파 출력 60·70·80 mW 비교)', src: 'photos/detail-ball-bond.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10456307/', author: 'Zhou H 외, Micromachines 14, 1587 (2023) 그림 9', license: 'CC BY 4.0' },
+      ] },
       { title: '와이어 재료', body: '금(Au) 와이어가 다루기 쉽지만 비싸서, 구리(Cu) 와이어도 많이 씁니다. 구리는 더 단단해 본딩 조건을 더 세밀하게 맞춰야 합니다.' },
     ],
     reviewed: false,
@@ -304,7 +424,9 @@ export const processes = [
     keyPoints: [
       { title: 'EMC', body: '에폭시 수지에 실리카 가루(필러)를 많이 섞은 재료입니다. 필러는 열팽창을 줄이고 단단하게 만듭니다.' },
       { title: '와이어 쓸림', body: '수지가 너무 빠르게 흐르면 가는 와이어가 밀려 옆 와이어와 닿을 수 있습니다.', figure: 'wire-sweep' },
-      { title: '미충전·보이드', body: '수지가 너무 느리게 흐르면 다 차기 전에 굳어 빈 곳이 남습니다.', figure: 'mold-void' },
+      { title: '미충전·보이드', body: '수지가 너무 느리게 흐르면 다 차기 전에 굳어 빈 곳이 남습니다.', figure: 'mold-void', photos: [
+        { kind: 'attach', title: '몰딩 후 X선 사진: 수지 속 보이드(빨간 원)와 보이드 없는 경우', src: 'photos/detail-mold-void.png', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5539550/', author: 'Hera D 외, Sensors 17, 1511 (2017) 그림 4', license: 'CC BY 4.0' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -331,7 +453,9 @@ export const processes = [
       { name: '판독 검사', desc: '카메라로 글자가 잘 읽히는지, 빠진 글자나 번짐이 없는지 확인합니다.' },
     ],
     keyPoints: [
-      { title: '새기는 깊이', body: '얕으면 잘 안 읽히고, 깊으면 수지가 얇아져 안쪽 칩이나 와이어가 손상될 수 있습니다. 패키지가 얇을수록 얕게 새기는 기술이 중요합니다.', figure: 'mark-depth' },
+      { title: '새기는 깊이', body: '얕으면 잘 안 읽히고, 깊으면 수지가 얇아져 안쪽 칩이나 와이어가 손상될 수 있습니다. 패키지가 얇을수록 얕게 새기는 기술이 중요합니다.', figure: 'mark-depth', photos: [
+        { kind: 'link', title: 'KEYENCE: 레이저로 마킹한 IC 패키지 사진', url: 'https://www.keyence.com/products/marker/laser-marker/industries/electronics.jsp' },
+      ] },
       { title: '무엇을 새기나', body: '제품 이름, 회사 로고, 생산 날짜와 로트 번호처럼 나중에 제품을 추적할 수 있는 정보를 새깁니다.' },
     ],
     reviewed: false,
@@ -362,7 +486,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: '웨이퍼 쏘잉과 다른 점', body: '실리콘만 자르는 웨이퍼 쏘잉과 달리, 단단한 수지와 무른 구리를 함께 잘라야 합니다. 그래서 블레이드 종류가 다르고 마모도 빠릅니다.' },
-      { title: '버(burr)', body: '구리 리드를 자를 때 금속이 늘어나 거스러미(버)가 남을 수 있습니다. 버가 크면 기판에 붙일 때 옆 단자와 닿을 수 있습니다.', figure: 'qfn-burr' },
+      { title: '버(burr)', body: '구리 리드를 자를 때 금속이 늘어나 거스러미(버)가 남을 수 있습니다. 버가 크면 기판에 붙일 때 옆 단자와 닿을 수 있습니다.', figure: 'qfn-burr', photos: [
+        { kind: 'link', title: 'DISCO: QFN 절단면의 구리 버 사진', url: 'https://www.disco.co.jp/eg/solution/library/dicing/qfn.html' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -392,7 +518,9 @@ export const processes = [
     ],
     keyPoints: [
       { title: 'EDS(웨이퍼 테스트)와 다른 점', body: 'EDS는 패키징 전에 웨이퍼 상태로 칩을 검사하고, 최종 테스트는 패키지가 된 뒤 다시 검사합니다. 패키징 과정에서 생긴 불량을 여기서 걸러 냅니다.' },
-      { title: '번인', body: '일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다.' },
+      { title: '번인', body: '일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다.', photos: [
+        { kind: 'link', title: 'Trio-Tech: 번인 보드 사진', url: 'https://www.triotech.com/our-products/burn-in-boards-and-related-equipment/' },
+      ] },
     ],
     reviewed: false,
     sources: [
@@ -400,6 +528,215 @@ export const processes = [
     ],
     sourceDate: '2026-10-31',
     photo: null,
+  },
+  // ── 전공정 사이사이 반복되는 공정(repeatsAfter: 주로 이 공정들 뒤에 함). 8대 공정 흐름(frontFlow)에는 넣지 않습니다. ──
+  {
+    id: 'cleaning',
+    name: { en: 'Wafer Cleaning', ko: '세정' },
+    aliases: ['세정', '세척', '웨이퍼 세정', 'cleaning', 'wafer cleaning'],
+    group: '',
+    stage: 'front',
+    repeatsAfter: ['etch', 'ion-implant', 'deposition'],
+    summary: '공정과 공정 사이마다 웨이퍼 표면에 남은 입자·유기물·금속 오염을 약품과 초순수로 씻어 냅니다.',
+    input: '앞 공정을 마친 웨이퍼',
+    output: '오염이 제거된 웨이퍼',
+    terms: [{ en: 'Particle', ko: '파티클' }, { en: 'DI Water', ko: '초순수' }, { en: 'Contamination', ko: '오염' }],
+    prerequisites: ['wafer-make'],
+    steps: [
+      { name: '약품 세정', desc: '오염 종류에 맞는 약품으로 표면의 입자·유기물·금속을 녹이거나 떼어 냅니다.' },
+      { name: '헹굼', desc: '초순수로 약품을 깨끗이 헹궈 냅니다.' },
+      { name: '건조', desc: '물 자국이 남지 않게 웨이퍼를 빠르게 말립니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'cmp',
+    name: { en: 'CMP', ko: 'CMP·평탄화' },
+    aliases: ['cmp', '씨엠피', '평탄화', '화학적 기계적 연마', 'chemical mechanical polishing'],
+    group: '',
+    stage: 'front',
+    repeatsAfter: ['deposition', 'metallization'],
+    summary: '막을 쌓아 울퉁불퉁해진 웨이퍼 표면을 연마 패드와 슬러리(연마액)로 갈아 평평하게 만듭니다. 층을 여러 번 쌓으려면 층마다 평평해야 합니다.',
+    input: '막이 쌓여 표면이 고르지 않은 웨이퍼',
+    output: '표면이 평평해진 웨이퍼',
+    terms: [{ en: 'Slurry', ko: '슬러리' }, { en: 'Polishing Pad', ko: '연마 패드' }, { en: 'Planarization', ko: '평탄화' }],
+    prerequisites: ['deposition'],
+    steps: [
+      { name: '웨이퍼 누르기', desc: '헤드가 웨이퍼를 뒤집어 잡고 회전하는 연마 패드 위에 누릅니다.' },
+      { name: '슬러리 공급', desc: '연마 입자와 약품이 섞인 슬러리를 패드 위에 흘립니다.' },
+      { name: '연마', desc: '약품이 표면을 무르게 하고 입자가 갈아 내어, 튀어나온 곳부터 깎여 평평해집니다.' },
+      { name: '세정', desc: '남은 슬러리와 가루를 씻어 냅니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'anneal',
+    name: { en: 'Annealing', ko: '열처리' },
+    aliases: ['열처리', '어닐링', 'anneal', 'annealing', 'rtp'],
+    group: '',
+    stage: 'front',
+    repeatsAfter: ['ion-implant'],
+    summary: '웨이퍼를 높은 온도로 데워, 이온 주입으로 흐트러진 결정을 되돌리고 넣은 불순물이 전기적으로 제 역할을 하게(활성화) 합니다.',
+    input: '이온이 주입된 웨이퍼',
+    output: '결정이 회복되고 불순물이 활성화된 웨이퍼',
+    terms: [{ en: 'Activation', ko: '활성화' }, { en: 'Rapid Thermal Processing', ko: '급속 열처리' }, { en: 'Crystal Damage', ko: '결정 손상' }],
+    prerequisites: ['ion-implant'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'ald',
+    name: { en: 'ALD', ko: 'ALD·원자층 증착' },
+    aliases: ['ald', '원자층 증착', '원자층증착', 'atomic layer deposition'],
+    group: '',
+    stage: 'front',
+    repeatsAfter: ['deposition'],
+    summary: '원료 기체를 번갈아 넣어 원자 한 층씩 쌓는 증착 방법입니다. 아주 얇고 고른 막을 깊은 홈 안쪽까지 입힐 수 있습니다.',
+    input: '막을 입힐 웨이퍼',
+    output: '아주 얇고 고른 막이 입혀진 웨이퍼',
+    terms: [{ en: 'Precursor', ko: '전구체' }, { en: 'Conformality', ko: '단차 피복성' }, { en: 'Purge', ko: '퍼지' }],
+    prerequisites: ['deposition'],
+    steps: [
+      { name: '원료 A 넣기', desc: '첫 번째 원료 기체가 표면에 한 층만 달라붙습니다.' },
+      { name: '퍼지', desc: '붙지 않은 기체를 불어 냅니다.' },
+      { name: '원료 B 넣기', desc: '두 번째 기체가 붙어 있는 층과 반응해 원자층 하나가 완성됩니다.' },
+      { name: '퍼지 후 반복', desc: '다시 불어 내고, 원하는 두께가 될 때까지 되풀이합니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+
+  // ── 팹 아웃·웨이퍼 출하/입고: 전공정이 끝난 웨이퍼가 후공정(또는 웨이퍼 레벨 패키징)으로 넘어가는 과정 ──
+  {
+    id: 'wafer-map',
+    name: { en: 'Wafer Map', ko: '웨이퍼 맵 전달' },
+    aliases: ['웨이퍼 맵', '웨이퍼맵', '맵', 'wafer map', '잉킹', 'inking'],
+    group: '',
+    stage: 'link',
+    summary: 'EDS 결과로 웨이퍼의 칩마다 양품·불량 위치를 기록한 지도(맵)를 만들어 후공정으로 보냅니다. 후공정 장비는 맵을 읽어 양품 칩만 집어 갑니다.',
+    input: 'EDS 검사 결과',
+    output: '칩별 양품·불량 지도(맵 데이터)',
+    terms: [{ en: 'Wafer Map', ko: '웨이퍼 맵' }, { en: 'Bin', ko: '빈(분류 등급)' }, { en: 'Inking', ko: '잉킹' }],
+    prerequisites: ['eds'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'wafer-transport',
+    name: { en: 'Wafer Transport & Storage', ko: '웨이퍼 운반·보관' },
+    aliases: ['웨이퍼 운반', '운반', '보관', 'foup', '풉', 'wafer transport'],
+    group: '',
+    stage: 'link',
+    summary: '웨이퍼를 오염과 충격을 막는 밀폐 용기에 담아 옮기고 보관합니다. 후공정을 다른 공장이나 후공정 전문 업체(OSAT)에서 하기도 해서 포장·운송 과정이 있습니다.',
+    input: '전공정이 끝난 웨이퍼 + 웨이퍼 맵',
+    output: '후공정 공장에 도착한 웨이퍼',
+    terms: [{ en: 'FOUP', ko: '웨이퍼 운반 용기' }, { en: 'OSAT', ko: '후공정 전문 업체' }, { en: 'Lot', ko: '로트' }],
+    prerequisites: ['wafer-map'],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'incoming-inspection',
+    name: { en: 'Incoming Inspection', ko: '입고 검사' },
+    aliases: ['입고 검사', '입고검사', '수입 검사', 'incoming inspection'],
+    group: '',
+    stage: 'link',
+    summary: '후공정에 들어온 웨이퍼의 수량과 겉모습(깨짐·긁힘), 웨이퍼 맵이 맞는지 확인한 뒤 다음 공정으로 보냅니다.',
+    input: '도착한 웨이퍼와 맵',
+    output: '확인을 마친 웨이퍼',
+    terms: [{ en: 'Visual Inspection', ko: '외관 검사' }, { en: 'Traceability', ko: '추적성' }],
+    prerequisites: ['wafer-transport'],
+    reviewed: false,
+    sources: [],
+  },
+
+  // ── 웨이퍼 레벨 패키징(WLP): 웨이퍼 상태에서 하는 패키징 준비. 일부 패키지만 거칩니다(usedBy). ──
+  {
+    id: 'tsv',
+    name: { en: 'TSV', ko: 'TSV·실리콘 관통 전극' },
+    aliases: ['tsv', '실리콘 관통 전극', '관통 전극', 'through silicon via'],
+    group: '',
+    stage: 'mid',
+    usedBy: ['3d', '2.5d'],
+    summary: '실리콘을 위아래로 꿰뚫는 구멍을 내고 구리로 채워, 쌓은 칩끼리 위아래로 바로 연결합니다.',
+    input: '회로가 만들어진 웨이퍼',
+    output: '위아래로 전극이 지나는 웨이퍼',
+    terms: [{ en: 'Via', ko: '비아' }, { en: 'Cu Filling', ko: '구리 채움' }, { en: 'Via Reveal', ko: '비아 노출' }],
+    prerequisites: ['etch', 'deposition'],
+    steps: [
+      { name: '깊은 구멍 식각', desc: '실리콘에 좁고 깊은 구멍을 팝니다.' },
+      { name: '절연막·장벽층', desc: '구멍 벽에 절연막과 구리가 퍼지지 않게 막는 층을 입힙니다.' },
+      { name: '구리 채우기', desc: '도금으로 구멍을 구리로 채웁니다.' },
+      { name: '평탄화', desc: '표면에 넘친 구리를 CMP로 갈아 냅니다.' },
+      { name: '뒷면 노출', desc: '웨이퍼 뒷면을 갈아 구리 끝을 드러냅니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'rdl',
+    name: { en: 'RDL', ko: 'RDL·재배선' },
+    aliases: ['rdl', '재배선', '재배선층', 'redistribution layer'],
+    group: '',
+    stage: 'mid',
+    usedBy: ['wlcsp', 'fanout', '2.5d', 'hd-fanout'],
+    summary: '절연층과 구리 배선을 새로 깔아 칩의 패드 위치를 범프·솔더볼을 놓기 좋은 자리로 옮깁니다.',
+    input: '패드가 칩 가장자리에 있는 웨이퍼',
+    output: '패드 위치가 다시 배치된 웨이퍼',
+    terms: [{ en: 'Redistribution Layer', ko: '재배선층' }, { en: 'Dielectric', ko: '절연층' }, { en: 'Fan-out', ko: '팬아웃' }],
+    prerequisites: ['photo', 'metallization'],
+    steps: [
+      { name: '절연층 바르기', desc: '웨이퍼 위에 절연층을 바르고 패드 자리만 엽니다.' },
+      { name: '배선 만들기', desc: '포토로 배선 모양을 만들고 구리를 도금해 패드에서 새 자리까지 길을 냅니다.' },
+      { name: '덮기', desc: '다시 절연층을 덮고 범프가 놓일 자리만 엽니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  {
+    id: 'bumping',
+    name: { en: 'Bumping', ko: '범핑' },
+    aliases: ['범핑', '범프', 'bumping', 'bump', '솔더 범프'],
+    group: '',
+    stage: 'mid',
+    usedBy: ['flipchip', 'wlcsp', '2.5d', '3d'],
+    summary: '웨이퍼 상태에서 칩 패드 위에 작은 금속 돌기(범프)를 만듭니다. 와이어 대신 범프로 연결하는 플립칩·WLCSP에 필요합니다.',
+    input: '패드가 드러난 웨이퍼',
+    output: '범프가 형성된 웨이퍼',
+    terms: [{ en: 'UBM', ko: '범프 아래 금속층' }, { en: 'Solder Bump', ko: '솔더 범프' }, { en: 'Plating', ko: '도금' }, { en: 'Reflow', ko: '리플로우' }],
+    prerequisites: ['metallization'],
+    steps: [
+      { name: '범프 아래 금속층', desc: '범프가 패드에 잘 붙도록 얇은 금속층(UBM)을 입힙니다.' },
+      { name: '자리 열기', desc: '감광막을 바르고 포토로 범프가 설 자리만 엽니다.' },
+      { name: '도금', desc: '열린 자리에 금속을 도금해 기둥처럼 쌓습니다.' },
+      { name: '정리', desc: '감광막과 필요 없는 금속층을 벗겨 냅니다.' },
+      { name: '리플로우', desc: '데워서 솔더를 녹이면 표면 장력으로 둥근 범프가 됩니다.' },
+    ],
+    reviewed: false,
+    sources: [],
+  },
+  // ── 보드 실장: 완성된 패키지를 제품 기판에 붙입니다. ──
+  {
+    id: 'smt',
+    name: { en: 'Board Mounting (SMT)', ko: '보드 실장(SMT)' },
+    aliases: ['실장', '보드 실장', '기판 실장', 'smt', '표면 실장', 'surface mount'],
+    group: '',
+    stage: 'board',
+    summary: '완성된 패키지를 제품 기판(PCB)에 올리고 솔더를 녹여 붙입니다. 이렇게 붙은 기판이 스마트폰, 자동차, 서버 같은 제품에 들어갑니다.',
+    input: '출하된 패키지 + 제품 기판',
+    output: '칩이 붙은 제품 기판',
+    terms: [{ en: 'PCB', ko: '인쇄 회로 기판' }, { en: 'Solder Paste', ko: '솔더 페이스트' }, { en: 'Reflow', ko: '리플로우' }],
+    prerequisites: ['test'],
+    steps: [
+      { name: '솔더 페이스트 인쇄', desc: '기판의 패드 위에 솔더 페이스트를 찍습니다.' },
+      { name: '부품 올리기', desc: '장비가 패키지를 집어 정확한 자리에 올립니다.' },
+      { name: '리플로우', desc: '기판을 데워 솔더를 녹였다 굳혀 패키지 단자와 기판을 붙입니다.' },
+      { name: '검사', desc: '붙은 상태를 카메라나 X선으로 확인합니다.' },
+    ],
+    reviewed: false,
+    sources: [],
   },
   {
     id: 'flipchip-bond',
@@ -411,7 +748,7 @@ export const processes = [
     input: '범프가 형성된 다이 + 기판',
     output: '기판에 연결된 다이',
     terms: [{ en: 'Bump', ko: '범프' }, { en: 'Reflow', ko: '리플로우' }, { en: 'Alignment', ko: '정렬' }],
-    prerequisites: ['wafer-saw'],
+    prerequisites: ['bumping', 'wafer-saw'],
     reviewed: false,
     sources: [],
   },
@@ -431,14 +768,43 @@ export const processes = [
   },
 ]
 
-// 단계 이름과 한 줄 소개. 화면의 단계 제목에 씁니다.
+// 단계 이름과 한 줄 소개. 화면의 단계 제목과 전체 공정 지도에 씁니다. result는 단계를 마친 결과물, hint는 지도 아래 안내입니다.
 export const STAGES = {
-  front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.' },
-  back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.' },
+  design: { name: { en: 'Chip Design', ko: '칩 설계' }, note: '칩이 할 일을 정하고, 회로를 코드로 설계해 실제 배치 도면으로 만든 뒤 파운드리에 넘깁니다.', result: '설계 데이터와 포토마스크', who: ['fabless', 'designhouse', 'idm'], hint: '프론트엔드 설계는 "무엇을 하는 회로인가", 백엔드 설계는 "칩 위에 어떻게 놓고 이을 것인가"를 정합니다.' },
+  front: { name: { en: 'Front-End Process', ko: '전공정' }, note: '웨이퍼 위에 회로를 만듭니다. 모든 패키지가 같은 순서를 거칩니다.', result: '회로가 완성된 웨이퍼', who: ['foundry', 'idm'], hint: '↻ 표시는 그 공정 뒤에 반복되는 공정입니다. 실제로는 산화·포토·식각·증착을 여러 번 되풀이하며 층을 쌓습니다.' },
+  link: { name: { en: 'Fab-out & Wafer Shipping', ko: '팹 아웃·웨이퍼 출하/입고' }, note: '검사를 마친 웨이퍼와 양품·불량 지도를 후공정으로 넘깁니다.', result: '후공정에 들어온 웨이퍼', who: ['foundry', 'osat'] },
+  mid: { name: { en: 'Wafer-Level Packaging (WLP)', ko: '웨이퍼 레벨 패키징(WLP)' }, note: '웨이퍼 상태에서 범프·재배선·관통 전극을 만듭니다. 플립칩·WLCSP·팬아웃·첨단 패키지만 거칩니다.', result: '범프·재배선이 만들어진 웨이퍼', optional: true, who: ['foundry', 'osat'], hint: '공정 아래 태그는 이 공정을 거치는 패키지입니다.' },
+  back: { name: { en: 'Back-End Process', ko: '후공정' }, note: '회로가 완성된 웨이퍼를 잘라 패키지로 만듭니다. 패키지마다 순서가 다릅니다.', result: '완성된 패키지', who: ['osat', 'idm'], hint: '🔍 표시가 있는 공정은 장비 전체부터 한 부분씩 확대해서 원리를 볼 수 있습니다.' },
+  board: { name: { en: 'Board Mounting', ko: '보드 실장' }, note: '완성된 패키지를 제품 기판에 붙여 실제 제품에 들어가게 합니다.', result: '칩이 들어간 제품', who: ['ems'] },
 }
 
-// 전공정은 모든 패키지가 같으므로 패키지마다 따로 적지 않습니다.
-export const frontFlow = processes.filter((process) => process.stage === 'front').map((process) => process.id)
+export const STAGE_ORDER = ['design', 'front', 'link', 'mid', 'back', 'board']
+
+// 단계를 맡는 회사 유형. 지도에서 "누가 하나요?"로 보여줍니다.
+export const ACTORS = {
+  fabless: { name: '팹리스', desc: '공장 없이 칩 설계만 하는 회사' },
+  designhouse: { name: '디자인하우스', desc: '팹리스와 파운드리 사이에서 백엔드 설계·테이프아웃을 돕는 회사' },
+  foundry: { name: '파운드리', desc: '설계를 받아 웨이퍼에 칩을 만들어 주는 위탁 생산 회사' },
+  osat: { name: 'OSAT', desc: '패키징과 테스트를 맡는 후공정 전문 회사' },
+  idm: { name: 'IDM', desc: '설계부터 생산·패키징까지 직접 하는 종합 반도체 회사' },
+  ems: { name: '세트·EMS', desc: '칩을 기판에 붙여 완제품을 만드는 회사' },
+}
+
+// 전체 공정 지도의 안내 문장
+export const MAP_INTRO = '칩을 설계하는 것부터 웨이퍼에 회로를 만들고, 패키지로 완성해 제품 기판에 붙이기까지의 전체 순서입니다. 단계를 누르면 그 안의 공정이 순서대로 펼쳐지고, 공정을 누르면 자세한 설명과 확대 그림으로 들어갑니다.'
+
+const isMain = (process) => !process.repeatsAfter
+const idsOf = (stage) => processes.filter((process) => process.stage === stage && isMain(process)).map((process) => process.id)
+
+// 전공정 8대 공정(사이사이 반복 공정은 빼고). 전공정은 모든 패키지가 같으므로 패키지마다 따로 적지 않습니다.
+export const frontFlow = idsOf('front')
+export const linkFlow = idsOf('link')
+export const midFlow = idsOf('mid')
+export const designFlow = idsOf('design')
+export const boardFlow = idsOf('board')
+
+// 8대 공정 사이사이 반복되는 공정
+export const frontSupport = processes.filter((process) => process.stage === 'front' && !isMain(process))
 
 export function findProcess(id) {
   return processes.find((process) => process.id === id)

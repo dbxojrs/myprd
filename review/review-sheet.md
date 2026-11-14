@@ -236,6 +236,8 @@
 
 ![너무 얇으면](images/detail-thin-wafer.svg)
 
+- 사진(너무 얇으면): [DISCO: 연삭 손상으로 생기는 웨이퍼 휨 설명 그림](https://www.disco.co.jp/eg/solution/library/grinder/warpage.html) · 원본 링크
+
 **라인 실습 변수: 최종 두께 (Final Thickness)**
 
 | 선택지 | 등급 | 대표 불량 | 이유 | 판단 | 고칠 곳·의견 |
@@ -288,7 +290,15 @@
 
 ![블레이드의 생김새](images/detail-saw-blade.svg)
 
+![블레이드의 생김새](images/detail-blade-sem.svg)
+
+- 사진(블레이드의 생김새): [다이싱 블레이드 날 끝 SEM 사진: 금속 결합재에 박힌 다이아몬드 입자와 기공](https://pmc.ncbi.nlm.nih.gov/articles/PMC9694500/) · Feng Y 외, Materials 15, 8083 (2022) 그림 6 · CC BY 4.0
+
+- 사진(블레이드의 생김새): [DISCO 허브 블레이드 날 표면 SEM 사진](https://www.disco.co.jp/eg/products/blade/zh05.html) · 원본 링크
+
 ![자르는 원리](images/detail-saw-cut.svg)
+
+- 사진(자르는 원리): [블레이드로 자른 홈(커프)과 가장자리 깨짐 비교 (Si·SiC·사파이어)](https://www.nature.com/articles/s41598-020-69399-9) · Chu JP 외, Scientific Reports 10, 12432 (2020) 그림 6 · CC BY 4.0
 
 ![마모와 교체](images/detail-saw-blade-wear.svg)
 
@@ -342,6 +352,8 @@
 | 접착 필름(DAF) | 얇은 칩에는 액체 접착제 대신 웨이퍼 뒷면에 미리 붙여 둔 접착 필름을 쓰기도 합니다. 두께가 일정하고 넘치지 않습니다. (아래 그림) | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![필렛](images/detail-die-fillet.svg)
+
+- 사진(필렛): [QFN 리드프레임 위 다이 둘레 접착제 검사 사진 (위에서 본 모습, 양호·불량)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12694084/) · Chang BR 외, Sensors 25, 7358 (2025) 그림 A2 · CC BY 4.0
 
 ![보이드](images/detail-die-void.svg)
 
@@ -405,6 +417,8 @@
 
 ![초음파의 역할](images/detail-ultrasonic.svg)
 
+- 사진(초음파의 역할): [패드 위 볼 본드 SEM 사진 (초음파 출력 60·70·80 mW 비교)](https://pmc.ncbi.nlm.nih.gov/articles/PMC10456307/) · Zhou H 외, Micromachines 14, 1587 (2023) 그림 9 · CC BY 4.0
+
 **라인 실습 변수: 초음파 출력·하중 (Ultrasonic Power & Force)**
 
 | 선택지 | 등급 | 대표 불량 | 이유 | 판단 | 고칠 곳·의견 |
@@ -458,6 +472,8 @@
 
 ![미충전·보이드](images/detail-mold-void.svg)
 
+- 사진(미충전·보이드): [몰딩 후 X선 사진: 수지 속 보이드(빨간 원)와 보이드 없는 경우](https://pmc.ncbi.nlm.nih.gov/articles/PMC5539550/) · Hera D 외, Sensors 17, 1511 (2017) 그림 4 · CC BY 4.0
+
 **라인 실습 변수: 주입 속도 (Transfer Speed)**
 
 | 선택지 | 등급 | 대표 불량 | 이유 | 판단 | 고칠 곳·의견 |
@@ -505,6 +521,8 @@
 | 무엇을 새기나 | 제품 이름, 회사 로고, 생산 날짜와 로트 번호처럼 나중에 제품을 추적할 수 있는 정보를 새깁니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 
 ![새기는 깊이](images/detail-mark-depth.svg)
+
+- 사진(새기는 깊이): [KEYENCE: 레이저로 마킹한 IC 패키지 사진](https://www.keyence.com/products/marker/laser-marker/industries/electronics.jsp) · 원본 링크
 
 **라인 실습 변수: 레이저 출력 (Laser Power)**
 
@@ -556,6 +574,8 @@
 
 ![버(burr)](images/detail-qfn-burr.svg)
 
+- 사진(버(burr)): [DISCO: QFN 절단면의 구리 버 사진](https://www.disco.co.jp/eg/solution/library/dicing/qfn.html) · 원본 링크
+
 **라인 실습 변수: 블레이드 상태·속도 (Blade Condition & Speed)**
 
 | 선택지 | 등급 | 대표 불량 | 이유 | 판단 | 고칠 곳·의견 |
@@ -603,6 +623,8 @@
 |---|---|---|---|
 | EDS(웨이퍼 테스트)와 다른 점 | EDS는 패키징 전에 웨이퍼 상태로 칩을 검사하고, 최종 테스트는 패키지가 된 뒤 다시 검사합니다. 패키징 과정에서 생긴 불량을 여기서 걸러 냅니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
 | 번인 | 일부 제품은 높은 온도와 전압에서 오래 동작시켜, 초기에 고장 날 약한 제품을 미리 골라냅니다. | ☐ 맞음 ☐ 고칠 곳 ☐ 모름 | |
+
+- 사진(번인): [Trio-Tech: 번인 보드 사진](https://www.triotech.com/our-products/burn-in-boards-and-related-equipment/) · 원본 링크
 
 **등록된 출처** (내용과 맞는지 봐 주세요)
 

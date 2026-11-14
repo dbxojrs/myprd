@@ -107,4 +107,14 @@ svg { background: #ffffff; font-family: sans-serif; }
 .il-void-area { fill: var(--surface); stroke: var(--bad); stroke-width: 1; stroke-dasharray: 2 2; }
 .il-groove { fill: var(--bg); stroke: var(--bad); stroke-width: 0.6; }
 .il-kerf-gap { fill: var(--surface); }
-.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }</style><rect x="36" y="40" width="48" height="16" rx="2" class="il-mold"></rect><g><line x1="44" y1="20" x2="44" y2="40" class="il-probe"></line><line x1="54" y1="20" x2="54" y2="40" class="il-probe"></line><line x1="66" y1="20" x2="66" y2="40" class="il-probe"></line><line x1="76" y1="20" x2="76" y2="40" class="il-probe"></line><rect x="36" y="12" width="48" height="8" class="il-tool"></rect></g><path d="M92 44 l6 6 l12 -14" class="il-check"></path><text x="60" y="72" class="il-label" text-anchor="middle">전기·외관을 검사해 양품 판정</text></svg>
+.il-crack { fill: none; stroke: var(--bad); stroke-width: 1.2; }
+.il-sem-bg { fill: #161616; }
+.il-sem-edge { stroke: #d0d0d0; stroke-width: 0.8; }
+.il-sem-grit { fill: #c8c8c8; stroke: #f4f4f4; stroke-width: 0.6; }
+.il-sem-pore { fill: #222222; }
+.il-sem-scan { fill: #ffffff; opacity: 0.35; }
+.il-sem-pointer { stroke: #e0e0e0; stroke-width: 0.5; }
+.il-sem-text { font-size: 5.5px; fill: #e8e8e8; }
+.il-sem-bar { fill: #000000; }
+.il-sem-shadow { fill: #0c0c0c; opacity: 0.8; }
+.il-sem-grit-dim { fill: #9a9a9a; stroke: #cfcfcf; }</style><rect x="36" y="40" width="48" height="16" rx="2" class="il-mold"></rect><g><line x1="44" y1="20" x2="44" y2="40" class="il-probe"></line><line x1="54" y1="20" x2="54" y2="40" class="il-probe"></line><line x1="66" y1="20" x2="66" y2="40" class="il-probe"></line><line x1="76" y1="20" x2="76" y2="40" class="il-probe"></line><rect x="36" y="12" width="48" height="8" class="il-tool"></rect></g><path d="M92 44 l6 6 l12 -14" class="il-check"></path><text x="60" y="72" class="il-label" text-anchor="middle">전기·외관을 검사해 양품 판정</text></svg>

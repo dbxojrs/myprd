@@ -3,7 +3,7 @@
 // flow가 null인 패키지는 첫 버전에서 설명만 제공합니다.
 // flow는 후공정 순서만 적습니다. 전공정(frontFlow)은 모든 패키지가 같아 따로 둡니다. 전체 순서가 필요하면 fullFlow를 씁니다(검수표).
 
-import { frontFlow } from './processes.js'
+import { boardFlow, designFlow, frontFlow, linkFlow, midFlow } from './processes.js'
 
 export const packages = [
   {
@@ -79,4 +79,16 @@ export function findPackage(id) {
 // 전공정 + 후공정 전체 순서. 후공정 흐름이 없는 패키지는 null입니다.
 export function fullFlow(pkg) {
   return pkg?.flow ? [...frontFlow, ...pkg.flow] : null
+}
+
+// 흐름이 있는 패키지를 고르지 않았을 때 후공정 흐름으로 보여줄 패키지
+export const DEFAULT_PACKAGE_ID = 'qfn'
+
+export function backFlowPackage(pkg) {
+  return pkg?.flow ? pkg : findPackage(DEFAULT_PACKAGE_ID)
+}
+
+// 전체 학습 순서: 칩 설계 → 전공정 → 팹 아웃·웨이퍼 출하/입고 → 웨이퍼 레벨 패키징 → 후공정 → 보드 실장. 사이사이 반복 공정은 넣지 않습니다.
+export function wholeFlow(pkg) {
+  return [...designFlow, ...frontFlow, ...linkFlow, ...midFlow, ...backFlowPackage(pkg).flow, ...boardFlow]
 }

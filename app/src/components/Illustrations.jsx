@@ -4,45 +4,14 @@
 // false이면 공정이 끝난 모습을 멈춘 그림으로 그립니다.
 
 import { useState } from 'react'
+import { Anim, Arrow, Label, Move, StepCaption, Visible } from './illustrationKit.jsx'
+import { animDrawings, ANIM_IDS } from './anim/index.js'
 
-export const Arrow = ({ x1, y1, x2, y2 }) => (
-  <g className="il-arrow">
-    <line x1={x1} y1={y1} x2={x2} y2={y2} />
-    <polygon
-      points={(() => {
-        const angle = Math.atan2(y2 - y1, x2 - x1)
-        const s = 5
-        const p1 = [x2 - s * Math.cos(angle - 0.5), y2 - s * Math.sin(angle - 0.5)]
-        const p2 = [x2 - s * Math.cos(angle + 0.5), y2 - s * Math.sin(angle + 0.5)]
-        return `${x2},${y2} ${p1.join(',')} ${p2.join(',')}`
-      })()}
-    />
-  </g>
-)
+export { Anim, Arrow, Label, Move, StepCaption, Visible }
+
 
 // ── 쏘잉 그림: 옆에서 본 모습(왼쪽)과 위에서 본 모습(오른쪽)을 같은 시간에 맞춰 움직입니다. ──
 // 블레이드는 자르는 방향(왼쪽 → 오른쪽)으로 돌며 나아가고, 한 줄을 다 자르면 들어 올려 다음 줄로 옮깁니다.
-
-// [시각(0–1), 값] 목록을 SMIL의 values·keyTimes로 바꿉니다. 같은 시각은 아주 조금씩 밀어 순서를 지킵니다.
-function track(points) {
-  const pts = [...points]
-  if (pts[0][0] > 0) pts.unshift([0, pts[0][1]])
-  if (pts[pts.length - 1][0] < 1) pts.push([1, pts[pts.length - 1][1]])
-  const times = []
-  pts.forEach(([t], i) => times.push(i > 0 && t <= times[i - 1] ? times[i - 1] + 0.0005 : t))
-  return {
-    values: pts.map(([, v]) => v).join(';'),
-    keyTimes: times.map((t) => +Math.min(t, 1).toFixed(4)).join(';'),
-  }
-}
-
-export const Anim = ({ attr, points, dur }) => (
-  <animate attributeName={attr} {...track(points)} dur={dur} repeatCount="indefinite" />
-)
-
-export const Move = ({ points, dur }) => (
-  <animateTransform attributeName="transform" type="translate" {...track(points)} dur={dur} repeatCount="indefinite" />
-)
 
 // 옆에서 본 블레이드: 원판 면이 보입니다. 회전을 보여주려고 살 두 개를 돌립니다.
 const SideBlade = ({ cy, r, animate }) => (
@@ -181,48 +150,6 @@ function sawDrawing({ layers, cutBottom, topShape, streets, gridLines, cutClass 
     )
   }
 }
-
-export const Label = ({ x, y, children, compact }) =>
-  compact ? null : (
-    <text x={x} y={y} className="il-label" textAnchor="middle">
-      {children}
-    </text>
-  )
-
-// 움직이는 동안 지금 어느 세부 단계인지 아래에 자막으로 보여줍니다. items: [시작, 끝, 글자] (0–1)
-export const StepCaption = ({ items, dur, x = 60, y = 76 }) =>
-  items.map(([from, to, text]) => (
-    <text key={text} x={x} y={y} className="il-label il-step" textAnchor="middle" opacity="0">
-      {text}
-      <Anim
-        attr="opacity"
-        points={[
-          [from, 0],
-          [from + 0.005, 1],
-          [to, 1],
-          ...(to < 1 ? [[to + 0.005, 0]] : []),
-        ]}
-        dur={dur}
-      />
-    </text>
-  ))
-
-// 일정 시간 동안만 보이는 묶음
-export const Visible = ({ from, to, dur, children }) => (
-  <g opacity="0">
-    {children}
-    <Anim
-      attr="opacity"
-      points={[
-        [from, 0],
-        [from + 0.005, 1],
-        [to, 1],
-        ...(to < 1 ? [[to + 0.005, 0]] : []),
-      ]}
-      dur={dur}
-    />
-  </g>
-)
 
 const processDrawings = {
   'wafer-make': (c) => (
@@ -661,6 +588,230 @@ const processDrawings = {
       <Label x="60" y="74" compact={c}>다이와 기판 사이 틈을 수지로 채움</Label>
     </>
   ),
+
+  // ── 설계 단계 ──
+  spec: (c) => (
+    <>
+      <rect x="38" y="8" width="44" height="56" rx="2" className="il-die" />
+      {[18, 26, 34, 42, 50].map((y, i) => (
+        <line key={y} x1="45" y1={y} x2={i % 2 ? 66 : 75} y2={y} className="il-line" />
+      ))}
+      <path d="M86 22 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="76" compact={c}>기능·성능·전력·크기 목표를 정함</Label>
+    </>
+  ),
+  rtl: (c) => (
+    <>
+      <rect x="22" y="8" width="76" height="56" rx="3" className="il-tool" />
+      {[
+        [28, 18, 'module chip('],
+        [34, 28, 'always @(clk)'],
+        [40, 38, 'q <= a + b;'],
+        [28, 48, 'endmodule'],
+      ].map(([x, y, code]) => (
+        <text key={y} x={x} y={y} className="il-code">
+          {code}
+        </text>
+      ))}
+      <Label x="60" y="76" compact={c}>칩의 동작을 코드로 작성</Label>
+    </>
+  ),
+  verification: (c) => (
+    <>
+      {[16, 30, 44].map((y, i) => (
+        <polyline
+          key={y}
+          points={Array.from({ length: 9 }, (_, k) => `${16 + k * 11},${y + ((k + i) % 2 ? 0 : 8)} ${27 + k * 11},${y + ((k + i) % 2 ? 0 : 8)}`).join(' ')}
+          className="il-link"
+        />
+      ))}
+      <path d="M100 56 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="76" compact={c}>시뮬레이션으로 사양대로 도는지 확인</Label>
+    </>
+  ),
+  synthesis: (c) => (
+    <>
+      {[[20, 14], [20, 40], [62, 27]].map(([x, y]) => (
+        <path key={`${x}-${y}`} d={`M${x} ${y} h12 a10 10 0 0 1 0 20 h-12 z`} className="il-die" />
+      ))}
+      <line x1="42" y1="24" x2="62" y2="33" className="il-line" />
+      <line x1="42" y1="50" x2="62" y2="41" className="il-line" />
+      <line x1="84" y1="37" x2="104" y2="37" className="il-line" />
+      <Label x="60" y="76" compact={c}>코드를 표준 셀(게이트) 연결도로 바꿈</Label>
+    </>
+  ),
+  'physical-design': (c) => (
+    <>
+      <rect x="18" y="6" width="84" height="58" className="il-die" />
+      {[[24, 12, 22, 16], [52, 12, 18, 26], [76, 12, 20, 16], [24, 34, 22, 24], [76, 34, 20, 24]].map(([x, y, w, h]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} className="il-oxide" />
+      ))}
+      <polyline points="46,20 52,20" className="il-link" />
+      <polyline points="70,20 76,20" className="il-link" />
+      <polyline points="35,34 35,30 61,30 61,38 61,48 76,48" className="il-link" />
+      <Label x="60" y="76" compact={c}>셀을 칩 위에 배치하고 배선으로 이음</Label>
+    </>
+  ),
+  tapeout: (c) => (
+    <>
+      <rect x="12" y="16" width="34" height="34" className="il-die" />
+      <rect x="18" y="22" width="10" height="8" className="il-oxide" />
+      <rect x="32" y="34" width="8" height="10" className="il-oxide" />
+      <path d="M38 12 l4 4 l8 -9" className="il-check" />
+      <Arrow x1={52} y1={33} x2={72} y2={33} />
+      <path d="M78 50 V28 l10 -6 v6 l10 -6 v6 l10 -6 V50 z" className="il-tool" />
+      <Label x="60" y="70" compact={c}>규칙 검사를 통과한 도면을 파운드리로</Label>
+    </>
+  ),
+  mask: (c) => (
+    <>
+      <rect x="24" y="10" width="72" height="50" rx="2" className="il-oxide" />
+      {[[34, 18, 16, 10], [58, 18, 28, 6], [34, 36, 10, 16], [52, 32, 34, 8], [52, 46, 22, 6]].map(([x, y, w, h]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} className="il-frame" />
+      ))}
+      <Label x="60" y="74" compact={c}>층마다 회로 무늬를 유리판에 새김</Label>
+    </>
+  ),
+
+  // ── 보드 실장 ──
+  smt: (c) => (
+    <>
+      <rect x="10" y="44" width="100" height="8" className="il-substrate" />
+      {[[22, 28], [56, 24], [88, 30]].map(([x, w]) => (
+        <g key={x}>
+          <rect x={x - w / 2} y="32" width={w} height="10" rx="1" className="il-mold" />
+          <rect x={x - w / 2 + 2} y="42" width="3" height="2" className="il-cu" />
+          <rect x={x + w / 2 - 5} y="42" width="3" height="2" className="il-cu" />
+        </g>
+      ))}
+      <Label x="60" y="70" compact={c}>패키지를 제품 기판에 붙임</Label>
+    </>
+  ),
+
+  // ── 전공정 사이사이 반복 공정 ──
+  cleaning: (c) => (
+    <>
+      <rect x="20" y="44" width="80" height="10" className="il-wafer" />
+      {[36, 60, 84].map((x) => (
+        <g key={x}>
+          <rect x={x - 5} y="10" width="10" height="5" className="il-tool" />
+          <line x1={x} y1="16" x2={x} y2="40" className="il-water" />
+        </g>
+      ))}
+      {[[30, 41], [52, 38], [74, 40], [92, 37]].map(([x, y]) => (
+        <circle key={x} cx={x} cy={y} r="1.6" className="il-dust" />
+      ))}
+      <Label x="60" y="70" compact={c}>약품·초순수로 오염을 씻어 냄</Label>
+    </>
+  ),
+  cmp: (c) => (
+    <>
+      <ellipse cx="60" cy="52" rx="46" ry="9" className="il-tool" />
+      <ellipse cx="60" cy="52" rx="40" ry="6.5" className="il-oxide" />
+      <rect x="50" y="22" width="20" height="18" className="il-frame" />
+      <rect x="46" y="40" width="28" height="5" className="il-wafer" />
+      <path d="M90 14 Q92 26 88 44" className="il-wire" />
+      <Label x="94" y="10" compact={c}>슬러리</Label>
+      <Label x="60" y="74" compact={c}>패드에 눌러 갈아 평평하게</Label>
+    </>
+  ),
+  anneal: (c) => (
+    <>
+      <rect x="14" y="20" width="92" height="40" rx="6" className="il-tool" />
+      <rect x="30" y="38" width="60" height="6" className="il-wafer" />
+      {[34, 50, 66, 82].map((x) => (
+        <path key={x} d={`M${x} 34 q 3 -4 0 -8 q -3 -4 0 -8`} className="il-wire" />
+      ))}
+      <Label x="60" y="74" compact={c}>고온으로 결정 회복·불순물 활성화</Label>
+    </>
+  ),
+  ald: (c) => (
+    <>
+      <rect x="20" y="50" width="80" height="10" className="il-wafer" />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x="20" y={47 - i * 3} width="80" height="2.4" className={i % 2 ? 'il-oxide' : 'il-resist'} />
+      ))}
+      <Arrow x1={36} y1={14} x2={36} y2={32} />
+      <Arrow x1={84} y1={14} x2={84} y2={32} />
+      <Label x="36" y="10" compact={c}>원료 A</Label>
+      <Label x="84" y="10" compact={c}>원료 B</Label>
+      <Label x="60" y="74" compact={c}>원자층을 한 층씩 번갈아 쌓음</Label>
+    </>
+  ),
+
+  // ── 팹 아웃·웨이퍼 출하/입고 ──
+  'wafer-map': (c) => (
+    <>
+      <circle cx="60" cy="38" r="26" className="il-wafer" />
+      {Array.from({ length: 25 }, (_, i) => {
+        const x = 40 + (i % 5) * 8
+        const y = 18 + Math.floor(i / 5) * 8
+        if (Math.hypot(x + 3 - 60, y + 3 - 38) > 22) return null
+        return <rect key={i} x={x} y={y} width="6.5" height="6.5" className={[7, 13, 16].includes(i) ? 'il-glue' : 'il-die'} />
+      })}
+      <Label x="60" y="74" compact={c}>칩마다 양품·불량 위치를 기록</Label>
+    </>
+  ),
+  'wafer-transport': (c) => (
+    <>
+      <rect x="30" y="14" width="60" height="44" rx="5" className="il-tool" />
+      {[22, 28, 34, 40, 46].map((y) => (
+        <line key={y} x1="36" y1={y} x2="84" y2={y} className="il-line" />
+      ))}
+      <rect x="44" y="8" width="32" height="6" rx="2" className="il-frame" />
+      <Arrow x1={92} y1={36} x2={112} y2={36} />
+      <Label x="60" y="72" compact={c}>밀폐 용기에 담아 옮기고 보관</Label>
+    </>
+  ),
+  'incoming-inspection': (c) => (
+    <>
+      <circle cx="46" cy="38" r="22" className="il-wafer" />
+      <circle cx="70" cy="30" r="12" className="il-hole" />
+      <line x1="78" y1="39" x2="92" y2="54" className="il-needle" />
+      <path d="M96 16 l4 4 l8 -9" className="il-check" />
+      <Label x="60" y="74" compact={c}>수량·겉모습·맵이 맞는지 확인</Label>
+    </>
+  ),
+
+  // ── 웨이퍼 레벨 패키징(WLP) ──
+  tsv: (c) => (
+    <>
+      <rect x="20" y="20" width="80" height="34" className="il-wafer" />
+      {[36, 60, 84].map((x) => (
+        <rect key={x} x={x - 2.5} y="20" width="5" height="34" className="il-cu" />
+      ))}
+      <rect x="20" y="14" width="80" height="6" className="il-die" />
+      <rect x="20" y="54" width="80" height="6" className="il-die" />
+      <Label x="60" y="74" compact={c}>실리콘을 꿰뚫는 구리 기둥으로 위아래 연결</Label>
+    </>
+  ),
+  rdl: (c) => (
+    <>
+      <rect x="22" y="12" width="76" height="48" className="il-die" />
+      {[[26, 16], [26, 52], [90, 16], [90, 52]].map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="5" height="5" className="il-frame" />
+      ))}
+      {[[28, 18, 46, 30], [28, 54, 46, 42], [92, 18, 74, 30], [92, 54, 74, 42]].map(([x1, y1, x2, y2]) => (
+        <polyline key={`${x1}-${y1}`} points={`${x1},${y1} ${x2},${y1} ${x2},${y2}`} className="il-link" />
+      ))}
+      {[[46, 30], [46, 42], [74, 30], [74, 42]].map(([x, y]) => (
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="3.4" className="il-bump" />
+      ))}
+      <Label x="60" y="74" compact={c}>가장자리 패드를 새 자리로 옮기는 배선</Label>
+    </>
+  ),
+  bumping: (c) => (
+    <>
+      <rect x="18" y="44" width="84" height="12" className="il-wafer" />
+      {[30, 46, 62, 78, 94].map((x) => (
+        <g key={x}>
+          <rect x={x - 5} y="41" width="10" height="3" className="il-frame" />
+          <circle cx={x} cy="35" r="6" className="il-bump" />
+        </g>
+      ))}
+      <Label x="60" y="72" compact={c}>패드 위에 작은 금속 돌기(범프)를 만듦</Label>
+    </>
+  ),
 }
 
 const packageDrawings = {
@@ -837,12 +988,12 @@ export function AdvancedIllustration({ id }) {
 }
 
 // 움직이는 개념도가 있는 공정
-const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test'])
+const ANIMATED = new Set(['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test', ...ANIM_IDS])
 
 // 옆·위 두 모습을 나란히 그리는 공정(작게 그릴 때는 옆에서 본 모습만)
 const WIDE = new Set(['wafer-saw', 'package-saw'])
 
-function prefersReducedMotion() {
+export function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
@@ -864,7 +1015,7 @@ export function Playable({ enabled, render }) {
 
 // still이 true이면 버튼 없이 멈춘 그림만 그립니다(검수표 그림 내보내기용).
 export function ProcessIllustration({ id, compact = false, still = false }) {
-  const draw = processDrawings[id]
+  const draw = animDrawings[id] ?? processDrawings[id]
   if (!draw) return null
 
   return (
