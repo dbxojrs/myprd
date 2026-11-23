@@ -4967,3 +4967,16 @@ button.nb-callout-icon:hover { background: rgb(0 0 0 / 0.06); }
 .case-rubric { width: 100%; margin: 8px 0 12px; }
 .case-rubric td small { display: block; }
 .case-total td { font-weight: 700; background: var(--accent-soft); }
+
+/* 계정(구글 로그인) */
+.side-account { position: relative; margin-bottom: 6px; }
+.google-btn .google-g { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); color: #fff; font-weight: 800; font-size: 0.72rem; flex: none; }
+.side-user { align-items: center; }
+.side-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
+.side-avatar.fallback { display: inline-grid; place-items: center; background: var(--accent); color: var(--accent-text); font-weight: 700; }
+.side-user-text { display: flex; flex-direction: column; min-width: 0; text-align: left; }
+.side-user-text strong { font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-user-text small { font-size: 0.72rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-user-text small.bad { color: #d94f4f; }
+.side-account-menu { display: grid; gap: 6px; padding: 8px 10px; margin: 4px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-size: 0.82rem; }
+.side-account-menu p { margin: 0; }

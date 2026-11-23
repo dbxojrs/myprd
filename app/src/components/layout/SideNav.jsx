@@ -4,6 +4,7 @@ import { useOpen } from '../../lib/uiOpen.js'
 import { togglePanel, useFloat } from '../../lib/floatState.js'
 import Icon from './icons.jsx'
 import { TermModeSwitch } from '../../lib/terms.jsx'
+import AccountBox from './AccountBox.jsx'
 
 // 왼쪽 메뉴: 흰 사이드바 + 영역별 묶음(펼치고 접기) + 아래쪽 노트·질문하기·다크 모드.
 // 데스크톱은 접으면 아이콘만(60px), 모바일은 ☰로 여는 서랍입니다.
@@ -65,6 +66,7 @@ export default function SideNav({ screen, activeGroup, collapsed, onGo, onToggle
       ))}
 
       <div className="side-bottom">
+        <AccountBox />
         <span className="side-label">도구</span>
         <button type="button" className={`side-item${float.open.notes ? ' on' : ''}`} onClick={() => togglePanel('notes')} title="노트 창 열기·닫기 (Alt+N)">
           <Icon name="memo" />

@@ -1,0 +1,20 @@
+# Netlify 배포 설정. 저장소(myprd) 루트에 두고, 앱은 app/ 폴더에서 빌드합니다.
+# 환경 변수(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)는 Netlify 화면의 Environment variables에 넣습니다.
+[build]
+  base = "app"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# 정적 파일은 오래 캐시하고, index.html은 늘 새로 받습니다(배포하면 바로 반영).
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

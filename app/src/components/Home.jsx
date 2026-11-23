@@ -8,6 +8,7 @@ import { schedule, usePlan } from '../lib/studyPlan.js'
 import { streakOf, useActivity, ymd } from '../lib/activity.js'
 import { useNotes } from '../lib/notes.js'
 import { dday, UnitList } from './StudyPlan.jsx'
+import { useAuth } from '../lib/cloud.js'
 
 // 첫 화면: 오늘의 공부 대시보드.
 // ① 오늘 할 공부(공부 일정에서) + 이어서 하기 ② 숫자 카드(진도·연속 공부일·다시 볼 문제·D-day) ③ 6단계 진도 줄.
@@ -33,6 +34,7 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
   const nextId = order.find((id) => !completed.includes(id))
   const [openStage, setOpenStage] = useState(null)
   const plan = usePlan()
+  const auth = useAuth()
   const activity = useActivity()
   const notes = useNotes()
   const [wrong] = useStoredState('tutor.wrong', [])
@@ -52,7 +54,10 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
     <section className="screen home dash">
       <div className="dash-top">
         <article className="card dash-today">
-          <p className="home-eyebrow">{dateText}</p>
+          <p className="home-eyebrow">
+            {dateText}
+            {auth.user && ` · ${auth.user.name}님, 오늘도 반가워요`}
+          </p>
           {plan.settings ? (
             <>
               <h2>오늘 할 공부 {todayUnits.length > 0 && <small className="muted">· {todayUnits.reduce((s, u) => s + u.min, 0)}분</small>}</h2>
