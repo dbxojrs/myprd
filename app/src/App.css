@@ -4569,3 +4569,59 @@ button.danger:hover { background: var(--bad-soft); }
 .movie-chapters button:hover { color: var(--text); background: var(--bg); }
 .movie-chapters button.now { color: var(--text); font-weight: 800; }
 .movie-chapters button.now::before { content: '▶ '; color: var(--accent); }
+
+/* 반도체 기초 화면 */
+.basics-head h2 { margin: 0 0 4px; }
+.basics-lessons { list-style: none; margin: 12px 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.basics-lessons button { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; padding: 10px 12px; border-radius: 12px; }
+.basics-lessons button:hover { border-color: var(--accent); }
+.basics-lessons button.on { border-color: var(--accent); background: var(--accent-soft); }
+.basics-lessons .num { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; font-size: 0.85rem; }
+.basics-lessons strong { display: block; font-size: 0.95rem; }
+.basics-lessons small { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+.basics-lessons em { margin-left: auto; font-size: 0.72rem; font-style: normal; }
+.mv-ball-label { fill: #fff; font-weight: 700; font-family: system-ui, sans-serif; paint-order: stroke; stroke: rgb(0 0 0 / 0.15); stroke-width: 0.6px; }
+.mv-ball-label.hole { fill: #3f7be8; stroke: none; }
+.mv-hole { fill: rgb(255 255 255 / 0.55); stroke: #3f7be8; stroke-width: 1.1; stroke-dasharray: 2 1.6; }
+.mv-block-n { fill: #f2774e; }
+.mv-block-p { fill: #5f8df5; }
+.mv-block-gray { fill: #6d7176; }
+.mv-block-gate { fill: #b9b6b1; }
+.mv-block-ox { fill: #3e4a55; }
+.mv-block-shine { fill: rgb(255 255 255 / 0.22); }
+.mv-block-label { fill: #fff; font-weight: 800; font-size: 11px; font-family: system-ui, sans-serif; }
+.mv-bat-body { fill: #1f2226; }
+.mv-bat-cap { fill: #d9a032; }
+.mv-bat-tip { fill: #b8bec7; }
+.mv-bat-sign { fill: #1f2226; font-weight: 900; font-size: 10px; }
+.mv-copper { fill: none; stroke: #b9792b; stroke-width: 2.2; stroke-linejoin: round; }
+.mv-flow-dot { fill: url(#s-orange); }
+.mv-depletion { fill: #b8bcc2; }
+@keyframes mv-orbit { to { transform: rotate(360deg); } }
+@keyframes mv-wander { 25% { transform: translate(18px, -10px); } 50% { transform: translate(40px, 6px); } 75% { transform: translate(22px, 16px); } }
+@keyframes mv-along { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes mv-gather { from { transform: translateY(var(--gy, 30px)); opacity: 0.3; } }
+.mv-orbit-ring { fill: none; stroke: rgb(120 128 140 / 0.35); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.mv-cmp-cond { fill: url(#g-metal); }
+.mv-cmp-semi { fill: url(#g-film); }
+.mv-cmp-ins { fill: url(#g-barrier); }
+.mv-axis { stroke: #8a909a; stroke-width: 1; fill: none; }
+.mv-wave-ac { fill: none; stroke: #9aa3b0; stroke-width: 1.6; stroke-dasharray: 1; }
+.mv-wave-dc { fill: none; stroke: #2f6fe0; stroke-width: 2; stroke-dasharray: 1; }
+.mv-switch { fill: none; stroke: #4b5563; stroke-width: 2; stroke-linecap: round; }
+.mv-vline { stroke: #3f7be8; stroke-width: 1.6; }
+@keyframes mv-slide-r { from { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { transform: translateX(var(--sx, 100px)); opacity: 0; } }
+.mv-chan-on { fill: url(#s-orange); }
+.mv-chan-off { fill: #6d7176; opacity: 0.5; }
+.mv-3d-sub .front { fill: #3f7be8; } .mv-3d-sub .top { fill: #8fb2f7; } .mv-3d-sub .side { fill: #2a58b3; }
+.mv-3d-gate .front { fill: rgb(185 182 177 / 0.85); } .mv-3d-gate .top { fill: rgb(225 222 218 / 0.9); } .mv-3d-gate .side { fill: rgb(150 147 142 / 0.85); }
+.mv-3d-ch .front { fill: #ef6a3a; } .mv-3d-ch .top { fill: #f9a07c; } .mv-3d-ch .side { fill: #b9431c; }
+.mv-leak { fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-dasharray: 2 2; }
+.basics-lessons li.has-part { position: relative; grid-column: 1 / -1; }
+.basics-lessons li.has-part::before { content: attr(data-part); display: block; margin: 6px 2px 4px; font-size: 0.78rem; font-weight: 800; color: var(--accent); }
+.basics-lessons li.has-part button { max-width: calc(50% - 4px); }
+@media (max-width: 760px) { .basics-lessons li.has-part button { max-width: none; } }
+@keyframes mv-emc-open { to { opacity: 0.18; } }
+.mv-emc-outline { fill: none; stroke: #4a5160; stroke-width: 1; stroke-dasharray: 3 2; }
+.mv-pill { fill: rgb(255 255 255 / 0.9); stroke: #c3c9d1; stroke-width: 0.8; }
+.mv-step { fill: rgb(255 255 255 / 0.9); stroke: #b6bec9; stroke-width: 0.9; }

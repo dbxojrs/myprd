@@ -20,6 +20,7 @@ import { TermModeSwitch } from './lib/terms.jsx'
 import FloatDock from './components/float/FloatDock.jsx'
 import SelectionToNote from './components/notes/SelectionToNote.jsx'
 import NotesPage from './components/notes/NotesPage.jsx'
+import CoursePage from './components/CoursePage.jsx'
 import { setUi, useUi } from './lib/uiOpen.js'
 import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
@@ -225,6 +226,9 @@ export default function App() {
           />
         )}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
+        {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
+        {screen === 'course-pkg' && <CoursePage key="pkg" courseId="pkg" onOpenProcess={openProcess} onGo={setScreen} />}
+        {screen === 'course-adv' && <CoursePage key="adv" courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <AdvancedPackage onOpenProcess={openProcess} onOpenPackage={openPackage} />}
       </main>
 

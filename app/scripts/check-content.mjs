@@ -10,7 +10,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 's
 const load = async (p) => (await import(pathToFileURL(p).href)).default
 const { findSource, SOURCE_CATALOG } = await import(pathToFileURL(path.join(root, 'data/sourceCatalog.js')).href)
 const { processes } = await import(pathToFileURL(path.join(root, 'data/processes.js')).href)
-const ids = new Set(processes.map((p) => p.id))
+const { BASICS } = await import(pathToFileURL(path.join(root, 'data/basics.js')).href)
+const { courseLessonIds } = await import(pathToFileURL(path.join(root, 'data/courses.js')).href)
+const ids = new Set([...processes.map((p) => p.id), ...BASICS.map((b) => b.id), ...courseLessonIds()])
 const problems = []
 const used = new Set()
 

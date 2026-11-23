@@ -206,3 +206,71 @@ export const Defs = () => (
     </radialGradient>
   </defs>
 )
+
+// 글자가 들어간 구슬(원자·전자·정공). tone: teal|orange|blue|gold|silver|pink|gray|cyan, hole: 빈 자리(점선 원)
+export function Ball({ cx, cy, r = 6, tone = 'teal', label, hole = false, style, className = '' }) {
+  if (hole)
+    return (
+      <g style={style} className={className}>
+        <circle cx={cx} cy={cy} r={r} className="mv-hole" />
+        {label && (
+          <text x={cx} y={cy + r * 0.38} textAnchor="middle" className="mv-ball-label hole" style={{ fontSize: r * 1.1 }}>
+            {label}
+          </text>
+        )}
+      </g>
+    )
+  return (
+    <g style={style} className={className}>
+      <circle cx={cx} cy={cy} r={r} fill={`url(#s-${tone})`} />
+      {label && (
+        <text x={cx} y={cy + r * 0.36} textAnchor="middle" className="mv-ball-label" style={{ fontSize: r * 0.95 }}>
+          {label}
+        </text>
+      )}
+    </g>
+  )
+}
+
+// 색 블록(N형·P형 같은 영역). tone: n(주황빨강)|p(파랑)|gray|gate
+export const Block = ({ x, y, w, h, tone = 'n', label, style, className = '' }) => (
+  <g style={style} className={className}>
+    <rect x={x} y={y} width={w} height={h} rx="1.5" className={`mv-block-${tone}`} />
+    <rect x={x} y={y} width={w} height={Math.min(4, h / 3)} rx="1.5" className="mv-block-shine" />
+    {label && (
+      <text x={x + w / 2} y={y + h / 2 + 4} textAnchor="middle" className="mv-block-label">
+        {label}
+      </text>
+    )}
+  </g>
+)
+
+// 전지(배터리). 왼쪽이 + 단자, flip이면 반대
+export const Battery = ({ x, y, flip = false, style }) => (
+  <g style={style} transform={flip ? `translate(${2 * x + 34} 0) scale(-1 1)` : undefined}>
+    <rect x={x} y={y - 7} width="34" height="14" rx="3" className="mv-bat-body" />
+    <rect x={x} y={y - 7} width="9" height="14" rx="3" className="mv-bat-cap" />
+    <rect x={x - 2.5} y={y - 2.5} width="3" height="5" rx="1" className="mv-bat-tip" />
+    <text x={x + 4.5} y={y + 3} textAnchor="middle" className="mv-bat-sign" transform={flip ? `translate(${2 * (x + 4.5)} 0) scale(-1 1)` : undefined}>
+      +
+    </text>
+  </g>
+)
+
+// 길(path)을 따라 흐르는 구슬들(전류·전자 흐름). d: SVG 경로, n: 개수, dur: 한 바퀴 시간
+export function Flow({ d, n = 8, dur = 3, at = 0, r = 2.4, tone = 'orange', until, reverse = false }) {
+  const dots = Array.from({ length: n }, (_, i) => (
+    <circle
+      key={i}
+      r={r}
+      fill={`url(#s-${tone})`}
+      style={{
+        offsetPath: `path('${d}')`,
+        offsetRotate: '0deg',
+        animation: `mv-along ${dur}s linear ${at - (i * dur) / n}s infinite ${reverse ? 'reverse' : 'normal'} both`,
+      }}
+    />
+  ))
+  const g = <g style={anim('mv-fade', at, 0.4)}>{dots}</g>
+  return until ? <g style={anim('mv-fadeout', until, 0.5)}>{g}</g> : g
+}
