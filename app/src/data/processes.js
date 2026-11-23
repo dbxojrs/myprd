@@ -130,7 +130,7 @@ export const processes = [
     prerequisites: [],
     reviewed: false,
     sources: [
-      { title: "[반도체 8대 공정] 1탄, '웨이퍼'란 무엇일까요?', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-1%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%eb%9e%80-%eb%ac%b4%ec%97%87%ec%9d%bc%ea%b9%8c%ec%9a%94/", tier: 'explain' },
+      { title: "[반도체 8대 공정] 1탄, '웨이퍼'란 무엇일까요?", publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-1%ed%83%84-%ec%9b%a8%ec%9d%b4%ed%8d%bc%eb%9e%80-%eb%ac%b4%ec%97%87%ec%9d%bc%ea%b9%8c%ec%9a%94/', tier: 'explain' },
     ],
     sourceDate: '2026-10-31',
     photo: { kind: 'attach', title: '단결정 실리콘 잉곳', src: 'photos/wafer-make.jpg', url: 'https://commons.wikimedia.org/wiki/File:Monokristalines_Silizium_f%C3%BCr_die_Waferherstellung.jpg', author: 'Stahlkocher', license: 'CC BY-SA 3.0' },
@@ -184,7 +184,7 @@ export const processes = [
     prerequisites: ['photo'],
     reviewed: false,
     sources: [
-      { title: "[반도체 8대 공정] 5탄, 반도체 회로패턴의 완성 '식각 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-5%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ed%9a%8c%eb%a1%9c%ed%8c%a8%ed%84%b4%ec%9d%98-%ec%99%84%ec%84%b1-%ec%8b%9d%ea%b0%81-%ea%b3%b5/", tier: 'explain' },
+      { title: "[반도체 8대 공정] 5탄, 반도체 회로패턴의 완성 '식각 공정'", publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-5%ed%83%84-%eb%b0%98%eb%8f%84%ec%b2%b4-%ed%9a%8c%eb%a1%9c%ed%8c%a8%ed%84%b4%ec%9d%98-%ec%99%84%ec%84%b1-%ec%8b%9d%ea%b0%81-%ea%b3%b5/', tier: 'explain' },
       { title: 'Lecture 17: Dry Etching (6.152J Micro/Nano Processing Technology, Fall 2005)', publisher: 'MIT OpenCourseWare', url: 'https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture17/', tier: 'explain' },
     ],
     sourceDate: '2026-10-31',
@@ -241,7 +241,7 @@ export const processes = [
     prerequisites: ['ion-implant'],
     reviewed: false,
     sources: [
-      { title: "[반도체 8대 공정] 7탄, 전기가 통하는 길을 만드는 '금속 배선 공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-7%ed%83%84-%ec%a0%84%ea%b8%b0%ea%b0%80-%ed%86%b5%ed%95%98%eb%8a%94-%ea%b8%b8%ec%9d%84-%eb%a7%8c%eb%93%9c%eb%8a%94-%ea%b8%88/", tier: 'explain' },
+      { title: "[반도체 8대 공정] 7탄, 전기가 통하는 길을 만드는 '금속 배선 공정'", publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-7%ed%83%84-%ec%a0%84%ea%b8%b0%ea%b0%80-%ed%86%b5%ed%95%98%eb%8a%94-%ea%b8%b8%ec%9d%84-%eb%a7%8c%eb%93%9c%eb%8a%94-%ea%b8%88/', tier: 'explain' },
     ],
     sourceDate: '2026-10-31',
     photo: { kind: 'attach', title: '칩 표면의 금속 배선과 가장자리 본드 패드', src: 'photos/metallization.jpg', url: 'https://commons.wikimedia.org/wiki/File:1886VE10-HD.jpg', author: 'ZeptoBars', license: 'CC BY 3.0' },
@@ -259,7 +259,7 @@ export const processes = [
     prerequisites: ['metallization'],
     reviewed: false,
     sources: [
-      { title: "[반도체 8대 공정] 8탄, 완벽한 반도체로 태어나기 위한 첫 번째 테스트 'EDS공정'', publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-8%ed%83%84-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a1%9c-%ed%83%9c%ec%96%b4%eb%82%98%ea%b8%b0-%ec%9c%84%ed%95%9c/", tier: 'explain' },
+      { title: "[반도체 8대 공정] 8탄, 완벽한 반도체로 태어나기 위한 첫 번째 테스트 'EDS공정'", publisher: '삼성전자 반도체 뉴스룸 (삼성반도체이야기)', url: 'https://news.samsungsemiconductor.com/kr/%eb%b0%98%eb%8f%84%ec%b2%b4-8%eb%8c%80-%ea%b3%b5%ec%a0%95-8%ed%83%84-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%eb%a1%9c-%ed%83%9c%ec%96%b4%eb%82%98%ea%b8%b0-%ec%9c%84%ed%95%9c/', tier: 'explain' },
     ],
     sourceDate: '2026-10-31',
     photo: { kind: 'attach', title: '프로브 카드', src: 'photos/eds.jpg', url: 'https://commons.wikimedia.org/wiki/File:Probe_card.JPG', author: 'Ajoones', license: 'CC BY 3.0' },

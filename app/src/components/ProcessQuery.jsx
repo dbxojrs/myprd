@@ -14,9 +14,12 @@ import ConceptFigures from './ConceptFigures.jsx'
 import ProcessSequence, { ProcessBreadcrumb } from './ProcessSequence.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
 import Collapsible, { ExpandAll } from './ui/Collapsible.jsx'
+import ProcessMovie from './movie/ProcessMovie.jsx'
+import ProcessExplainer from './ProcessExplainer.jsx'
+import { explainers } from '../data/explainers/index.js'
 
 // 공정 상세의 접는 섹션. 열림 상태는 공정과 관계없이 섹션별로 기억합니다.
-const SECTION_IDS = ['pq.video', 'pq.zoom', 'pq.io', 'pq.terms', 'pq.steps', 'pq.analogy', 'pq.sources', 'pq.prereq']
+const SECTION_IDS = ['pq.explain', 'pq.video', 'pq.zoom', 'pq.io', 'pq.terms', 'pq.steps', 'pq.analogy', 'pq.sources', 'pq.prereq']
 
 export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onReport }) {
   const [query, setQuery] = useState('')
@@ -84,7 +87,14 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
           <ProcessIllustration id={process.id} />
           <p>{process.summary}</p>
           <ReviewBadge reviewed={process.reviewed} sources={process.sources} sourceDate={process.sourceDate} />
+          <ProcessMovie key={`movie-${process.id}`} id={process.id} />
           <ExpandAll ids={SECTION_IDS} label="공정 설명" />
+
+          {explainers[process.id] && (
+            <Collapsible id="pq.explain" title="자세한 설명 · 출처">
+              <ProcessExplainer id={process.id} />
+            </Collapsible>
+          )}
 
           <Collapsible id="pq.io" title="입력 · 결과">
             <dl className="facts">
