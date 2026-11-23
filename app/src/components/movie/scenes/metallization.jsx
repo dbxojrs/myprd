@@ -16,7 +16,7 @@ const Why = ({ B }) => (
       소자(트랜지스터)만으로는 신호가 오가지 못합니다
     </Tag>
     <g style={anim('mv-fade', B(1), 0.6)}>
-      <path d={`M85 ${SI_TOP - 18} V90 H185 V${SI_TOP - 18} M185 90 H265 V${SI_TOP - 18}`} className="mv-wire" style={loop('mv-flow', B(1), 0.8)} />
+      <path d={`M85 ${SI_TOP - 18} V90 H185 V${SI_TOP - 18} M185 90 H265 V${SI_TOP - 18}`} className="mv-route" style={loop('mv-flow', B(1), 0.8)} />
     </g>
     <Tag x={225} y={84} anchor="middle" at={B(1) + 0.4}>
       금속선으로 연결

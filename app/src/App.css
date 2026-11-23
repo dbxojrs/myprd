@@ -4362,7 +4362,7 @@ button.danger:hover { background: var(--bad-soft); }
 .mv-dopant-p { fill: #ff6f91; stroke: #fff; stroke-width: 0.8; }
 .mv-legendbox { fill: rgb(8 12 20 / 0.7); }
 .mv-shield { stroke: #ffd166; stroke-width: 2; stroke-dasharray: 3 3; }
-.mv-wire { stroke: var(--mv-metal); stroke-width: 3; fill: none; stroke-dasharray: 6 3; }
+.mv-route { stroke: var(--mv-metal); stroke-width: 3; fill: none; stroke-dasharray: 6 3; }
 .m-tungsten { fill: #a7b4c8; }
 .mv-silicide { fill: #c08bff; opacity: 0.8; }
 .mv-pad { fill: #5d6b84; stroke: #c9d3e3; stroke-width: 0.8; }
@@ -4396,3 +4396,75 @@ button.danger:hover { background: var(--bad-soft); }
   .movie-svg .mv-tag { font-size: 9px; }
   .movie-svg .mv-tag.strong { font-size: 9.5px; }
 }
+
+/* 후공정 애니메이션 재료·장비 */
+.mv-circuit { fill: #ffd166; opacity: 0.85; }
+.mv-tape { fill: #7ad1c8; opacity: 0.85; }
+.mv-chuck { fill: #3c4a63; }
+@keyframes mv-thin { to { transform: scaleY(0.3); } }
+@keyframes mv-wheeldown { 30% { transform: translateY(38px); } to { transform: translateY(66px); } }
+.mv-wheel-body { fill: #5d6b84; }
+.mv-wheel-teeth { fill: #e8eef8; }
+.mv-dust { fill: #c9d3e3; }
+.mv-damage { fill: #ff7a5a; opacity: 0.7; }
+.mv-thinwafer { fill: none; stroke: var(--mv-si-a); stroke-width: 5; stroke-linecap: round; }
+.mv-ring { fill: none; stroke: #c9d3e3; stroke-width: 8; }
+.mv-dtape { fill: #2f5d78; opacity: 0.8; }
+@keyframes mv-travel { to { transform: translateX(200px); } }
+@keyframes mv-travel2 { to { transform: translateX(240px); } }
+.mv-blade { fill: rgb(232 238 248 / 0.25); stroke: #e8eef8; stroke-width: 1.2; }
+.mv-blade-mark { stroke: rgb(232 238 248 / 0.6); stroke-width: 1; }
+.mv-hub { fill: #8a96ab; }
+@keyframes mv-stretch { to { transform: scaleX(1.06); } }
+@keyframes mv-spread { to { transform: translateX(var(--sx, 0px)); } }
+@keyframes mv-spread2 { to { transform: translate(var(--sx, 0px), var(--sy, 0px)); } }
+.mv-laser { stroke: #ff4d6d; stroke-width: 2; filter: drop-shadow(0 0 2px #ff4d6d); }
+.mv-modlayer { stroke: #ffd166; stroke-width: 2; stroke-dasharray: 2 2; }
+.mv-alert { fill: none; stroke: #ff5d73; stroke-width: 1.5; }
+@keyframes mv-lift { to { transform: translateY(-40px); } }
+@keyframes mv-pinup { from { transform: translateY(14px); } }
+@keyframes mv-colletdown { from { transform: translateY(-30px); } }
+@keyframes mv-placedown { from { transform: translateY(-50px); opacity: 0.6; } }
+.mv-pin { fill: #c9d3e3; }
+.mv-collet { fill: #5d6b84; stroke: #c9d3e3; stroke-width: 0.8; }
+.mv-frame { fill: #b8873e; }
+.mv-lead { fill: #d6995a; }
+.mv-epoxy { fill: #e8e2c8; }
+.mv-void-bubble { fill: #0f1a2b; stroke: #ff5d73; stroke-width: 0.8; }
+.mv-capillary { fill: #c9d3e3; }
+.mv-wire { fill: none; stroke: #ffd166; stroke-width: 1.3; }
+.mv-wire.draw { stroke-dasharray: 1; }
+@keyframes mv-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.mv-ball { fill: #ffd166; }
+.mv-spark { fill: none; stroke: #9be7ff; stroke-width: 1.4; }
+.mv-wave { fill: none; stroke: #9be7ff; stroke-width: 1.2; }
+@keyframes mv-capdown { to { transform: translateY(34px); } }
+@keyframes mv-capmove { from { transform: translate(136px, 100px); } 50% { transform: translate(196px, 52px); } to { transform: translate(256px, 124px); } }
+.mv-mold { fill: #4a5568; stroke: #8a96ab; stroke-width: 0.8; }
+@keyframes mv-moldclose { from { transform: translateY(-36px); } }
+.mv-emc { fill: #23262d; stroke: #4a5160; stroke-width: 0.8; }
+@keyframes mv-widenx { from { transform: scaleX(0); } }
+@keyframes mv-sweep { to { transform: skewX(-8deg); } }
+@keyframes mv-push { to { transform: translateX(14px); } }
+.mv-mark { fill: #c9d3e3; font-size: 9px; font-weight: 700; letter-spacing: 1px; }
+.mv-mark.big { font-size: 16px; }
+@keyframes mv-scan { from { transform: translateX(0); } to { transform: translateX(150px); } }
+.mv-cutline { fill: #9be7ff; }
+.mv-socket { fill: #3c4a63; stroke: #c9d3e3; stroke-width: 0.8; }
+.mv-needle-r { fill: #ffd166; }
+@keyframes mv-handler { 0% { transform: translateY(-40px); } 60% { transform: translateY(26px); } 100% { transform: translateY(26px); } }
+.mv-signal { fill: none; stroke: #4fd18b; stroke-width: 1.6; stroke-dasharray: 4 3; }
+.mv-oven { fill: #3a2a24; stroke: #ff9b5c; stroke-width: 1; }
+@keyframes mv-togood { 0% { transform: translate(0, 0); } 100% { transform: translate(var(--tx), 82px); } }
+@keyframes mv-tobad { 0% { transform: translate(0, 0); } 100% { transform: translate(var(--tx), 82px); } }
+.mv-bin { fill: none; stroke-width: 1.5; }
+.mv-bin.good { stroke: #4fd18b; }
+.mv-bin.bad { stroke: #ff5d73; }
+.mv-ringside { fill: #c9d3e3; }
+.mv-solder { fill: #d9dde6; stroke: #8a96ab; stroke-width: 0.6; }
+.mv-subst { fill: #3f7a5a; stroke: #9be0b5; stroke-width: 0.6; }
+@keyframes mv-flip { to { transform: scaleY(-1); } }
+@keyframes mv-flipdown { 0%, 45% { transform: translateY(0); } to { transform: translateY(62px); } }
+.mv-underfill { fill: #9be7ff; opacity: 0.85; }
+.mv-rdl { fill: none; stroke: var(--mv-metal); stroke-width: 2.4; stroke-dasharray: 1; }
+.mv-liner { fill: none; stroke: #c08bff; stroke-width: 2; }
