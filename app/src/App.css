@@ -4671,3 +4671,85 @@ button.danger:hover { background: var(--bad-soft); }
 .pkg-guide-flow .num { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; font-size: 0.8rem; }
 .pkg-guide-flow p { margin: 4px 0 0; }
 .pkg-guide-step { font-weight: 700; font-size: 0.98rem; }
+
+/* ── 홈: 오늘의 공부 대시보드 ── */
+.dash-top { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.dash-today { padding: 20px 22px; }
+.dash-today h2 { margin: 2px 0 10px; font-size: 1.45rem; }
+.dash-today .button-row { margin-top: 12px; }
+.dash-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dash-stat { display: flex; align-items: center; gap: 12px; padding: 14px 16px; text-align: left; font: inherit; color: inherit; cursor: default; margin: 0; }
+button.dash-stat { cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; }
+button.dash-stat:hover { transform: translateY(-2px); border-color: var(--accent); }
+.dash-stat strong { display: block; font-size: 1.35rem; line-height: 1.1; }
+.dash-stat small { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 12em; }
+.dash-emoji { font-size: 1.7rem; width: 44px; text-align: center; flex: none; }
+.home-ring { width: 48px; height: 48px; flex: none; }
+.home-ring-bg { fill: none; stroke: var(--border); stroke-width: 6; }
+.home-ring-fg { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+.dash-h { margin: 22px 0 10px; font-size: 1.05rem; }
+.dash-stages { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.dash-stage { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 10px; border-radius: 14px; text-align: left; }
+.dash-stage.open { border-color: var(--accent); background: var(--accent-soft); }
+.dash-stage-icon { height: 46px; display: grid; place-items: center; overflow: hidden; }
+.dash-stage-icon svg { max-height: 46px; width: auto; }
+.dash-stage-text small { color: var(--muted); font-size: 0.72rem; }
+.dash-stage-text strong { display: block; font-size: 0.88rem; line-height: 1.25; }
+.dash-stage-bar { display: block; height: 5px; margin-top: 6px; border-radius: 99px; background: var(--border); overflow: hidden; }
+.dash-stage-bar span { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+.dash-stage.done .dash-stage-text strong::after { content: ' ✓'; color: var(--accent); }
+.dash .home-stage-panel { margin-top: 12px; }
+@media (max-width: 900px) {
+  .dash-top { grid-template-columns: 1fr; }
+  .dash-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .dash-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-stat { padding: 12px; gap: 8px; }
+  .dash-stat strong { font-size: 1.15rem; }
+  .dash-emoji { width: 32px; font-size: 1.4rem; }
+  .home-ring { width: 38px; height: 38px; }
+}
+
+/* ── 공부 일정 (캘린더) ── */
+.plan-setup { display: grid; gap: 14px; max-width: 620px; }
+.plan-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 12px; }
+.plan-head h2 { margin: 2px 0 8px; }
+.plan-head .home-progress-bar { max-width: 360px; }
+.plan-note { padding: 10px 14px; border-radius: 12px; background: var(--accent-soft); }
+.plan-body { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.plan-cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.plan-cal-head .link { font-size: 1.5rem; padding: 0 10px; }
+.plan-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.plan-dow { text-align: center; font-size: 0.75rem; color: var(--muted); padding: 2px 0; }
+.plan-dow:first-child { color: #d94f4f; }
+.plan-day { position: relative; min-height: 64px; padding: 4px 5px; border-radius: 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; }
+.plan-day.out { opacity: 0.38; }
+.plan-day.past .plan-date { color: var(--muted); }
+.plan-day.today { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.plan-day.picked { background: var(--accent-soft); border-color: var(--accent); }
+.plan-date { font-weight: 700; font-size: 0.82rem; }
+.plan-goal { position: absolute; top: 3px; right: 5px; font-size: 0.8rem; }
+.plan-load { font-size: 0.72rem; font-weight: 700; color: var(--accent); line-height: 1.15; }
+.plan-load small { display: block; font-weight: 500; color: var(--muted); }
+.plan-dot { position: absolute; bottom: 5px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; }
+.plan-dot.inline { position: static; display: inline-block; vertical-align: middle; }
+.plan-legend { font-size: 0.78rem; margin: 8px 0 0; }
+.plan-day-panel h3 { margin-top: 0; }
+.plan-units { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.plan-units li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 12px; transition: background 0.2s ease; }
+.plan-units li.done { background: var(--accent-soft); }
+.plan-units li.done .plan-unit-open span { text-decoration: line-through; color: var(--muted); }
+.plan-units input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.plan-unit-open { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; border: 0; background: none; padding: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.plan-unit-open:hover span { color: var(--accent); }
+.plan-unit-open small { font-size: 0.75rem; }
+.plan-units.compact li { padding: 6px 10px; }
+.plan-ai textarea { margin: 8px 0; }
+@media (max-width: 900px) {
+  .plan-body { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .plan-day { min-height: 50px; padding: 3px; }
+  .plan-load small { display: none; }
+}

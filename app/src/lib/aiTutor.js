@@ -185,3 +185,44 @@ export async function gradeWritten({ apiKey, question, answer }) {
   if (!parsed) throw new Error('AI 채점 결과를 읽지 못했습니다. 다시 시도하세요.')
   return { ...parsed, score: Math.max(0, Math.min(100, parsed.score)) }
 }
+
+const PlanAdjust = z.object({
+  order: z.array(z.string()),
+  skip: z.array(z.string()),
+  minutesPerDay: z.number().int().nullable(),
+  days: z.array(z.number().int()).nullable(),
+  note: z.string(),
+})
+
+// (4) 공부 일정 조정. 남은 단원 목록과 약한 범위를 주고, 학생의 요청대로 순서·뺄 단원·시간을 다시 정하게 합니다.
+// 날짜별 배치는 앱이 규칙으로 다시 계산합니다(AI는 순서와 설정만 정함).
+export async function adjustPlan({ apiKey, request, units, settings, weak }) {
+  const response = await withPlainRetry((full) => client(apiKey).beta.messages.parse({
+    model: getModel(),
+    max_tokens: 8000,
+    ...(full ? FALLBACK : {}),
+    output_config: { ...(full ? { effort: 'low' } : {}), format: betaZodOutputFormat(PlanAdjust) },
+    system: SYSTEM,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          `UNITS (남은 단원, 지금 순서): ${JSON.stringify(units.map((u) => ({ id: u.id, title: u.title, min: u.min, stage: u.stage })))}`,
+          `SETTINGS: ${JSON.stringify({ goal: settings.goal, days: settings.days, minutesPerDay: settings.minutes })} (days: 0=일요일 … 6=토요일)`,
+          `WEAK (자주 틀린 범위와 횟수): ${JSON.stringify(weak)}`,
+          `STUDENT REQUEST: ${request}`,
+          '',
+          '학생 요청에 맞게 공부 일정을 조정하세요.',
+          '- order: UNITS의 id를 새 순서로 모두 나열합니다(뺄 단원은 skip에). 목록에 없는 id를 만들지 마세요.',
+          '- 기초가 먼저, 앞 공정이 뒤 공정보다 먼저인 흐름은 특별한 요청이 없으면 지킵니다.',
+          '- minutesPerDay, days는 바꿀 필요가 있을 때만 값을 넣고, 아니면 null.',
+          '- note: 무엇을 왜 바꿨는지 한국어 합니다체 2~3문장.',
+        ].join('\n'),
+      },
+    ],
+  }))
+  if (response.stop_reason === 'refusal') throw new Error('AI가 이 요청에 답하지 않았습니다.')
+  const parsed = response.parsed_output
+  if (!parsed) throw new Error('AI 답을 일정 형식으로 읽지 못했습니다. 다시 시도하세요.')
+  return parsed
+}

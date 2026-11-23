@@ -22,6 +22,8 @@ import SelectionToNote from './components/notes/SelectionToNote.jsx'
 import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
 import WrittenQuiz from './components/WrittenQuiz.jsx'
+import StudyPlan from './components/StudyPlan.jsx'
+import { markActive } from './lib/activity.js'
 import Collapsible from './components/ui/Collapsible.jsx'
 import { COURSES, courseStorageKey } from './data/courses.js'
 import { writeStored } from './lib/storage.js'
@@ -97,6 +99,16 @@ export default function App() {
     if (lessonId) writeStored(courseStorageKey(courseId), lessonId)
     setScreen(COURSES[courseId].screen)
     window.scrollTo({ top: 0 })
+  }
+
+  // 공부 일정의 단원 열기: 공정 상세 / 영상 강의 단원 / 다른 화면
+  const openUnit = (unit) => {
+    const go = unit.go
+    if (go.kind === 'process') openProcess(go.id)
+    else if (go.kind === 'course') {
+      writeStored(courseStorageKey(go.course), go.lesson)
+      setScreen(go.course === 'basics' ? 'basics' : COURSES[go.course].screen)
+    } else setScreen(go.screen)
   }
 
   const openPackage = (id) => {
@@ -183,7 +195,8 @@ export default function App() {
         {screen === 'package' && (
           <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} onOpenProcess={openProcess} />
         )}
-        {screen === 'home' && <Home pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} />}
+        {screen === 'home' && <Home pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} onOpenUnit={openUnit} />}
+        {screen === 'plan' && <StudyPlan completed={completed} onOpenUnit={openUnit} />}
         {screen === 'map' && (
           <ProcessMap
             pkg={pkg}
@@ -213,7 +226,10 @@ export default function App() {
             initialId={processId}
             pkg={pkg}
             completed={completed}
-            onComplete={(id) => setCompleted((list) => (list.includes(id) ? list : [...list, id]))}
+            onComplete={(id) => {
+              markActive()
+              setCompleted((list) => (list.includes(id) ? list : [...list, id]))
+            }}
             onOpenProcess={setProcessId}
             onOpenMap={() => setScreen('map')}
             onOpenCourse={openCourse}

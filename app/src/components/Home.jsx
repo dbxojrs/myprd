@@ -1,73 +1,153 @@
 import { useState } from 'react'
 import { wholeFlow } from '../data/packages.js'
 import { ACTORS, findProcess, STAGE_ORDER, STAGES } from '../data/processes.js'
-import { MENU_GROUPS } from './menu.js'
 import { ProcessIllustration } from './Illustrations.jsx'
 import { Term } from '../lib/terms.jsx'
+import { useStoredState } from '../lib/storage.js'
+import { schedule, usePlan } from '../lib/studyPlan.js'
+import { streakOf, useActivity, ymd } from '../lib/activity.js'
+import { useNotes } from '../lib/notes.js'
+import { dday, UnitList } from './StudyPlan.jsx'
 
-// 첫 화면. 칩 설계부터 보드 실장까지 6단계를 크게 보여주고, 단계를 누르면 아래에 설명과 공정 목록이 펼쳐집니다.
-// 그 아래에는 메뉴 묶음(배우기·실습·심화)을 카드로 보여줍니다. 설명 글은 모두 data/processes.js의 STAGES에서 가져옵니다.
+// 첫 화면: 오늘의 공부 대시보드.
+// ① 오늘 할 공부(공부 일정에서) + 이어서 하기 ② 숫자 카드(진도·연속 공부일·다시 볼 문제·D-day) ③ 6단계 진도 줄.
+// 메뉴는 왼쪽 메뉴에만 둡니다(같은 카드를 홈에 또 늘어놓지 않음). 단계 설명 글은 data/processes.js의 STAGES에서 가져옵니다.
 
-// 단계 타일에 작게 그릴 대표 공정 그림
 const STAGE_ICON = { design: 'physical-design', front: 'photo', link: 'wafer-map', mid: 'bumping', back: 'wire-bond', board: 'smt' }
+const WEEK = ['일', '월', '화', '수', '목', '금', '토']
 
-export default function Home({ pkg, completed, onGo, onOpenProcess }) {
+function Ring({ value }) {
+  const r = 22
+  const c = 2 * Math.PI * r
+  return (
+    <svg className="home-ring" viewBox="0 0 56 56" aria-hidden="true">
+      <circle cx="28" cy="28" r={r} className="home-ring-bg" />
+      <circle cx="28" cy="28" r={r} className="home-ring-fg" strokeDasharray={c} strokeDashoffset={c * (1 - value)} transform="rotate(-90 28 28)" />
+    </svg>
+  )
+}
+
+export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }) {
   const order = wholeFlow(pkg)
   const done = order.filter((id) => completed.includes(id)).length
   const nextId = order.find((id) => !completed.includes(id))
   const [openStage, setOpenStage] = useState(null)
+  const plan = usePlan()
+  const activity = useActivity()
+  const notes = useNotes()
+  const [wrong] = useStoredState('tutor.wrong', [])
+  const [wrongW] = useStoredState('tutor.wrongWritten', [])
+
+  const today = new Date()
+  const result = schedule(plan, completed, today)
+  const todayUnits = result?.days[ymd(today)] ?? []
+  const nextUnit = result && Object.entries(result.days).find(([d]) => d >= ymd(today))?.[1]?.[0]
+  const streak = streakOf(activity, today)
+  const left = plan.settings ? dday(plan.settings.goal, today) : null
   const stage = openStage && STAGES[openStage]
   const stageIds = openStage ? order.filter((id) => findProcess(id)?.stage === openStage) : []
+  const dateText = `${today.getMonth() + 1}월 ${today.getDate()}일 ${WEEK[today.getDay()]}요일`
 
   return (
-    <section className="screen home">
-      <div className="home-hero">
-        <div className="home-hero-text">
-          <p className="home-eyebrow">칩 설계 → 전공정 → 후공정 → 보드 실장</p>
-          <h2>반도체가 만들어지는 전 과정을 움직이는 그림과 장비 실습으로</h2>
-          <p className="muted">단계를 누르면 무엇을 하는지, 누가 하는지, 어떤 공정을 거치는지 펼쳐집니다.</p>
-          <div className="home-progress" aria-label="전체 공정 학습 진도">
+    <section className="screen home dash">
+      <div className="dash-top">
+        <article className="card dash-today">
+          <p className="home-eyebrow">{dateText}</p>
+          {plan.settings ? (
+            <>
+              <h2>오늘 할 공부 {todayUnits.length > 0 && <small className="muted">· {todayUnits.reduce((s, u) => s + u.min, 0)}분</small>}</h2>
+              {todayUnits.length ? (
+                <UnitList units={todayUnits} plan={plan} completed={completed} onOpenUnit={onOpenUnit} compact />
+              ) : (
+                <p className="muted">오늘은 쉬는 날입니다. {nextUnit && `다음 공부: ${nextUnit.title}`}</p>
+              )}
+              <div className="button-row">
+                {todayUnits.find((u) => u.id !== 'review') && (
+                  <button type="button" className="primary" onClick={() => onOpenUnit(todayUnits.find((u) => u.id !== 'review'))}>
+                    ▶ 시작하기
+                  </button>
+                )}
+                <button type="button" onClick={() => onGo('plan')}>
+                  📅 캘린더 보기
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2>무엇부터 공부할까요?</h2>
+              <p className="muted">목표 날짜와 하루 공부 시간을 정하면 기초부터 첨단 패키징·시험까지 날짜별로 나눠 드립니다. 매일 여기서 오늘 할 공부를 확인하세요.</p>
+              <div className="button-row">
+                <button type="button" className="primary" onClick={() => onGo('plan')}>
+                  📅 공부 일정 만들기
+                </button>
+                {nextId && (
+                  <button type="button" onClick={() => onOpenProcess(nextId)}>
+                    {done === 0 ? '바로 시작' : '이어서'}: <Term value={findProcess(nextId).name} compact /> →
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </article>
+
+        <div className="dash-stats">
+          <button type="button" className="card dash-stat" onClick={() => onGo('map')}>
+            <Ring value={order.length ? done / order.length : 0} />
             <span>
-              학습한 공정 <strong>{done}</strong> / {order.length}
+              <strong>{order.length ? Math.round((done / order.length) * 100) : 0}%</strong>
+              <small>공정 진도 {done}/{order.length}</small>
             </span>
-            <div className="home-progress-bar" aria-hidden="true">
-              <span style={{ width: `${(done / order.length) * 100}%` }} />
-            </div>
+          </button>
+          <div className="card dash-stat">
+            <span className="dash-emoji" aria-hidden="true">
+              🔥
+            </span>
+            <span>
+              <strong>{streak}일</strong>
+              <small>연속 공부</small>
+            </span>
           </div>
-          <div className="button-row">
-            {nextId && (
-              <button type="button" className="primary" onClick={() => onOpenProcess(nextId)}>
-                {done === 0 ? '처음부터 학습' : '이어서 학습'}: <Term value={findProcess(nextId).name} compact /> →
-              </button>
-            )}
-            <button type="button" onClick={() => onGo('machine-fab')}>
-              FAB 설비 실습 열기
-            </button>
-          </div>
+          <button type="button" className="card dash-stat" onClick={() => onGo('wrong')}>
+            <span className="dash-emoji" aria-hidden="true">
+              🔁
+            </span>
+            <span>
+              <strong>{wrong.length + wrongW.length}문제</strong>
+              <small>다시 볼 문제</small>
+            </span>
+          </button>
+          <button type="button" className="card dash-stat" onClick={() => onGo(plan.settings ? 'plan' : 'notes')}>
+            <span className="dash-emoji" aria-hidden="true">
+              {plan.settings ? '🎯' : '📒'}
+            </span>
+            <span>
+              <strong>{plan.settings ? (left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : '목표일 지남') : `${notes.length}개`}</strong>
+              <small>{plan.settings ? plan.settings.title : '내 노트'}</small>
+            </span>
+          </button>
         </div>
       </div>
 
-      <ol className="home-stages" aria-label="반도체 제조 6단계">
+      <h3 className="dash-h">반도체가 만들어지는 6단계</h3>
+      <ol className="dash-stages" aria-label="반도체 제조 6단계">
         {STAGE_ORDER.map((id, i) => {
           const s = STAGES[id]
+          const ids = order.filter((x) => findProcess(x)?.stage === id)
+          const n = ids.filter((x) => completed.includes(x)).length
           const isOpen = openStage === id
           return (
             <li key={id}>
-              <button
-                type="button"
-                className={`home-stage${isOpen ? ' open' : ''}${s.optional ? ' optional' : ''}`}
-                aria-expanded={isOpen}
-                aria-controls="home-stage-panel"
-                onClick={() => setOpenStage(isOpen ? null : id)}
-              >
-                <span className="home-stage-no">{i + 1}</span>
-                <span className="home-stage-icon" aria-hidden="true">
+              <button type="button" className={`dash-stage${isOpen ? ' open' : ''}${ids.length && n === ids.length ? ' done' : ''}`} aria-expanded={isOpen} aria-controls="home-stage-panel" onClick={() => setOpenStage(isOpen ? null : id)}>
+                <span className="dash-stage-icon" aria-hidden="true">
                   <ProcessIllustration id={STAGE_ICON[id]} compact />
                 </span>
-                <strong>
-                  <Term value={s.name} compact />
-                </strong>
-                <span className="home-stage-result">{s.result}</span>
+                <span className="dash-stage-text">
+                  <small>{i + 1}단계</small>
+                  <strong>{s.name.ko}</strong>
+                  <span className="dash-stage-bar" aria-label={`${n}/${ids.length} 학습`}>
+                    <span style={{ width: `${ids.length ? (n / ids.length) * 100 : 0}%` }} />
+                  </span>
+                </span>
               </button>
             </li>
           )
@@ -105,12 +185,7 @@ export default function Home({ pkg, completed, onGo, onOpenProcess }) {
           <p className="home-sub">이 단계의 공정 ({stageIds.length})</p>
           <div className="home-chips">
             {stageIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                className={completed.includes(id) ? 'home-chip done' : 'home-chip'}
-                onClick={() => onOpenProcess(id)}
-              >
+              <button key={id} type="button" className={completed.includes(id) ? 'home-chip done' : 'home-chip'} onClick={() => onOpenProcess(id)}>
                 {completed.includes(id) && '✓ '}
                 <Term value={findProcess(id).name} compact />
               </button>
@@ -118,25 +193,6 @@ export default function Home({ pkg, completed, onGo, onOpenProcess }) {
           </div>
         </article>
       )}
-
-      <div className="home-groups">
-        {MENU_GROUPS.map((group) => (
-          <section key={group.id} className="home-group" aria-labelledby={`home-${group.id}`}>
-            <h3 id={`home-${group.id}`}>
-              <span aria-hidden="true">{group.icon}</span> {group.label}
-            </h3>
-            <p className="muted">{group.desc}</p>
-            <div className="home-cards">
-              {group.items.map((item) => (
-                <button key={item.id} type="button" className="home-card" onClick={() => onGo(item.id)}>
-                  <strong>{item.label}</strong>
-                  <span>{item.desc}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
     </section>
   )
 }

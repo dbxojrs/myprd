@@ -3,6 +3,7 @@ import { makeQuiz, QUIZ_SCOPES, topicLabel } from '../lib/quiz.js'
 import { useStoredState } from '../lib/storage.js'
 import { AiExplain, AiKeyBox, AiQuizMaker } from './AiTutor.jsx'
 import { appendToCurrentNote } from '../lib/notes.js'
+import { markActive } from '../lib/activity.js'
 
 // 문제·정답·해설을 노트로 보냅니다.
 function QuizToNote({ q }) {
@@ -56,6 +57,7 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
   }
 
   const finish = (answers) => {
+    markActive()
     const qs = run.questions
     const score = qs.filter((q, i) => answers[i] === q.answer).length
     setWrong((list) => {

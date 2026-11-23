@@ -3,6 +3,7 @@ import { checkKeywords, gradeShort, makeWritten, norm, WRITTEN_KINDS, WRITTEN_SC
 import { useStoredState } from '../lib/storage.js'
 import { useApiKey } from '../lib/apiKey.js'
 import { appendToCurrentNote } from '../lib/notes.js'
+import { markActive } from '../lib/activity.js'
 import { AiKeyBox } from './AiTutor.jsx'
 
 // 심화 주관식 시험. 문제는 공정 데이터에서 만듭니다(lib/writtenQuiz.js).
@@ -54,6 +55,7 @@ export default function WrittenQuiz({ onOpenProcess }) {
   }
 
   const finish = (results) => {
+    markActive()
     const qs = run.questions
     const score = qs.reduce((sum, q, i) => sum + (POINT[results[i]?.verdict] ?? 0), 0)
     setWrong((list) => {
