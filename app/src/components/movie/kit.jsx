@@ -58,16 +58,38 @@ export const Tag = ({ x, y, children, at = 0, anchor = 'start', strong = false }
   </text>
 )
 
-// 지시선 + 글자
-export const Callout = ({ x, y, tx, ty, text, at = 0, anchor = 'start' }) => (
-  <g style={anim('mv-fade', at, 0.5)}>
-    <path d={`M${x} ${y} L${tx} ${ty}`} className="mv-leader" />
-    <circle cx={x} cy={y} r="1.6" className="mv-dotc" />
-    <text x={tx + (anchor === 'end' ? -2 : 2)} y={ty + (ty < y ? -2 : 6)} textAnchor={anchor} className="mv-tag strong">
-      {text}
-    </text>
-  </g>
-)
+// 글자 폭 대략 계산 (한글은 글자 크기만큼, 영문·숫자는 그 0.6배)
+const textWidth = (text, size) => [...String(text)].reduce((w, ch) => w + (/[\u3131-\uD79D]/.test(ch) ? size : size * 0.6), 0)
+
+// 괄호 라벨: 「[ 글자 ]」 모양 라벨에서 휘어진 화살표가 (x, y)를 가리킵니다.
+// tx, ty: 라벨 글자의 기준점, anchor: start면 라벨이 tx에서 오른쪽으로, end면 왼쪽으로 놓입니다.
+export function Callout({ x, y, tx, ty, text, at = 0, anchor = 'start' }) {
+  const size = 8.5
+  const w = textWidth(text, size)
+  const bw = w + 14
+  const bh = 14
+  // 화면 밖으로 나가지 않게 안쪽으로 밀어 넣습니다.
+  const bx = Math.min(Math.max(anchor === 'end' ? tx - bw : tx, 3), W - 3 - bw)
+  const by = Math.min(Math.max(ty - 10.5, 2), H - 2 - 14)
+  const c = 3.5 // 괄호 모서리 길이
+  // 화살표 시작점: 라벨 상자에서 가리킬 곳과 가까운 쪽
+  const sx = Math.min(Math.max(x, bx + 4), bx + bw - 4)
+  const sy = y > by + bh ? by + bh + 1.5 : y < by ? by - 1.5 : by + bh / 2
+  const midX = (sx + x) / 2 + (x > sx ? -6 : 6)
+  const midY = (sy + y) / 2 + (y > sy ? -6 : 6)
+  return (
+    <g style={anim('mv-fade', at, 0.5)} className="mv-callout">
+      <path d={`M${sx} ${sy} Q${midX} ${midY} ${x} ${y}`} className="mv-leader" markerEnd="url(#mv-head-dark)" />
+      <path
+        d={`M${bx + c} ${by} H${bx} V${by + bh} H${bx + c} M${bx + bw - c} ${by} H${bx + bw} V${by + bh} H${bx + bw - c}`}
+        className="mv-bracket"
+      />
+      <text x={bx + bw / 2} y={by + 10.5} textAnchor="middle" className="mv-tag strong">
+        {text}
+      </text>
+    </g>
+  )
+}
 
 // 내려오는 입자들 (가스·이온·원자). 여러 줄로 시간차를 두고 반복합니다.
 export function Rain({ x0 = 20, x1 = 300, y0 = 10, y1 = SI_TOP, n = 14, at = 0, dur = 1.4, cls = 'mv-gas', r = 2, angle = 0, until }) {
@@ -121,19 +143,66 @@ export const Arrow = ({ x1, y1, x2, y2, at = 0, cls = '' }) => (
   </g>
 )
 
-// 공용 정의 (화살촉, 무늬)
+// 재료 광택 (위가 밝고 아래가 어두운 세로 그라데이션)
+const SLAB_GRADIENTS = {
+  si: ['#7a7d82', '#55585d'],
+  oxide: ['#a9e2f5', '#62bfe0'],
+  pr: ['#f6b26b', '#e08a35'],
+  prx: ['#fbe3c2', '#f2c894'],
+  film: ['#8fd3a4', '#4fa874'],
+  nitride: ['#b8a5ea', '#8a74cf'],
+  metal: ['#f2c15c', '#c98e22'],
+  barrier: ['#9aa3b5', '#6d7689'],
+  doped: ['#ef7d52', '#c9471f'],
+  mask: ['#3a3d44', '#1f2126'],
+}
+// 구슬(원자·이온·전자) 그라데이션: [밝은 점, 본색, 그림자색]
+const SPHERES = {
+  teal: ['#c8fff0', '#3cc7a5', '#1e7e68'],
+  orange: ['#ffe2bf', '#f7871f', '#b2510b'],
+  blue: ['#d7e6ff', '#3f7be8', '#1d3f99'],
+  gold: ['#fff2c2', '#e0a92b', '#9c6d0e'],
+  silver: ['#ffffff', '#c3c9d3', '#7d8594'],
+  pink: ['#ffd9e2', '#f0587d', '#a51f45'],
+  gray: ['#f2f4f7', '#a3aab6', '#646c7a'],
+  cyan: ['#e3fbff', '#46c6e6', '#16809c'],
+}
+
+// 공용 정의 (화살촉, 재료 광택, 구슬 질감)
 export const Defs = () => (
   <defs>
     <marker id="mv-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" className="mv-arrowhead" />
     </marker>
+    <marker id="mv-head-dark" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#6b717c" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </marker>
     <linearGradient id="mv-si" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" className="mv-si-a" />
-      <stop offset="1" className="mv-si-b" />
+      <stop offset="0" stopColor="#7a7d82" />
+      <stop offset="1" stopColor="#4f5257" />
     </linearGradient>
+    {Object.entries(SLAB_GRADIENTS).map(([k, [a, b]]) => (
+      <linearGradient key={k} id={`g-${k}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor={a} />
+        <stop offset="0.55" stopColor={b} />
+        <stop offset="1" stopColor={b} stopOpacity="0.92" />
+      </linearGradient>
+    ))}
+    {Object.entries(SPHERES).map(([k, [hi, mid, lo]]) => (
+      <radialGradient key={k} id={`s-${k}`} cx="0.36" cy="0.32" r="0.7">
+        <stop offset="0" stopColor={hi} />
+        <stop offset="0.45" stopColor={mid} />
+        <stop offset="1" stopColor={lo} />
+      </radialGradient>
+    ))}
     <radialGradient id="mv-glow">
       <stop offset="0" className="mv-glow-a" />
       <stop offset="1" className="mv-glow-b" />
+    </radialGradient>
+    <radialGradient id="mv-flare" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stopColor="#fffbe6" stopOpacity="0.95" />
+      <stop offset="0.4" stopColor="#ffe8a3" stopOpacity="0.5" />
+      <stop offset="1" stopColor="#ffd36b" stopOpacity="0" />
     </radialGradient>
   </defs>
 )

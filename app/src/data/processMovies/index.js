@@ -6,3 +6,10 @@ export const processMovies = Object.fromEntries(
     .filter(([path]) => !path.endsWith('/index.js'))
     .map(([, m]) => [m.default.id, m.default]),
 )
+
+// 목차: 영상처럼 "지금 어느 공정인지"를 보여 주는 묶음. 순서는 실제 공정 순서입니다.
+export const CHAPTERS = [
+  { title: '전공정 8대 공정', ids: ['wafer-make', 'oxidation', 'photo', 'etch', 'deposition', 'ion-implant', 'metallization', 'eds'] },
+  { title: '후공정(PKG·TEST)', ids: ['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test'] },
+  { title: '첨단 패키징', ids: ['bumping', 'flipchip-bond', 'underfill', 'rdl', 'tsv'] },
+]

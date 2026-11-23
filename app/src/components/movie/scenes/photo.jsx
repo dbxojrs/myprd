@@ -61,6 +61,7 @@ const Mask = ({ at = 0 }) => (
 
 const Lamp = ({ at = 0 }) => (
   <g style={anim('mv-fade', at, 0.6)}>
+    <ellipse cx="160" cy="10" rx="120" ry="46" fill="url(#mv-flare)" style={loop('mv-pulse', at, 2.4, 'ease-in-out')} />
     <rect x="110" y="4" width="100" height="14" rx="4" className="mv-soft" />
     <text x="160" y="13.5" textAnchor="middle" className="mv-tag">
       빛(노광 장비)

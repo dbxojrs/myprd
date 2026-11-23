@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { processMovies } from '../../data/processMovies/index.js'
+import { CHAPTERS, processMovies } from '../../data/processMovies/index.js'
+import { findProcess } from '../../data/processes.js'
 import { findSource } from '../../data/sourceCatalog.js'
 import { movieArt } from './scenes/index.js'
 import { Defs, H, MAT, W } from './kit.jsx'
@@ -12,14 +13,41 @@ import { prefersReducedMotion } from '../Illustrations.jsx'
 const HOLD = 1.2 // 장면 끝에서 다음 장면으로 넘어가기 전 잠깐 멈추는 시간(초)
 const SPEEDS = [0.75, 1, 1.25, 1.5]
 
-export default function ProcessMovie({ id }) {
+export default function ProcessMovie({ id, onOpenProcess }) {
   const movie = processMovies[id]
   const art = movieArt[id]
   if (!movie || !art) return null
-  return <Movie movie={movie} art={art} />
+  return <Movie movie={movie} art={art} id={id} onOpenProcess={onOpenProcess} />
 }
 
-function Movie({ movie, art }) {
+// 공정 목차: 지금 공정이 들어 있는 묶음을 번호와 함께 보여 주고, 누르면 그 공정으로 갑니다.
+function Chapters({ id, onOpenProcess }) {
+  const group = CHAPTERS.find((c) => c.ids.includes(id))
+  if (!group) return null
+  return (
+    <ol className="movie-chapters" aria-label={group.title}>
+      <li className="chap-title">{group.title}</li>
+      {group.ids.map((pid, i) => {
+        const name = findProcess(pid)?.name.ko ?? pid
+        return (
+          <li key={pid}>
+            <button
+              type="button"
+              className={pid === id ? 'now' : ''}
+              aria-current={pid === id ? 'step' : undefined}
+              disabled={!onOpenProcess || pid === id}
+              onClick={() => onOpenProcess?.(pid)}
+            >
+              {i + 1}. {name}
+            </button>
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
+function Movie({ movie, art, id, onOpenProcess }) {
   const scenes = movie.scenes
   const last = scenes.length - 1
   const [reduced] = useState(prefersReducedMotion)
@@ -201,6 +229,8 @@ function Movie({ movie, art }) {
           )
         })}
       </div>
+
+      <Chapters id={id} onOpenProcess={onOpenProcess} />
 
       <div className="movie-controls">
         <button type="button" onClick={() => (beat > 0 ? goBeat(0) : goScene(si - 1))} aria-label="이전 장면" title="이전 장면 (←)">

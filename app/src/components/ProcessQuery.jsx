@@ -87,7 +87,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
           <ProcessIllustration id={process.id} />
           <p>{process.summary}</p>
           <ReviewBadge reviewed={process.reviewed} sources={process.sources} sourceDate={process.sourceDate} />
-          <ProcessMovie key={`movie-${process.id}`} id={process.id} />
+          <ProcessMovie key={`movie-${process.id}`} id={process.id} onOpenProcess={open} />
           <ExpandAll ids={SECTION_IDS} label="공정 설명" />
 
           {explainers[process.id] && (

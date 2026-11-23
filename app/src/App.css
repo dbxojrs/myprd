@@ -4468,3 +4468,104 @@ button.danger:hover { background: var(--bad-soft); }
 .mv-underfill { fill: #9be7ff; opacity: 0.85; }
 .mv-rdl { fill: none; stroke: var(--mv-metal); stroke-width: 2.4; stroke-dasharray: 1; }
 .mv-liner { fill: none; stroke: #c08bff; stroke-width: 2; }
+
+/* ───────── 공정 애니메이션: 밝은 스튜디오 스타일 (위 규칙을 덮어씀) ─────────
+   밝은 회색 그라데이션 배경 + 바닥 그림자, 광택 있는 재료, 구슬 같은 입자, 괄호 라벨.
+   무대는 다크 모드에서도 밝게 둡니다(영상 화면처럼). */
+.movie-stage {
+  background:
+    radial-gradient(70% 22% at 50% 96%, rgb(0 0 0 / 0.10), transparent 70%),
+    linear-gradient(180deg, #c6ccd0 0%, #dfe4e6 28%, #e8ecee 62%, #dce2e4 100%);
+}
+.movie-scene { filter: drop-shadow(0 5px 6px rgb(40 48 60 / 0.22)); }
+.movie-step { background: rgb(255 255 255 / 0.75); color: #3b4048; border: 1px solid rgb(0 0 0 / 0.08); }
+.movie-bigplay { background: rgb(255 255 255 / 0.95); color: #2f3440; box-shadow: 0 10px 30px rgb(0 0 0 / 0.2); }
+
+/* 자막: 짙은 회색 상자에 흰 글씨 */
+.movie-caption {
+  background: rgb(48 50 54 / 0.88);
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+}
+.movie-caption .cite { color: #e6ecf5; border-color: rgb(230 236 245 / 0.45); }
+
+/* 재료: 광택 그라데이션 */
+.m-si { fill: url(#g-si); }
+.m-oxide { fill: url(#g-oxide); }
+.m-pr { fill: url(#g-pr); }
+.m-prx { fill: url(#g-prx); }
+.m-film { fill: url(#g-film); }
+.m-nitride { fill: url(#g-nitride); }
+.m-metal { fill: url(#g-metal); }
+.m-barrier { fill: url(#g-barrier); }
+.m-doped { fill: url(#g-doped); opacity: 0.92; }
+.m-mask { fill: url(#g-mask); }
+.movie-svg [class^='m-'], .movie-svg [class*=' m-'] { stroke: rgb(255 255 255 / 0.35); stroke-width: 0.4; }
+.mv-hatch { stroke: rgb(255 255 255 / 0.08); }
+
+/* 입자: 빛이 반사되는 구슬 */
+.mv-gas { fill: url(#s-cyan); }
+.mv-water { fill: url(#s-blue); }
+.mv-ion { fill: url(#s-pink); }
+.mv-atom { fill: url(#s-gold); }
+.mv-ball { fill: url(#s-gold); }
+.mv-solder { fill: url(#s-silver); stroke: none; }
+.mv-dopant-n { fill: url(#s-orange); stroke: none; }
+.mv-dopant-p { fill: url(#s-blue); stroke: none; }
+.mv-siatom { fill: url(#s-teal); opacity: 1; }
+.mv-dust { fill: url(#s-gray); }
+.mv-sand { fill: #d6bc86; }
+
+/* 글자·선: 밝은 배경에 맞게 짙은 글자 + 흰 테두리 */
+.mv-tag { fill: #2f343c; stroke: rgb(255 255 255 / 0.85); stroke-width: 2.2px; font-weight: 600; }
+.mv-tag.strong { fill: #22262c; }
+.mv-callout .mv-tag { stroke: rgb(255 255 255 / 0.9); }
+.mv-bracket { fill: none; stroke: #6b717c; stroke-width: 0.9; stroke-linecap: round; }
+.mv-leader { stroke: #6b717c; stroke-width: 0.9; fill: none; opacity: 1; }
+.mv-dotc { fill: #6b717c; }
+.mv-arrow { stroke: #6b717c; stroke-width: 1.3; }
+.mv-arrowhead { fill: #6b717c; }
+.mv-line { stroke: #8a909a; }
+
+/* 빈 곳·보조 그림 */
+.mv-void { fill: #dfe4e6; }
+.mv-soft { fill: rgb(255 255 255 / 0.65); stroke: #a7aeb8; stroke-width: 0.8; }
+.mv-legendbox { fill: rgb(255 255 255 / 0.85); stroke: #c3c9d1; stroke-width: 0.8; }
+.mv-crucible { stroke: #8f97a3; }
+.mv-ring { stroke: #9aa2ad; }
+.mv-ringside { fill: #9aa2ad; }
+.mv-needle { stroke: #5f6670; }
+.mv-blade { fill: rgb(150 158 170 / 0.25); stroke: #6f7782; }
+.mv-blade-mark { stroke: rgb(90 98 110 / 0.6); }
+.mv-capillary { fill: #b9c0ca; stroke: #8a929e; stroke-width: 0.5; }
+.mv-wire { stroke: #d39a1a; stroke-width: 1.5; }
+.mv-pin { fill: #9aa2ad; }
+.mv-saw { fill: #9aa2ad; }
+.mv-wheel-teeth { fill: #b9c0ca; }
+.mv-notch { stroke: #e3e8ea; }
+.mv-die { fill: #8d97a8; stroke: #c9d0dc; }
+.mv-waferdisc { fill: url(#s-gray); stroke: #c7ced8; }
+.mv-waferdisc.mirror { fill: #e8edf3; }
+.mv-plasma { fill: #b36bff; opacity: 0.22; }
+.mv-ray { fill: #8b6cff; opacity: 0.28; }
+.mv-ray-core { stroke: #7a5cff; }
+.mv-mark { fill: #d7dde6; }
+.mv-shine { stroke: rgb(255 255 255 / 0.55); }
+.mv-cell { fill: #5b7fbf; }
+.mv-heatwash { fill: #ff8a3d; opacity: 0.1; }
+.mv-glow-a { stop-color: #ffcf8a; stop-opacity: 0.95; }
+.mv-glow-b { stop-color: #ff9c4d; stop-opacity: 0; }
+
+/* 범례 색칸도 같은 그라데이션 */
+.movie-legend svg rect { stroke: rgb(0 0 0 / 0.15); stroke-width: 0.6; }
+
+/* 공정 목차 (영상의 「8대 공정」 목록처럼, 지금 공정만 진하게) */
+.movie-chapters { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; margin: 0; padding: 2px 14px 8px; list-style: none; font-size: 0.82rem; }
+.movie-chapters .chap-title { font-weight: 800; color: var(--text); margin-right: 6px; padding: 2px 10px; border: 1px solid var(--border); border-radius: 6px; }
+.movie-chapters button { border: none; background: none; padding: 3px 6px; border-radius: 6px; color: var(--muted); font-size: inherit; min-height: 28px; }
+.movie-chapters button:hover { color: var(--text); background: var(--bg); }
+.movie-chapters button.now { color: var(--text); font-weight: 800; }
+.movie-chapters button.now::before { content: '▶ '; color: var(--accent); }
