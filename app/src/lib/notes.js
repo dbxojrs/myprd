@@ -80,7 +80,8 @@ export const quote = (text) =>
     .join('\n')
 
 // 전체 노트를 .md 글로 (공정별 제목 아래 노트)
-export function notesToMarkdown(list) {
+// forPaste: 노션·구글 문서 등에 붙여넣을 때. 형광펜(==글==)을 <mark> 대신 굵은 글씨로 바꿉니다(붙여넣기에서 HTML 태그가 그대로 보이지 않게).
+export function notesToMarkdown(list, { forPaste = false } = {}) {
   const groups = new Map()
   for (const n of sortNotes(list)) {
     const key = n.ref?.label ?? '공정 지정 없음'
@@ -93,7 +94,7 @@ export function notesToMarkdown(list) {
     for (const n of items) {
       parts.push(`### ${n.pinned ? '📌 ' : ''}${n.title || '(제목 없음)'}`)
       if (n.tags.length) parts.push(n.tags.map((t) => `#${t}`).join(' '))
-      parts.push('', n.body.replace(/==(.+?)==/g, '<mark>$1</mark>'), '')
+      parts.push('', n.body.replace(/==(.+?)==/g, forPaste ? '**$1**' : '<mark>$1</mark>'), '')
     }
   }
   return parts.join('\n')

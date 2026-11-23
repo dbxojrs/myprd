@@ -54,6 +54,18 @@ export default function NotesPage({ onOpenProcess }) {
 
   const tags = [...new Set(notes.flatMap((n) => n.tags))].sort()
   const found = searchNotes(notes, text, tag)
+
+  // 지금 보이는(검색·태그로 걸러진) 노트를 붙여넣기용 Markdown으로 클립보드에 복사합니다.
+  const copyForPaste = async () => {
+    const md = notesToMarkdown(found, { forPaste: true })
+    try {
+      await navigator.clipboard.writeText(md)
+      setMessage(`노트 ${found.length}개를 복사했습니다. 노션 페이지에 붙여넣으면(Ctrl+V) 제목·목록·인용으로 바뀝니다.`)
+    } catch {
+      download(`내노트-${new Date().toISOString().slice(0, 10)}.md`, md)
+      setMessage('이 브라우저에서 클립보드 복사가 막혀 .md 파일로 내려받았습니다. 노션의 가져오기(Import → Markdown)로 올릴 수 있습니다.')
+    }
+  }
   const groups = group(found, by)
 
   const edit = (id) => {
@@ -90,6 +102,9 @@ export default function NotesPage({ onOpenProcess }) {
           </button>
           <button type="button" disabled={notes.length === 0} onClick={() => download(`내노트-${new Date().toISOString().slice(0, 10)}.md`, notesToMarkdown(notes))}>
             ⬇ .md 내보내기
+          </button>
+          <button type="button" disabled={found.length === 0} title="노션·구글 문서·옵시디언에 붙여넣으면 제목·목록·인용이 그대로 살아납니다. 검색·태그로 걸러 둔 노트만 복사합니다." onClick={copyForPaste}>
+            📋 노션용 복사
           </button>
           <button
             type="button"
