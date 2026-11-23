@@ -21,6 +21,7 @@ import FloatDock from './components/float/FloatDock.jsx'
 import SelectionToNote from './components/notes/SelectionToNote.jsx'
 import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
+import WrittenQuiz from './components/WrittenQuiz.jsx'
 import Collapsible from './components/ui/Collapsible.jsx'
 import { COURSES, courseStorageKey } from './data/courses.js'
 import { writeStored } from './lib/storage.js'
@@ -239,6 +240,7 @@ export default function App() {
             onActiveChange={setLineProcessId}
           />
         )}
+        {screen === 'written' && <WrittenQuiz onOpenProcess={openProcess} />}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}

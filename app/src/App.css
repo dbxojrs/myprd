@@ -4651,3 +4651,15 @@ button.danger:hover { background: var(--bad-soft); }
 @media (max-width: 600px) {
   .course-bar-nav { width: 100%; justify-content: space-between; }
 }
+
+/* 심화 주관식 */
+.wq-form { display: grid; gap: 8px; margin: 10px 0; }
+.wq-input { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface, transparent); color: inherit; resize: vertical; }
+.wq-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.wq-keywords ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 6px 0 10px; }
+.wq-keywords li { padding: 3px 10px; border-radius: 999px; font-size: 0.85rem; border: 1px solid var(--border); }
+.wq-keywords li.hit { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.wq-keywords li.miss { color: var(--muted); }
+.wq-model { margin: 8px 0; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); }
+.wq-model ul { margin: 6px 0 0; padding-left: 18px; }
+.wq-judge { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }

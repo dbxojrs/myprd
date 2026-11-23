@@ -144,3 +144,44 @@ export async function generateQuestions({ apiKey, refs, count = 5, level = '실�
   // 형식이 어긋난 문제는 버립니다.
   return parsed.questions.filter((q) => q.choices.length === 4 && q.answer >= 0 && q.answer < 4 && new Set(q.choices).size === 4)
 }
+
+const Graded = z.object({
+  verdict: z.enum(['correct', 'partial', 'wrong']),
+  score: z.number().int(),
+  good: z.string(),
+  missing: z.string(),
+  feedback: z.string(),
+})
+
+// (3) 심화 주관식 답을 앱 자료(모범 답안) 기준으로 채점합니다. 화면에는 "AI 채점 · 참고용"으로 보여 줍니다.
+export async function gradeWritten({ apiKey, question, answer }) {
+  const response = await withPlainRetry((full) => client(apiKey).beta.messages.parse({
+    model: getModel(),
+    max_tokens: 8000,
+    ...(full ? FALLBACK : {}),
+    output_config: { ...(full ? { effort: 'low' } : {}), format: betaZodOutputFormat(Graded) },
+    system: SYSTEM,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          `APP DATA:\n${contextFor(question.ref)}`,
+          `QUESTION: ${question.prompt}`,
+          `MODEL ANSWER (app data): ${(question.model ?? [question.answerText]).join(' / ')}`,
+          `STUDENT ANSWER: ${answer}`,
+          '',
+          '학생 답을 모범 답안과 APP DATA만 기준으로 채점하세요. 표현이 달라도 뜻이 맞으면 인정합니다.',
+          '- verdict: correct(핵심을 거의 다 맞게 씀) / partial(일부만 맞음) / wrong(핵심이 틀리거나 없음)',
+          '- score: 0~100',
+          '- good: 잘 쓴 점 한 문장, missing: 빠졌거나 틀린 점 한두 문장(없으면 "없음")',
+          '- feedback: 다음에 더 잘 쓰려면 어떻게 하면 좋은지 한두 문장. 모두 한국어 합니다체.',
+          'APP DATA에 없는 내용을 학생이 썼다면 맞다 틀리다 단정하지 말고 "앱 자료에서 확인되지 않음"이라고 적으세요.',
+        ].join('\n'),
+      },
+    ],
+  }))
+  if (response.stop_reason === 'refusal') throw new Error('AI가 이 요청에 답하지 않았습니다.')
+  const parsed = response.parsed_output
+  if (!parsed) throw new Error('AI 채점 결과를 읽지 못했습니다. 다시 시도하세요.')
+  return { ...parsed, score: Math.max(0, Math.min(100, parsed.score)) }
+}
