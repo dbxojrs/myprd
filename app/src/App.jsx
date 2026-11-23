@@ -21,6 +21,9 @@ import FloatDock from './components/float/FloatDock.jsx'
 import SelectionToNote from './components/notes/SelectionToNote.jsx'
 import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
+import Collapsible from './components/ui/Collapsible.jsx'
+import { COURSES, courseStorageKey } from './data/courses.js'
+import { writeStored } from './lib/storage.js'
 import { setUi, useUi } from './lib/uiOpen.js'
 import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
@@ -86,6 +89,13 @@ export default function App() {
   const openMachine = (id) => {
     setMachineFocus(id)
     setScreen(machines.find((m) => m.id === id)?.stage === 'front' ? 'machine-fab' : 'machine-pkg')
+  }
+
+  // 공정 상세의 "강의로 돌아가기"에서 씁니다. 그 단원을 골라 둔 채 강의가 있는 학습 화면으로 갑니다.
+  const openCourse = (courseId, lessonId) => {
+    if (lessonId) writeStored(courseStorageKey(courseId), lessonId)
+    setScreen(COURSES[courseId].screen)
+    window.scrollTo({ top: 0 })
   }
 
   const openPackage = (id) => {
@@ -184,6 +194,9 @@ export default function App() {
         )}
         {screen === 'front' && <FrontFlow completed={completed} currentId={processId} onOpenProcess={openProcess} />}
         {screen === 'flow' && (
+          <CourseBlock courseId="pkg" onOpenProcess={openProcess} onGo={setScreen} />
+        )}
+        {screen === 'flow' && (
           <FlowChart
             pkg={pkg}
             completed={completed}
@@ -202,6 +215,7 @@ export default function App() {
             onComplete={(id) => setCompleted((list) => (list.includes(id) ? list : [...list, id]))}
             onOpenProcess={setProcessId}
             onOpenMap={() => setScreen('map')}
+            onOpenCourse={openCourse}
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
         )}
@@ -227,8 +241,7 @@ export default function App() {
         )}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
-        {screen === 'course-pkg' && <CoursePage key="pkg" courseId="pkg" onOpenProcess={openProcess} onGo={setScreen} />}
-        {screen === 'course-adv' && <CoursePage key="adv" courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}
+        {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <AdvancedPackage onOpenProcess={openProcess} onOpenPackage={openPackage} />}
       </main>
 
@@ -242,5 +255,17 @@ export default function App() {
       <SelectionToNote currentRef={currentRef} />
       <FloatDock currentRef={currentRef} onOpenProcess={openProcess} onOpenMachine={openMachine} />
     </div>
+  )
+}
+
+// 학습 화면 맨 위에 넣는 영상 강의 상자. 접어 두면 아래 학습 내용만 봅니다.
+function CourseBlock({ courseId, onOpenProcess, onGo }) {
+  const course = COURSES[courseId]
+  return (
+    <section className="screen course-block">
+      <Collapsible id={`course.${courseId}`} title={`🎬 영상으로 배우기 · ${course.title}`} badge={`${course.lessons.length}단원`}>
+        <CoursePage key={courseId} courseId={courseId} embedded onOpenProcess={onOpenProcess} onGo={onGo} />
+      </Collapsible>
+    </section>
   )
 }

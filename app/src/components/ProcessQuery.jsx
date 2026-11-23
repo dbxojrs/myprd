@@ -17,11 +17,12 @@ import Collapsible, { ExpandAll } from './ui/Collapsible.jsx'
 import ProcessMovie from './movie/ProcessMovie.jsx'
 import ProcessExplainer from './ProcessExplainer.jsx'
 import { explainers } from '../data/explainers/index.js'
+import { findLessonCourse } from '../data/courses.js'
 
 // 공정 상세의 접는 섹션. 열림 상태는 공정과 관계없이 섹션별로 기억합니다.
 const SECTION_IDS = ['pq.explain', 'pq.video', 'pq.zoom', 'pq.io', 'pq.terms', 'pq.steps', 'pq.analogy', 'pq.sources', 'pq.prereq']
 
-export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onReport }) {
+export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onOpenCourse, onReport }) {
   const [query, setQuery] = useState('')
   const [result, setResult] = useState(() =>
     initialId ? { status: 'found', process: findProcess(initialId) } : null,
@@ -81,6 +82,7 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
       {process && (
         <article className="card">
           <ProcessBreadcrumb process={process} pkg={pkg} onOpenMap={onOpenMap} />
+          <CourseBar id={process.id} onOpen={open} onOpenCourse={onOpenCourse} />
           <h3>
             <Term value={process.name} />
           </h3>
@@ -167,5 +169,33 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
         </article>
       )}
     </section>
+  )
+}
+
+// 이 공정이 영상 강의의 몇 번째 단원인지 보여 주고, 앞뒤 단원·강의 목차로 바로 갑니다.
+// 앞뒤 단원이 공정이 아니면(예: 전체 모습과 재료) 강의가 있는 학습 화면에서 그 단원을 엽니다.
+function CourseBar({ id, onOpen, onOpenCourse }) {
+  const found = findLessonCourse(id)
+  if (!found || !onOpenCourse) return null
+  const { courseId, course, index, prev, next } = found
+  const go = (lesson) => (findProcess(lesson.id) ? onOpen(lesson.id) : onOpenCourse(courseId, lesson.id))
+  return (
+    <nav className="course-bar" aria-label={`${course.title} 순서`}>
+      <button type="button" className="link course-bar-title" onClick={() => onOpenCourse(courseId, id)}>
+        🎬 {course.title} <strong>{index + 1}/{course.lessons.length}</strong>
+      </button>
+      <span className="course-bar-nav">
+        {prev && (
+          <button type="button" className="chip" onClick={() => go(prev)}>
+            ← {prev.title}
+          </button>
+        )}
+        {next && (
+          <button type="button" className="chip" onClick={() => go(next)}>
+            {next.title} →
+          </button>
+        )}
+      </span>
+    </nav>
   )
 }

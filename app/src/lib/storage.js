@@ -17,6 +17,11 @@ function write(key, value) {
   }
 }
 
+// 화면 밖(다른 화면의 버튼 등)에서 저장값을 미리 바꿔 둘 때 씁니다.
+export function writeStored(key, value) {
+  write(key, value)
+}
+
 export function useStoredState(key, fallback) {
   const [value, setValue] = useState(() => read(key, fallback))
   const update = (next) => {

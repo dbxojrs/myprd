@@ -35,9 +35,8 @@ export const MENU_GROUPS = [
     desc: '웨이퍼를 잘라 패키지로 만들고 테스트하는 PKG·TEST 공정과 설비를 공부합니다.',
     stages: ['mid', 'back'],
     items: [
-      { id: 'course-pkg', label: '패키징 영상 강의', desc: '완성된 패키지의 전체 모습과 재료부터 보고, 백그라인딩부터 최종 테스트까지 8단계를 애니메이션으로 하나씩 자세히 봅니다.' },
       { id: 'package', label: '패키지 타입', desc: 'QFN·BGA·플립칩 등 패키지 타입별 구조와 쓰임을 보고 학습할 타입을 고릅니다.' },
-      { id: 'flow', label: 'PKG 공정 흐름도', desc: '고른 패키지 타입의 후공정 순서를 봅니다.' },
+      { id: 'flow', label: 'PKG 공정 흐름도', desc: '전체 모습과 재료부터 백그라인딩~최종 테스트 8단계를 영상으로 보고, 고른 패키지 타입의 후공정 순서를 봅니다.' },
       { id: 'sim', label: '단위 공정 시뮬레이션', desc: '단위 공정 하나의 조건을 바꿔 결과와 불량을 봅니다.' },
       { id: 'line', label: 'PKG 라인 시뮬레이션', desc: '첫 공정부터 끝까지 조건을 골라 완성된 패키지를 판정받습니다.' },
       { id: 'machine-pkg', label: 'PKG 설비 실습 (EQ)', desc: '그라인더·쏘·다이 본더·와이어 본더·몰드·마커·테스트 핸들러를 둘러보고 가동해 봅니다.' },
@@ -73,8 +72,7 @@ export const MENU_GROUPS = [
     desc: '2.5D·3D·칩렛 같은 첨단 패키지와 앞으로의 기술을 봅니다.',
     stages: [],
     items: [
-      { id: 'course-adv', label: '첨단 패키지 영상', desc: '왜 첨단 패키지가 필요한지부터 2.5D·3D·팬아웃·칩렛 구조와 범핑·TSV·하이브리드 본딩 같은 핵심 기술까지 애니메이션으로 점점 자세히 봅니다.' },
-      { id: 'advanced', label: 'Advanced PKG', desc: '2.5D, 3D, 칩렛 같은 첨단 패키지의 핵심 공정과 미래 기술을 봅니다.' },
+      { id: 'advanced', label: 'Advanced PKG', desc: '왜 필요한지부터 2.5D·3D·팬아웃·칩렛 구조, 범핑·TSV·하이브리드 본딩까지 영상으로 점점 자세히 보고, 핵심 공정과 미래 기술을 봅니다.' },
     ],
   },
 ]

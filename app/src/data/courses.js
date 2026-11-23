@@ -11,7 +11,8 @@ export const COURSES = {
     finish: { label: '이제 공정으로: 웨이퍼 제조 →', processId: 'wafer-make' },
   },
   pkg: {
-    title: '패키징 영상 강의',
+    title: '후공정 영상 강의',
+    screen: 'flow',
     intro: '먼저 완성된 패키지의 전체 모습과 재료를 보고, 웨이퍼가 패키지가 되기까지 8단계를 하나씩 자세히 봅니다.',
     lessons: [
       { id: 'pkg-overview', title: '전체 모습과 재료', short: '패키지는 무엇으로, 어떤 순서로 만드나', part: '전체 보기' },
@@ -24,10 +25,11 @@ export const COURSES = {
       { id: 'package-saw', title: '패키지 쏘잉', short: '판을 낱개로 자르기' },
       { id: 'test', title: '최종 테스트', short: '완성품 검사하기' },
     ],
-    finish: { label: '다음 강의: 첨단 패키지 영상 →', screen: 'course-adv' },
+    finish: { label: '다음: 첨단 패키지 영상으로 →', screen: 'advanced' },
   },
   adv: {
-    title: '첨단 패키지 영상',
+    title: '첨단 패키지 영상 강의',
+    screen: 'advanced',
     intro: '왜 첨단 패키지가 필요한지 전체 그림을 먼저 보고, 대표 구조(2.5D·3D·팬아웃·칩렛)를 본 뒤, 그 구조를 만드는 핵심 기술을 하나씩 자세히 봅니다.',
     lessons: [
       { id: 'adv-overview', title: '왜 첨단 패키지인가', short: '전체 그림과 종류', part: '전체 보기' },
@@ -45,5 +47,18 @@ export const COURSES = {
     finish: null,
   },
 }
+
+// 공정 상세에서 "강의 몇 번째 단원인지" 보여 줄 때 씁니다. 기초 강의는 공정이 아니라 빼고 찾습니다.
+// screen: 이 강의가 들어 있는 학습 화면(후공정 = PKG 공정 흐름도, 첨단 = Advanced PKG)
+export function findLessonCourse(id) {
+  for (const [courseId, course] of Object.entries(COURSES)) {
+    if (!course.screen) continue
+    const index = course.lessons.findIndex((l) => l.id === id)
+    if (index >= 0) return { courseId, course, index, prev: course.lessons[index - 1], next: course.lessons[index + 1] }
+  }
+  return null
+}
+
+export const courseStorageKey = (courseId) => `tutor.course.${courseId}`
 
 export const courseLessonIds = () => Object.values(COURSES).flatMap((c) => c.lessons.map((l) => l.id))

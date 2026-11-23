@@ -4636,3 +4636,18 @@ button.danger:hover { background: var(--bad-soft); }
 .mv-carrier { fill: #c9d0da; stroke: #9aa2ad; stroke-width: 0.6; }
 .mv-chiplet-io { fill: url(#g-film); }
 .mv-block-label.small { font-size: 8px; }
+
+/* 학습 화면 안에 넣은 영상 강의 */
+.course-block { padding-bottom: 0; }
+.course-block + .screen { padding-top: 8px; }
+.course-embed .basics-lessons { margin-top: 4px; }
+.course-embed-intro { margin: 0 0 6px; }
+.course-embed { scroll-margin-top: 72px; }
+/* 공정 상세의 강의 순서 막대 */
+.course-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 0 10px; padding: 8px 12px; border-radius: 12px; background: var(--accent-soft); }
+.course-bar-title { font-weight: 600; }
+.course-bar-title strong { margin-left: 4px; }
+.course-bar-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (max-width: 600px) {
+  .course-bar-nav { width: 100%; justify-content: space-between; }
+}
