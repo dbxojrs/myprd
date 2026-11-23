@@ -32,6 +32,15 @@ export default {
         { text: '수십 μm까지 얇게 간 웨이퍼는 받침 웨이퍼에 임시로 붙여 다룹니다(WSS).', cite: ['hynix-be-8', 'samsung-pkg-engineer'] },
       ],
     },
+    {
+      heading: '더 알아보기: 실제 제품과 회사 발표',
+      points: [
+        { text: 'HBM은 TSV가 있는 베이스 다이 위에 코어 DRAM 다이를 쌓아 만들며, SK하이닉스는 HBM4부터 베이스 다이에 TSMC의 로직 공정을 쓰기로 했습니다.', cite: ['hynix-tsmc-hbm'] },
+        { text: 'SK하이닉스 HBM4는 데이터 단자(I/O)를 2,048개로 이전 세대의 두 배로 늘려 대역폭을 두 배로 높였습니다.', cite: ['hynix-hbm4'] },
+        { text: 'MR-MUF를 적용한 HBM2E는 이전 세대(HBM2)보다 열 방출 성능이 36% 좋아졌습니다.', cite: ['hynix-mrmuf-2024'] },
+        { text: '삼성전자는 Advanced TC-NCF로 12단을 8단과 같은 높이로 만들고, 칩 사이 간격을 업계 최소인 7μm로 줄여 수직 집적도를 20% 이상 높였습니다. 신호용은 작은 범프, 열 방출용은 큰 범프를 섞어 씁니다.', cite: ['samsung-hbm3e-12h'] },
+      ],
+    },
   ],
   gaps: [
     'HBM 세대별 대역폭·층수 숫자는 이 설명에서 다루지 않았습니다.',
