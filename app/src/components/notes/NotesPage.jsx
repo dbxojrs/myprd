@@ -2,8 +2,10 @@ import { useRef, useState } from 'react'
 import { findProcess, STAGES, STAGE_ORDER } from '../../data/processes.js'
 import { machines } from '../../data/machineSim.js'
 import { openPanel } from '../../lib/floatState.js'
-import { deleteNote, download, importNotes, notesToMarkdown, searchNotes, setCurrent, updateNote, useNotes } from '../../lib/notes.js'
+import { addNote, deleteNote, download, openNotePage, useEdit, importNotes, notesToMarkdown, searchNotes, setCurrent, updateNote, useNotes } from '../../lib/notes.js'
 import MiniText from '../MiniText.jsx'
+import NotePage from './NotePage.jsx'
+import { BUILTIN_TEMPLATES, COVERS, deleteTemplate, useTemplates } from '../../lib/noteTemplates.js'
 
 // "내 노트" 전체 화면: 검색·태그·묶어 보기, 복습 모드, 내보내기/가져오기.
 
@@ -44,7 +46,14 @@ function group(list, by) {
 }
 
 export default function NotesPage({ onOpenProcess }) {
+  const { pageId } = useEdit()
+  if (pageId) return <NotePage key={pageId} noteId={pageId} onClose={() => openNotePage(null)} onOpenProcess={onOpenProcess} />
+  return <NotesList onOpenProcess={onOpenProcess} />
+}
+
+function NotesList({ onOpenProcess }) {
   const notes = useNotes()
+  const [picking, setPicking] = useState(false)
   const [text, setText] = useState('')
   const [tag, setTag] = useState('')
   const [by, setBy] = useState('stage')
@@ -97,7 +106,10 @@ export default function NotesPage({ onOpenProcess }) {
           </p>
         </div>
         <div className="button-row">
-          <button type="button" className="primary" disabled={found.length === 0} onClick={() => setReview({ index: 0 })}>
+          <button type="button" className="primary" onClick={() => setPicking((v) => !v)} aria-expanded={picking}>
+            ＋ 새 페이지
+          </button>
+          <button type="button" disabled={found.length === 0} onClick={() => setReview({ index: 0 })}>
             🔁 복습 모드
           </button>
           <button type="button" disabled={notes.length === 0} onClick={() => download(`내노트-${new Date().toISOString().slice(0, 10)}.md`, notesToMarkdown(notes))}>
@@ -124,6 +136,8 @@ export default function NotesPage({ onOpenProcess }) {
           </p>
         )}
       </div>
+
+      {picking && <TemplatePicker onClose={() => setPicking(false)} />}
 
       <div className="notes-layout">
         <details className="notes-filter" open={typeof window !== 'undefined' && window.innerWidth >= 960}>
@@ -172,11 +186,13 @@ export default function NotesPage({ onOpenProcess }) {
               <div className="notes-cards">
                 {g.notes.map((n) => (
                   <article key={`${g.key}-${n.id}`} className="card note-card">
+                    {COVERS[n.style?.cover] && <div className="note-card-cover" style={{ background: COVERS[n.style.cover] }} aria-hidden="true" />}
                     <header>
-                      <strong>
+                      <button type="button" className="note-card-title" onClick={() => openNotePage(n.id)} title="페이지로 열기">
                         {n.pinned && '📌 '}
+                        {n.style?.icon && <span className="note-card-icon">{n.style.icon}</span>}
                         {n.title || '제목 없는 노트'}
-                      </strong>
+                      </button>
                       {n.ref &&
                         (n.ref.kind === 'process' ? (
                           <button type="button" className="link inline-link" onClick={() => onOpenProcess(n.ref.id)}>
@@ -195,8 +211,11 @@ export default function NotesPage({ onOpenProcess }) {
                         {n.tags.length > 0 && ` · ${n.tags.map((t) => `#${t}`).join(' ')}`}
                       </small>
                       <div className="button-row">
-                        <button type="button" onClick={() => edit(n.id)}>
-                          ✎ 편집
+                        <button type="button" className="primary" onClick={() => openNotePage(n.id)}>
+                          📄 열기
+                        </button>
+                        <button type="button" onClick={() => edit(n.id)} title="떠 있는 작은 창에서 편집">
+                          ◱
                         </button>
                         <button type="button" aria-pressed={n.pinned} onClick={() => updateNote(n.id, { pinned: !n.pinned })} title="고정">
                           📌
@@ -288,5 +307,42 @@ function ReviewMode({ notes, start, onClose, onOpenProcess }) {
       </div>
       <p className="muted quiz-keys">키보드: ← → 넘기기 · 모바일: 좌우로 밀기</p>
     </section>
+  )
+}
+
+// 새 페이지: 기본 템플릿 + 내가 저장한 템플릿 중에서 고르기
+function TemplatePicker({ onClose }) {
+  const mine = useTemplates()
+  const create = (t) => {
+    const note = addNote({ title: t.title, body: t.body, style: t.style ?? {} })
+    onClose()
+    openNotePage(note.id)
+  }
+  return (
+    <article className="card tpl-picker">
+      <div className="tpl-head">
+        <h3>어떤 페이지로 시작할까요?</h3>
+        <button type="button" className="link" onClick={onClose}>
+          닫기 ✕
+        </button>
+      </div>
+      <div className="tpl-grid">
+        {[...BUILTIN_TEMPLATES, ...mine].map((t) => (
+          <div key={t.id} className="tpl-item">
+            <button type="button" className="tpl-card" onClick={() => create(t)} style={COVERS[t.style?.cover] ? { '--tpl-cover': COVERS[t.style.cover] } : undefined}>
+              <span className="tpl-icon">{t.icon}</span>
+              <strong>{t.name}</strong>
+              <small>{t.desc}</small>
+            </button>
+            {t.id.startsWith('t-') && (
+              <button type="button" className="link tpl-del" onClick={() => window.confirm(`"${t.name}" 템플릿을 지울까요?`) && deleteTemplate(t.id)}>
+                지우기
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="muted">페이지를 꾸민 뒤 위쪽 "⭐ 템플릿으로 저장"을 누르면 여기에 내 템플릿으로 추가됩니다.</p>
+    </article>
   )
 }

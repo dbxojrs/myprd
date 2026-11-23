@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { addNote, deleteNote, notesFor, setCurrent, sortNotes, updateNote, useEdit, useNotes } from '../../lib/notes.js'
+import { addNote, deleteNote, notesFor, openNotePage, setCurrent, sortNotes, updateNote, useEdit, useNotes } from '../../lib/notes.js'
 import MiniText from '../MiniText.jsx'
 
 // 떠 있는 노트 창의 내용. 지금 보는 공정에 붙은 노트를 보여주고, 쓰던 노트는 화면을 옮겨도 그대로 둡니다.
@@ -174,6 +174,9 @@ export function NoteEditor({ note, onBack, onDelete, onOpenProcess }) {
         <span className={`note-status ${status}`} aria-live="polite">
           {status === 'saved' ? '저장됨 ✓' : '입력 중…'}
         </span>
+        <button type="button" className="link" onClick={() => openNotePage(note.id)} title="큰 화면에서 블록으로 꾸미기">
+          📄 페이지로 열기
+        </button>
       </div>
       {note.ref && (
         <p className="note-ref muted">

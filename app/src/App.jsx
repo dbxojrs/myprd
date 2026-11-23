@@ -24,6 +24,7 @@ import CoursePage from './components/CoursePage.jsx'
 import WrittenQuiz from './components/WrittenQuiz.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
+import { useEdit } from './lib/notes.js'
 import Collapsible from './components/ui/Collapsible.jsx'
 import { COURSES, courseStorageKey } from './data/courses.js'
 import { writeStored } from './lib/storage.js'
@@ -54,6 +55,11 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [screen])
+  // 어디서든 노트를 "페이지로 열기"하면 내 노트 화면으로 옮깁니다.
+  const { pageId } = useEdit()
+  useEffect(() => {
+    if (pageId) setScreen('notes')
+  }, [pageId])
   const [completed, setCompleted] = useStoredState('tutor.completed', [])
   const [, setReports] = useStoredState('tutor.reports', [])
 

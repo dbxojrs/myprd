@@ -3,14 +3,17 @@ import { openPanel } from './floatState.js'
 
 // 개인 노트. 브라우저 localStorage('tutor.notes')에만 저장하고 서버나 AI로 보내지 않습니다
 // (챗봇에서 사용자가 "내 노트 같이 보내기"를 켠 경우만 예외).
-// 노트: { id, title, body, ref: { kind, id, label } | null, tags, pinned, createdAt, updatedAt }
+// 노트: { id, title, body, ref: { kind, id, label } | null, tags, pinned, style?, createdAt, updatedAt }
+// body는 Markdown 글(블록 문법은 lib/blocks.js). style은 페이지 꾸미기 { icon, cover, font, size, wide }.
 export const notesStore = createStore('tutor.notes', [])
 // 지금 노트 창에서 쓰고 있는 노트와 저장 실패 알림(새로고침하면 사라져도 되는 값)
-export const editStore = createStore(null, { currentId: null, saveError: false })
+export const editStore = createStore(null, { currentId: null, saveError: false, pageId: null })
 
 export const useNotes = () => useStore(notesStore)
 export const useEdit = () => useStore(editStore)
 export const setCurrent = (currentId) => editStore.set((s) => ({ ...s, currentId }))
+// 노트를 큰 페이지 편집기(내 노트 화면)로 엽니다. App이 pageId를 보고 화면을 옮깁니다.
+export const openNotePage = (pageId) => editStore.set((s) => ({ ...s, pageId }))
 
 const newId = () => `n-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
 const sameRef = (a, b) => (a?.kind ?? null) === (b?.kind ?? null) && (a?.id ?? null) === (b?.id ?? null)
@@ -21,9 +24,9 @@ function save(next) {
   return ok
 }
 
-export function addNote({ title = '', body = '', ref = null, tags = [] } = {}) {
+export function addNote({ title = '', body = '', ref = null, tags = [], style = {} } = {}) {
   const now = new Date().toISOString()
-  const note = { id: newId(), title, body, ref, tags, pinned: false, createdAt: now, updatedAt: now }
+  const note = { id: newId(), title, body, ref, tags, pinned: false, style, createdAt: now, updatedAt: now }
   save((list) => [note, ...list])
   return note
 }
@@ -92,7 +95,7 @@ export function notesToMarkdown(list, { forPaste = false } = {}) {
   for (const [label, items] of groups) {
     parts.push(`## ${label}`, '')
     for (const n of items) {
-      parts.push(`### ${n.pinned ? '📌 ' : ''}${n.title || '(제목 없음)'}`)
+      parts.push(`### ${n.pinned ? '📌 ' : ''}${n.style?.icon ? `${n.style.icon} ` : ''}${n.title || '(제목 없음)'}`)
       if (n.tags.length) parts.push(n.tags.map((t) => `#${t}`).join(' '))
       parts.push('', n.body.replace(/==(.+?)==/g, forPaste ? '**$1**' : '<mark>$1</mark>'), '')
     }
@@ -113,6 +116,7 @@ export function importNotes(data) {
     ref: n.ref && typeof n.ref.kind === 'string' ? n.ref : null,
     tags: Array.isArray(n.tags) ? n.tags.filter((t) => typeof t === 'string') : [],
     pinned: Boolean(n.pinned),
+    style: n.style && typeof n.style === 'object' ? { icon: String(n.style.icon ?? '').slice(0, 8), cover: String(n.style.cover ?? ''), font: String(n.style.font ?? ''), size: String(n.style.size ?? ''), wide: Boolean(n.style.wide) } : {},
     createdAt: typeof n.createdAt === 'string' ? n.createdAt : new Date().toISOString(),
     updatedAt: typeof n.updatedAt === 'string' ? n.updatedAt : new Date().toISOString(),
   }))
