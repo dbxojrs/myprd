@@ -170,12 +170,16 @@ function LineVerdict({ verdict, onRestart }) {
   )
 }
 
-export default function MachineSim({ onOpenProcess, initialId = null, area = null }) {
+export default function MachineSim({ onOpenProcess, initialId = null, area = null, onMachineChange }) {
   // area: 'front'이면 전공정(FAB) 설비만, 'back'이면 후공정(PKG·TEST) 설비만 보여줍니다.
   const pool = area ? machines.filter((m) => m.stage === area) : machines
   const first = pool.find((m) => m.id === initialId) ?? pool[0]
   const [machineId, setMachineId] = useState(first.id)
   const machine = machines.find((m) => m.id === machineId)
+  // 노트·챗봇 창이 지금 보는 설비를 알 수 있게 알려줍니다.
+  useEffect(() => {
+    onMachineChange?.(machineId)
+  }, [machineId, onMachineChange])
   const [mode, setMode] = useState('free')
   const [display, setDisplay] = useState('example')
   const [scenarioId, setScenarioId] = useState(null)

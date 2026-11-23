@@ -55,6 +55,15 @@ export const MENU_GROUPS = [
     ],
   },
   {
+    id: 'mine',
+    label: '내 공부',
+    en: 'My Notes',
+    icon: '📒',
+    desc: '공부하며 쓴 노트를 공정별로 모아 보고 복습합니다.',
+    stages: [],
+    items: [{ id: 'notes', label: '내 노트', desc: '어느 화면에서든 📝 동그라미로 쓴 노트를 공정 단계·태그·날짜로 묶어 보고, 복습 모드로 다시 떠올려 봅니다.' }],
+  },
+  {
     id: 'deep',
     label: '첨단 패키징',
     en: 'Advanced PKG',

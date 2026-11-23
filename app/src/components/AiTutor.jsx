@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useApiKey } from '../lib/apiKey.js'
 import { processes, STAGES, STAGE_ORDER } from '../data/processes.js'
 import { machines } from '../data/machineSim.js'
+import ModelPicker from './chat/ModelPicker.jsx'
 
 // AI 기능 화면 조각. 모두 선택 기능이며, 키가 없으면 키를 넣는 칸만 보여줍니다.
 // AI 모듈(SDK 포함)은 처음 쓸 때만 내려받습니다.
@@ -17,6 +18,7 @@ export function AiKeyBox({ compact = false }) {
         <button type="button" className="link" onClick={clear}>
           키 지우기
         </button>
+        {!compact && <ModelPicker />}
       </div>
     )
   return (

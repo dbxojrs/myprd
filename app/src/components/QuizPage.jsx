@@ -2,6 +2,26 @@ import { useEffect, useState } from 'react'
 import { makeQuiz, QUIZ_SCOPES, topicLabel } from '../lib/quiz.js'
 import { useStoredState } from '../lib/storage.js'
 import { AiExplain, AiKeyBox, AiQuizMaker } from './AiTutor.jsx'
+import { appendToCurrentNote } from '../lib/notes.js'
+
+// 문제·정답·해설을 노트로 보냅니다.
+function QuizToNote({ q }) {
+  return (
+    <button
+      type="button"
+      className="link"
+      onClick={() =>
+        appendToCurrentNote(
+          `❓ ${q.prompt}\n- 정답: **${q.choices[q.answer]}**\n- 해설: ${q.explain.replace(/\n/g, ' ')}`,
+          { kind: 'quiz', id: q.topic ?? 'quiz', label: '시험' },
+          '시험 오답 정리',
+        )
+      }
+    >
+      📝 노트로
+    </button>
+  )
+}
 
 // 시험 화면. 문제는 공정 데이터와 장비 규칙표로 만듭니다(lib/quiz.js).
 // 연습 모드는 한 문제씩 바로 채점하고 해설을 보여주며, 시험 모드는 끝난 뒤 한꺼번에 채점합니다.
@@ -89,6 +109,7 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
                       <strong>정답:</strong> {w.q.choices[w.q.answer]}
                     </p>
                     <p className="quiz-explain">{w.q.explain}</p>
+                    <QuizToNote q={w.q} />
                   </details>
                 </li>
               ))}
@@ -240,7 +261,7 @@ function QuizRun({ run, setRun, finish, onOpenProcess, onOpenMachine }) {
                 <strong>정답:</strong> {x.choices[x.answer]}
               </p>
               <p className="quiz-explain">{x.explain}</p>
-              <RefLink q={x} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+              <RefLink q={x} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} /> <QuizToNote q={x} />
               <AiExplain question={x} picked={answers[i]} />
             </li>
           ))}
@@ -284,7 +305,7 @@ function QuizRun({ run, setRun, finish, onOpenProcess, onOpenMachine }) {
           <div className={`quiz-feedback ${picked === q.answer ? 'ok' : 'ng'}`} aria-live="polite">
             <strong>{picked === q.answer ? '정답입니다' : '틀렸습니다'}</strong>
             <p className="quiz-explain">{q.explain}</p>
-            <RefLink q={q} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+            <RefLink q={q} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} /> <QuizToNote q={q} />
             <AiExplain key={q.id} question={q} picked={picked} />
           </div>
         )}

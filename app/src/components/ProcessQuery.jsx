@@ -13,6 +13,10 @@ import ZoomStory from './ZoomStory.jsx'
 import ConceptFigures from './ConceptFigures.jsx'
 import ProcessSequence, { ProcessBreadcrumb } from './ProcessSequence.jsx'
 import { Term, useTerms } from '../lib/terms.jsx'
+import Collapsible, { ExpandAll } from './ui/Collapsible.jsx'
+
+// 공정 상세의 접는 섹션. 열림 상태는 공정과 관계없이 섹션별로 기억합니다.
+const SECTION_IDS = ['pq.video', 'pq.zoom', 'pq.io', 'pq.terms', 'pq.steps', 'pq.analogy', 'pq.sources', 'pq.prereq']
 
 export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onReport }) {
   const [query, setQuery] = useState('')
@@ -78,41 +82,55 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
             <Term value={process.name} />
           </h3>
           <ProcessIllustration id={process.id} />
-          <VideoLinks videos={process.videos} />
           <p>{process.summary}</p>
-          <ZoomStory key={`zoom-${process.id}`} id={process.id} />
-          <ConceptFigures processId={process.id} />
-          <dl className="facts">
-            <dt>입력</dt>
-            <dd>{process.input}</dd>
-            <dt>결과</dt>
-            <dd>{process.output}</dd>
-            <dt>핵심 용어</dt>
-            <dd>{list(process.terms)}</dd>
-          </dl>
-          <ProcessDetails steps={process.steps} keyPoints={process.keyPoints} />
-          <AnalogyButton key={process.id} text={processAnalogies[process.id]} />
-          <PhotoExample key={`photo-${process.id}`} photo={process.photo} />
           <ReviewBadge reviewed={process.reviewed} sources={process.sources} sourceDate={process.sourceDate} />
-          {process.sources.length > 0 && (
-            <details className="sources-detail">
-              <summary>참고 자료 {process.sources.length}개</summary>
-              <SourceList sources={process.sources} />
-            </details>
-          )}
+          <ExpandAll ids={SECTION_IDS} label="공정 설명" />
 
-          <h4>먼저 볼 공정</h4>
-          {prereqs.length === 0 ? (
-            <p className="muted">앞 공정을 모두 학습했거나 첫 공정입니다.</p>
-          ) : (
-            <div className="button-row">
-              {prereqs.map((item) => (
-                <button key={item.id} type="button" className="chip" onClick={() => open(item.id)}>
-                  <Term value={item.name} compact />
-                </button>
-              ))}
-            </div>
+          <Collapsible id="pq.io" title="입력 · 결과">
+            <dl className="facts">
+              <dt>입력</dt>
+              <dd>{process.input}</dd>
+              <dt>결과</dt>
+              <dd>{process.output}</dd>
+            </dl>
+          </Collapsible>
+          <Collapsible id="pq.steps" title="세부 단계 · 핵심 포인트">
+            <ProcessDetails steps={process.steps} keyPoints={process.keyPoints} />
+          </Collapsible>
+          <Collapsible id="pq.zoom" title="확대해서 보기 · 개념도">
+            <ZoomStory key={`zoom-${process.id}`} id={process.id} />
+            <ConceptFigures processId={process.id} />
+          </Collapsible>
+          <Collapsible id="pq.terms" title="핵심 용어" defaultOpen={false} badge={`${process.terms.length}개`}>
+            <p>{list(process.terms)}</p>
+          </Collapsible>
+          <Collapsible id="pq.analogy" title="비유로 쉽게 보기 · 사진" defaultOpen={false}>
+            <AnalogyButton key={process.id} text={processAnalogies[process.id]} />
+            <PhotoExample key={`photo-${process.id}`} photo={process.photo} />
+          </Collapsible>
+          {process.videos?.length > 0 && (
+            <Collapsible id="pq.video" title="영상" defaultOpen={false} badge={`${process.videos.length}개`}>
+              <VideoLinks videos={process.videos} />
+            </Collapsible>
           )}
+          {process.sources.length > 0 && (
+            <Collapsible id="pq.sources" title="참고 자료" defaultOpen={false} badge={`${process.sources.length}개`}>
+              <SourceList sources={process.sources} />
+            </Collapsible>
+          )}
+          <Collapsible id="pq.prereq" title="먼저 볼 공정" defaultOpen={false} badge={prereqs.length ? `${prereqs.length}개` : undefined}>
+            {prereqs.length === 0 ? (
+              <p className="muted">앞 공정을 모두 학습했거나 첫 공정입니다.</p>
+            ) : (
+              <div className="button-row">
+                {prereqs.map((item) => (
+                  <button key={item.id} type="button" className="chip" onClick={() => open(item.id)}>
+                    <Term value={item.name} compact />
+                  </button>
+                ))}
+              </div>
+            )}
+          </Collapsible>
 
           <ProcessSequence process={process} pkg={pkg} completed={completed} onOpen={open} onComplete={onComplete} />
 

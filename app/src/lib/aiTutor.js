@@ -3,18 +3,34 @@ import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod'
 import { z } from 'zod'
 import { findProcess, STAGES } from '../data/processes.js'
 import { machines } from '../data/machineSim.js'
+import { getModel } from './aiModel.js'
 
 // 선택 기능: 사용자가 직접 넣은 Claude API 키로 (1) 문제 해설을 더 깊게 듣고 (2) 추가 문제를 만듭니다.
 // 이 앱에는 서버가 없어서 브라우저가 Claude API를 직접 부릅니다(dangerouslyAllowBrowser).
 // 키는 그 사람의 브라우저에만 있고, 이 앱의 데이터(공정 설명·장비 규칙표)만 근거로 쓰게 합니다.
 // AI 답은 화면에서 "AI 요약 · 출처 확인 권장"으로 표시합니다(PRD 5번).
 
-const MODEL = 'claude-opus-5-5'
-// 안전 분류기가 요청을 거절하면 서버가 알맞은 다른 모델로 다시 시도합니다.
+// 모델은 사용자가 고릅니다(lib/aiModel.js). 안전 분류기가 요청을 거절하면 서버가 알맞은 다른 모델로 다시 시도합니다.
 const FALLBACK = { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }
 
-function client(apiKey) {
+export function client(apiKey) {
   return new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
+}
+
+// 고른 모델이 effort·fallback 같은 옵션을 지원하지 않아 400이 나면, 그 옵션을 빼고 한 번 더 시도합니다.
+async function withPlainRetry(call) {
+  try {
+    return await call(true)
+  } catch (error) {
+    if (!(error instanceof Anthropic.BadRequestError)) throw error
+    try {
+      return await call(false)
+    } catch (again) {
+      if (again instanceof Anthropic.BadRequestError)
+        throw new Error(`이 모델(${getModel()})에서는 이 기능을 쓸 수 없습니다. 다른 모델을 고르세요. (${again.message})`)
+      throw again
+    }
+  }
 }
 
 const SYSTEM = [
@@ -63,11 +79,10 @@ export function aiErrorText(error) {
 
 // (1) 문제 하나를 더 깊게 설명합니다.
 export async function explainDeeper({ apiKey, question, picked }) {
-  const message = await client(apiKey).beta.messages.create({
-    model: MODEL,
+  const message = await withPlainRetry((full) => client(apiKey).beta.messages.create({
+    model: getModel(),
     max_tokens: 16000,
-    ...FALLBACK,
-    output_config: { effort: 'medium' },
+    ...(full ? { ...FALLBACK, output_config: { effort: 'medium' } } : {}),
     system: SYSTEM,
     messages: [
       {
@@ -83,7 +98,7 @@ export async function explainDeeper({ apiKey, question, picked }) {
         ].join('\n'),
       },
     ],
-  })
+  }))
   if (message.stop_reason === 'refusal') throw new Error('AI가 이 요청에 답하지 않았습니다.')
   return textOf(message)
 }
@@ -103,11 +118,11 @@ const Generated = z.object({
 // (2) 고른 공정·장비 자료만으로 객관식 문제를 새로 만듭니다.
 export async function generateQuestions({ apiKey, refs, count = 5, level = '실무' }) {
   const data = refs.map((ref) => contextFor(ref)).join('\n')
-  const response = await client(apiKey).beta.messages.parse({
-    model: MODEL,
+  const response = await withPlainRetry((full) => client(apiKey).beta.messages.parse({
+    model: getModel(),
     max_tokens: 16000,
-    ...FALLBACK,
-    output_config: { effort: 'medium', format: betaZodOutputFormat(Generated) },
+    ...(full ? FALLBACK : {}),
+    output_config: { ...(full ? { effort: 'medium' } : {}), format: betaZodOutputFormat(Generated) },
     system: SYSTEM,
     messages: [
       {
@@ -122,7 +137,7 @@ export async function generateQuestions({ apiKey, refs, count = 5, level = '실�
         ].join('\n'),
       },
     ],
-  })
+  }))
   if (response.stop_reason === 'refusal') throw new Error('AI가 이 요청에 답하지 않았습니다.')
   const parsed = response.parsed_output
   if (!parsed) throw new Error('AI 답을 문제 형식으로 읽지 못했습니다. 다시 시도하세요.')
