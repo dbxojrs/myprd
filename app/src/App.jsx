@@ -22,6 +22,7 @@ import SelectionToNote from './components/notes/SelectionToNote.jsx'
 import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
 import WrittenQuiz from './components/WrittenQuiz.jsx'
+import CasePractice from './components/CasePractice.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
 import { useEdit } from './lib/notes.js'
@@ -263,6 +264,7 @@ export default function App() {
           />
         )}
         {screen === 'written' && <WrittenQuiz onOpenProcess={openProcess} />}
+        {screen === 'cases' && <CasePractice onOpenProcess={openProcess} onOpenMachine={openMachine} />}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}

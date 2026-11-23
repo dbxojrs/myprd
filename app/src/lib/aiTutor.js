@@ -226,3 +226,45 @@ export async function adjustPlan({ apiKey, request, units, settings, weak }) {
   if (!parsed) throw new Error('AI 답을 일정 형식으로 읽지 못했습니다. 다시 시도하세요.')
   return parsed
 }
+
+const CaseGraded = z.object({
+  criteria: z.array(z.object({ id: z.string(), score: z.number().int(), comment: z.string() })),
+  strengths: z.string(),
+  improve: z.string(),
+  nextStep: z.string(),
+})
+
+// (5) 실무 상황 문제 평가. 상황·데이터·모범 포인트(앱 자료)와 채점 기준만 근거로 점수를 매깁니다.
+export async function gradeCase({ apiKey, scenario, rubric, answers, followup }) {
+  const qs = [...scenario.questions, ...(followup ? scenario.followups.map((f, i) => ({ id: `f${i}`, q: f.q, points: f.points, data: f.table })) : [])]
+  const response = await withPlainRetry((full) => client(apiKey).beta.messages.parse({
+    model: getModel(),
+    max_tokens: 12000,
+    ...(full ? FALLBACK : {}),
+    output_config: { ...(full ? { effort: 'medium' } : {}), format: betaZodOutputFormat(CaseGraded) },
+    system: SYSTEM,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          `SCENARIO (교육용 가상 사례): ${JSON.stringify({ title: scenario.title, story: scenario.story, table: scenario.table, facts: scenario.facts })}`,
+          `APP DATA (장비 규칙표): ${contextFor({ kind: 'machine', id: scenario.machine })}`,
+          `QUESTIONS WITH MODEL POINTS: ${JSON.stringify(qs.map((q) => ({ id: q.id, q: q.q, data: q.data, modelPoints: q.points.map((p) => ({ text: p.text, criterion: p.cat })) })))}`,
+          `RUBRIC: ${JSON.stringify(rubric)}`,
+          `STUDENT ANSWERS: ${JSON.stringify(answers)}`,
+          '',
+          '당신은 반도체 패키징 공장의 선임 공정기술 엔지니어로서 신입의 답안을 평가합니다.',
+          '- criteria: RUBRIC의 각 id마다 0~해당 배점 사이 정수 score와 한두 문장 comment. 모범 포인트를 얼마나 담았는지, 판단 순서와 근거가 맞는지 봅니다. 표현이 달라도 뜻이 같으면 인정합니다.',
+          '- strengths: 잘한 판단 한두 문장. improve: 빠졌거나 위험한 판단 두세 문장(예: 원인 확인 전 조건 변경, 출하 중지 누락).',
+          '- nextStep: 이 학생이 다음에 연습하면 좋을 것 한 문장.',
+          '모두 한국어 합니다체. APP DATA와 모범 포인트에 없는 기술 주장을 학생이 했다면 맞다 틀리다 단정하지 말고 "앱 자료에서 확인되지 않음"이라고 적으세요.',
+        ].join('\n'),
+      },
+    ],
+  }))
+  if (response.stop_reason === 'refusal') throw new Error('AI가 이 요청에 답하지 않았습니다.')
+  const parsed = response.parsed_output
+  if (!parsed) throw new Error('AI 평가 결과를 읽지 못했습니다. 다시 시도하세요.')
+  const max = Object.fromEntries(rubric.map((r) => [r.id, r.points]))
+  return { ...parsed, criteria: parsed.criteria.filter((c) => max[c.id] !== undefined).map((c) => ({ ...c, score: Math.max(0, Math.min(max[c.id], c.score)) })) }
+}
