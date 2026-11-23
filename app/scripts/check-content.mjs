@@ -76,6 +76,14 @@ for (const f of fs.readdirSync(pkgDir).filter((f) => f.endsWith('.js') && f !== 
   for (const sec of g.sections ?? []) sec.points.forEach((p, i) => checkCites(`패키지 ${g.id}/${sec.heading}#${i + 1}`, p.cite))
 }
 
+const { EQUIPMENT } = await import(pathToFileURL(path.join(root, 'data/equipment/index.js')).href)
+const { VISUALS } = await import(pathToFileURL(path.join(root, 'data/visuals.js')).href)
+for (const [id, v] of Object.entries(VISUALS)) {
+  if (!['real-photo', 'edu-diagram', 'ai-generated'].includes(v.origin)) problems.push(`시각 자료 ${id}: origin이 이상함`)
+  if (v.origin === 'real-photo' && (!v.source || !v.license)) problems.push(`시각 자료 ${id}: 실제 사진인데 출처·라이선스 없음`)
+  ;(v.notes ?? []).forEach((n, i) => checkCites(`시각 자료 ${id}#${i + 1}`, n.cite))
+}
+
 // 현장 실무 훈련 시나리오: 출처 키, 분기 연결, 배점 합 100, 데이터 id
 const fcDir = path.join(root, 'data/fieldCases')
 for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== 'index.js')) {
@@ -101,6 +109,14 @@ for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== '
     if (n.type !== 'end' && n.type !== 'outcome' && !n.next && !(n.options ?? []).every((o) => o.next)) problems.push(`${where}/${id}: 다음으로 갈 곳이 없음`)
   }
   if (!Object.values(fc.nodes).some((n) => n.type === 'end')) problems.push(`${where}: 평가(end) 노드 없음`)
+  // 장비 구조 연동: parts는 data/equipment 부위 id, figure는 data/visuals id
+  const eq = EQUIPMENT[fc.equipment?.kind]
+  if (fc.equipment?.kind && !eq) problems.push(`${where}: 장비 데이터 없음 "${fc.equipment.kind}"`)
+  for (const n of Object.values(fc.nodes).filter((x) => x.type === 'data'))
+    for (const it of n.items) {
+      for (const pt of it.parts ?? []) if (!eq?.modules.some((m) => m.id === pt)) problems.push(`${where}/${it.id}: 장비에 없는 부위 "${pt}"`)
+      if (it.figure && !VISUALS[it.figure]) problems.push(`${where}/${it.id}: 시각 자료 목록에 없는 그림 "${it.figure}"`)
+    }
 }
 
 const unused = keys.filter((k) => !used.has(k))

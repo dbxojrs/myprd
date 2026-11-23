@@ -1,6 +1,8 @@
 # Phase 2 설계: 시나리오 장비 구조도 (인터랙티브 2D)
 
-> 상태: 설계 (구현 전) · 작성 2026-11-24 · 대상: 현장 실무 훈련(`components/field/FieldSim.jsx`)
+> 상태: **1~5단계 구현됨** (2026-11-24) · 대상: 현장 실무 훈련(`components/field/FieldSim.jsx`)
+> 구현 파일: `components/field/EquipmentPanel.jsx`, `data/visuals.js`, PKG-001 데이터의 `parts`·`observe`·`figure`, `scripts/check-content.mjs` 검사
+> 남은 것: 6단계(FAB 시나리오 연결은 Phase 4에서), 실제 장비 사진(출처·라이선스 확인 후)
 
 ## 1. 목표
 

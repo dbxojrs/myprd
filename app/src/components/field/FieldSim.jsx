@@ -6,6 +6,7 @@ import { markActive } from '../../lib/activity.js'
 import { addNote, openNotePage } from '../../lib/notes.js'
 import { writeStored } from '../../lib/storage.js'
 import { findProcess } from '../../data/processes.js'
+import EquipmentPanel from './EquipmentPanel.jsx'
 
 // 현장 실무 훈련: 분기형 시나리오 목록과 진행 화면(3단: 사건·진행 / 상황·판단 / 데이터·선임 엔지니어).
 // 시나리오는 data/fieldCases, 진행·채점 규칙은 lib/fieldSim.js. 진행 상태는 'tutor.field'에 저장돼 새로고침해도 이어집니다.
@@ -210,6 +211,22 @@ function Table({ table }) {
 function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
   const [run, setRunState] = useState(() => saved?.run && !saved.run.done ? saved.run : saved?.run?.done ? saved.run : newRun(c))
   const [panel, setPanel] = useState('data')
+  const [part, setPart] = useState(null) // 장비 구조 탭에서 강조할 부위 id 또는 검사 그림 id
+  // 데이터 항목의 장비 위치 보기(관련 부위 강조 + 장비 구조 탭)
+  const showOnEquipment = (item) => {
+    const target = item.parts?.[0] ?? item.figure
+    if (!target) return
+    setPart(target)
+    setPanel('equip')
+  }
+  // 장비 구조 탭에서 "이 데이터 확인하러 가기": 데이터 수집 단계의 해당 카드로 스크롤
+  const jumpToData = (id) => {
+    const el = document.getElementById(`fd-${id}`)
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    el.classList.add('flash')
+    setTimeout(() => el.classList.remove('flash'), 1600)
+  }
   const [draft, setDraft] = useState({}) // 현재 노드에서 고르는 중인 값
   const node = c.nodes[run.node]
   const dataNode = Object.values(c.nodes).find((n) => n.type === 'data')
@@ -376,9 +393,14 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                 .map((i) => {
                   const seen = run.viewed.includes(i.id)
                   return (
-                    <div key={i.id} className={`field-data-item${seen ? ' seen' : ''}`}>
+                    <div key={i.id} id={`fd-${i.id}`} className={`field-data-item${seen ? ' seen' : ''}`}>
                       <div className="field-data-head">
                         <span>{i.label}</span>
+                        {(i.parts?.length > 0 || i.figure) && (
+                          <button type="button" className="link field-eq-link" onClick={() => showOnEquipment(i)} title="이 데이터와 관련된 장비 부위·검사 원리를 오른쪽 패널에서 봅니다">
+                            🔧 장비에서 보기
+                          </button>
+                        )}
                         {seen ? (
                           <span className="status ok">확인함</span>
                         ) : (
@@ -388,7 +410,8 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                             onClick={() => {
                               const r = log({ ...run, viewed: [...run.viewed, i.id], time: run.time + i.cost }, `확인: ${i.label}`)
                               setRun(r)
-                              setPanel('data')
+                              if (i.parts?.length || i.figure) showOnEquipment(i)
+                              else setPanel('data')
                             }}
                             title={i.cost > left ? '남은 시간이 부족합니다' : ''}
                           >
@@ -870,6 +893,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         <div className="seg" role="tablist" aria-label="오른쪽 패널">
           {[
             ['data', `확보한 데이터 ${run.viewed.length}`],
+            ['equip', '장비 구조'],
             ['mentor', '선임 엔지니어'],
           ].map(([id, label]) => (
             <button key={id} type="button" role="tab" aria-selected={panel === id} className={panel === id ? 'active' : ''} onClick={() => setPanel(id)}>
@@ -877,7 +901,11 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             </button>
           ))}
         </div>
-        {panel === 'data' ? (
+        {panel === 'equip' ? (
+          <div className="field-panel">
+            <EquipmentPanel c={c} run={run} focus={part} onFocus={setPart} onJumpData={jumpToData} canJump={node?.type === 'data' && !run.done} />
+          </div>
+        ) : panel === 'data' ? (
           <div className="field-panel">
             <h4>초기 데이터</h4>
             {c.nodes.brief?.table && <Table table={c.nodes.brief.table} />}

@@ -5176,3 +5176,54 @@ button { min-height: 36px; }
   .field-filters input { grid-column: 1 / -1; }
   .dash-mid { grid-template-columns: 1fr; }
 }
+
+/* ── 장비 구조 탭 (Phase 2) ── */
+.eqp { display: grid; gap: 10px; }
+.eqp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.visual-badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; border: 1px dashed var(--accent-2, var(--accent)); color: var(--accent-2, var(--accent)); }
+.visual-badge.real-photo { border-style: solid; color: var(--good); border-color: var(--good); }
+.visual-badge.ai-generated { color: var(--warn); border-color: var(--warn); }
+.eqp-stage { position: relative; }
+.eqp-canvas { overflow: auto; max-height: 340px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); overscroll-behavior: contain; }
+.eqp-inner { transition: width 0.25s ease; min-width: 100%; }
+.eqp-inner svg { display: block; width: 100%; height: auto; }
+.eqp-zoom { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; align-items: center; background: color-mix(in srgb, var(--surface) 85%, transparent); border-radius: 8px; padding: 3px; }
+.eqp-zoom button { min-height: 28px; width: 28px; padding: 0; font-weight: 800; }
+.eqp-zoom small { font-size: 0.72rem; color: var(--muted); padding: 0 4px; }
+.eqp-tip { font-size: 0.76rem; margin: 0; }
+.eqp-parts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.eqp-parts button { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; }
+.eqp-parts button.on { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.eqp-no { color: var(--accent); font-weight: 800; }
+.eqp-detail { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: grid; gap: 6px; }
+.eqp-detail h4 { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.eqp-detail p { margin: 0; font-size: 0.88rem; }
+.eqp-src { font-size: 0.76rem !important; }
+.eqp-related { border-top: 1px dashed var(--border); padding-top: 6px; display: grid; gap: 4px; }
+.eqp-related-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; }
+.scenario-tag { font-size: 0.7rem; font-weight: 700; color: var(--warn); }
+.scenario-tag::before { content: '🧪 '; }
+.eqp-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+.eqp-compare > div { border-radius: 8px; padding: 6px 8px; font-size: 0.8rem; }
+.eqp-compare .ok { background: var(--good-soft); }
+.eqp-compare .ok strong { color: var(--good); }
+.eqp-compare .bad { background: var(--bad-soft); }
+.eqp-compare .bad strong { color: var(--bad); }
+.eqp-compare p { margin: 2px 0 0; font-size: 0.8rem !important; }
+.eqp-notes { margin: 0; padding-left: 18px; font-size: 0.84rem; display: grid; gap: 4px; }
+.field-eq-link { font-size: 0.78rem; margin-left: auto; margin-right: 6px; white-space: nowrap; }
+.field-data-item.flash { animation: fd-flash 1.5s ease; }
+@keyframes fd-flash { 0%, 60% { box-shadow: 0 0 0 3px var(--accent); } 100% { box-shadow: none; } }
+/* Shear 시험 원리 도식 */
+.shear-fig { width: 100%; height: auto; background: var(--surface-2); border-radius: 10px; }
+.shear-fig .sf-chip { fill: #6b7280; }
+.shear-fig .sf-pad { fill: #c9a227; }
+.shear-fig .sf-ball { fill: #e0b84a; stroke: #8a6d1d; stroke-width: 1; }
+.shear-fig .sf-wire { stroke: #e0b84a; stroke-width: 3; fill: none; }
+.shear-fig .sf-contact { stroke: var(--bad); stroke-width: 3; stroke-dasharray: 4 3; }
+.shear-fig .sf-tool rect, .shear-fig .sf-tool path { fill: var(--accent); }
+.shear-fig .sf-arrow { stroke: var(--accent); stroke-width: 2; }
+.shear-fig .sf-arrowhead { fill: var(--accent); }
+.shear-fig .sf-label { font-size: 10px; fill: var(--text); }
+.shear-fig .sf-label.strong { font-weight: 700; fill: var(--bad); }
+@media (prefers-reduced-motion: reduce) { .eqp-inner { transition: none; } .field-data-item.flash { animation: none; outline: 2px solid var(--accent); } }
