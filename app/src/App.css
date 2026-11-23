@@ -4625,3 +4625,14 @@ button.danger:hover { background: var(--bad-soft); }
 .mv-emc-outline { fill: none; stroke: #4a5160; stroke-width: 1; stroke-dasharray: 3 2; }
 .mv-pill { fill: rgb(255 255 255 / 0.9); stroke: #c3c9d1; stroke-width: 0.8; }
 .mv-step { fill: rgb(255 255 255 / 0.9); stroke: #b6bec9; stroke-width: 0.9; }
+/* 첨단 패키지 그림 */
+.mv-cell-tiny { fill: rgb(255 255 255 / 0.18); }
+.mv-hbm { fill: url(#g-nitride); stroke: rgb(255 255 255 / 0.4); stroke-width: 0.4; }
+.mv-interposer { fill: #a8afba; stroke: #7d8594; stroke-width: 0.6; }
+.mv-bridge { fill: url(#g-metal); stroke: #9c6d0e; stroke-width: 0.5; }
+.mv-rdl-line { fill: none; stroke: #d39a1a; stroke-width: 1.2; }
+.mv-ncf { fill: #f6d57a; opacity: 0.9; }
+.mv-muf { fill: #2f3440; opacity: 0.55; }
+.mv-carrier { fill: #c9d0da; stroke: #9aa2ad; stroke-width: 0.6; }
+.mv-chiplet-io { fill: url(#g-film); }
+.mv-block-label.small { font-size: 8px; }

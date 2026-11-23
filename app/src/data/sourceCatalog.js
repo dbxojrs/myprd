@@ -435,6 +435,11 @@ export const SOURCE_CATALOG = [
     title: "On the Vertically Stacked Gate-All-Around Nanosheet and Nanowire Transistor Scaling beyond the 5 nm Technology Node",
     publisher: "Nanomaterials 12(10):1739 (2022), DOI 10.3390/nano12101739, CC BY 4.0",
     url: "https://doi.org/10.3390/nano12101739" },
+  // 첨단 패키지 (2026-11-23 본문 확인)
+  { key: "hynix-hybrid-note", short: "SK하이닉스(영문)", tier: "explain", checked: "2026-11-23",
+    title: "[Tech Note] Hybrid Bonding: Evolving into a Foundational Technology for Improving Semiconductor Performance",
+    publisher: "SK hynix Newsroom (2026.08.25)",
+    url: "https://news.skhynix.com/en/tech-note-series-ep2/" },
 ]
 
 const byKey = new Map(SOURCE_CATALOG.map((s) => [s.key, s]))
