@@ -32,6 +32,13 @@ export default {
         { text: 'SK하이닉스는 2013년 1세대 HBM에 TSV를 적용했다고 소개합니다.', cite: ['hynix-hbm-packaging'] },
       ],
     },
+    {
+      heading: '다른 무료 출처로 더 알아보기',
+      points: [
+        { text: '실리콘에 구멍을 뚫는 방법 중 플라즈마로 깊게 파는 DRIE가 약 95%를 차지합니다.', cite: ['oa-tsv-bump-2023'] },
+        { text: '구멍 안쪽에는 절연층·접착층·씨앗층(대개 SiO₂/Ti/Cu)을 차례로 입히고, 구리 전해 도금으로 채웁니다.', cite: ['oa-tsv-bump-2023'] },
+      ],
+    },
   ],
   gaps: [
     '구멍 식각 깊이·종횡비 숫자는 위 출처에서 확인하지 못했습니다.',
