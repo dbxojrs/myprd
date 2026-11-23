@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Component, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CHAPTERS, processMovies } from '../../data/processMovies/index.js'
 import { findProcess } from '../../data/processes.js'
 import { findBasic } from '../../data/basics.js'
@@ -18,7 +18,11 @@ export default function ProcessMovie({ id, onOpenProcess, chapters }) {
   const movie = processMovies[id]
   const art = movieArt[id]
   if (!movie || !art) return null
-  return <Movie movie={movie} art={art} id={id} onOpenProcess={onOpenProcess} chapters={chapters} />
+  return (
+    <MovieBoundary>
+      <Movie movie={movie} art={art} id={id} onOpenProcess={onOpenProcess} chapters={chapters} />
+    </MovieBoundary>
+  )
 }
 
 // 공정 목차: 지금 공정이 들어 있는 묶음을 번호와 함께 보여 주고, 누르면 그 공정으로 갑니다.
@@ -102,17 +106,18 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
     }
   }, [playing, speed, animations])
 
-  // 장면 시계
+  // 장면 시계: 화면 갱신은 1초에 10번만 합니다(그림의 움직임은 CSS 애니메이션이 부드럽게 처리).
+  // 매 프레임 다시 그리면 느린 컴퓨터에서 탭이 멈추거나 꺼질 수 있습니다.
   useEffect(() => {
     if (!playing) return undefined
     let prev = performance.now()
-    let raf = requestAnimationFrame(function tick(now) {
+    const timer = setInterval(() => {
+      const now = performance.now()
       const dt = ((now - prev) / 1000) * speed
       prev = now
       setElapsed((t) => t + dt)
-      raf = requestAnimationFrame(tick)
-    })
-    return () => cancelAnimationFrame(raf)
+    }, 100)
+    return () => clearInterval(timer)
   }, [playing, speed])
 
   // 장면이 끝나면 다음 장면으로
@@ -200,9 +205,7 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
       <div className="movie-stage">
         <svg ref={stage} viewBox={`0 0 ${W} ${H}`} className={`movie-svg${playing ? '' : ' paused'}`} role="img" aria-label={`${scene.title}: ${current.text}`}>
           <Defs />
-          <g key={`${si}-${take}`} className="movie-scene">
-            {drawing.draw((i) => i * beatLen)}
-          </g>
+          <SceneArt key={`${si}-${take}`} drawing={drawing} beatLen={beatLen} />
         </svg>
         <div className="movie-step">
           {si + 1} / {scenes.length} · {scene.title}
@@ -302,6 +305,37 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
       <p className="movie-note muted">그림은 이 앱에서 직접 그린 교육용 그림입니다(실제 크기·비율과 다를 수 있음). 자막의 출처 이름을 누르면 원문이 열립니다.</p>
     </section>
   )
+}
+
+// 장면 그림. 장면이 바뀔 때만 다시 그립니다(재생 중 시계가 돌 때는 그대로 둠).
+const SceneArt = memo(function SceneArt({ drawing, beatLen }) {
+  return <g className="movie-scene">{drawing.draw((i) => i * beatLen)}</g>
+})
+
+// 그림에서 오류가 나도 페이지 전체가 꺼지지 않고 이 상자 안에만 안내를 보여 줍니다.
+export class MovieBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { error: null }
+  }
+  static getDerivedStateFromError(error) {
+    return { error }
+  }
+  componentDidCatch(error) {
+    console.error('공정 애니메이션 오류:', error)
+  }
+  render() {
+    if (this.state.error)
+      return (
+        <p className="notice movie-error">
+          애니메이션을 보여 주다가 문제가 생겼습니다. 아래 설명은 그대로 볼 수 있습니다.{' '}
+          <button type="button" className="link" onClick={() => this.setState({ error: null })}>
+            다시 시도
+          </button>
+        </p>
+      )
+    return this.props.children
+  }
 }
 
 // 문장 끝의 출처 표시: 출처 이름(짧게)을 누르면 원문이 열립니다.

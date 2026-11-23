@@ -4477,7 +4477,7 @@ button.danger:hover { background: var(--bad-soft); }
     radial-gradient(70% 22% at 50% 96%, rgb(0 0 0 / 0.10), transparent 70%),
     linear-gradient(180deg, #c6ccd0 0%, #dfe4e6 28%, #e8ecee 62%, #dce2e4 100%);
 }
-.movie-scene { filter: drop-shadow(0 5px 6px rgb(40 48 60 / 0.22)); }
+/* 장면 전체 그림자(filter)는 매 프레임 계산이 무거워 쓰지 않습니다. 바닥 그림자는 무대 배경으로 표현합니다. */
 .movie-step { background: rgb(255 255 255 / 0.75); color: #3b4048; border: 1px solid rgb(0 0 0 / 0.08); }
 .movie-bigplay { background: rgb(255 255 255 / 0.95); color: #2f3440; box-shadow: 0 10px 30px rgb(0 0 0 / 0.2); }
 
