@@ -477,6 +477,23 @@ export const SOURCE_CATALOG = [
     title: "SK hynix Partners with TSMC to Strengthen HBM Technological Leadership",
     publisher: "SK hynix Newsroom (2024.04.19)",
     url: "https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/" },
+  // 패키지 타입 안내 출처 (2026-11-24 본문 확인)
+  { key: "amkor-pbga", short: "Amkor", tier: "explain", checked: "2026-11-24",
+    title: "PBGA/TEPBGA (Plastic Ball Grid Array)",
+    publisher: "Amkor Technology",
+    url: "https://amkor.com/packaging/laminate/pbga/" },
+  { key: "amkor-fcbga", short: "Amkor", tier: "explain", checked: "2026-11-24",
+    title: "FCBGA Laminate Packaging",
+    publisher: "Amkor Technology",
+    url: "https://amkor.com/packaging/laminate/fcbga/" },
+  { key: "amkor-flipchip", short: "Amkor", tier: "explain", checked: "2026-11-24",
+    title: "Flip Chip Packaging",
+    publisher: "Amkor Technology",
+    url: "https://amkor.com/technology/flip-chip/" },
+  { key: "amkor-wlcsp", short: "Amkor", tier: "explain", checked: "2026-11-24",
+    title: "WLCSP Wafer Level CSP Wafer Level Packaging",
+    publisher: "Amkor Technology",
+    url: "https://amkor.com/packaging/wafer-level-packaging/wlcsp/" },
 ]
 
 const byKey = new Map(SOURCE_CATALOG.map((s) => [s.key, s]))

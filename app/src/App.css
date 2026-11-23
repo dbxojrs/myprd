@@ -4663,3 +4663,11 @@ button.danger:hover { background: var(--bad-soft); }
 .wq-model { margin: 8px 0; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); }
 .wq-model ul { margin: 6px 0 0; padding-left: 18px; }
 .wq-judge { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+
+/* 패키지 타입 안내 */
+.pkg-guide h4 { margin: 16px 0 6px; }
+.pkg-guide-flow { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.pkg-guide-flow li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--border); border-radius: 12px; }
+.pkg-guide-flow .num { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; font-size: 0.8rem; }
+.pkg-guide-flow p { margin: 4px 0 0; }
+.pkg-guide-step { font-weight: 700; font-size: 0.98rem; }

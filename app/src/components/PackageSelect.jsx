@@ -4,8 +4,9 @@ import ReviewBadge from './ReviewBadge.jsx'
 import AnalogyButton from './AnalogyButton.jsx'
 import { PackageIllustration } from './Illustrations.jsx'
 import { Term } from '../lib/terms.jsx'
+import PackageGuide from './PackageGuide.jsx'
 
-export default function PackageSelect({ packageId, onSelect, onStart }) {
+export default function PackageSelect({ packageId, onSelect, onStart, onOpenProcess }) {
   const pkg = findPackage(packageId)
 
   return (
@@ -46,12 +47,15 @@ export default function PackageSelect({ packageId, onSelect, onStart }) {
           </dl>
           <AnalogyButton key={pkg.id} text={packageAnalogies[pkg.id]} />
           <ReviewBadge reviewed={pkg.reviewed} sources={pkg.sources} />
+          <PackageGuide id={pkg.id} onOpenProcess={onOpenProcess} />
           {pkg.flow ? (
             <button type="button" className="primary" onClick={onStart}>
-              이 패키지로 학습 시작
+              이 패키지로 흐름도·라인 시뮬레이션 시작
             </button>
           ) : (
-            <p className="notice">설명만 제공합니다. 공정 상세는 준비 중입니다.</p>
+            <p className="notice">
+              위 후공정 순서에서 단계를 눌러 공정마다 자세히 볼 수 있습니다. PKG 공정 흐름도와 라인 시뮬레이션은 아직 QFN 기준으로만 만들어져 있습니다.
+            </p>
           )}
         </article>
       )}

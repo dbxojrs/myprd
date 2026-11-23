@@ -60,6 +60,22 @@ for (const f of fs.readdirSync(exDir).filter((f) => f.endsWith('.js') && f !== '
   for (const sec of e.sections) sec.points.forEach((p, i) => checkCites(`설명 ${e.id}/${sec.heading}#${i + 1}`, p.cite))
 }
 
+// 패키지 타입 안내
+const { packages } = await import(pathToFileURL(path.join(root, 'data/packages.js')).href)
+const pkgDir = path.join(root, 'data/packageGuides')
+for (const f of fs.readdirSync(pkgDir).filter((f) => f.endsWith('.js') && f !== 'index.js')) {
+  const g = await load(path.join(pkgDir, f))
+  if (!packages.some((p) => p.id === g.id)) problems.push(`패키지 안내 ${f}: 없는 패키지 id "${g.id}"`)
+  g.structure.forEach((l, i) => checkCites(`패키지 ${g.id}/구조#${i + 1}`, l.cite))
+  g.flow.forEach((s, i) => {
+    if (s.id && !ids.has(s.id)) problems.push(`패키지 ${g.id}/순서#${i + 1}: 없는 공정 id "${s.id}"`)
+    if (!s.id && !s.name) problems.push(`패키지 ${g.id}/순서#${i + 1}: 공정 id도 이름도 없음`)
+    if (s.note) checkCites(`패키지 ${g.id}/순서#${i + 1}`, s.note.cite)
+  })
+  g.compare.forEach((l, i) => checkCites(`패키지 ${g.id}/비교#${i + 1}`, l.cite))
+  for (const sec of g.sections ?? []) sec.points.forEach((p, i) => checkCites(`패키지 ${g.id}/${sec.heading}#${i + 1}`, p.cite))
+}
+
 const unused = keys.filter((k) => !used.has(k))
 console.log(`출처 ${SOURCE_CATALOG.length}개 중 설명·자막에서 쓰는 것 ${keys.length - unused.length}개 (나머지는 공정 데이터·장비 실습에서 씀)`)
 if (problems.length) {

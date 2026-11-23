@@ -181,7 +181,7 @@ export default function App() {
       {/* 화면이 바뀌면 본문이 부드럽게 들어오고, 카드들이 차례로 떠오릅니다. */}
       <main key={screen === 'query' ? `query-${queryKey}` : screen} className="page-enter">
         {screen === 'package' && (
-          <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} />
+          <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} onOpenProcess={openProcess} />
         )}
         {screen === 'home' && <Home pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} />}
         {screen === 'map' && (
