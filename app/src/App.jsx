@@ -23,6 +23,7 @@ import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
 import WrittenQuiz from './components/WrittenQuiz.jsx'
 import CasePractice from './components/CasePractice.jsx'
+import FieldSim from './components/field/FieldSim.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
 import { useEdit } from './lib/notes.js'
@@ -35,7 +36,22 @@ import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
 
 export default function App() {
-  const [screen, setScreen] = useState('home')
+  // 지금 보는 화면은 이 탭(sessionStorage)에만 기억합니다. 새로고침하면 보던 화면으로 돌아오고, 새 탭은 홈부터.
+  const [screen, setScreenState] = useState(() => {
+    try {
+      return sessionStorage.getItem('tutor-screen') || 'home'
+    } catch {
+      return 'home'
+    }
+  })
+  const setScreen = (next) => {
+    setScreenState(next)
+    try {
+      sessionStorage.setItem('tutor-screen', next)
+    } catch {
+      // 저장 못 해도 화면 이동에는 영향 없음
+    }
+  }
   const [packageId, setPackageId] = useState(null)
   const [processId, setProcessId] = useState(null)
   const [lineProcessId, setLineProcessId] = useState(null)
@@ -175,7 +191,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className="app-body">
+      <div className={`app-body${screen === 'field' ? ' wide' : ''}`}>
       {showFlowBar && !ui.focus && !ui.flowbar && (
         <button type="button" className="flowbar-collapsed" aria-expanded="false" onClick={() => setUi({ flowbar: true })}>
           공정 흐름{activeFlowName ? ` · 현재: ${activeFlowName}` : ''} ▾ 펼치기
@@ -240,6 +256,10 @@ export default function App() {
             onOpenProcess={setProcessId}
             onOpenMap={() => setScreen('map')}
             onOpenCourse={openCourse}
+            onOpenField={(id) => {
+              writeStored('tutor.field.open', id)
+              setScreen('field')
+            }}
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
         )}
@@ -265,6 +285,7 @@ export default function App() {
         )}
         {screen === 'written' && <WrittenQuiz onOpenProcess={openProcess} />}
         {screen === 'cases' && <CasePractice onOpenProcess={openProcess} onOpenMachine={openMachine} />}
+        {screen === 'field' && <FieldSim onOpenProcess={openProcess} onOpenMachine={openMachine} onGo={setScreen} />}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}

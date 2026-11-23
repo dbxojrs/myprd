@@ -76,6 +76,31 @@ for (const f of fs.readdirSync(pkgDir).filter((f) => f.endsWith('.js') && f !== 
   for (const sec of g.sections ?? []) sec.points.forEach((p, i) => checkCites(`패키지 ${g.id}/${sec.heading}#${i + 1}`, p.cite))
 }
 
+// 현장 실무 훈련 시나리오: 출처 키, 분기 연결, 배점 합 100, 데이터 id
+const fcDir = path.join(root, 'data/fieldCases')
+for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== 'index.js')) {
+  const fc = await load(path.join(fcDir, f))
+  const where = `실무 시나리오 ${fc.id}`
+  for (const k of fc.sources ?? []) {
+    used.add(k)
+    if (!findSource(k)) problems.push(`${where}: 카탈로그에 없는 출처 키 "${k}"`)
+  }
+  const sum = fc.rubric.reduce((s, r) => s + r.points, 0)
+  if (sum !== 100) problems.push(`${where}: 배점 합이 ${sum}점 (100이어야 함)`)
+  const nodeIds = Object.keys(fc.nodes)
+  if (!fc.nodes[fc.start]) problems.push(`${where}: 시작 노드 "${fc.start}" 없음`)
+  const cats = new Set(fc.rubric.map((r) => r.id))
+  for (const [id, n] of Object.entries(fc.nodes)) {
+    if (n.next && !nodeIds.includes(n.next)) problems.push(`${where}/${id}: 없는 다음 노드 "${n.next}"`)
+    for (const o of n.options ?? []) {
+      if (o.next && !nodeIds.includes(o.next)) problems.push(`${where}/${id}.${o.id}: 없는 다음 노드 "${o.next}"`)
+      for (const c of Object.keys(o.score ?? {})) if (!cats.has(c)) problems.push(`${where}/${id}.${o.id}: 없는 평가 기준 "${c}"`)
+    }
+    if (n.type !== 'end' && n.type !== 'outcome' && !n.next && !(n.options ?? []).every((o) => o.next)) problems.push(`${where}/${id}: 다음으로 갈 곳이 없음`)
+  }
+  if (!Object.values(fc.nodes).some((n) => n.type === 'end')) problems.push(`${where}: 평가(end) 노드 없음`)
+}
+
 const unused = keys.filter((k) => !used.has(k))
 console.log(`출처 ${SOURCE_CATALOG.length}개 중 설명·자막에서 쓰는 것 ${keys.length - unused.length}개 (나머지는 공정 데이터·장비 실습에서 씀)`)
 if (problems.length) {

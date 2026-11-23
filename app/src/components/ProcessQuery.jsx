@@ -18,11 +18,12 @@ import ProcessMovie from './movie/ProcessMovie.jsx'
 import ProcessExplainer from './ProcessExplainer.jsx'
 import { explainers } from '../data/explainers/index.js'
 import { findLessonCourse } from '../data/courses.js'
+import { fieldCasesFor } from '../data/fieldCases/index.js'
 
 // 공정 상세의 접는 섹션. 열림 상태는 공정과 관계없이 섹션별로 기억합니다.
 const SECTION_IDS = ['pq.explain', 'pq.video', 'pq.zoom', 'pq.io', 'pq.terms', 'pq.steps', 'pq.analogy', 'pq.sources', 'pq.prereq']
 
-export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onOpenCourse, onReport }) {
+export default function ProcessQuery({ initialId, pkg, completed, onComplete, onOpenProcess, onOpenMap, onOpenCourse, onOpenField, onReport }) {
   const [query, setQuery] = useState('')
   const [result, setResult] = useState(() =>
     initialId ? { status: 'found', process: findProcess(initialId) } : null,
@@ -143,6 +144,23 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
               </div>
             )}
           </Collapsible>
+
+          {onOpenField && fieldCasesFor(process.id).length > 0 && (
+            <div className="nb-callout c-purple field-link">
+              <span className="nb-callout-icon">🛠️</span>
+              <div>
+                <strong>현장 실무 훈련으로 이어 가기</strong>
+                <p className="muted">이 공정에서 생길 법한 문제를 엔지니어가 되어 풀어 봅니다(교육용 가상 사례).</p>
+                <div className="button-row">
+                  {fieldCasesFor(process.id).map((fc) => (
+                    <button key={fc.id} type="button" onClick={() => onOpenField(fc.id)}>
+                      {fc.id} · {fc.title} →
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <ProcessSequence process={process} pkg={pkg} completed={completed} onOpen={open} onComplete={onComplete} />
 
