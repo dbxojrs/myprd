@@ -153,8 +153,8 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
                 <p className="muted">이 공정에서 생길 법한 문제를 엔지니어가 되어 풀어 봅니다(교육용 가상 사례).</p>
                 <div className="button-row">
                   {fieldCasesFor(process.id).map((fc) => (
-                    <button key={fc.id} type="button" onClick={() => onOpenField(fc.id)}>
-                      {fc.id} · {fc.title} →
+                    <button key={fc.id} type="button" onClick={() => onOpenField(fc.id, fc.category)}>
+                      {fc.category} · {fc.id} · {fc.title} →
                     </button>
                   ))}
                 </div>

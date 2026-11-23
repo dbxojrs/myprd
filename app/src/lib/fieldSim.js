@@ -103,3 +103,15 @@ export function evaluate(c, run) {
 }
 
 export const grade = (total) => (total >= 85 ? { label: '현장 투입 가능', tone: 'ok' } : total >= 65 ? { label: '보완 필요', tone: 'warn' } : { label: '다시 연습', tone: 'bad' })
+
+// 오늘의 현장 실무 훈련 추천: 진행 중 → 이론을 끝낸 공정의 안 푼 시나리오 → 안 푼 시나리오 → 점수가 가장 낮은 시나리오
+export function recommendCase(cases, field, completed = []) {
+  if (!cases.length) return null
+  const st = (c) => field[c.id]
+  return (
+    cases.find((c) => st(c)?.run && !st(c).run.done) ??
+    cases.find((c) => st(c)?.best == null && completed.includes(c.process)) ??
+    cases.find((c) => st(c)?.best == null) ??
+    [...cases].sort((a, b) => (st(a)?.best ?? 0) - (st(b)?.best ?? 0))[0]
+  )
+}

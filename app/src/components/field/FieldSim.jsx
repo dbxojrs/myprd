@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FIELD_CASES, findFieldCase } from '../../data/fieldCases/index.js'
+import { DIFFICULTIES, FIELD_CASES, FIELD_PROCESSES, findFieldCase, PLANNED_CASES } from '../../data/fieldCases/index.js'
 import { findSource } from '../../data/sourceCatalog.js'
 import { evaluate, finishRun, grade, newRun, resetRun, saveRun, useField } from '../../lib/fieldSim.js'
 import { markActive } from '../../lib/activity.js'
@@ -10,7 +10,10 @@ import { findProcess } from '../../data/processes.js'
 // 현장 실무 훈련: 분기형 시나리오 목록과 진행 화면(3단: 사건·진행 / 상황·판단 / 데이터·선임 엔지니어).
 // 시나리오는 data/fieldCases, 진행·채점 규칙은 lib/fieldSim.js. 진행 상태는 'tutor.field'에 저장돼 새로고침해도 이어집니다.
 
-export default function FieldSim({ onOpenProcess, onOpenMachine, onGo }) {
+const STATUS_LABEL = { new: '미시작', doing: '진행 중', done: '완료' }
+const statusOf = (st) => (st?.run && !st.run.done ? 'doing' : st?.best != null ? 'done' : 'new')
+
+export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, onGo }) {
   const field = useField()
   const [openId, setOpenId] = useState(() => {
     try {
@@ -19,6 +22,7 @@ export default function FieldSim({ onOpenProcess, onOpenMachine, onGo }) {
       return null
     }
   })
+  const [filter, setFilter] = useState({ status: 'all', diff: 'all', proc: 'all', q: '' })
   const open = (id) => {
     setOpenId(id)
     writeStored('tutor.field.open', id)
@@ -27,55 +31,132 @@ export default function FieldSim({ onOpenProcess, onOpenMachine, onGo }) {
   const c = findFieldCase(openId)
   if (c) return <FieldRun key={c.id} c={c} saved={field[c.id]} onBack={() => open(null)} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} onGo={onGo} />
 
+  const TABS = [
+    ['ALL', '전체', 'field'],
+    ['FAB', '전공정 FAB', 'field-fab'],
+    ['PKG', '후공정 PKG', 'field-pkg'],
+  ]
+  const inTab = (x) => tab === 'ALL' || x.category === tab
+  const procs = tab === 'ALL' ? [...FIELD_PROCESSES.FAB, ...FIELD_PROCESSES.PKG] : FIELD_PROCESSES[tab]
+  const q = filter.q.trim().toLowerCase()
+  const match = (x, st) =>
+    inTab(x) &&
+    (filter.status === 'all' || filter.status === st) &&
+    (filter.diff === 'all' || x.difficulty === filter.diff) &&
+    (filter.proc === 'all' || x.processLabel === filter.proc) &&
+    (!q || `${x.id} ${x.title} ${x.processLabel} ${x.subtitle ?? ''} ${x.summary ?? ''}`.toLowerCase().includes(q))
+  const ready = FIELD_CASES.filter((x) => match(x, statusOf(field[x.id])))
+  const planned = PLANNED_CASES.filter((x) => match(x, 'new') && !FIELD_CASES.some((r) => r.id === x.id))
+  const count = (cat) => FIELD_CASES.filter((x) => cat === 'ALL' || x.category === cat).length + PLANNED_CASES.filter((x) => cat === 'ALL' || x.category === cat).length
+
   return (
     <section className="screen field">
       <div className="field-hero">
         <p className="home-eyebrow">현장 실무 훈련</p>
-        <h2>오늘 당신은 패키징 공정기술 엔지니어입니다</h2>
+        <h2>현장 실무 훈련</h2>
         <p className="muted">
-          생산라인에서 생긴 문제를 <strong>상황 파악 → 초기 대응 → 데이터 수집 → 원인 분석 → 조치·검증 → 평가</strong> 순서로 해결합니다. 고른 조치에 따라 다음 상황이 달라지고, 점수는
-          미리 공개된 기준으로만 계산합니다. API 키 없이 진행됩니다.
+          실제 반도체 생산 현장에서 발생할 수 있는 문제를 해결하며 공정 엔지니어의 판단 능력을 훈련합니다. <strong>상황 파악 → 초기 대응 → 데이터 수집 → 원인 분석 → 조치·검증 → 평가</strong> 순서로 진행하고,
+          고른 조치에 따라 다음 상황이 달라집니다. 점수는 공개된 기준으로만 계산하며 API 키 없이 진행됩니다.
         </p>
         <span className="virtual-badge">모든 사례·수치는 교육용 가상 데이터</span>
       </div>
+
+      <div className="field-tabs" role="tablist" aria-label="공정 구분">
+        {TABS.map(([id, label, screen]) => (
+          <button key={id} type="button" role="tab" aria-selected={tab === id} className={`field-tab ${id.toLowerCase()}${tab === id ? ' on' : ''}`} onClick={() => onGo(screen)}>
+            {id !== 'ALL' && <span className={`cat ${id.toLowerCase()}`}>{id}</span>}
+            {label} <small>{count(id)}</small>
+          </button>
+        ))}
+      </div>
+
+      <div className="field-filters">
+        <input type="search" value={filter.q} onChange={(e) => setFilter({ ...filter, q: e.target.value })} placeholder="시나리오 검색 (제목·공정·ID)" aria-label="시나리오 검색" />
+        <select value={filter.status} onChange={(e) => setFilter({ ...filter, status: e.target.value })} aria-label="학습 상태">
+          <option value="all">상태: 전체</option>
+          <option value="doing">진행 중</option>
+          <option value="done">완료</option>
+          <option value="new">미시작</option>
+        </select>
+        <select value={filter.diff} onChange={(e) => setFilter({ ...filter, diff: e.target.value })} aria-label="난이도">
+          <option value="all">난이도: 전체</option>
+          {DIFFICULTIES.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+        <select value={filter.proc} onChange={(e) => setFilter({ ...filter, proc: e.target.value })} aria-label="공정 종류">
+          <option value="all">공정: 전체</option>
+          {procs.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="field-list">
-        {FIELD_CASES.map((x) => {
+        {ready.map((x) => {
           const st = field[x.id]
-          const inProgress = st?.run && !st.run.done
+          const s = statusOf(st)
           return (
-            <article key={x.id} className="card field-card">
+            <article key={x.id} className={`card field-card cat-${x.category.toLowerCase()}`}>
               <div className="field-card-top">
+                <span className={`cat ${x.category.toLowerCase()}`}>{x.category}</span>
+                <span className="field-proc">{x.processLabel}</span>
                 <code>{x.id}</code>
-                <span className="status warn">검수 전 · v{x.version}</span>
               </div>
               <h3>{x.title}</h3>
               <p className="muted">{x.subtitle}</p>
               <div className="case-tags">
-                <span className="quiz-tag">난이도 {x.level}</span>
+                <span className="quiz-tag">{x.difficulty}</span>
                 <span className="quiz-tag soft">약 {x.minutes}분</span>
-                <span className="quiz-tag soft">{findProcess(x.process)?.name.ko}</span>
+                <span className={`status ${s === 'done' ? 'ok' : s === 'doing' ? 'info' : 'warn'}`}>{STATUS_LABEL[s]}</span>
+                <span className="status warn">검수 전 v{x.version}</span>
               </div>
-              <ul className="field-goals">
-                {x.goals.slice(0, 3).map((g) => (
-                  <li key={g}>{g}</li>
-                ))}
-              </ul>
+              <p className="field-comp">
+                <strong>주요 역량</strong> {x.competencies?.join(' · ')}
+              </p>
               <div className="field-card-foot">
-                {st?.best != null && <span className={`status ${grade(st.best).tone}`}>최고 {st.best}점</span>}
+                {st?.best != null ? <span className={`status ${grade(st.best).tone}`}>최고 {st.best}점</span> : <span />}
                 <button type="button" className="primary" onClick={() => open(x.id)}>
-                  {inProgress ? '이어서 하기 →' : st?.best != null ? '다시 도전 →' : '시작하기 →'}
+                  {s === 'doing' ? '이어서 하기 →' : s === 'done' ? '다시 도전 →' : '시작하기 →'}
                 </button>
               </div>
             </article>
           )
         })}
-        <article className="card field-card soon">
-          <h3>다음 시나리오 (준비 중)</h3>
-          <p className="muted">Die Attach Void → Molding 보이드·박리 → Final Test 수율 급락 → 고객 불량 클레임 순서로 난도를 높여 추가합니다. 지금은 같은 주제를 "사례 서술형 연습"에서 풀 수 있습니다.</p>
-          <button type="button" onClick={() => onGo('cases')}>
-            사례 서술형 연습 열기 →
-          </button>
-        </article>
+        {planned.map((x) => (
+          <article key={x.id} className={`card field-card soon cat-${x.category.toLowerCase()}`}>
+            <div className="field-card-top">
+              <span className={`cat ${x.category.toLowerCase()}`}>{x.category}</span>
+              <span className="field-proc">{x.processLabel}</span>
+              <code>{x.id}</code>
+            </div>
+            <h3>{x.title}</h3>
+            <p className="muted">{x.summary}</p>
+            <div className="case-tags">
+              <span className="quiz-tag">{x.difficulty}</span>
+              <span className="status info">설계 샘플 · 준비 중</span>
+            </div>
+            <div className="field-card-foot">
+              <button type="button" className="link" onClick={() => onOpenProcess(x.process)}>
+                관련 이론 →
+              </button>
+              {x.practice ? (
+                <button type="button" onClick={() => onGo('cases')}>
+                  서술형 사례로 먼저 연습 →
+                </button>
+              ) : (
+                <button type="button" disabled>
+                  준비 중
+                </button>
+              )}
+            </div>
+          </article>
+        ))}
+        {ready.length + planned.length === 0 && <p className="muted">조건에 맞는 시나리오가 없습니다.</p>}
       </div>
     </section>
   )
@@ -198,6 +279,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         for (const id of pickedNow) {
           const o = node.options.find((x) => x.id === id)
           r = log(r, o.log ?? o.text, o.tone === 'good' ? 'ok' : o.tone === 'bad' ? 'bad' : 'warn')
+          if (o.status) r.status = o.status
         }
         setRun(r)
       }
@@ -686,8 +768,14 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         <button type="button" className="link" onClick={onBack}>
           ← 시나리오 목록
         </button>
-        <code className="field-id">{c.id}</code>
+        <div className="field-badges">
+          <span className={`cat ${c.category.toLowerCase()}`}>{c.category}</span>
+          <code className="field-id">{c.id}</code>
+        </div>
         <h2 className="field-title">{c.title}</h2>
+        <p className="muted field-meta">
+          {c.processLabel} · {c.difficulty} · 약 {c.minutes}분
+        </p>
         <div className="field-badges">
           <span className="virtual-badge">가상 데이터</span>
           <span className="status warn">검수 전 v{c.version}</span>
@@ -746,6 +834,30 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
 
       {/* 가운데: 상황 · 판단 */}
       <div className="field-center card" role="region" aria-label="상황과 판단" aria-live="polite">
+        <dl className="field-summary" aria-label="사건 요약">
+          <div>
+            <dt>사건</dt>
+            <dd>{c.id}</dd>
+          </div>
+          <div>
+            <dt>공정</dt>
+            <dd>
+              <span className={`cat ${c.category.toLowerCase()}`}>{c.category}</span> {c.processLabel}
+            </dd>
+          </div>
+          <div>
+            <dt>설비</dt>
+            <dd>{c.equipment?.name ?? '-'}</dd>
+          </div>
+          <div>
+            <dt>현재 상태</dt>
+            <dd>{run.done ? '조치 완료 · 평가' : run.status ?? '이상 보고 접수'}</dd>
+          </div>
+          <div>
+            <dt>가상 경과</dt>
+            <dd>{run.time}분</dd>
+          </div>
+        </dl>
         <p className="home-eyebrow">
           {run.done ? '6단계 · 결과 평가' : `${stepNo}단계 · ${node?.title}`}
         </p>

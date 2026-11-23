@@ -1,21 +1,33 @@
 // 화면 메뉴(왼쪽 사이드바·위쪽 경로 표시). 기존 화면 id는 그대로 두고 상위 묶음만 정리했습니다.
-// 이론 학습 → 공정 시뮬레이터 → 현장 실무 훈련 → 시험 및 평가 → 내 학습 관리: 배우고 · 해 보고 · 현장처럼 풀고 · 확인하고 · 관리합니다.
+// 홈 → 이론 학습 → 공정 시뮬레이터 → 현장 실무 훈련 → 시험 및 평가 → 내 학습: 배우고 · 해 보고 · 현장처럼 풀고 · 확인하고 · 관리합니다.
 // stages: 공정 상세 화면(query)에서 이 묶음을 켤 공정 단계
 export const MENU_GROUPS = [
+  {
+    id: "home",
+    label: "홈",
+    en: "Home",
+    icon: "🏠",
+    desc: "오늘 할 공부와 이어서 할 학습, 추천 실무 훈련을 한눈에 봅니다.",
+    stages: [],
+    items: [
+      { id: "home", label: "내 대시보드", desc: "진도·연속 공부일·다시 볼 문제·D-day와 6단계 진도를 한 화면에서 봅니다." },
+      { id: "today", label: "오늘의 학습", desc: "오늘 일정, 이어서 할 공정, 오늘의 현장 실무 훈련, 오답 복습을 순서대로 보여 줍니다." },
+    ],
+  },
   {
     id: "learn",
     label: "이론 학습",
     en: "Learn",
     icon: "📘",
     desc: "반도체 기초부터 FAB 전공정, PKG 후공정, 첨단 패키징까지 애니메이션과 출처 있는 설명으로 공부합니다.",
-    stages: ["design", "front", "link", "mid", "back", "board"],
+    stages: ["design","front","link","mid","back","board"],
     items: [
       { id: "basics", label: "반도체 기초", desc: "원자와 전자, 도핑, PN 접합, 트랜지스터, MOSFET, CMOS, FinFET·GAA까지 공정을 이해하는 데 필요한 기본 지식을 애니메이션으로 봅니다." },
-      { id: "map", label: "전체 공정 흐름도", desc: "칩 설계 → 전공정(FAB) → 팹 아웃 → WLP → 후공정(PKG·TEST) → 보드 실장 순서를 한눈에 보고 단계별로 들어갑니다." },
-      { id: "front", label: "FAB 전공정 (8대 공정)", desc: "웨이퍼 제조 → 산화 → 포토 → 식각 → 증착·이온주입 → 금속 배선 → EDS를 차례로 봅니다." },
-      { id: "flow", label: "PKG 후공정 (흐름도·영상)", desc: "전체 모습과 재료부터 백그라인딩~최종 테스트 8단계를 영상으로 보고, 고른 패키지 타입의 후공정 순서를 봅니다." },
-      { id: "package", label: "패키지 타입", desc: "QFN·BGA·플립칩 등 패키지 타입별 구조와 쓰임을 보고 학습할 타입을 고릅니다." },
+      { id: "front", label: "전공정 FAB", desc: "웨이퍼 제조 → 산화 → 포토 → 식각 → 증착·이온주입 → 금속 배선 → EDS를 차례로 봅니다." },
+      { id: "flow", label: "후공정 PKG", desc: "전체 모습과 재료부터 백그라인딩~최종 테스트 8단계를 영상으로 보고, 고른 패키지 타입의 후공정 순서를 봅니다." },
       { id: "advanced", label: "첨단 패키징", desc: "왜 필요한지부터 2.5D·3D·팬아웃·칩렛 구조, 범핑·TSV·하이브리드 본딩까지 영상으로 점점 자세히 보고, 핵심 공정과 미래 기술을 봅니다." },
+      { id: "map", label: "전체 공정 흐름도", desc: "칩 설계 → 전공정(FAB) → 팹 아웃 → WLP → 후공정(PKG·TEST) → 보드 실장 순서를 한눈에 보고 단계별로 들어갑니다." },
+      { id: "package", label: "패키지 타입", desc: "QFN·BGA·플립칩 등 패키지 타입별 구조와 쓰임을 보고 학습할 타입을 고릅니다." },
       { id: "query", label: "공정 검색", desc: "공정 이름(한글·영문)으로 찾아 설명, 확대 그림, 선행 공정을 봅니다." },
     ],
   },
@@ -29,8 +41,8 @@ export const MENU_GROUPS = [
     items: [
       { id: "machine-fab", label: "FAB 설비 실습", desc: "확산로·스캐너·식각기·CVD·이온 주입기·PVD를 둘러보고, 레시피를 정해 가동해 알람·불량을 판정받습니다." },
       { id: "machine-pkg", label: "PKG 설비 실습", desc: "그라인더·쏘·다이 본더·와이어 본더·몰드·마커·테스트 핸들러를 둘러보고 가동해 봅니다." },
-      { id: "sim", label: "공정별 시뮬레이션", desc: "단위 공정 하나의 조건을 바꿔 결과와 불량을 봅니다." },
-      { id: "line", label: "라인 시뮬레이션", desc: "첫 공정부터 끝까지 조건을 골라 완성된 패키지를 판정받습니다." },
+      { id: "sim", label: "PKG 단위 공정 시뮬레이션", desc: "단위 공정 하나의 조건을 바꿔 결과와 불량을 봅니다." },
+      { id: "line", label: "PKG 라인 시뮬레이션", desc: "첫 공정부터 끝까지 조건을 골라 완성된 패키지를 판정받습니다." },
     ],
   },
   {
@@ -38,11 +50,13 @@ export const MENU_GROUPS = [
     label: "현장 실무 훈련",
     en: "Field Training",
     icon: "🛠️",
-    desc: "공정기술 엔지니어가 되어 현장 문제를 단계별로 판단하고 해결합니다. 모든 사례·수치는 교육용 가상 데이터입니다.",
+    desc: "실제 반도체 생산 현장에서 발생할 수 있는 문제를 해결하며 공정 엔지니어의 판단 능력을 훈련합니다. 모든 사례·수치는 교육용 가상 데이터입니다.",
     stages: [],
     badge: "신규",
     items: [
-      { id: "field", label: "실무 시나리오", desc: "상황 전달 → 초기 대응 → 데이터 수집 → 원인 분석 → 조치·검증 → 평가까지, 내 선택에 따라 결과가 달라지는 분기형 시뮬레이션입니다. API 키 없이 동작합니다." },
+      { id: "field", label: "시나리오 전체", desc: "전공정 FAB와 후공정 PKG 시나리오를 함께 보고, 상태·난이도·공정·검색으로 거릅니다." },
+      { id: "field-fab", label: "전공정 FAB 시나리오", desc: "Photo·Etch·CVD·PVD·산화·이온주입·CMP·세정·계측 공정의 현장 문제를 풉니다." },
+      { id: "field-pkg", label: "후공정 PKG 시나리오", desc: "Back Grinding·Dicing·Die Attach·Wire Bonding·Flip Chip·Molding·Singulation·Test 공정의 현장 문제를 풉니다." },
       { id: "cases", label: "사례 서술형 연습", desc: "와이어 본딩 접합 강도 급락, 다이 어태치 보이드, 몰딩 보이드, 테스트 수율 급락, 고객 클레임을 현장 상황·데이터로 풀고 100점 기준으로 평가받습니다. 추가 데이터로 판단을 고치는 연습까지 합니다." },
     ],
   },
@@ -62,7 +76,7 @@ export const MENU_GROUPS = [
   },
   {
     id: "mine",
-    label: "내 학습 관리",
+    label: "내 학습",
     en: "My Study",
     icon: "📒",
     desc: "공부 일정을 짜고, 공부하며 쓴 노트를 모아 복습합니다.",

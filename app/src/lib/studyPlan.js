@@ -37,7 +37,7 @@ export function allUnits() {
     { id: 'quiz:back', title: '후공정 문제 풀기', min: 15, stage: 'back', go: { kind: 'screen', screen: 'quiz' } },
     ...ofStage('board').map((id) => proc(id, 15)),
     ...advOnly.map((l) => ({ id: `adv:${l.id}`, title: `첨단 · ${l.title}`, min: 15, stage: 'adv', go: { kind: 'course', course: 'adv', lesson: l.id } })),
-    { id: 'field:CASE-WB-001', title: '현장 실무 · CASE-WB-001 와이어 본딩 접합 강도', min: 25, stage: 'exam', go: { kind: 'screen', screen: 'field' } },
+    { id: 'field:PKG-001', title: '현장 실무 · PKG-001 와이어 본딩 접합 강도', min: 25, stage: 'exam', go: { kind: 'screen', screen: 'field-pkg' } },
     { id: 'cases:1', title: '사례 서술형 연습 · 사례 1~2', min: 40, stage: 'exam', go: { kind: 'screen', screen: 'cases' } },
     { id: 'cases:2', title: '사례 서술형 연습 · 사례 3~5', min: 50, stage: 'exam', go: { kind: 'screen', screen: 'cases' } },
     { id: 'written:all', title: '심화 주관식 풀기', min: 20, stage: 'exam', go: { kind: 'screen', screen: 'written' } },

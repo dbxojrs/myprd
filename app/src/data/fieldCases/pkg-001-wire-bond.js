@@ -1,11 +1,17 @@
-// CASE-WB-001: Wire Bonding 접합 강도 이상 (분기형 현장 실무 시나리오)
+// PKG-001 (예전 CASE-WB-001): Wire Bonding 접합 강도 이상 (분기형 현장 실무 시나리오)
 // ⚠ 모든 사건·수치·로그는 교육용 가상 데이터입니다. 실제 업체·장비의 규격이나 사양이 아닙니다.
 // 원인·불량에 대한 설명은 앱의 와이어 본더 규칙표(data/machines/wireBond.js)에 있는 내용만 근거로 씁니다.
 // 구조 설명은 lib/fieldSim.js 맨 위 주석을 보세요.
 
 export default {
-  id: 'CASE-WB-001',
-  version: '1.0',
+  id: 'PKG-001',
+  legacyIds: ['CASE-WB-001'], // 예전 id로 저장된 진행 기록을 옮길 때 씁니다(lib/migrations.js)
+  category: 'PKG',
+  processLabel: 'Wire Bonding',
+  difficulty: '중급',
+  equipment: { name: '와이어 본더 2호기', kind: 'wire-bond' },
+  competencies: ['긴급 대응', '측정 신뢰성 검증', '가설 검증', '변경 관리'],
+  version: '1.1',
   reviewed: false,
   updated: '2026-11-24',
   title: 'Wire Bonding 접합 강도 이상',
@@ -84,11 +90,11 @@ export default {
       goal: '불량이 더 퍼지지 않게 막습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '현장에 도착했습니다. 지금 바로 할 조치를 모두 고르세요.',
       options: [
-        { id: 'stop2', text: '2호기 생산을 즉시 멈춘다', score: { contain: 6 }, tone: 'good', log: '2호기 생산 중단', feedback: '관리 하한 아래 값이 나오는 설비를 계속 돌리면 불량이 계속 쌓입니다.' },
+        { id: 'stop2', text: '2호기 생산을 즉시 멈춘다', score: { contain: 6 }, tone: 'good', log: '2호기 생산 중단', status: '2호기 정지', feedback: '관리 하한 아래 값이 나오는 설비를 계속 돌리면 불량이 계속 쌓입니다.' },
         { id: 'hold', text: 'Capillary 교체(09:05) 이후 2호기에서 만든 LOT을 찾아 Hold하고 다음 공정 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '09:05 이후 2호기 LOT Hold', feedback: '이상이 시작됐을 수 있는 시점 이후 제품이 영향 범위입니다. 다음 공정으로 넘어가면 되돌리기 어렵습니다.' },
         { id: 'share', text: '품질·생산 담당에게 알리고, 발견 시각·LOT·교체 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '품질·생산 공유, 시각 기록', feedback: '영향 범위 판단과 나중의 원인 분석에 시각 기록이 꼭 필요합니다.' },
         { id: 'stop1', text: '예방 차원에서 1호기도 함께 멈춘다', score: { contain: -3 }, tone: 'warn', log: '1호기도 중단', feedback: '1호기는 같은 자재·Recipe로 정상 값(27 gf)이 나옵니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
-        { id: 'keeprun', text: '측정 오류일 수 있으니 확인될 때까지 2호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '2호기 계속 생산', feedback: '측정 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 계속 커집니다. 먼저 멈추고 확인합니다.' },
+        { id: 'keeprun', text: '측정 오류일 수 있으니 확인될 때까지 2호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '2호기 계속 생산', status: '2호기 가동 중 (이상 상태)', feedback: '측정 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 계속 커집니다. 먼저 멈추고 확인합니다.' },
         { id: 'usnow', text: '초음파 출력을 바로 올려 생산을 이어 간다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 초음파 출력 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가리고, 초음파가 지나치면 패드 아래 층이 깨질 수 있습니다(와이어 본더 규칙표).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요. 보고서에 그대로 들어갑니다.' },
@@ -191,10 +197,10 @@ export default {
       goal: '원인을 없애는 조치를 하나 고릅니다. 고른 조치에 따라 결과가 달라집니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'replace', text: '다른 새 Capillary로 바꾸고, 조건은 그대로 둔 채 첫 제품 Shear·외관을 확인한 뒤 재가동한다', score: { fix: 15 }, tone: 'good', log: 'Capillary 재교체 + 첫 제품 확인', next: 'r_good', feedback: '원인(오염된 툴)을 직접 없애고, 조건을 바꾸지 않아 새 불량 위험도 만들지 않았습니다.' },
-        { id: 'clean', text: '지금 Capillary를 청소해서 다시 쓴다', score: { fix: 6 }, tone: 'warn', log: 'Capillary 청소 후 재사용', next: 'r_clean', feedback: '원인 쪽으로 가는 조치지만, 이물이 붙었던 툴은 상태를 장담하기 어렵습니다.' },
-        { id: 'us_up', text: '초음파 출력을 높여 강도를 맞추고 재가동한다', score: { fix: 0 }, tone: 'bad', log: '초음파 출력 상향 후 재가동', next: 'r_us', feedback: '원인(툴)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
-        { id: 'doe', text: '변경 승인을 받아 하중·초음파 조합을 소량 시험(DOE)으로 찾는다', score: { fix: 5 }, tone: 'warn', log: '조건 최적화 시험 요청', next: 'r_doe', feedback: '변경 절차는 지켰지만, 원인이 툴로 확인된 상황에서 조건을 찾는 것은 돌아가는 길입니다.' },
+        { id: 'replace', text: '다른 새 Capillary로 바꾸고, 조건은 그대로 둔 채 첫 제품 Shear·외관을 확인한 뒤 재가동한다', score: { fix: 15 }, tone: 'good', log: 'Capillary 재교체 + 첫 제품 확인', status: 'Capillary 재교체 · 첫 제품 확인', next: 'r_good', feedback: '원인(오염된 툴)을 직접 없애고, 조건을 바꾸지 않아 새 불량 위험도 만들지 않았습니다.' },
+        { id: 'clean', text: '지금 Capillary를 청소해서 다시 쓴다', score: { fix: 6 }, tone: 'warn', log: 'Capillary 청소 후 재사용', status: '청소한 툴로 재가동', next: 'r_clean', feedback: '원인 쪽으로 가는 조치지만, 이물이 붙었던 툴은 상태를 장담하기 어렵습니다.' },
+        { id: 'us_up', text: '초음파 출력을 높여 강도를 맞추고 재가동한다', score: { fix: 0 }, tone: 'bad', log: '초음파 출력 상향 후 재가동', status: '조건 변경 후 재가동', next: 'r_us', feedback: '원인(툴)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
+        { id: 'doe', text: '변경 승인을 받아 하중·초음파 조합을 소량 시험(DOE)으로 찾는다', score: { fix: 5 }, tone: 'warn', log: '조건 최적화 시험 요청', status: '2호기 정지 · 조건 시험 대기', next: 'r_doe', feedback: '변경 절차는 지켰지만, 원인이 툴로 확인된 상황에서 조건을 찾는 것은 돌아가는 길입니다.' },
       ],
       hints: [
         '원인으로 확인한 것은 "조건"이었나요, "툴"이었나요?',
@@ -247,7 +253,7 @@ export default {
       goal: '새 결과를 보고 조치를 고칩니다.',
       prompt: '이제 어떻게 하시겠습니까?',
       options: [
-        { id: 'rollback', text: '바꾼 조건이 있으면 원래대로 되돌리고, 새 Capillary로 교체한 뒤 첫 제품 Shear와 패드 손상을 함께 확인한다', score: { fix: 6 }, tone: 'good', log: '조건 원복 + Capillary 교체 + 첫 제품 확인', next: 'r_good', feedback: '좋습니다. 결과를 보고 판단을 고친 것도 중요한 역량입니다.' },
+        { id: 'rollback', text: '바꾼 조건이 있으면 원래대로 되돌리고, 새 Capillary로 교체한 뒤 첫 제품 Shear와 패드 손상을 함께 확인한다', score: { fix: 6 }, tone: 'good', log: '조건 원복 + Capillary 교체 + 첫 제품 확인', status: '조건 원복 · 툴 교체', next: 'r_good', feedback: '좋습니다. 결과를 보고 판단을 고친 것도 중요한 역량입니다.' },
         { id: 'more_us', text: '조건을 조금 더 조정해 맞춘다', score: { fix: -3, know: -3 }, tone: 'bad', log: '조건 추가 조정', next: 'recover', feedback: '원인을 그대로 둔 채 조건을 더 바꾸면 손상 위험이 더 커집니다. 다시 고르세요.' },
       ],
       hints: ['처음 확인한 원인(툴)은 지금 해결됐나요?', '조건을 바꾼 것이 있다면 그것부터 원래대로 돌려야 하지 않을까요?', '조건 원복 + 툴 교체 + 첫 제품 확인입니다.'],

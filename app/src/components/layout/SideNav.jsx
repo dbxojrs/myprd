@@ -8,7 +8,7 @@ import AccountBox from './AccountBox.jsx'
 
 // 왼쪽 메뉴: 흰 사이드바 + 영역별 묶음(펼치고 접기) + 아래쪽 노트·질문하기·다크 모드.
 // 데스크톱은 접으면 아이콘만(60px), 모바일은 ☰로 여는 서랍입니다.
-const GROUP_ICON = { learn: 'book', sim: 'gauge', field: 'wrench', exam: 'quiz', mine: 'memo' }
+const GROUP_ICON = { home: 'home', learn: 'book', sim: 'gauge', field: 'wrench', exam: 'quiz', mine: 'memo' }
 
 export default function SideNav({ screen, activeGroup, collapsed, onGo, onToggleCollapse, onClose, dark, onDark }) {
   const float = useFloat()
@@ -47,20 +47,7 @@ export default function SideNav({ screen, activeGroup, collapsed, onGo, onToggle
         </button>
       </div>
 
-      <button
-        type="button"
-        className={`side-item nav${screen === 'home' ? ' active' : ''}`}
-        aria-current={screen === 'home' ? 'page' : undefined}
-        onClick={() => go('home')}
-        title="홈: 이어서 공부하기 · 전체 메뉴"
-      >
-        <Icon name="home" />
-        <span className="side-text">
-          홈<small>이어서 공부하기 · 전체 메뉴</small>
-        </span>
-      </button>
-
-      <span className="side-label">공부</span>
+      <span className="side-label">메뉴</span>
       {MENU_GROUPS.map((group) => (
         <SideGroup key={group.id} group={group} screen={screen} active={group === activeGroup} collapsed={collapsed} onGo={go} />
       ))}

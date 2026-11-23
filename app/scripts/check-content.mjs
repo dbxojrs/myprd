@@ -80,6 +80,8 @@ for (const f of fs.readdirSync(pkgDir).filter((f) => f.endsWith('.js') && f !== 
 const fcDir = path.join(root, 'data/fieldCases')
 for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== 'index.js')) {
   const fc = await load(path.join(fcDir, f))
+  if (!fc) continue // 준비 중 목록(planned.js) 같은 보조 파일
+  if (!['FAB', 'PKG'].includes(fc.category)) problems.push(`실무 시나리오 ${fc.id}: category는 FAB 또는 PKG`)
   const where = `실무 시나리오 ${fc.id}`
   for (const k of fc.sources ?? []) {
     used.add(k)

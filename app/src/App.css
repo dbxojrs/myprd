@@ -4974,22 +4974,25 @@ button.nb-callout-icon:hover { background: rgb(0 0 0 / 0.06); }
    상태는 색만으로 구분하지 않고 아이콘(✓ ⚠ ✕)과 글자를 함께 씁니다. */
 :root {
   --bg: #f4f5f9; --surface: #ffffff; --surface-2: #f8f9fc; --text: #161b2e; --muted: #556079; --border: #dde1ea;
-  --accent: #4f46e5; --accent-text: #ffffff; --accent-soft: #ecebfd;
+  --accent: #4f46e5; --accent-2: #7c3aed; --accent-text: #ffffff; --accent-soft: #ecebfd; --sidebar: #ffffff;
+  --fab: #0369a1; --fab-soft: #e0f2fe; --pkg: #7c3aed; --pkg-soft: #f1eafe;
   --good: #0d8478; --good-soft: #def3f0; --warn: #b45309; --warn-soft: #fdf0e0; --bad: #c0262d; --bad-soft: #fde8e8;
   --radius: 14px; --shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 1px 3px rgb(16 24 40 / 0.08);
 }
 :root[data-theme='dark'] {
-  --bg: #0e1321; --surface: #161c2d; --surface-2: #1b2236; --text: #e8ebf4; --muted: #9ba4bc; --border: #283149;
-  --accent: #8d87ff; --accent-text: #0e1321; --accent-soft: #24284d;
-  --good: #3cc8b5; --good-soft: #10302d; --warn: #f4a64c; --warn-soft: #382914; --bad: #f37b7e; --bad-soft: #3b1c21;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  --bg: #0f1117; --surface: #1b1e28; --surface-2: #222634; --sidebar: #171a23; --text: #f1f5f9; --muted: #94a3b8; --border: #2a2f3d;
+  --accent: #818cf8; --accent-2: #a78bfa; --accent-text: #0f1117; --accent-soft: #252a4a;
+  --good: #2dd4bf; --good-soft: #0f2e2b; --warn: #f59e0b; --warn-soft: #33260c; --bad: #ef4444; --bad-soft: #3a1618;
+  --fab: #38bdf8; --fab-soft: #0e2a38; --pkg: #a78bfa; --pkg-soft: #2a2245;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0e1321; --surface: #161c2d; --surface-2: #1b2236; --text: #e8ebf4; --muted: #9ba4bc; --border: #283149;
-    --accent: #8d87ff; --accent-text: #0e1321; --accent-soft: #24284d;
-    --good: #3cc8b5; --good-soft: #10302d; --warn: #f4a64c; --warn-soft: #382914; --bad: #f37b7e; --bad-soft: #3b1c21;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+    --bg: #0f1117; --surface: #1b1e28; --surface-2: #222634; --sidebar: #171a23; --text: #f1f5f9; --muted: #94a3b8; --border: #2a2f3d;
+    --accent: #818cf8; --accent-2: #a78bfa; --accent-text: #0f1117; --accent-soft: #252a4a;
+    --good: #2dd4bf; --good-soft: #0f2e2b; --warn: #f59e0b; --warn-soft: #33260c; --bad: #ef4444; --bad-soft: #3a1618;
+    --fab: #38bdf8; --fab-soft: #0e2a38; --pkg: #a78bfa; --pkg-soft: #2a2245;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.35);
   }
 }
 body { font-size: 16px; line-height: 1.65; }
@@ -5127,4 +5130,49 @@ button { min-height: 36px; }
   .field-right { position: static; max-height: none; }
   .field-center { padding: 16px; }
   .field-eval-grid { grid-template-columns: 1fr; }
+}
+
+.side { background: var(--sidebar, var(--surface)); }
+/* FAB/PKG 구분 표시: 색 + 아이콘 + 글자 */
+.cat { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.02em; border: 1px solid currentColor; }
+.cat.fab { color: var(--fab); background: var(--fab-soft); }
+.cat.fab::before { content: '🏭'; }
+.cat.pkg { color: var(--pkg); background: var(--pkg-soft); }
+.cat.pkg::before { content: '📦'; }
+
+/* 현장 실무 훈련 v2: 탭·필터·FAB/PKG 카드·사건 요약 바 */
+.field-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 10px; border-bottom: 1px solid var(--border); }
+.field-tab { display: inline-flex; align-items: center; gap: 6px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; padding: 8px 14px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.field-tab small { color: var(--muted); font-weight: 600; }
+.field-tab.on { color: var(--text); border-bottom-color: var(--accent); }
+.field-tab.fab.on { border-bottom-color: var(--fab); }
+.field-tab.pkg.on { border-bottom-color: var(--pkg); }
+.field-filters { display: grid; grid-template-columns: minmax(200px, 2fr) repeat(3, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.field-filters input, .field-filters select { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; font-size: 0.9rem; }
+.field-card { border-top: 3px solid var(--accent); }
+.field-card.cat-fab { border-top-color: var(--fab); }
+.field-card.cat-pkg { border-top-color: var(--pkg); }
+.field-card-top { flex-wrap: wrap; justify-content: flex-start; }
+.field-card-top code { margin-left: auto; }
+.field-proc { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.field-comp { font-size: 0.84rem; margin: 0; color: var(--muted); }
+.field-comp strong { color: var(--text); margin-right: 4px; }
+.field-meta { margin: -4px 0 8px; font-size: 0.84rem; }
+.field-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); font-size: 0.85rem; }
+.field-summary div { display: flex; flex-direction: column; min-width: 80px; }
+.field-summary dt { color: var(--muted); font-size: 0.72rem; font-weight: 600; }
+.field-summary dd { margin: 0; font-weight: 700; }
+.field-today { border-top: 3px solid var(--accent); display: flex; flex-direction: column; gap: 6px; }
+.field-today.cat-fab { border-top-color: var(--fab); }
+.field-today.cat-pkg { border-top-color: var(--pkg); }
+.field-today h3, .field-today p { margin: 0; }
+.field-today .primary { align-self: flex-start; margin-top: 4px; }
+.dash-mid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; margin-top: 14px; }
+.dash-wrong h3 { margin: 2px 0 4px; }
+.today-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.today-grid h3 { margin: 4px 0; }
+@media (max-width: 760px) {
+  .field-filters { grid-template-columns: 1fr 1fr; }
+  .field-filters input { grid-column: 1 / -1; }
+  .dash-mid { grid-template-columns: 1fr; }
 }

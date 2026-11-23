@@ -9,6 +9,7 @@ import { streakOf, useActivity, ymd } from '../lib/activity.js'
 import { useNotes } from '../lib/notes.js'
 import { dday, UnitList } from './StudyPlan.jsx'
 import { useAuth } from '../lib/cloud.js'
+import FieldTodayCard from './field/FieldTodayCard.jsx'
 
 // 첫 화면: 오늘의 공부 대시보드.
 // ① 오늘 할 공부(공부 일정에서) + 이어서 하기 ② 숫자 카드(진도·연속 공부일·다시 볼 문제·D-day) ③ 6단계 진도 줄.
@@ -131,6 +132,18 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
             </span>
           </button>
         </div>
+      </div>
+
+      <div className="dash-mid">
+        <FieldTodayCard completed={completed} onGo={onGo} />
+        <article className="card dash-wrong">
+          <p className="home-eyebrow">🔁 오답 복습</p>
+          <h3>{wrong.length + wrongW.length}문제 다시 보기</h3>
+          <p className="muted">틀린 문제는 다시 맞힐 때까지 남습니다. 실무 시나리오에서 틀린 점검 문제도 여기에 모입니다.</p>
+          <button type="button" onClick={() => onGo('wrong')} disabled={!wrong.length}>
+            오답 노트 열기 →
+          </button>
+        </article>
       </div>
 
       <h3 className="dash-h">반도체가 만들어지는 6단계</h3>

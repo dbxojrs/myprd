@@ -24,6 +24,7 @@ import CoursePage from './components/CoursePage.jsx'
 import WrittenQuiz from './components/WrittenQuiz.jsx'
 import CasePractice from './components/CasePractice.jsx'
 import FieldSim from './components/field/FieldSim.jsx'
+import TodayPage from './components/TodayPage.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
 import { useEdit } from './lib/notes.js'
@@ -191,7 +192,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className={`app-body${screen === 'field' ? ' wide' : ''}`}>
+      <div className={`app-body${['field', 'field-fab', 'field-pkg'].includes(screen) ? ' wide' : ''}`}>
       {showFlowBar && !ui.focus && !ui.flowbar && (
         <button type="button" className="flowbar-collapsed" aria-expanded="false" onClick={() => setUi({ flowbar: true })}>
           공정 흐름{activeFlowName ? ` · 현재: ${activeFlowName}` : ''} ▾ 펼치기
@@ -256,9 +257,9 @@ export default function App() {
             onOpenProcess={setProcessId}
             onOpenMap={() => setScreen('map')}
             onOpenCourse={openCourse}
-            onOpenField={(id) => {
+            onOpenField={(id, category) => {
               writeStored('tutor.field.open', id)
-              setScreen('field')
+              setScreen(category === 'FAB' ? 'field-fab' : 'field-pkg')
             }}
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
@@ -285,7 +286,10 @@ export default function App() {
         )}
         {screen === 'written' && <WrittenQuiz onOpenProcess={openProcess} />}
         {screen === 'cases' && <CasePractice onOpenProcess={openProcess} onOpenMachine={openMachine} />}
-        {screen === 'field' && <FieldSim onOpenProcess={openProcess} onOpenMachine={openMachine} onGo={setScreen} />}
+        {['field', 'field-fab', 'field-pkg'].includes(screen) && (
+          <FieldSim key={screen} tab={screen === 'field-fab' ? 'FAB' : screen === 'field-pkg' ? 'PKG' : 'ALL'} onOpenProcess={openProcess} onOpenMachine={openMachine} onGo={setScreen} />
+        )}
+        {screen === 'today' && <TodayPage pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} onOpenUnit={openUnit} />}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}
