@@ -48,7 +48,9 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
     (!q || `${x.id} ${x.title} ${x.processLabel} ${x.subtitle ?? ''} ${x.summary ?? ''}`.toLowerCase().includes(q))
   const ready = FIELD_CASES.filter((x) => match(x, statusOf(field[x.id])))
   const planned = PLANNED_CASES.filter((x) => match(x, 'new') && !FIELD_CASES.some((r) => r.id === x.id))
-  const count = (cat) => FIELD_CASES.filter((x) => cat === 'ALL' || x.category === cat).length + PLANNED_CASES.filter((x) => cat === 'ALL' || x.category === cat).length
+  // 이미 만든 시나리오와 같은 id의 준비 중 항목은 빼고 셉니다.
+  const pendingOnly = PLANNED_CASES.filter((x) => !FIELD_CASES.some((r) => r.id === x.id))
+  const count = (cat) => [...FIELD_CASES, ...pendingOnly].filter((x) => cat === 'ALL' || x.category === cat).length
 
   return (
     <section className="screen field">
@@ -166,8 +168,9 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
 // 웨이퍼 맵(영역별 값). 가운데→가장자리 동심원, 목표 대비 편차로 색을 칠하고 숫자·글자를 함께 씁니다.
 function WaferMap({ data }) {
   const rings = data.rings
-  const dev = (v) => (v - data.target) / data.target
-  const tone = (v) => (Math.abs(dev(v)) >= 0.05 ? 'bad' : Math.abs(dev(v)) >= 0.02 ? 'warn' : 'ok')
+  // 목표값 대비 편차(target) 또는 한계값(limit, 예: 오버레이) 기준으로 판정합니다.
+  const dev = (v) => (data.limit ? v / data.limit : (v - data.target) / data.target)
+  const tone = (v) => (data.limit ? (v > data.limit ? 'bad' : v >= data.limit * 0.8 ? 'warn' : 'ok') : Math.abs(dev(v)) >= 0.05 ? 'bad' : Math.abs(dev(v)) >= 0.02 ? 'warn' : 'ok')
   const R = [70, 50, 26]
   const one = (set, title) => (
     <figure className="wmap">
@@ -196,11 +199,15 @@ function WaferMap({ data }) {
       <ul className="wmap-legend">
         {rings.map((r) => (
           <li key={r.label}>
-            <span className={`status ${tone(r.value)}`}>{r.label}</span> {r.value} {data.unit} ({dev(r.value) >= 0 ? '+' : ''}
-            {(dev(r.value) * 100).toFixed(1)}%)
+            <span className={`status ${tone(r.value)}`}>{r.label}</span> {r.value} {data.unit}
+            {data.limit ? ` (한계의 ${Math.round(dev(r.value) * 100)}%)` : ` (${dev(r.value) >= 0 ? '+' : ''}${(dev(r.value) * 100).toFixed(1)}%)`}
           </li>
         ))}
-        <li className="muted">목표 {data.target} {data.unit} · 색: 목표 대비 ±2 % 안 ✓ / 2~5 % ⚠ / 5 % 넘음 ✕ (가상 판정 기준)</li>
+        <li className="muted">
+          {data.limit
+            ? `관리 한계 ${data.limit} ${data.unit} · 색: 한계의 80 % 미만 ✓ / 80~100 % ⚠ / 한계 초과 ✕ (가상 판정 기준)`
+            : `목표 ${data.target} ${data.unit} · 색: 목표 대비 ±2 % 안 ✓ / 2~5 % ⚠ / 5 % 넘음 ✕ (가상 판정 기준)`}
+        </li>
       </ul>
     </div>
   )

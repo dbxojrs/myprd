@@ -494,6 +494,27 @@ export const SOURCE_CATALOG = [
     title: "WLCSP Wafer Level CSP Wafer Level Packaging",
     publisher: "Amkor Technology",
     url: "https://amkor.com/packaging/wafer-level-packaging/wlcsp/" },
+  // 포토 오버레이 (2026-11-24 원문 확인: Europe PMC 전문, EPFL 페이지)
+  { key: "oa-overlay-hoc-2025", short: "논문(OA)", tier: "evidence", checked: "2026-11-24",
+    title: "Method of high-order advanced lithography overlay correction to enhance the manufacturing performance of integrated circuits",
+    publisher: "Nanoscale Advances (RSC, 2025), DOI 10.1039/d5na00682a, CC BY-NC 3.0",
+    url: "https://doi.org/10.1039/d5na00682a" },
+  { key: "oa-alignment-3d-2025", short: "논문(OA)", tier: "evidence", checked: "2026-11-24",
+    title: "Investigation and Application of Key Alignment Parameters for Overlay Accuracy in 3D Structures",
+    publisher: "Micromachines 16(8):876 (2025), DOI 10.3390/mi16080876, CC BY 4.0",
+    url: "https://doi.org/10.3390/mi16080876" },
+  { key: "oa-litho-thermal-2025", short: "논문(OA)", tier: "evidence", checked: "2026-11-24",
+    title: "Thermal Control Systems in Projection Lithography Tools: A Comprehensive Review",
+    publisher: "Micromachines 16(8):880 (2025), DOI 10.3390/mi16080880, CC BY 4.0",
+    url: "https://doi.org/10.3390/mi16080880" },
+  { key: "oa-overlay-dbo-2025", short: "논문(OA)", tier: "evidence", checked: "2026-11-24",
+    title: "Using Higher Diffraction Orders to Improve the Accuracy and Robustness of Overlay Measurements",
+    publisher: "Micromachines 16(3):347 (2025), DOI 10.3390/mi16030347, CC BY 4.0",
+    url: "https://doi.org/10.3390/mi16030347" },
+  { key: "epfl-cmi-rework", short: "EPFL", tier: "explain", checked: "2026-11-24",
+    title: "Photolithography inspection, rework, descum and stripping",
+    publisher: "EPFL Center of MicroNanoTechnology (CMi)",
+    url: "https://www.epfl.ch/research/facilities/cmi/?p=16319" },
 ]
 
 const byKey = new Map(SOURCE_CATALOG.map((s) => [s.key, s]))
