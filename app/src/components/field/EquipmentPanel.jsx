@@ -53,7 +53,7 @@ export function ShearTestFigure({ highlight = 'contact' }) {
   )
 }
 
-export default function EquipmentPanel({ c, run, focus, onFocus, onJumpData, canJump }) {
+export default function EquipmentPanel({ c, run, focus, onFocus, onJumpData, canJump, hideObserve = false }) {
   const kind = c.equipment?.kind
   const Iso = ISO[kind]
   const eq = EQUIPMENT[kind]
@@ -158,7 +158,7 @@ export default function EquipmentPanel({ c, run, focus, onFocus, onJumpData, can
                 <span>{i.label}</span>
                 {run.viewed.includes(i.id) ? <span className="status ok">확인함</span> : <span className="status info">미확인</span>}
               </div>
-              {i.observe && (
+              {i.observe && !hideObserve && (
                 <div className="eqp-observe">
                   <span className="scenario-tag">시나리오 가정 · 관찰 포인트</span>
                   <div className="eqp-compare">
@@ -180,6 +180,7 @@ export default function EquipmentPanel({ c, run, focus, onFocus, onJumpData, can
               )}
             </div>
           ))}
+          {hideObserve && related.some((i) => i.observe) && <p className="muted">평가 모드: 관찰 포인트는 결과 평가 뒤에 볼 수 있습니다.</p>}
           {related.length === 0 && <p className="muted">이 시나리오에서 이 부위와 직접 연결된 데이터는 없습니다.</p>}
         </section>
       )}
@@ -206,7 +207,7 @@ export default function EquipmentPanel({ c, run, focus, onFocus, onJumpData, can
                   <span>{i.label}</span>
                   {run.viewed.includes(i.id) ? <span className="status ok">확인함</span> : <span className="status info">미확인</span>}
                 </div>
-                {i.observe && (
+                {i.observe && !hideObserve && (
                   <div className="eqp-observe">
                     <span className="scenario-tag">시나리오 가정 · 관찰 포인트</span>
                     <p>{i.observe.normal}</p>

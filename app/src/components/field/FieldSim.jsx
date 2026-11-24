@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DIFFICULTIES, FIELD_CASES, FIELD_PROCESSES, findFieldCase, PLANNED_CASES } from '../../data/fieldCases/index.js'
 import { findSource } from '../../data/sourceCatalog.js'
-import { evaluate, finishRun, grade, newRun, resetRun, saveRun, useField } from '../../lib/fieldSim.js'
+import { evaluate, finishRun, grade, HINT_PENALTY, newRun, resetRun, saveRun, useField } from '../../lib/fieldSim.js'
 import { markActive } from '../../lib/activity.js'
 import { addNote, openNotePage } from '../../lib/notes.js'
 import { writeStored } from '../../lib/storage.js'
@@ -30,7 +30,7 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
     window.scrollTo({ top: 0 })
   }
   const c = findFieldCase(openId)
-  if (c) return <FieldRun key={c.id} c={c} saved={field[c.id]} onBack={() => open(null)} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} onGo={onGo} />
+  if (c) return <FieldRun key={c.id} c={c} saved={field[c.id]} onBack={() => open(null)} onOpenCase={open} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} onGo={onGo} />
 
   const TABS = [
     ['ALL', '전체', 'field'],
@@ -208,7 +208,7 @@ function Table({ table }) {
   )
 }
 
-function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
+function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, onGo }) {
   const [run, setRunState] = useState(() => saved?.run && !saved.run.done ? saved.run : saved?.run?.done ? saved.run : newRun(c))
   const [panel, setPanel] = useState('data')
   const [part, setPart] = useState(null) // 장비 구조 탭에서 강조할 부위 id 또는 검사 그림 id
@@ -242,6 +242,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
     const next = { ...r, node: nodeId, path: [...r.path, nodeId] }
     if (c.nodes[nodeId]?.type === 'end') {
       const result = evaluate(c, next)
+      if (next.mode === 'exam') addWrongNotes(next.quiz)
       markActive()
       finishRun(c.id, next, result)
       setRunState({ ...next, done: true })
@@ -252,6 +253,35 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
   const stepNo = node?.step ?? c.steps.length
   const hintLevel = run.hints[run.node] ?? 0
   const result = run.done ? evaluate(c, run) : null
+  const exam = run.mode === 'exam'
+  const hideFeedback = exam && !run.done // 평가 모드: 결과 전까지 정답·피드백 숨김
+  const started = run.started !== false // 예전 기록(모드 선택 전 버전)은 이미 시작한 것으로 봄
+  const timeRatio = c.timeLimit ? run.time / c.timeLimit : 0
+  const [sheet, setSheet] = useState(null) // 'summary' | 'prev' | null
+  const [nudge, setNudge] = useState('') // 다음 단계로 못 갈 때 안내
+  const centerRef = useRef(null)
+  useEffect(() => setNudge(''), [run.node])
+
+  // 틀린 점검 문제를 오답 노트로(연습: 바로, 평가: 결과 때)
+  const addWrongNotes = (quizAnswers) => {
+    const qs = Object.values(c.nodes).filter((n) => n.type === 'quiz').flatMap((n) => n.questions)
+    const wrong = qs.filter((q) => quizAnswers[q.id] !== undefined && quizAnswers[q.id] !== q.answer)
+    if (!wrong.length) return 0
+    try {
+      const list = JSON.parse(localStorage.getItem('tutor.wrong') ?? '[]')
+      for (const q of wrong) {
+        const id = `field-${c.id}-${q.id}`
+        const item = { q: { id, type: '실무 시나리오', topic: findProcess(c.process)?.stage ?? 'back', prompt: q.prompt, choices: q.choices, answer: q.answer, explain: q.explain, ref: { kind: 'process', id: c.process } }, misses: 1, at: new Date().toISOString() }
+        const at = list.findIndex((w) => w.q.id === id)
+        if (at >= 0) list[at] = { ...list[at], misses: list[at].misses + 1, at: item.at }
+        else list.unshift(item)
+      }
+      localStorage.setItem('tutor.wrong', JSON.stringify(list.slice(0, 200)))
+    } catch {
+      // 저장 실패는 진행에 영향 없음
+    }
+    return wrong.length
+  }
 
   // ── 노드별 가운데 화면 ──
   const center = () => {
@@ -280,7 +310,32 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
               <li key={f}>{f}</li>
             ))}
           </ul>
-          <button type="button" className="primary" onClick={() => goto(log(run, '현장 도착 · 상황 파악'), node.next)}>
+          {!started && (
+            <fieldset className="field-mode">
+              <legend>훈련 방식</legend>
+              <label className={`field-option${!exam ? ' on' : ''}`}>
+                <input type="radio" name="mode" checked={!exam} onChange={() => setRun({ ...run, mode: 'practice', timed: false })} />
+                <span>
+                  <strong>연습 모드 (기본)</strong>
+                  <small>판단마다 바로 피드백, 힌트·장비 관찰 포인트 자유롭게, 실수해도 다시 생각해 볼 수 있습니다.</small>
+                </span>
+              </label>
+              <label className={`field-option${exam ? ' on' : ''}`}>
+                <input type="radio" name="mode" checked={exam} onChange={() => setRun({ ...run, mode: 'exam' })} />
+                <span>
+                  <strong>평가 모드</strong>
+                  <small>결과가 나올 때까지 정답·피드백을 숨깁니다. 가설은 한 번만 제출, 힌트는 1단계마다 −{HINT_PENALTY}점. 모든 판단 이력이 기록됩니다.</small>
+                </span>
+              </label>
+              {exam && c.timeLimit && (
+                <label className="field-timed">
+                  <input type="checkbox" checked={Boolean(run.timed)} onChange={(e) => setRun({ ...run, timed: e.target.checked })} />
+                  제한 시간 적용 (가상 {c.timeLimit}분) — 넘기면 실패가 아니라 사건 규칙대로 감점: {c.timeRule?.text}
+                </label>
+              )}
+            </fieldset>
+          )}
+          <button type="button" className="primary" onClick={() => goto(log({ ...run, started: true }, `현장 도착 · 상황 파악 (${exam ? `평가 모드${run.timed ? ' · 제한 시간' : ''}` : '연습 모드'})`), node.next)}>
             현장으로 출동 →
           </button>
         </>
@@ -295,6 +350,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         if (draft.essay) r.essays = { ...r.essays, [run.node]: draft.essay }
         for (const id of pickedNow) {
           const o = node.options.find((x) => x.id === id)
+          r = { ...r, time: r.time + (o.cost ?? 0) }
           r = log(r, o.log ?? o.text, o.tone === 'good' ? 'ok' : o.tone === 'bad' ? 'bad' : 'warn')
           if (o.status) r.status = o.status
         }
@@ -317,7 +373,10 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                         checked={on}
                         onChange={() => setDraft((d) => ({ ...d, picks: node.multi ? (on ? pickedNow.filter((x) => x !== o.id) : [...pickedNow, o.id]) : [o.id] }))}
                       />
-                      <span>{o.text}</span>
+                      <span>
+                        {o.text}
+                        {o.cost > 0 && <small className="field-cost"> · 가상 {o.cost}분</small>}
+                      </span>
                     </label>
                   )
                 })}
@@ -334,6 +393,17 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             </>
           ) : (
             <>
+              {hideFeedback ? (
+                <div className="field-recorded">
+                  <span className="status info">기록함</span>
+                  <ul>
+                    {shown.map((id) => (
+                      <li key={id}>{node.options.find((o) => o.id === id)?.text}</li>
+                    ))}
+                  </ul>
+                  <p className="muted">평가 모드: 판단이 적절했는지는 결과 평가에서 공개됩니다.</p>
+                </div>
+              ) : (
               <ul className="field-feedback">
                 {node.options
                   .filter((o) => shown.includes(o.id) || (node.multi && o.tone === 'good'))
@@ -351,6 +421,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                     )
                   })}
               </ul>
+              )}
               <button
                 type="button"
                 className="primary"
@@ -371,20 +442,24 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
     }
 
     if (node.type === 'data') {
-      const left = node.budget - run.time
+      // 이 단계에서 쓴 시간 = 확인한 데이터의 시간 합
+      const usedHere = node.items.filter((i) => run.viewed.includes(i.id)).reduce((t, i) => t + i.cost, 0)
+      const left = node.budget - usedHere
       const groups = [...new Set(node.items.map((i) => i.group))]
       return (
         <>
           <p className="field-prompt">{node.prompt}</p>
-          <div className="field-budget">
-            <span>가상 시간</span>
+          <div className={`field-budget${left <= node.budget * 0.2 ? ' warn' : ''}`}>
+            <span>데이터 확인 시간</span>
             <div className="home-progress-bar" aria-hidden="true">
               <span style={{ width: `${(run.time / node.budget) * 100}%` }} />
             </div>
             <strong>
-              {run.time} / {node.budget}분
+              {node.budget - left} / {node.budget}분
             </strong>
           </div>
+          {left <= node.budget * 0.2 && left > 0 && <p className="field-time-warn">⚠ 데이터 확인 시간이 {left}분 남았습니다. 가장 중요한 확인부터 하세요.</p>}
+          {left <= 0 && <p className="field-time-warn">⚠ 데이터 확인 시간을 다 썼습니다. 확보한 데이터로 원인 분석을 진행하세요.</p>}
           {groups.map((g) => (
             <div key={g} className="field-data-group">
               <h4>{g}</h4>
@@ -395,7 +470,14 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                   return (
                     <div key={i.id} id={`fd-${i.id}`} className={`field-data-item${seen ? ' seen' : ''}`}>
                       <div className="field-data-head">
-                        <span>{i.label}</span>
+                        <span className="field-data-icon" aria-hidden="true">
+                          {i.icon ?? '📄'}
+                        </span>
+                        <span className="field-data-title">
+                          <strong>{i.label}</strong>
+                          {i.purpose && <small>{i.purpose}</small>}
+                          <small className="field-cost">예상 소요 {i.cost}분</small>
+                        </span>
                         {(i.parts?.length > 0 || i.figure) && (
                           <button type="button" className="link field-eq-link" onClick={() => showOnEquipment(i)} title="이 데이터와 관련된 장비 부위·검사 원리를 오른쪽 패널에서 봅니다">
                             🔧 장비에서 보기
@@ -422,7 +504,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                       {seen && (
                         <div className="field-data-body">
                           <DataView result={i.result} />
-                          <p className="muted">💡 {i.note}</p>
+                          {!hideFeedback && <p className="muted">💡 {i.note}</p>}
                         </div>
                       )}
                     </div>
@@ -447,8 +529,8 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
       const submit = () => {
         const o = node.options.find((x) => x.id === pick)
         const tries = h.tries + 1
-        let r = { ...run, hypo: { pick, tries, evidence: ev, solved: Boolean(o.correct) || tries >= 3 }, essays: draft.essay ? { ...run.essays, hypo: draft.essay } : run.essays }
-        r = log(r, `가설: ${o.text}`, o.correct ? 'ok' : 'bad')
+        let r = { ...run, hypo: { pick, tries, evidence: ev, solved: exam || Boolean(o.correct) || tries >= 3 }, essays: draft.essay ? { ...run.essays, hypo: draft.essay } : run.essays }
+        r = log(r, `가설: ${o.text}`, exam ? 'info' : o.correct ? 'ok' : 'bad')
         setRun(r)
         setDraft({})
       }
@@ -465,7 +547,21 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
               <p className="muted">다른 가설을 다시 세워 보세요. (두 번째 시도는 점수 절반)</p>
             </div>
           )}
-          {h.solved ? (
+          {h.solved && hideFeedback ? (
+            <>
+              <div className="field-recorded">
+                <span className="status info">가설 기록함</span>
+                <p>
+                  <strong>{last?.text}</strong>
+                </p>
+                <p className="muted">근거: {h.evidence.map((id) => dataNode.items.find((i) => i.id === id)?.label).join(' / ') || '없음'}</p>
+                <p className="muted">평가 모드: 가설이 맞았는지는 결과 평가에서 공개됩니다.</p>
+              </div>
+              <button type="button" className="primary" onClick={() => goto(run, node.next)}>
+                조치 단계로 →
+              </button>
+            </>
+          ) : h.solved ? (
             <>
               <div className={`field-verdict ${last?.correct ? 'ok' : 'warn'}`}>
                 <span className={`status ${last?.correct ? 'ok' : 'warn'}`}>{last?.correct ? '가설 적중' : '정답 공개'}</span>
@@ -533,23 +629,8 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         const quiz = { ...run.quiz, ...answers }
         let r = { ...run, quiz, submitted: { ...run.submitted, [run.node]: true } }
         const wrong = node.questions.filter((q) => quiz[q.id] !== q.answer)
-        r = log(r, `조건 변경 위험 점검: ${node.questions.length - wrong.length}/${node.questions.length} 정답`, wrong.length ? 'warn' : 'ok')
-        // 틀린 문제는 오답 노트로
-        if (wrong.length) {
-          try {
-            const list = JSON.parse(localStorage.getItem('tutor.wrong') ?? '[]')
-            for (const q of wrong) {
-              const id = `field-${c.id}-${q.id}`
-              const item = { q: { id, type: '실무 시나리오', topic: findProcess(c.process)?.stage ?? 'back', prompt: q.prompt, choices: q.choices, answer: q.answer, explain: q.explain, ref: { kind: 'process', id: c.process } }, misses: 1, at: new Date().toISOString() }
-              const at = list.findIndex((w) => w.q.id === id)
-              if (at >= 0) list[at] = { ...list[at], misses: list[at].misses + 1, at: item.at }
-              else list.unshift(item)
-            }
-            localStorage.setItem('tutor.wrong', JSON.stringify(list.slice(0, 200)))
-          } catch {
-            // 저장 실패는 무시(진행에는 영향 없음)
-          }
-        }
+        r = log(r, exam ? '조건 변경 위험 점검 답 제출' : `조건 변경 위험 점검: ${node.questions.length - wrong.length}/${node.questions.length} 정답`, exam ? 'info' : wrong.length ? 'warn' : 'ok')
+        if (!exam) addWrongNotes(quiz)
         setRun(r)
       }
       return (
@@ -562,20 +643,22 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
               <div className="field-options">
                 {q.choices.map((ch, i) => {
                   const picked = done ? run.quiz[q.id] === i : answers[q.id] === i
-                  const state = done ? (i === q.answer ? ' correct' : picked ? ' wrong' : '') : picked ? ' on' : ''
+                  const reveal = done && !hideFeedback
+                  const state = reveal ? (i === q.answer ? ' correct' : picked ? ' wrong' : '') : picked ? ' on' : ''
                   return (
                     <label key={ch} className={`field-option${state}`}>
                       <input type="radio" name={q.id} disabled={done} checked={picked} onChange={() => setDraft((d) => ({ ...d, answers: { ...answers, [q.id]: i } }))} />
                       <span>
                         {ch}
-                        {done && i === q.answer && <em className="status ok">정답</em>}
-                        {done && picked && i !== q.answer && <em className="status bad">내 답</em>}
+                        {reveal && i === q.answer && <em className="status ok">정답</em>}
+                        {reveal && picked && i !== q.answer && <em className="status bad">내 답</em>}
+                        {done && hideFeedback && picked && <em className="status info">내 답</em>}
                       </span>
                     </label>
                   )
                 })}
               </div>
-              {done && <p className="muted">{q.explain}</p>}
+              {done && !hideFeedback && <p className="muted">{q.explain}</p>}
             </div>
           ))}
           {!done ? (
@@ -584,7 +667,11 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             </button>
           ) : (
             <>
-              {node.questions.some((q) => run.quiz[q.id] !== q.answer) && <p className="muted">틀린 문제는 오답 노트에 담았습니다.</p>}
+              {hideFeedback ? (
+                <p className="muted">평가 모드: 정답과 해설은 결과 평가에서 공개됩니다.</p>
+              ) : (
+                node.questions.some((q) => run.quiz[q.id] !== q.answer) && <p className="muted">틀린 문제는 오답 노트에 담았습니다.</p>
+              )}
               <button type="button" className="primary" onClick={() => goto(run, node.next)}>
                 조치 선택으로 →
               </button>
@@ -628,6 +715,9 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
       `- ${hypo?.text ?? ''}`,
       run.essays.hypo ? `- 설명: ${run.essays.hypo}` : '',
       '',
+      ...((run.hypotheses ?? []).length
+        ? ['### 검토한 가설', ...run.hypotheses.map((h) => `- [${{ open: '검증 전', supported: '지지됨', rejected: '기각' }[h.status]}] ${h.text}${h.memo ? ` — ${h.memo}` : ''}`), '']
+        : []),
       '## 4. 확인한 증거',
       ...run.viewed.map((id) => `- ${dataNode.items.find((i) => i.id === id)?.label}`),
       '',
@@ -668,7 +758,11 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             </h2>
             <span className={`status ${g.tone}`}>{g.label}</span>
           </div>
-          <p className="muted">선택형 점수는 미리 공개된 규칙(아래 표)으로만 계산했습니다. 힌트 사용 {result.hintCount}회(점수에는 영향 없음).</p>
+          <p className="muted">
+            {exam ? '평가 모드' : '연습 모드'} · 선택형 점수는 미리 공개된 규칙(아래 표)으로만 계산했습니다. 힌트 {result.hintCount}회
+            {result.hintPenalty ? ` (−${result.hintPenalty}점)` : ' (감점 없음)'}
+            {result.overtime ? ` · 제한 시간 초과(${run.time}/${c.timeLimit}분) 규칙 적용` : ''}.
+          </p>
         </div>
         <table className="nb-table field-rubric">
           <thead>
@@ -724,7 +818,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             )}
           </section>
           <section>
-            <h4>ℹ 놓친 정보</h4>
+            <h4>ℹ 놓친 주요 증거</h4>
             {result.missed.length ? (
               <ul>
                 {result.missed.map((x) => (
@@ -739,6 +833,23 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             )}
           </section>
         </div>
+        {result.checks.length > 0 && (
+          <section className="field-checks">
+            <h4>판단 점검표</h4>
+            <ul>
+              {result.checks.map((k) => (
+                <li key={k.q} className={k.ok ? 'ok' : 'bad'}>
+                  <span className={`status ${k.ok ? 'ok' : 'bad'}`}>{k.ok ? '예' : '아니요'}</span> {k.q}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {result.hintPenalty > 0 && (
+          <p className="muted">
+            항목 합계 {result.subtotal}점 − 힌트 감점 {result.hintPenalty}점 = <strong>{result.total}점</strong>
+          </p>
+        )}
         <details className="card field-model" open>
           <summary>모범 대응 절차</summary>
           <ol>
@@ -758,6 +869,28 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             <button type="button" onClick={() => onGo('wrong')}>
               오답 노트 →
             </button>
+          </div>
+          <h4>유사 시나리오</h4>
+          <div className="button-row">
+            {(c.similar ?? []).map((sid) => {
+              if (sid.startsWith('cases:'))
+                return (
+                  <button key={sid} type="button" onClick={() => onGo('cases')}>
+                    서술형 사례: 와이어 본딩 접합 강도 →
+                  </button>
+                )
+              const real = findFieldCase(sid)
+              const plan = PLANNED_CASES.find((x) => x.id === sid)
+              return real ? (
+                <button key={sid} type="button" onClick={() => onOpenCase(sid)}>
+                  {sid} · {real.title} →
+                </button>
+              ) : plan ? (
+                <button key={sid} type="button" disabled title="설계 샘플 · 준비 중">
+                  {sid} · {plan.title} (준비 중)
+                </button>
+              ) : null
+            })}
           </div>
         </div>
         <div className="button-row">
@@ -800,6 +933,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
           {c.processLabel} · {c.difficulty} · 약 {c.minutes}분
         </p>
         <div className="field-badges">
+          {started && <span className={`status ${exam ? 'warn' : 'info'}`}>{exam ? `평가 모드${run.timed ? ' · 제한 시간' : ''}` : '연습 모드'}</span>}
           <span className="virtual-badge">가상 데이터</span>
           <span className="status warn">검수 전 v{c.version}</span>
         </div>
@@ -827,11 +961,16 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             <p className="muted">아직 없음</p>
           ) : (
             <ol>
-              {run.log.map((l, i) => (
-                <li key={i} className={`tone-${l.tone}`}>
-                  <small>+{l.t}분</small> {l.text}
-                </li>
-              ))}
+              {run.log.map((l, i) => {
+                const tone = hideFeedback ? 'info' : l.tone
+                return (
+                  <li key={i} className={`tone-${tone}`}>
+                    <small className="field-log-time">{l.t}분</small>
+                    <span>{l.text}</span>
+                    {!hideFeedback && (tone === 'ok' || tone === 'bad' || tone === 'warn') && <small className={`field-log-res ${tone}`}>{tone === 'ok' ? '적절' : tone === 'bad' ? '위험' : '보완'}</small>}
+                  </li>
+                )
+              })}
             </ol>
           )}
         </div>
@@ -876,17 +1015,60 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
             <dt>현재 상태</dt>
             <dd>{run.done ? '조치 완료 · 평가' : run.status ?? '이상 보고 접수'}</dd>
           </div>
-          <div>
-            <dt>가상 경과</dt>
-            <dd>{run.time}분</dd>
+          <div className={`field-summary-time${run.timed && exam && timeRatio >= 0.8 ? ' warn' : ''}`}>
+            <dt>가상 경과{run.timed && exam ? ` / 제한 ${c.timeLimit}분` : ''}</dt>
+            <dd>
+              {run.time}분
+              {c.timeLimit && (
+                <span className="field-timebar" aria-hidden="true">
+                  <span style={{ width: `${Math.min(100, timeRatio * 100)}%` }} className={timeRatio >= 1 ? 'bad' : timeRatio >= 0.8 ? 'warn' : ''} />
+                </span>
+              )}
+            </dd>
           </div>
         </dl>
+        {run.timed && exam && !run.done && timeRatio >= 0.8 && (
+          <p className="field-time-warn">{timeRatio >= 1 ? `⚠ 제한 시간(${c.timeLimit}분)을 넘겼습니다. 끝까지 진행할 수 있으며, 사건 규칙대로 감점됩니다.` : `⚠ 제한 시간까지 ${c.timeLimit - run.time}분 남았습니다. 우선순위를 정하세요.`}</p>
+        )}
         <p className="home-eyebrow">
           {run.done ? '6단계 · 결과 평가' : `${stepNo}단계 · ${node?.title}`}
         </p>
         {!run.done && <h3 className="field-node-title">{node?.title}</h3>}
-        {run.done ? evaluation() : center()}
+        <div ref={centerRef}>{run.done ? evaluation() : center()}</div>
+        {!run.done && started && (
+          <div className="field-actionbar" role="toolbar" aria-label="진행 버튼">
+            {nudge && <p className="field-nudge" role="status">{nudge}</p>}
+            <button type="button" onClick={() => setSheet('prev')} disabled={run.path.length < 2}>
+              ← 이전 단계 보기
+            </button>
+            <button type="button" onClick={() => setSheet('summary')}>
+              🗂 현재까지 정리하기
+            </button>
+            <button type="button" onClick={() => setPanel('mentor')} disabled={!node?.hints}>
+              💡 힌트{exam ? ` (−${HINT_PENALTY}점)` : ''}
+            </button>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                const btns = [...(centerRef.current?.querySelectorAll('button.primary') ?? [])]
+                const go = btns.at(-1)
+                if (go && !go.disabled) return go.click()
+                const why = {
+                  choice: '선택지를 하나 이상 고른 뒤 결정하세요.',
+                  data: '데이터를 하나 이상 확인하세요. 모든 데이터를 볼 필요는 없습니다.',
+                  hypothesis: '가장 유력한 원인 가설을 하나 고르세요. 근거 데이터도 함께 고르면 좋습니다.',
+                  quiz: '모든 문항에 답을 고르세요.',
+                }
+                setNudge(why[node?.type] ?? '이 단계에서 할 일을 먼저 마치세요.')
+              }}
+            >
+              다음 단계 →
+            </button>
+          </div>
+        )}
       </div>
+      {sheet && <FieldSheet kind={sheet} c={c} run={run} hideFeedback={hideFeedback} onClose={() => setSheet(null)} />}
 
       {/* 오른쪽: 확보한 데이터 · 공정 조건 · 선임 엔지니어 */}
       <aside className="field-right card">
@@ -894,6 +1076,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
           {[
             ['data', `확보한 데이터 ${run.viewed.length}`],
             ['equip', '장비 구조'],
+            ['hypo', `현재 가설 ${(run.hypotheses ?? []).length}`],
             ['mentor', '선임 엔지니어'],
           ].map(([id, label]) => (
             <button key={id} type="button" role="tab" aria-selected={panel === id} className={panel === id ? 'active' : ''} onClick={() => setPanel(id)}>
@@ -903,7 +1086,11 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         </div>
         {panel === 'equip' ? (
           <div className="field-panel">
-            <EquipmentPanel c={c} run={run} focus={part} onFocus={setPart} onJumpData={jumpToData} canJump={node?.type === 'data' && !run.done} />
+            <EquipmentPanel c={c} run={run} focus={part} onFocus={setPart} onJumpData={jumpToData} canJump={node?.type === 'data' && !run.done} hideObserve={hideFeedback} />
+          </div>
+        ) : panel === 'hypo' ? (
+          <div className="field-panel">
+            <HypothesisBoard run={run} items={dataNode.items} onChange={(hypotheses) => setRun({ ...run, hypotheses })} />
           </div>
         ) : panel === 'data' ? (
           <div className="field-panel">
@@ -928,6 +1115,7 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
         ) : (
           <div className="field-panel">
             <p className="muted">정답을 바로 알려 주지 않고, 질문으로 생각을 이끕니다. 단계가 올라갈수록 구체적입니다.</p>
+            {exam && !run.done && <p className="field-time-warn">평가 모드: 힌트 1단계마다 −{HINT_PENALTY}점입니다.</p>}
             {run.done || !node?.hints ? (
               <p className="muted">이 단계에는 힌트가 없습니다.</p>
             ) : (
@@ -945,10 +1133,172 @@ function FieldRun({ c, saved, onBack, onOpenProcess, onOpenMachine, onGo }) {
                 )}
               </>
             )}
-            <p className="muted field-hint-count">이 시나리오에서 힌트 {Object.values(run.hints).reduce((s, n) => s + n, 0)}회 사용 (점수와 무관, 기록만 남습니다)</p>
+            <p className="muted field-hint-count">이 시나리오에서 힌트 {Object.values(run.hints).reduce((s, n) => s + n, 0)}회 사용 {exam ? `(평가 모드: 1단계마다 −${HINT_PENALTY}점)` : '(연습 모드: 점수와 무관, 기록만 남습니다)'}</p>
           </div>
         )}
       </aside>
     </section>
+  )
+}
+
+const HYPO_STATUS = { open: { label: '검증 전', tone: 'info' }, supported: { label: '지지됨', tone: 'ok' }, rejected: { label: '기각', tone: 'bad' } }
+
+// "현재 가설" 탭: 내가 생각하는 원인 후보를 여러 개 적고, 확보한 데이터를 근거/반대 증거로 붙이며, 검증 상태와 메모를 관리합니다.
+// 점수에는 들어가지 않는 개인 작업 공간이며(채점은 원인 분석 단계에서), 보고서에 함께 들어갑니다.
+function HypothesisBoard({ run, items, onChange }) {
+  const list = run.hypotheses ?? []
+  const [text, setText] = useState('')
+  const viewed = items.filter((i) => run.viewed.includes(i.id))
+  const patch = (id, p) => onChange(list.map((h) => (h.id === id ? { ...h, ...p } : h)))
+  const toggle = (h, key, dataId) => patch(h.id, { [key]: h[key].includes(dataId) ? h[key].filter((x) => x !== dataId) : [...h[key], dataId] })
+  return (
+    <div className="hypo-board">
+      <p className="muted">생각나는 원인 후보를 적고, 확보한 데이터를 근거·반대 증거로 연결해 보세요. 점수와 무관한 개인 메모이며 보고서에 들어갑니다.</p>
+      <form
+        className="hypo-add"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!text.trim()) return
+          onChange([...list, { id: `h${Date.now().toString(36)}`, text: text.trim(), for: [], against: [], status: 'open', memo: '' }])
+          setText('')
+        }}
+      >
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="예: 새 Capillary 문제일 것 같다" aria-label="새 가설" />
+        <button type="submit" disabled={!text.trim()}>
+          추가
+        </button>
+      </form>
+      {list.length === 0 && <p className="muted">아직 적은 가설이 없습니다.</p>}
+      {list.map((h) => (
+        <article key={h.id} className={`hypo-card ${h.status}`}>
+          <div className="hypo-head">
+            <strong>{h.text}</strong>
+            <button type="button" className="link" onClick={() => onChange(list.filter((x) => x.id !== h.id))} aria-label="가설 지우기">
+              ✕
+            </button>
+          </div>
+          <div className="hypo-status" role="radiogroup" aria-label="검증 상태">
+            {Object.entries(HYPO_STATUS).map(([k, v]) => (
+              <button key={k} type="button" role="radio" aria-checked={h.status === k} className={`status ${h.status === k ? v.tone : ''}`} onClick={() => patch(h.id, { status: k })}>
+                {v.label}
+              </button>
+            ))}
+          </div>
+          {viewed.length === 0 ? (
+            <p className="muted">데이터를 확인하면 근거로 연결할 수 있습니다.</p>
+          ) : (
+            <div className="hypo-evidence">
+              {[
+                ['for', '근거'],
+                ['against', '반대 증거'],
+              ].map(([key, label]) => (
+                <div key={key}>
+                  <small>{label}</small>
+                  <div className="field-evidence">
+                    {viewed.map((i) => (
+                      <label key={i.id} className={`chip small${h[key].includes(i.id) ? ' chip-active' : ''}`}>
+                        <input type="checkbox" checked={h[key].includes(i.id)} onChange={() => toggle(h, key, i.id)} />
+                        {i.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <textarea className="wq-input" rows={2} value={h.memo} onChange={(e) => patch(h.id, { memo: e.target.value })} placeholder="메모" aria-label="가설 메모" />
+        </article>
+      ))}
+    </div>
+  )
+}
+
+// 하단 버튼의 "이전 단계 보기"·"현재까지 정리하기" 창(읽기 전용)
+function FieldSheet({ kind, c, run, hideFeedback, onClose }) {
+  const dataNode = Object.values(c.nodes).find((n) => n.type === 'data')
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+  const decided = (nodeId) => {
+    const n = c.nodes[nodeId]
+    if (n?.options && n.type !== 'hypothesis') return (run.picks[nodeId] ?? []).map((id) => n.options.find((o) => o.id === id)?.text)
+    if (n?.type === 'data') return run.viewed.map((id) => n.items.find((i) => i.id === id)?.label)
+    if (n?.type === 'hypothesis' && run.hypo.pick) return [n.options.find((o) => o.id === run.hypo.pick)?.text]
+    if (n?.type === 'quiz') return n.questions.filter((q) => run.quiz[q.id] !== undefined).map((q) => `${q.prompt} → ${q.choices[run.quiz[q.id]]}`)
+    if (n?.type === 'outcome') return [n.text]
+    return []
+  }
+  const past = [...new Set(run.path.slice(0, -1))]
+  return (
+    <div className="field-sheet-bg" onClick={onClose}>
+      <div className="field-sheet card" role="dialog" aria-modal="true" aria-label={kind === 'prev' ? '이전 단계' : '현재까지 정리'} onClick={(e) => e.stopPropagation()}>
+        <div className="field-sheet-head">
+          <h3>{kind === 'prev' ? '지나온 단계 (읽기 전용)' : '현재까지 정리'}</h3>
+          <button type="button" className="link" onClick={onClose} autoFocus>
+            닫기 ✕
+          </button>
+        </div>
+        {kind === 'prev' ? (
+          <ol className="field-sheet-list">
+            {past.map((id) => (
+              <li key={id}>
+                <strong>{c.nodes[id]?.title}</strong>
+                <ul>
+                  {decided(id).filter(Boolean).map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                  {decided(id).length === 0 && <li className="muted">기록 없음</li>}
+                </ul>
+              </li>
+            ))}
+            <p className="muted">이미 내린 판단은 바꿀 수 없습니다. 실제 현장처럼, 새 정보가 나오면 다음 단계에서 판단을 고쳐 가세요.</p>
+          </ol>
+        ) : (
+          <div className="field-sheet-grid">
+            <section>
+              <h4>진행</h4>
+              <p>
+                {run.mode === 'exam' ? '평가 모드' : '연습 모드'} · 가상 {run.time}분{c.timeLimit && run.timed ? ` / 제한 ${c.timeLimit}분` : ''} · 현재 상태: {run.status ?? '이상 보고 접수'}
+              </p>
+            </section>
+            <section>
+              <h4>확보한 데이터 {run.viewed.length}개</h4>
+              <ul>
+                {run.viewed.map((id) => (
+                  <li key={id}>{dataNode.items.find((i) => i.id === id)?.label}</li>
+                ))}
+              </ul>
+            </section>
+            <section>
+              <h4>수행한 조치</h4>
+              <ul>
+                {run.log.map((l, i) => (
+                  <li key={i}>
+                    <small className="muted">{l.t}분</small> {l.text}
+                    {!hideFeedback && l.tone !== 'info' && <small className={`field-log-res ${l.tone}`}> {l.tone === 'ok' ? '적절' : l.tone === 'bad' ? '위험' : '보완'}</small>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            <section>
+              <h4>내 가설</h4>
+              {(run.hypotheses ?? []).length ? (
+                <ul>
+                  {run.hypotheses.map((h) => (
+                    <li key={h.id}>
+                      [{HYPO_STATUS[h.status].label}] {h.text} <small className="muted">근거 {h.for.length} · 반대 {h.against.length}</small>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">오른쪽 "현재 가설" 탭에서 적을 수 있습니다.</p>
+              )}
+            </section>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

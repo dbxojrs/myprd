@@ -15,10 +15,16 @@ import { createStore, useStore } from './sharedStore.js'
 // 점수: 기준(rubric)마다 선택지·데이터·가설·퀴즈 점수를 더한 뒤 0~배점으로 자릅니다.
 
 export const fieldStore = createStore('tutor.field', {})
+export const HINT_PENALTY = 2
 export const useField = () => useStore(fieldStore)
 
-export function newRun(c) {
+// mode: 'practice'(연습: 힌트·피드백 바로) | 'exam'(평가: 결과 전 피드백 숨김, 힌트 감점), timed: 제한 시간 적용
+export function newRun(c, { mode = 'practice', timed = false } = {}) {
   return {
+    mode,
+    timed,
+    started: false, // 모드를 고르고 출동하면 true
+    hypotheses: [], // 내 가설 목록 { id, text, for: [데이터 id], against: [데이터 id], status: 'open'|'supported'|'rejected', memo }
     node: c.start,
     path: [c.start],
     picks: {}, // { 노드 id: [선택지 id…] } (하나 고르기는 고른 순서대로 쌓임)
@@ -85,10 +91,14 @@ export function evaluate(c, run) {
   if (hypoNode && run.hypo.solved) {
     const right = hypoNode.options.find((o) => o.correct)
     const s = hypoNode.score
-    raw.cause = (raw.cause ?? 0) + (run.hypo.tries <= 1 ? s.correct : run.hypo.tries === 2 ? s.retry : 0)
-    const ev = run.hypo.evidence.filter((id) => right.support.includes(id)).length
+    // 최종 고른 가설이 맞을 때만 점수(첫 시도 만점, 두 번째 절반). 평가 모드는 한 번만 제출합니다.
+    const ok = run.hypo.pick === right.id
+    raw.cause = (raw.cause ?? 0) + (!ok ? 0 : run.hypo.tries <= 1 ? s.correct : run.hypo.tries === 2 ? s.retry : 0)
+    // 근거 점수는 맞는 가설을 골랐을 때만(틀린 원인을 뒷받침한 근거에는 주지 않음)
+    const ev = ok ? run.hypo.evidence.filter((id) => right.support.includes(id)).length : 0
     raw.cause += Math.min(s.evidenceMax, ev * s.evidenceEach)
-    if (run.hypo.tries > 1) risky.push({ node: hypoNode.title, text: `처음 고른 가설이 틀렸습니다(시도 ${run.hypo.tries}번)`, tone: 'warn' })
+    if (!ok) risky.push({ node: hypoNode.title, text: `원인 가설이 맞지 않았습니다: ${hypoNode.options.find((o) => o.id === run.hypo.pick)?.text ?? '-'}`, feedback: right.feedback, tone: 'bad' })
+    else if (run.hypo.tries > 1) risky.push({ node: hypoNode.title, text: `처음 고른 가설이 틀렸습니다(시도 ${run.hypo.tries}번)`, tone: 'warn' })
   }
   // 퀴즈
   for (const n of Object.values(c.nodes).filter((x) => x.type === 'quiz'))
@@ -97,9 +107,19 @@ export function evaluate(c, run) {
       if (a === q.answer) raw.know = (raw.know ?? 0) + q.points
       else if (a !== undefined) risky.push({ node: n.title, text: `${q.prompt} → "${q.choices[a]}"`, feedback: q.explain, tone: 'warn' })
     }
+  // 시간 규칙: 평가 모드 + 제한 시간을 켠 경우에만, 사건별 규칙대로 감점(실패 처리 아님)
+  const overtime = run.mode === 'exam' && run.timed && c.timeLimit && run.time > c.timeLimit
+  if (overtime && c.timeRule) {
+    raw[c.timeRule.cat] = (raw[c.timeRule.cat] ?? 0) - c.timeRule.penalty
+    risky.push({ node: '가상 시간', text: `제한 시간 초과 (${run.time}분 / ${c.timeLimit}분)`, feedback: c.timeRule.text, tone: 'warn' })
+  }
   const rows = c.rubric.map((r) => ({ ...r, raw: raw[r.id] ?? 0, score: Math.max(0, Math.min(r.points, raw[r.id] ?? 0)) }))
   const hintCount = Object.values(run.hints).reduce((s, n) => s + n, 0)
-  return { rows, total: rows.reduce((s, r) => s + r.score, 0), good, risky, missed, hintCount }
+  // 평가 모드에서 힌트를 쓰면 1단계마다 2점 감점(연습 모드는 기록만)
+  const hintPenalty = run.mode === 'exam' ? hintCount * HINT_PENALTY : 0
+  const sum = rows.reduce((s, r) => s + r.score, 0)
+  const checks = (c.checks ?? []).map((k) => ({ q: k.q, ok: checkRule(k.rule, run) }))
+  return { rows, subtotal: sum, hintPenalty, total: Math.max(0, sum - hintPenalty), good, risky, missed, hintCount, overtime, checks }
 }
 
 export const grade = (total) => (total >= 85 ? { label: '현장 투입 가능', tone: 'ok' } : total >= 65 ? { label: '보완 필요', tone: 'warn' } : { label: '다시 연습', tone: 'bad' })
@@ -114,4 +134,17 @@ export function recommendCase(cases, field, completed = []) {
     cases.find((c) => st(c)?.best == null) ??
     [...cases].sort((a, b) => (st(a)?.best ?? 0) - (st(b)?.best ?? 0))[0]
   )
+}
+
+// 판단 점검 규칙: picked/notPicked('노드.선택지'), viewedAny(데이터 id), evidenceMin(가설 근거 수)
+export function checkRule(rule, run) {
+  const has = (key) => {
+    const [n, o] = key.split('.')
+    return (run.picks[n] ?? []).includes(o)
+  }
+  if (rule.picked && !rule.picked.every(has)) return false
+  if (rule.notPicked && rule.notPicked.some(has)) return false
+  if (rule.viewedAny && !rule.viewedAny.some((id) => run.viewed.includes(id))) return false
+  if (rule.evidenceMin && (run.hypo?.evidence?.length ?? 0) < rule.evidenceMin) return false
+  return true
 }
