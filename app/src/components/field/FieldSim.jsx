@@ -163,8 +163,66 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
   )
 }
 
+// 웨이퍼 맵(영역별 값). 가운데→가장자리 동심원, 목표 대비 편차로 색을 칠하고 숫자·글자를 함께 씁니다.
+function WaferMap({ data }) {
+  const rings = data.rings
+  const dev = (v) => (v - data.target) / data.target
+  const tone = (v) => (Math.abs(dev(v)) >= 0.05 ? 'bad' : Math.abs(dev(v)) >= 0.02 ? 'warn' : 'ok')
+  const R = [70, 50, 26]
+  const one = (set, title) => (
+    <figure className="wmap">
+      <svg viewBox="0 0 160 160" role="img" aria-label={`${title} 웨이퍼 맵: ${set.map((r) => `${r.label} ${r.value}${data.unit}`).join(', ')}`}>
+        {/* set은 바깥(가장자리)→안(가운데) 순서. 큰 원부터 그려 안쪽 원이 위에 오게 합니다. */}
+        {set.map((r, k) => (
+          <circle key={r.label} cx="80" cy="80" r={R[k] ?? 20} className={`wmap-ring ${tone(r.value)}`} />
+        ))}
+        <path d="M74 152 L86 152 L80 146 Z" className="wmap-notch" />
+        {set.map((r, i) => (
+          <text key={r.label} x="80" y={80 - (R[i] - (R[i + 1] ?? 0)) / 2 - (R[i + 1] ?? 0) + 4} textAnchor="middle" className="wmap-val">
+            {r.value}
+          </text>
+        ))}
+      </svg>
+      <figcaption>{title}</figcaption>
+    </figure>
+  )
+  const outer = [...rings].reverse() // R 순서(바깥→안)에 맞춤
+  return (
+    <div className="wmap-wrap">
+      <div className="wmap-row">
+        {one(outer, data.title ?? '이 설비')}
+        {data.compare && one([...data.compare.rings].reverse(), data.compare.label)}
+      </div>
+      <ul className="wmap-legend">
+        {rings.map((r) => (
+          <li key={r.label}>
+            <span className={`status ${tone(r.value)}`}>{r.label}</span> {r.value} {data.unit} ({dev(r.value) >= 0 ? '+' : ''}
+            {(dev(r.value) * 100).toFixed(1)}%)
+          </li>
+        ))}
+        <li className="muted">목표 {data.target} {data.unit} · 색: 목표 대비 ±2 % 안 ✓ / 2~5 % ⚠ / 5 % 넘음 ✕ (가상 판정 기준)</li>
+      </ul>
+    </div>
+  )
+}
+
 function DataView({ result }) {
   if (!result) return null
+  const meta = result.meta && <p className="data-meta">📋 {result.meta}</p>
+  if (result.kind === 'wafermap')
+    return (
+      <>
+        {meta}
+        <WaferMap data={result} />
+      </>
+    )
+  if (result.kind === 'table' && meta)
+    return (
+      <>
+        {meta}
+        <DataView result={{ ...result, meta: null }} />
+      </>
+    )
   if (result.kind === 'table')
     return (
       <div className="nb-table-wrap">

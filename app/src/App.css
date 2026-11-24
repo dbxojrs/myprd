@@ -5297,3 +5297,18 @@ button { min-height: 36px; }
   .field-actionbar button { flex: 1 1 45%; font-size: 0.85rem; }
   .field-actionbar .primary { margin-left: 0; }
 }
+
+/* 웨이퍼 맵·데이터 정보 줄 */
+.data-meta { margin: 0 0 4px; font-size: 0.76rem; color: var(--muted); }
+.wmap-wrap { display: grid; gap: 6px; }
+.wmap-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.wmap { margin: 0; text-align: center; width: 150px; }
+.wmap svg { width: 100%; height: auto; }
+.wmap figcaption { font-size: 0.78rem; font-weight: 700; }
+.wmap-ring { stroke: var(--surface); stroke-width: 2; }
+.wmap-ring.ok { fill: color-mix(in srgb, var(--good) 45%, var(--surface)); }
+.wmap-ring.warn { fill: color-mix(in srgb, var(--warn) 50%, var(--surface)); }
+.wmap-ring.bad { fill: color-mix(in srgb, var(--bad) 55%, var(--surface)); }
+.wmap-notch { fill: var(--surface); }
+.wmap-val { font-size: 11px; font-weight: 800; fill: var(--text); }
+.wmap-legend { list-style: none; padding: 0; margin: 0; display: grid; gap: 3px; font-size: 0.8rem; }
