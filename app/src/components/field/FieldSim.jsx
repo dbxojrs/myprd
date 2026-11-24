@@ -4,6 +4,8 @@ import { findSource } from '../../data/sourceCatalog.js'
 import { evaluate, finishRun, grade, HINT_PENALTY, newRun, resetRun, saveRun, useField } from '../../lib/fieldSim.js'
 import { markActive } from '../../lib/activity.js'
 import { addNote, openNotePage } from '../../lib/notes.js'
+import { findScenario } from '../../data/scenarios.js'
+import { addReport, reportFromRun } from '../../lib/reports.js'
 import { writeStored } from '../../lib/storage.js'
 import { findProcess } from '../../data/processes.js'
 import EquipmentPanel from './EquipmentPanel.jsx'
@@ -941,7 +943,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
               if (sid.startsWith('cases:'))
                 return (
                   <button key={sid} type="button" onClick={() => onGo('cases')}>
-                    서술형 사례: 와이어 본딩 접합 강도 →
+                    서술형 사례: {findScenario(sid.slice(6))?.title ?? '현장 사례'} →
                   </button>
                 )
               const real = findFieldCase(sid)
@@ -961,6 +963,15 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
         <div className="button-row">
           <button type="button" className="primary" onClick={report}>
             🧾 엔지니어 보고서 작성 (노트로)
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              addReport(reportFromRun(c, run))
+              onGo('report')
+            }}
+          >
+            📑 8D · 5 Why · 피시본으로 정리
           </button>
           <button
             type="button"

@@ -25,6 +25,10 @@ import WrittenQuiz from './components/WrittenQuiz.jsx'
 import CasePractice from './components/CasePractice.jsx'
 import FieldSim from './components/field/FieldSim.jsx'
 import TodayPage from './components/TodayPage.jsx'
+import DataLab from './components/analysis/DataLab.jsx'
+import DefectAtlas from './components/analysis/DefectAtlas.jsx'
+import LearningAnalytics from './components/analysis/LearningAnalytics.jsx'
+import EngineerReport from './components/report/EngineerReport.jsx'
 import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
 import { useEdit } from './lib/notes.js'
@@ -118,6 +122,13 @@ export default function App() {
     setScreen(machines.find((m) => m.id === id)?.stage === 'front' ? 'machine-fab' : 'machine-pkg')
   }
 
+  // 다른 화면(도감·분석·보고서)에서 현장 실무 시나리오 하나를 바로 엽니다.
+  const openField = (id, category) => {
+    writeStored('tutor.field.open', id)
+    setScreen(category === 'FAB' ? 'field-fab' : 'field-pkg')
+    window.scrollTo({ top: 0 })
+  }
+
   // 공정 상세의 "강의로 돌아가기"에서 씁니다. 그 단원을 골라 둔 채 강의가 있는 학습 화면으로 갑니다.
   const openCourse = (courseId, lessonId) => {
     if (lessonId) writeStored(courseStorageKey(courseId), lessonId)
@@ -192,7 +203,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className={`app-body${['field', 'field-fab', 'field-pkg'].includes(screen) ? ' wide' : ''}`}>
+      <div className={`app-body${['field', 'field-fab', 'field-pkg', 'report'].includes(screen) ? ' wide' : ''}`}>
       {showFlowBar && !ui.focus && !ui.flowbar && (
         <button type="button" className="flowbar-collapsed" aria-expanded="false" onClick={() => setUi({ flowbar: true })}>
           공정 흐름{activeFlowName ? ` · 현재: ${activeFlowName}` : ''} ▾ 펼치기
@@ -257,10 +268,7 @@ export default function App() {
             onOpenProcess={setProcessId}
             onOpenMap={() => setScreen('map')}
             onOpenCourse={openCourse}
-            onOpenField={(id, category) => {
-              writeStored('tutor.field.open', id)
-              setScreen(category === 'FAB' ? 'field-fab' : 'field-pkg')
-            }}
+            onOpenField={openField}
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
         )}
@@ -289,6 +297,10 @@ export default function App() {
         {['field', 'field-fab', 'field-pkg'].includes(screen) && (
           <FieldSim key={screen} tab={screen === 'field-fab' ? 'FAB' : screen === 'field-pkg' ? 'PKG' : 'ALL'} onOpenProcess={openProcess} onOpenMachine={openMachine} onGo={setScreen} />
         )}
+        {screen === 'datalab' && <DataLab onOpenField={openField} />}
+        {screen === 'defects' && <DefectAtlas onOpenMachine={openMachine} onOpenProcess={openProcess} onOpenField={openField} />}
+        {screen === 'report' && <EngineerReport onOpenField={openField} />}
+        {screen === 'analytics' && <LearningAnalytics completed={completed} onGo={setScreen} onOpenField={openField} />}
         {screen === 'today' && <TodayPage pkg={pkg} completed={completed} onGo={setScreen} onOpenProcess={openProcess} onOpenUnit={openUnit} />}
         {screen === 'notes' && <NotesPage onOpenProcess={openProcess} />}
         {screen === 'basics' && <CoursePage key="basics" courseId="basics" onOpenProcess={openProcess} onGo={setScreen} />}

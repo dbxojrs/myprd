@@ -64,6 +64,10 @@ export function mergeData(remote = {}, local = {}) {
   const out = { ...local, ...remote }
   const both = (k) => remote[k] !== undefined && local[k] !== undefined
   if (both('tutor.notes')) out['tutor.notes'] = byId(remote['tutor.notes'], local['tutor.notes'], (n) => n.id, (x, y) => newer(x, y, (n) => n.updatedAt))
+  if (both('tutor.reports')) {
+    const list = byId(remote['tutor.reports'].list ?? [], local['tutor.reports'].list ?? [], (r) => r.id, (x, y) => newer(x, y, (r) => r.updatedAt))
+    out['tutor.reports'] = { list: list.sort((x, y) => (y.updatedAt > x.updatedAt ? 1 : -1)).slice(0, 50), open: local['tutor.reports'].open ?? null }
+  }
   if (both('tutor.noteTemplates')) out['tutor.noteTemplates'] = byId(remote['tutor.noteTemplates'], local['tutor.noteTemplates'])
   if (both('tutor.completed')) out['tutor.completed'] = [...new Set([...remote['tutor.completed'], ...local['tutor.completed']])]
   if (both('tutor.activity')) {
