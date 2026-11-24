@@ -19,6 +19,8 @@
 // 실제 장비 사진은 출처·라이선스를 확인한 것만 씁니다(data/processes.js의 photo). 확인한 사진이 없으면 교육용 도식만 씁니다.
 
 import { processes } from './processes.js'
+import { EQUIPMENT } from './equipment/index.js'
+import { VISUALS } from './visuals.js'
 
 export const MEDIA = [
   {
@@ -117,10 +119,39 @@ function processMovie(process, stage, processMovies = {}) {
   }
 }
 
+// 시나리오 장비의 입체 도식(설비 실습과 같은 그림). 그 공정 전용 도식(예: 테스트 셀 구성도)이 있으면 그것을 씁니다.
+// 관련 부위는 시나리오 데이터 항목의 parts에서 가져옵니다(확인한 데이터의 부위를 강조).
+function equipmentMedia(c) {
+  const kind = c.equipment?.kind
+  const eq = EQUIPMENT[kind]
+  if (!eq || MEDIA.some((m) => m.process === c.process && m.mediaType === 'diagram' && !m.scenarioId)) return null
+  const items = Object.values(c.nodes).filter((n) => n.type === 'data').flatMap((n) => n.items)
+  return {
+    mediaId: `equip-${kind}`,
+    scenarioId: null,
+    processCategory: c.category,
+    process: c.process,
+    stages: [1, 2, 3, 4, 5],
+    mediaType: 'equipment',
+    kind,
+    title: `${c.equipment.name} 구조 (장비 입체 도식)`,
+    description: '부위를 누르면 장비 구조 탭에서 역할과 출처를 봅니다. 데이터를 확인하면 관련 부위가 강조됩니다. 실제 장비 모양·배치와 다를 수 있습니다.',
+    alt: `${eq.kind.ko} 입체 도식: ${eq.modules.map((m) => m.name.ko).join(', ')}`,
+    hotspots: eq.modules.map((m) => m.id),
+    relatedDataIds: Object.fromEntries(items.filter((i) => i.parts?.length).map((i) => [i.id, i.parts])),
+    source: VISUALS['equipment-iso'].source,
+    license: VISUALS['equipment-iso'].license,
+    validationStatus: 'unreviewed',
+    isEducationalIllustration: true,
+  }
+}
+
 // 이 시나리오의 이 단계에서 보여 줄 미디어. 아직 확인하지 않은 데이터에 묶인 미디어는 숨깁니다.
 // movies: data/processMovies의 영상 목록(화면 쪽에서 넘김 — 이 파일은 Node 검사에서도 읽히도록 Vite 전용 import를 쓰지 않습니다)
 export function mediaFor(c, stage, viewed = [], movies = {}) {
   const list = MEDIA.filter((m) => (m.scenarioId === c.id || (!m.scenarioId && m.process === c.process)) && (!stage || m.stages.includes(stage)))
+  const equip = equipmentMedia(c)
+  if (equip && (!stage || equip.stages.includes(stage))) list.push(equip)
   const photo = processPhoto(c.process)
   if (photo && (!stage || photo.stages.includes(stage))) list.push(photo)
   const movie = processMovie(c.process, stage, movies)

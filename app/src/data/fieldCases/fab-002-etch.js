@@ -35,6 +35,23 @@ export default {
     { kind: 'process', id: 'etch', label: '식각 공정 설명' },
     { kind: 'machine', id: 'etch', label: '식각 설비 실습' },
   ],
+  scene: {
+    location: '식각기 2번 챔버 · 제품 B LOT',
+    clock: '오후 14:00 보고 (제품 B는 어제 첫 양산)',
+    state: '제품 B 잔류물 불량 증가',
+    metrics: {
+      title: '잔류물 불량 칩 비율',
+      unit: '%',
+      limit: 1,
+      limitLabel: '관리 상한 1 % (가상)',
+      rows: [
+        { label: '제품 A', value: 0.2 },
+        { label: '제품 B', value: 6.8, flag: true, flagText: '상한 초과' },
+      ],
+      note: '같은 2번 챔버·같은 Recipe·같은 검사 기준의 비교입니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 조건을 확정하지 못해 신제품 LOT 대기가 길어졌습니다.' },
   checks: [
@@ -91,13 +108,15 @@ export default {
       title: '초기 대응 판단',
       goal: '불량이 더 퍼지지 않게 막되, 정상인 제품까지 멈추지는 않습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['stopB', 'keeprun'], ['stopall', 'keeprun']],
       options: [
-        { id: 'stopB', cost: 5, text: '제품 B의 2번 챔버 투입을 멈춘다(제품 A는 계속)', score: { contain: 6 }, tone: 'good', log: '제품 B 투입 중단', status: '제품 B 정지 · 제품 A 진행', feedback: '불량이 제품 B에만 나오므로 B만 멈추면 생산 손실을 줄일 수 있습니다.' },
-        { id: 'hold', cost: 10, text: '이미 식각한 제품 B LOT을 찾아 Hold하고 다음 공정 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '식각 완료 B LOT Hold', feedback: '다음 공정으로 넘어가면 잔류물이 그대로 남아 되돌리기 어렵습니다.' },
-        { id: 'share', cost: 5, text: '제품기술·품질 담당에게 알리고, 첫 발생 LOT과 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '신제품 문제는 제품기술 담당과 함께 봐야 합니다.' },
-        { id: 'stopall', cost: 5, text: '2번 챔버 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '2번 챔버 전체 중단', status: '2번 챔버 정지', feedback: '제품 A는 같은 챔버에서 정상입니다. 근거 없이 다 멈추면 생산 손실만 커집니다.' },
-        { id: 'keeprun', cost: 0, text: '검사 오류일 수 있으니 제품 B를 계속 진행한다', score: { contain: -8 }, tone: 'bad', log: '제품 B 계속 진행', status: '제품 B 진행 중 (이상 상태)', feedback: '확인하는 동안 불량 LOT이 계속 늘어납니다. 먼저 멈추고 확인합니다.' },
-        { id: 'timenow', cost: 10, text: '식각 시간을 바로 늘려 잔류물을 없앤다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 식각 시간 상향', feedback: '원인을 모르는 채 조건을 바꾸면, 목표 막을 다 깎은 뒤에도 계속 깎아 아래 막이 손상될 수 있습니다(식각기 규칙표).' },
+        { id: 'stopB', title: '제품 B 투입 중단', target: '2번 챔버 · 제품 B (제품 A는 계속)', cost: 5, text: '제품 B의 2번 챔버 투입을 멈춘다(제품 A는 계속)', score: { contain: 6 }, tone: 'good', log: '제품 B 투입 중단', status: '제품 B 정지 · 제품 A 진행', feedback: '불량이 제품 B에만 나오므로 B만 멈추면 생산 손실을 줄일 수 있습니다.' },
+        { id: 'hold', title: '식각한 제품 B LOT Hold', target: '제품 B LOT · 다음 공정', cost: 10, text: '이미 식각한 제품 B LOT을 찾아 Hold하고 다음 공정 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '식각 완료 B LOT Hold', feedback: '다음 공정으로 넘어가면 잔류물이 그대로 남아 되돌리기 어렵습니다.' },
+        { id: 'share', title: '관련 부서 공유 · 시각 기록', target: '제품기술·품질 담당', cost: 5, text: '제품기술·품질 담당에게 알리고, 첫 발생 LOT과 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '신제품 문제는 제품기술 담당과 함께 봐야 합니다.' },
+        { id: 'stopall', title: '2번 챔버 전체 중단', target: '2번 챔버', cost: 5, text: '2번 챔버 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '2번 챔버 전체 중단', status: '2번 챔버 정지', feedback: '제품 A는 같은 챔버에서 정상입니다. 근거 없이 다 멈추면 생산 손실만 커집니다.' },
+        { id: 'keeprun', title: '검사 확인 때까지 제품 B 계속 진행', target: '제품 B', cost: 0, text: '검사 오류일 수 있으니 제품 B를 계속 진행한다', score: { contain: -8 }, tone: 'bad', log: '제품 B 계속 진행', status: '제품 B 진행 중 (이상 상태)', feedback: '확인하는 동안 불량 LOT이 계속 늘어납니다. 먼저 멈추고 확인합니다.' },
+        { id: 'timenow', title: '식각 시간 즉시 연장', target: '2번 챔버 Recipe', cost: 10, text: '식각 시간을 바로 늘려 잔류물을 없앤다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 식각 시간 상향', feedback: '원인을 모르는 채 조건을 바꾸면, 목표 막을 다 깎은 뒤에도 계속 깎아 아래 막이 손상될 수 있습니다(식각기 규칙표).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요.' },
       hints: [
@@ -198,10 +217,10 @@ export default {
       goal: '원인에 맞는 조치를 하나 고릅니다. 고른 조치에 따라 결과가 달라집니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'gas_up', cost: 40, text: '변경 승인을 받아 제품 B용으로 식각 가스 유량을 늘리는 조건을 소량 웨이퍼로 시험하고, 잔류물과 아래 막 상태를 함께 확인한다', score: { fix: 15 }, tone: 'good', log: '승인 후 제품 B 가스 유량 상향 소량 시험', status: '제품 B 조건 소량 시험', next: 'r_good', feedback: '원인(식각제 부족)에 맞는 조치를 변경 절차대로 했고, 부작용도 함께 확인합니다.' },
-        { id: 'time_up', cost: 10, text: '식각 시간을 늘려 잔류물을 없앤다', score: { fix: 3 }, tone: 'bad', log: '식각 시간 상향', status: '시간 변경 후 진행', next: 'r_time', feedback: '잔류물은 줄겠지만 이미 다 깎인 곳이 문제입니다.' },
-        { id: 'bias_up', cost: 10, text: '바이어스를 올려 더 세게 깎는다', score: { fix: 0 }, tone: 'bad', log: '바이어스 상향', status: '바이어스 변경 후 진행', next: 'r_bias', feedback: '원인과 다른 조건을 바꿨습니다.' },
-        { id: 'clean', cost: 40, text: '챔버를 세정한 뒤 다시 진행한다', score: { fix: 2 }, tone: 'warn', log: '챔버 세정', status: '세정 후 진행', next: 'r_clean', feedback: '확인된 원인과 관계없는 조치입니다.' },
+        { id: 'gas_up', title: '제품 B용 가스 유량 조건 소량 시험', target: '제품 B 전용 Recipe(변경 승인)', cost: 40, text: '변경 승인을 받아 제품 B용으로 식각 가스 유량을 늘리는 조건을 소량 웨이퍼로 시험하고, 잔류물과 아래 막 상태를 함께 확인한다', score: { fix: 15 }, tone: 'good', log: '승인 후 제품 B 가스 유량 상향 소량 시험', status: '제품 B 조건 소량 시험', next: 'r_good', feedback: '원인(식각제 부족)에 맞는 조치를 변경 절차대로 했고, 부작용도 함께 확인합니다.' },
+        { id: 'time_up', title: '식각 시간 연장', target: 'Recipe', cost: 10, text: '식각 시간을 늘려 잔류물을 없앤다', score: { fix: 3 }, tone: 'bad', log: '식각 시간 상향', status: '시간 변경 후 진행', next: 'r_time', feedback: '잔류물은 줄겠지만 이미 다 깎인 곳이 문제입니다.' },
+        { id: 'bias_up', title: '바이어스 상향', target: 'Recipe', cost: 10, text: '바이어스를 올려 더 세게 깎는다', score: { fix: 0 }, tone: 'bad', log: '바이어스 상향', status: '바이어스 변경 후 진행', next: 'r_bias', feedback: '원인과 다른 조건을 바꿨습니다.' },
+        { id: 'clean', title: '챔버 세정 후 재진행', target: '2번 챔버', cost: 40, text: '챔버를 세정한 뒤 다시 진행한다', score: { fix: 2 }, tone: 'warn', log: '챔버 세정', status: '세정 후 진행', next: 'r_clean', feedback: '확인된 원인과 관계없는 조치입니다.' },
       ],
       hints: ['원인은 "식각제가 모자라는 것"이었습니다. 무엇을 늘려야 할까요?', '조건을 바꿀 때 거쳐야 할 절차는 무엇일까요?', '변경 승인 → 제품 B용 가스 유량 상향 소량 시험 → 잔류물·아래 막 함께 확인입니다.'],
     },

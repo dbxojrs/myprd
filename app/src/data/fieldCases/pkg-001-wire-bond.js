@@ -42,6 +42,23 @@ export default {
   ],
 
   // 가상 시간: 조치(cost)와 데이터 확인에 시간이 듭니다. 평가 모드에서 '제한 시간'을 켜면 timeLimit을 넘겼을 때 timeRule대로 감점합니다(실패 처리 아님).
+  scene: {
+    location: '와이어 본더 2호기',
+    clock: '오전 10:00 보고 (09:05 Capillary 교체)',
+    state: '2호기 Ball Shear 저하',
+    metrics: {
+      title: 'Ball Shear 평균',
+      unit: 'gf',
+      limit: 18,
+      limitLabel: '관리 하한 18 gf (가상)',
+      rows: [
+        { label: '1호기', value: 27 },
+        { label: '2호기', value: 16, flag: true, flagText: '하한 미달' },
+      ],
+      note: '같은 자재·같은 Recipe·같은 시험 방법의 비교입니다. 클수록 접합이 강합니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 정상 복귀까지 가지 못해, 그동안 Hold 물량과 생산 차질이 커졌습니다.' },
 
@@ -103,13 +120,15 @@ export default {
       title: '초기 대응 판단',
       goal: '불량이 더 퍼지지 않게 막습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '현장에 도착했습니다. 지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['stop2', 'keeprun'], ['stop2', 'usnow']],
       options: [
-        { id: 'stop2', cost: 5, text: '2호기 생산을 즉시 멈춘다', score: { contain: 6 }, tone: 'good', log: '2호기 생산 중단', status: '2호기 정지', feedback: '관리 하한 아래 값이 나오는 설비를 계속 돌리면 불량이 계속 쌓입니다.' },
-        { id: 'hold', cost: 10, text: 'Capillary 교체(09:05) 이후 2호기에서 만든 LOT을 찾아 Hold하고 다음 공정 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '09:05 이후 2호기 LOT Hold', feedback: '이상이 시작됐을 수 있는 시점 이후 제품이 영향 범위입니다. 다음 공정으로 넘어가면 되돌리기 어렵습니다.' },
-        { id: 'share', cost: 5, text: '품질·생산 담당에게 알리고, 발견 시각·LOT·교체 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '품질·생산 공유, 시각 기록', feedback: '영향 범위 판단과 나중의 원인 분석에 시각 기록이 꼭 필요합니다.' },
-        { id: 'stop1', cost: 5, text: '예방 차원에서 1호기도 함께 멈춘다', score: { contain: -3 }, tone: 'warn', log: '1호기도 중단', feedback: '1호기는 같은 자재·Recipe로 정상 값(27 gf)이 나옵니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
-        { id: 'keeprun', cost: 0, text: '측정 오류일 수 있으니 확인될 때까지 2호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '2호기 계속 생산', status: '2호기 가동 중 (이상 상태)', feedback: '측정 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 계속 커집니다. 먼저 멈추고 확인합니다.' },
-        { id: 'usnow', cost: 10, text: '초음파 출력을 바로 올려 생산을 이어 간다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 초음파 출력 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가리고, 초음파가 지나치면 패드 아래 층이 깨질 수 있습니다(와이어 본더 규칙표).' },
+        { id: 'stop2', title: '2호기 생산 즉시 중단', target: '2호기', cost: 5, text: '2호기 생산을 즉시 멈춘다', score: { contain: 6 }, tone: 'good', log: '2호기 생산 중단', status: '2호기 정지', feedback: '관리 하한 아래 값이 나오는 설비를 계속 돌리면 불량이 계속 쌓입니다.' },
+        { id: 'hold', title: '교체 이후 LOT Hold', target: '09:05 이후 2호기 LOT · 다음 공정', cost: 10, text: 'Capillary 교체(09:05) 이후 2호기에서 만든 LOT을 찾아 Hold하고 다음 공정 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '09:05 이후 2호기 LOT Hold', feedback: '이상이 시작됐을 수 있는 시점 이후 제품이 영향 범위입니다. 다음 공정으로 넘어가면 되돌리기 어렵습니다.' },
+        { id: 'share', title: '관련 부서 공유 · 시각 기록', target: '품질·생산 담당', cost: 5, text: '품질·생산 담당에게 알리고, 발견 시각·LOT·교체 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '품질·생산 공유, 시각 기록', feedback: '영향 범위 판단과 나중의 원인 분석에 시각 기록이 꼭 필요합니다.' },
+        { id: 'stop1', title: '1호기도 함께 중단', target: '1호기', cost: 5, text: '예방 차원에서 1호기도 함께 멈춘다', score: { contain: -3 }, tone: 'warn', log: '1호기도 중단', feedback: '1호기는 같은 자재·Recipe로 정상 값(27 gf)이 나옵니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
+        { id: 'keeprun', title: '확인될 때까지 2호기 계속 가동', target: '2호기', cost: 0, text: '측정 오류일 수 있으니 확인될 때까지 2호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '2호기 계속 생산', status: '2호기 가동 중 (이상 상태)', feedback: '측정 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 계속 커집니다. 먼저 멈추고 확인합니다.' },
+        { id: 'usnow', title: '초음파 출력 즉시 상향 후 생산', target: '2호기 Recipe', cost: 10, text: '초음파 출력을 바로 올려 생산을 이어 간다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 초음파 출력 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가리고, 초음파가 지나치면 패드 아래 층이 깨질 수 있습니다(와이어 본더 규칙표).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요. 보고서에 그대로 들어갑니다.' },
       hints: [
@@ -211,10 +230,10 @@ export default {
       goal: '원인을 없애는 조치를 하나 고릅니다. 고른 조치에 따라 결과가 달라집니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'replace', cost: 20, text: '다른 새 Capillary로 바꾸고, 조건은 그대로 둔 채 첫 제품 Shear·외관을 확인한 뒤 재가동한다', score: { fix: 15 }, tone: 'good', log: 'Capillary 재교체 + 첫 제품 확인', status: 'Capillary 재교체 · 첫 제품 확인', next: 'r_good', feedback: '원인(오염된 툴)을 직접 없애고, 조건을 바꾸지 않아 새 불량 위험도 만들지 않았습니다.' },
-        { id: 'clean', cost: 15, text: '지금 Capillary를 청소해서 다시 쓴다', score: { fix: 6 }, tone: 'warn', log: 'Capillary 청소 후 재사용', status: '청소한 툴로 재가동', next: 'r_clean', feedback: '원인 쪽으로 가는 조치지만, 이물이 붙었던 툴은 상태를 장담하기 어렵습니다.' },
-        { id: 'us_up', cost: 10, text: '초음파 출력을 높여 강도를 맞추고 재가동한다', score: { fix: 0 }, tone: 'bad', log: '초음파 출력 상향 후 재가동', status: '조건 변경 후 재가동', next: 'r_us', feedback: '원인(툴)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
-        { id: 'doe', cost: 40, text: '변경 승인을 받아 하중·초음파 조합을 소량 시험(DOE)으로 찾는다', score: { fix: 5 }, tone: 'warn', log: '조건 최적화 시험 요청', status: '2호기 정지 · 조건 시험 대기', next: 'r_doe', feedback: '변경 절차는 지켰지만, 원인이 툴로 확인된 상황에서 조건을 찾는 것은 돌아가는 길입니다.' },
+        { id: 'replace', title: '새 Capillary로 교체 + 첫 제품 확인', target: '2호기 Capillary', cost: 20, text: '다른 새 Capillary로 바꾸고, 조건은 그대로 둔 채 첫 제품 Shear·외관을 확인한 뒤 재가동한다', score: { fix: 15 }, tone: 'good', log: 'Capillary 재교체 + 첫 제품 확인', status: 'Capillary 재교체 · 첫 제품 확인', next: 'r_good', feedback: '원인(오염된 툴)을 직접 없애고, 조건을 바꾸지 않아 새 불량 위험도 만들지 않았습니다.' },
+        { id: 'clean', title: '지금 Capillary 청소 후 재사용', target: '2호기 Capillary', cost: 15, text: '지금 Capillary를 청소해서 다시 쓴다', score: { fix: 6 }, tone: 'warn', log: 'Capillary 청소 후 재사용', status: '청소한 툴로 재가동', next: 'r_clean', feedback: '원인 쪽으로 가는 조치지만, 이물이 붙었던 툴은 상태를 장담하기 어렵습니다.' },
+        { id: 'us_up', title: '초음파 출력 상향 후 재가동', target: '2호기 Recipe', cost: 10, text: '초음파 출력을 높여 강도를 맞추고 재가동한다', score: { fix: 0 }, tone: 'bad', log: '초음파 출력 상향 후 재가동', status: '조건 변경 후 재가동', next: 'r_us', feedback: '원인(툴)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
+        { id: 'doe', title: '하중·초음파 조합 소량 시험(DOE)', target: '2호기 Recipe(변경 승인)', cost: 40, text: '변경 승인을 받아 하중·초음파 조합을 소량 시험(DOE)으로 찾는다', score: { fix: 5 }, tone: 'warn', log: '조건 최적화 시험 요청', status: '2호기 정지 · 조건 시험 대기', next: 'r_doe', feedback: '변경 절차는 지켰지만, 원인이 툴로 확인된 상황에서 조건을 찾는 것은 돌아가는 길입니다.' },
       ],
       hints: [
         '원인으로 확인한 것은 "조건"이었나요, "툴"이었나요?',

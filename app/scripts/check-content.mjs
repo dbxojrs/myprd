@@ -121,6 +121,12 @@ for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== '
   const itemIds = new Set(Object.values(fc.nodes).filter((x) => x.type === 'data').flatMap((n) => n.items.map((i) => i.id)))
   for (const f of fc.scene?.diagram?.flags ?? []) if (!itemIds.has(f.after)) problems.push(`${where}/scene: 없는 데이터 id "${f.after}"`)
   for (const m of fc.scene?.metrics?.rows ?? []) if (typeof m.value !== 'number') problems.push(`${where}/scene: 수치가 아닌 지표 "${m.label}"`)
+  if (!fc.scene?.metrics?.rows?.length) problems.push(`${where}: 상황 개요 지표(scene.metrics) 없음`)
+  if (!fc.scene?.location) problems.push(`${where}: 이상 발생 위치(scene.location) 없음`)
+  for (const [nid, n] of Object.entries(fc.nodes)) {
+    const titled = (n.options ?? []).filter((o) => o.title).length
+    if (titled && titled !== n.options.length) problems.push(`${where}/${nid}: 액션 카드 이름(title)이 일부 선택지에만 있음`)
+  }
   for (const [nid, n] of Object.entries(fc.nodes))
     for (const g of n.exclusive ?? []) for (const id of g) if (!n.options?.some((o) => o.id === id)) problems.push(`${where}/${nid}: 상호 배타 규칙의 없는 선택지 "${id}"`)
 }

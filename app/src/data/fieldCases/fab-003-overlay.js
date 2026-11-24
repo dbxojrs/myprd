@@ -44,6 +44,23 @@ export default {
     { kind: 'process', id: 'photo', label: '포토 공정 설명' },
     { kind: 'machine', id: 'photo', label: '포토 설비 실습' },
   ],
+  scene: {
+    location: '노광기 S2 · 이상 LOT (식각 대기 줄)',
+    clock: '오전 11:00 보고',
+    state: '이상 LOT 식각 대기 중',
+    metrics: {
+      title: '오버레이 (샘플 웨이퍼 평균)',
+      unit: 'nm',
+      limit: 6,
+      limitLabel: '관리 한계 6 nm (가상)',
+      rows: [
+        { label: '정상 LOT', value: 3.1 },
+        { label: '이상 LOT', value: 7.8, flag: true, flagText: '한계 초과' },
+      ],
+      note: '같은 노광기 S2·같은 Recipe, LOT당 샘플 2장 기준의 비교입니다. 작을수록 좋습니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 재작업 방향을 정하지 못해, Hold LOT의 식각 대기와 납기 부담이 커졌습니다.' },
   checks: [
@@ -100,13 +117,15 @@ export default {
       title: '초기 대응 판단',
       goal: '이상 LOT이 되돌릴 수 없는 단계로 넘어가지 않게 막습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['hold', 'etchgo']],
       options: [
-        { id: 'hold', cost: 10, text: '이상 LOT을 식각 전에 Hold해 식각 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '이상 LOT 식각 전 Hold', status: '이상 LOT Hold (식각 전)', feedback: '포토는 식각 전이라면 감광액을 벗기고 다시 할 수 있지만, 식각·증착 뒤에는 대개 늦습니다(EPFL CMi).' },
-        { id: 'measureall', cost: 20, text: '이상 LOT의 모든 웨이퍼로 오버레이 측정 범위를 넓힌다', score: { contain: 6 }, tone: 'good', log: '이상 LOT 전 웨이퍼 측정', feedback: '샘플 측정만으로는 어느 웨이퍼까지 영향인지 모릅니다. 재작업 범위를 정하려면 측정 범위를 넓혀야 합니다.' },
-        { id: 'share', cost: 5, text: '계측·식각 담당에게 알리고, 이상 LOT 목록과 발견 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 기록', feedback: '식각 담당이 알아야 Hold LOT이 실수로 투입되지 않습니다.' },
-        { id: 'stopscanner', cost: 5, text: '노광기 S2를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '노광기 S2 정지', status: '노광기 S2 정지', feedback: '같은 S2에서 다른 LOT은 정상입니다. 노광기 문제라는 근거 없이 멈추면 생산만 줄어듭니다.' },
-        { id: 'etchgo', cost: 0, text: '한계를 조금 넘은 정도이니 식각을 진행시키고 결과를 본다', score: { contain: -8 }, tone: 'bad', log: '이상 LOT 식각 진행', status: '이상 LOT 식각 진행 (되돌릴 수 없음)', feedback: '식각을 하고 나면 재작업이 대개 불가능합니다(EPFL CMi). 지금이 되돌릴 수 있는 마지막 시점입니다.' },
-        { id: 'offsetnow', cost: 10, text: '이상 LOT의 측정값으로 노광기 보정값을 바로 바꿔 모든 LOT에 적용한다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '이상값으로 보정값 일괄 변경', feedback: '원인이 이 LOT들에만 있다면, 그 값을 모든 LOT 보정에 넣으면 정상 LOT까지 어긋날 수 있습니다(교육용 가정).' },
+        { id: 'hold', title: '이상 LOT 식각 전 Hold', target: '이상 LOT (식각 대기 줄)', cost: 10, text: '이상 LOT을 식각 전에 Hold해 식각 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '이상 LOT 식각 전 Hold', status: '이상 LOT Hold (식각 전)', feedback: '포토는 식각 전이라면 감광액을 벗기고 다시 할 수 있지만, 식각·증착 뒤에는 대개 늦습니다(EPFL CMi).' },
+        { id: 'measureall', title: '측정 범위를 전 웨이퍼로 확대', target: '이상 LOT 모든 웨이퍼', cost: 20, text: '이상 LOT의 모든 웨이퍼로 오버레이 측정 범위를 넓힌다', score: { contain: 6 }, tone: 'good', log: '이상 LOT 전 웨이퍼 측정', feedback: '샘플 측정만으로는 어느 웨이퍼까지 영향인지 모릅니다. 재작업 범위를 정하려면 측정 범위를 넓혀야 합니다.' },
+        { id: 'share', title: '관련 부서 공유 · 목록 기록', target: '계측·식각 담당', cost: 5, text: '계측·식각 담당에게 알리고, 이상 LOT 목록과 발견 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 기록', feedback: '식각 담당이 알아야 Hold LOT이 실수로 투입되지 않습니다.' },
+        { id: 'stopscanner', title: '노광기 S2 중단', target: '노광기 S2', cost: 5, text: '노광기 S2를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '노광기 S2 정지', status: '노광기 S2 정지', feedback: '같은 S2에서 다른 LOT은 정상입니다. 노광기 문제라는 근거 없이 멈추면 생산만 줄어듭니다.' },
+        { id: 'etchgo', title: '식각 진행 후 결과 보기', target: '이상 LOT', cost: 0, text: '한계를 조금 넘은 정도이니 식각을 진행시키고 결과를 본다', score: { contain: -8 }, tone: 'bad', log: '이상 LOT 식각 진행', status: '이상 LOT 식각 진행 (되돌릴 수 없음)', feedback: '식각을 하고 나면 재작업이 대개 불가능합니다(EPFL CMi). 지금이 되돌릴 수 있는 마지막 시점입니다.' },
+        { id: 'offsetnow', title: '보정값 즉시 일괄 변경', target: '노광기 S2 · 모든 LOT', cost: 10, text: '이상 LOT의 측정값으로 노광기 보정값을 바로 바꿔 모든 LOT에 적용한다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '이상값으로 보정값 일괄 변경', feedback: '원인이 이 LOT들에만 있다면, 그 값을 모든 LOT 보정에 넣으면 정상 LOT까지 어긋날 수 있습니다(교육용 가정).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요.' },
       hints: [
@@ -207,11 +226,11 @@ export default {
       goal: '이상 LOT을 살리고 원인을 없애는 조치를 하나 고릅니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'rework_align', cost: 45, text: '이상 LOT은 식각 전에 감광액을 벗겨 재작업하되, 마크 상태에 맞게 정렬 전략(측정 조건·사용할 마크)을 검토·승인받아 적용하고, E3 식각 담당에게 마크 형상 원인 조사를 요청한다', score: { fix: 15 }, tone: 'good', log: '재작업 + 정렬 전략 검토 + 앞 공정 조사 요청', status: '재작업 · 정렬 전략 검토', next: 'r_good', feedback: '되돌릴 수 있을 때 재작업하고, 원인(앞 공정의 마크 비대칭)에 맞춰 정렬 전략을 검토하며 앞 공정과 협업했습니다. 정렬 전략·마크 설계·공정 모니터링 최적화는 논문에서도 제시하는 방향입니다(Micromachines 2025).' },
-        { id: 'rework_same', cost: 30, text: '같은 조건 그대로 재작업한다', score: { fix: 4 }, tone: 'warn', log: '같은 조건으로 재작업', status: '같은 조건 재작업', next: 'r_same', feedback: '재작업 자체는 맞지만, 마크 상태가 그대로라 같은 결과가 날 수 있습니다.' },
-        { id: 'offset', cost: 15, text: '이상 LOT의 측정값으로 노광기 보정값을 바꿔 모든 LOT에 적용하고 재작업한다', score: { fix: 0 }, tone: 'bad', log: '이상값으로 보정값 일괄 변경', status: '보정값 변경', next: 'r_offset', feedback: '원인이 일부 LOT의 마크에 있는데 모든 LOT 보정을 바꿨습니다.' },
-        { id: 'etch_go', cost: 0, text: '한계 근처이니 식각으로 넘긴다', score: { fix: 0 }, tone: 'bad', log: '이상 LOT 식각 진행', status: '이상 LOT 식각 진행 (되돌릴 수 없음)', next: 'r_etch', feedback: '되돌릴 수 있는 마지막 시점을 놓쳤습니다.' },
-        { id: 'scanner_pm', cost: 60, text: '노광기 S2의 렌즈·스테이지를 점검한다', score: { fix: 2 }, tone: 'warn', log: '노광기 점검', status: '노광기 점검 중', next: 'r_pm', feedback: '데이터로 지운 원인을 점검하느라 시간이 듭니다.' },
+        { id: 'rework_align', title: '식각 전 재작업 + 정렬 전략 검토', target: '이상 LOT · 정렬 조건 · 앞 공정 협업', cost: 45, text: '이상 LOT은 식각 전에 감광액을 벗겨 재작업하되, 마크 상태에 맞게 정렬 전략(측정 조건·사용할 마크)을 검토·승인받아 적용하고, E3 식각 담당에게 마크 형상 원인 조사를 요청한다', score: { fix: 15 }, tone: 'good', log: '재작업 + 정렬 전략 검토 + 앞 공정 조사 요청', status: '재작업 · 정렬 전략 검토', next: 'r_good', feedback: '되돌릴 수 있을 때 재작업하고, 원인(앞 공정의 마크 비대칭)에 맞춰 정렬 전략을 검토하며 앞 공정과 협업했습니다. 정렬 전략·마크 설계·공정 모니터링 최적화는 논문에서도 제시하는 방향입니다(Micromachines 2025).' },
+        { id: 'rework_same', title: '같은 조건으로 재작업', target: '이상 LOT', cost: 30, text: '같은 조건 그대로 재작업한다', score: { fix: 4 }, tone: 'warn', log: '같은 조건으로 재작업', status: '같은 조건 재작업', next: 'r_same', feedback: '재작업 자체는 맞지만, 마크 상태가 그대로라 같은 결과가 날 수 있습니다.' },
+        { id: 'offset', title: '보정값 일괄 변경 후 재작업', target: '노광기 S2 · 모든 LOT', cost: 15, text: '이상 LOT의 측정값으로 노광기 보정값을 바꿔 모든 LOT에 적용하고 재작업한다', score: { fix: 0 }, tone: 'bad', log: '이상값으로 보정값 일괄 변경', status: '보정값 변경', next: 'r_offset', feedback: '원인이 일부 LOT의 마크에 있는데 모든 LOT 보정을 바꿨습니다.' },
+        { id: 'etch_go', title: '식각으로 넘김', target: '이상 LOT', cost: 0, text: '한계 근처이니 식각으로 넘긴다', score: { fix: 0 }, tone: 'bad', log: '이상 LOT 식각 진행', status: '이상 LOT 식각 진행 (되돌릴 수 없음)', next: 'r_etch', feedback: '되돌릴 수 있는 마지막 시점을 놓쳤습니다.' },
+        { id: 'scanner_pm', title: '노광기 렌즈·스테이지 점검', target: '노광기 S2', cost: 60, text: '노광기 S2의 렌즈·스테이지를 점검한다', score: { fix: 2 }, tone: 'warn', log: '노광기 점검', status: '노광기 점검 중', next: 'r_pm', feedback: '데이터로 지운 원인을 점검하느라 시간이 듭니다.' },
       ],
       hints: ['이상 LOT은 아직 식각 전입니다. 무엇을 할 수 있나요?', '원인은 노광기가 아니라 일부 LOT의 마크 상태였습니다. 무엇을 바꿔야 하고, 누구와 협업해야 할까요?', '식각 전 재작업 + 마크 상태에 맞는 정렬 전략 검토(승인) + 앞 공정(E3) 조사 요청입니다.'],
     },

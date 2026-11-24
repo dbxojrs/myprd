@@ -43,6 +43,22 @@ export default {
     { kind: 'screen', id: 'cases', label: '사례 서술형 연습' },
   ],
 
+  scene: {
+    location: '몰드 프레스 2호기 · 지난 주말 LOT 4개',
+    clock: '오전 9:30 보고 (출하 오늘 오후 예정)',
+    state: '출하 전 C-SAM 박리 발견',
+    metrics: {
+      title: 'C-SAM 박리 시료 비율 (다이 패드-몰드 계면)',
+      unit: '%',
+      max: 100,
+      rows: [
+        { label: '박리 LOT 4개', value: 40.9, flag: true, flagText: '박리', note: '시료 22개 중 9개' },
+        { label: '같은 주 다른 LOT', value: 0, note: '시료 44개 중 0개' },
+      ],
+      note: '같은 프리컨디셔닝·같은 C-SAM 기준. 비율은 표의 시료 수(22개 중 9개, 44개 중 0개)로 계산했습니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 출하 판정과 재개 조건을 정하지 못해, 출하 일정과 Hold 물량 부담이 커졌습니다.' },
 
@@ -105,14 +121,16 @@ export default {
       title: '초기 대응 판단',
       goal: '박리 제품이 나가지 않게 막고, 범위를 확인할 준비를 합니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['hold', 'shippass']],
       options: [
-        { id: 'hold', cost: 10, text: '박리 LOT과 같은 기간(지난 주말) 몰딩 LOT을 모두 출하 보류(Hold)한다', score: { contain: 8 }, tone: 'good', log: '주말 몰딩 LOT 출하 보류', status: '주말 LOT Hold', feedback: '같은 기간 LOT은 같은 조건을 겪었을 수 있습니다. 확인 전에 내보내면 되돌릴 수 없습니다.' },
-        { id: 'sample', cost: 15, text: '주말에 몰딩한 다른 LOT도 C-SAM 시료 검사로 범위를 확인한다', score: { contain: 4 }, tone: 'good', log: '주말 LOT C-SAM 범위 확인', feedback: '박리는 겉으로 보이지 않아 초음파 현미경으로 확인합니다(NASA NEPP).' },
-        { id: 'trace', cost: 5, text: '박리 LOT의 공정 이력(설비·경로·자재·작업 기록)을 확보한다', score: { contain: 4 }, tone: 'good', log: '박리 LOT 공정 이력 확보', feedback: '어떤 경로로 만들어졌는지가 원인을 좁히는 첫 단서입니다.' },
-        { id: 'share', cost: 5, text: '품질·생산·출하 담당에게 알리고 출하 일정 영향을 공유한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유', feedback: '출하가 걸린 문제라 일정 판단을 함께 해야 합니다.' },
-        { id: 'stopall', cost: 5, text: '예방 차원에서 몰딩 라인 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '몰딩 라인 전체 중단', feedback: '이번 주 LOT은 박리가 없습니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
-        { id: 'shippass', cost: 0, text: '전기 검사를 통과했으니 예정대로 출하한다', score: { contain: -8 }, tone: 'bad', log: '박리 LOT 출하 진행', status: '박리 LOT 출하', feedback: 'NASA NEPP 보고서에 따르면 J-STD-020 시험은 전기 검사와 초음파 현미경(C-SAM) 검사를 모두 통과해야 합니다. 박리가 확인된 LOT은 내보내면 안 됩니다.' },
-        { id: 'pressure', cost: 10, text: '몰딩 압력·온도를 바로 올려 접착을 강하게 만든다', score: { contain: -5, fix: -5 }, tone: 'bad', log: '원인 확인 전 몰딩 조건 상향', feedback: '원인을 모르는 채 조건을 바꾸면 원인을 가리고, 압력이 지나치면 플래시 같은 새 불량이 생길 수 있습니다(몰드 프레스 규칙표, 교육용 가설).' },
+        { id: 'hold', title: '주말 몰딩 LOT 출하 보류', target: '지난 주말 몰딩 LOT 전체', cost: 10, text: '박리 LOT과 같은 기간(지난 주말) 몰딩 LOT을 모두 출하 보류(Hold)한다', score: { contain: 8 }, tone: 'good', log: '주말 몰딩 LOT 출하 보류', status: '주말 LOT Hold', feedback: '같은 기간 LOT은 같은 조건을 겪었을 수 있습니다. 확인 전에 내보내면 되돌릴 수 없습니다.' },
+        { id: 'sample', title: '주말 다른 LOT C-SAM 범위 확인', target: '주말 몰딩 LOT', cost: 15, text: '주말에 몰딩한 다른 LOT도 C-SAM 시료 검사로 범위를 확인한다', score: { contain: 4 }, tone: 'good', log: '주말 LOT C-SAM 범위 확인', feedback: '박리는 겉으로 보이지 않아 초음파 현미경으로 확인합니다(NASA NEPP).' },
+        { id: 'trace', title: '박리 LOT 공정 이력 확보', target: '박리 LOT 4개', cost: 5, text: '박리 LOT의 공정 이력(설비·경로·자재·작업 기록)을 확보한다', score: { contain: 4 }, tone: 'good', log: '박리 LOT 공정 이력 확보', feedback: '어떤 경로로 만들어졌는지가 원인을 좁히는 첫 단서입니다.' },
+        { id: 'share', title: '관련 부서 공유 · 출하 영향', target: '품질·생산·출하 담당', cost: 5, text: '품질·생산·출하 담당에게 알리고 출하 일정 영향을 공유한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유', feedback: '출하가 걸린 문제라 일정 판단을 함께 해야 합니다.' },
+        { id: 'stopall', title: '몰딩 라인 전체 중단', target: '몰딩 라인', cost: 5, text: '예방 차원에서 몰딩 라인 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '몰딩 라인 전체 중단', feedback: '이번 주 LOT은 박리가 없습니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
+        { id: 'shippass', title: '예정대로 출하', target: '박리 LOT', cost: 0, text: '전기 검사를 통과했으니 예정대로 출하한다', score: { contain: -8 }, tone: 'bad', log: '박리 LOT 출하 진행', status: '박리 LOT 출하', feedback: 'NASA NEPP 보고서에 따르면 J-STD-020 시험은 전기 검사와 초음파 현미경(C-SAM) 검사를 모두 통과해야 합니다. 박리가 확인된 LOT은 내보내면 안 됩니다.' },
+        { id: 'pressure', title: '몰딩 압력·온도 즉시 상향', target: '2호기 Recipe', cost: 10, text: '몰딩 압력·온도를 바로 올려 접착을 강하게 만든다', score: { contain: -5, fix: -5 }, tone: 'bad', log: '원인 확인 전 몰딩 조건 상향', feedback: '원인을 모르는 채 조건을 바꾸면 원인을 가리고, 압력이 지나치면 플래시 같은 새 불량이 생길 수 있습니다(몰드 프레스 규칙표, 교육용 가설).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요.' },
       hints: [
@@ -214,10 +232,10 @@ export default {
       goal: '원인을 막는 조치를 하나 고릅니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'restore', cost: 25, text: '몰딩 투입은 플라즈마 세정을 거친 경로로만 허용하고, 세정 생략 기간에 대기하던 리드프레임은 표면 상태를 확인해 쓰지 않는다. 첫 LOT은 프리컨디셔닝 + C-SAM으로 확인한다', score: { fix: 15 }, tone: 'good', log: '세정 경로 복구·생략 금지 + 대기 리드프레임 격리 + 첫 LOT C-SAM', status: '정상 경로로 재개', next: 'r_good', feedback: '원인(세정 생략 경로와 표면 상태)을 직접 막고, 몰딩 조건은 건드리지 않았습니다.' },
-        { id: 'bake', cost: 20, text: '박리 LOT을 베이크해 습기를 뺀 뒤 출하한다', score: { fix: 2 }, tone: 'warn', log: '박리 LOT 베이크 후 출하 검토', next: 'r_bake', feedback: '베이크는 흡습을 빼는 절차(J-STD-033)지만, 이미 벌어진 계면을 붙이지는 못합니다.' },
-        { id: 'emcchange', cost: 15, text: 'EMC를 예전 LOT으로 되돌린다', score: { fix: 3 }, tone: 'warn', log: 'EMC 예전 LOT으로 교체', next: 'r_emc', feedback: 'EMC는 원인이 아니었습니다. 세정 생략 경로는 그대로입니다.' },
-        { id: 'pressure', cost: 10, text: '몰딩 압력과 금형 온도를 올려 접착을 강하게 한다', score: { fix: 0 }, tone: 'bad', log: '몰딩 압력·온도 상향', status: '조건 변경 후 재개', next: 'r_pressure', feedback: '원인(표면 상태)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
+        { id: 'restore', title: '세정 경로만 허용 + 대기 리드프레임 격리 + 첫 LOT C-SAM', target: '몰딩 투입 경로 · 리드프레임', cost: 25, text: '몰딩 투입은 플라즈마 세정을 거친 경로로만 허용하고, 세정 생략 기간에 대기하던 리드프레임은 표면 상태를 확인해 쓰지 않는다. 첫 LOT은 프리컨디셔닝 + C-SAM으로 확인한다', score: { fix: 15 }, tone: 'good', log: '세정 경로 복구·생략 금지 + 대기 리드프레임 격리 + 첫 LOT C-SAM', status: '정상 경로로 재개', next: 'r_good', feedback: '원인(세정 생략 경로와 표면 상태)을 직접 막고, 몰딩 조건은 건드리지 않았습니다.' },
+        { id: 'bake', title: '박리 LOT 베이크 후 출하', target: '박리 LOT', cost: 20, text: '박리 LOT을 베이크해 습기를 뺀 뒤 출하한다', score: { fix: 2 }, tone: 'warn', log: '박리 LOT 베이크 후 출하 검토', next: 'r_bake', feedback: '베이크는 흡습을 빼는 절차(J-STD-033)지만, 이미 벌어진 계면을 붙이지는 못합니다.' },
+        { id: 'emcchange', title: 'EMC 예전 LOT으로 교체', target: 'EMC', cost: 15, text: 'EMC를 예전 LOT으로 되돌린다', score: { fix: 3 }, tone: 'warn', log: 'EMC 예전 LOT으로 교체', next: 'r_emc', feedback: 'EMC는 원인이 아니었습니다. 세정 생략 경로는 그대로입니다.' },
+        { id: 'pressure', title: '몰딩 압력·금형 온도 상향', target: '2호기 Recipe', cost: 10, text: '몰딩 압력과 금형 온도를 올려 접착을 강하게 한다', score: { fix: 0 }, tone: 'bad', log: '몰딩 압력·온도 상향', status: '조건 변경 후 재개', next: 'r_pressure', feedback: '원인(표면 상태)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
       ],
       hints: ['원인은 "몰딩 조건"이었나요, "몰딩 전 표면을 준비하는 경로"였나요?', '이미 박리된 LOT을 살리는 일과, 앞으로 박리가 안 생기게 하는 일을 구분해 보세요.', '세정 경로만 허용 + 대기 리드프레임 격리 + 첫 LOT 프리컨디셔닝·C-SAM 확인입니다.'],
     },

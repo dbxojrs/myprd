@@ -37,6 +37,24 @@ export default {
     { kind: 'process', id: 'deposition', label: '증착 공정 설명' },
     { kind: 'machine', id: 'deposition', label: 'CVD 설비 실습' },
   ],
+  // 현장 상황 개요(현장 보기). 수치는 아래 brief 표와 같은 가상 데이터입니다.
+  scene: {
+    location: 'PECVD 3호기 (오늘 첫 LOT부터)',
+    clock: '오전 09:30 보고 (어젯밤 배기 라인 정기 정비 후)',
+    state: '3호기 막 두께 균일도 이상',
+    metrics: {
+      title: '막 두께 균일도 (범위/평균)',
+      unit: '%',
+      limit: 5,
+      limitLabel: '관리 상한 5 % (가상)',
+      rows: [
+        { label: '1호기', value: 2.1 },
+        { label: '3호기', value: 9.4, flag: true, flagText: '상한 초과' },
+      ],
+      note: '같은 막·같은 Recipe·같은 계측 기준의 비교입니다. 낮을수록 고릅니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 정상 복귀까지 가지 못해, 그동안 Hold 물량과 다음 공정(CMP·식각) 대기가 늘었습니다.' },
   checks: [
@@ -94,13 +112,15 @@ export default {
       title: '초기 대응 판단',
       goal: '불량이 다음 공정으로 넘어가지 않게 막습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['stop3', 'keeprun'], ['stopall', 'keeprun']],
       options: [
-        { id: 'stop3', cost: 5, text: '3호기 생산을 멈춘다', score: { contain: 6 }, tone: 'good', log: '3호기 생산 중단', status: '3호기 정지', feedback: '관리 상한을 넘는 설비를 계속 돌리면 불량 웨이퍼가 계속 쌓입니다.' },
-        { id: 'hold', cost: 10, text: '정비 이후 3호기에서 증착한 LOT을 찾아 Hold하고 다음 공정(CMP·식각) 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '정비 이후 3호기 LOT Hold', feedback: '이상이 시작됐을 수 있는 시점(정비 뒤 첫 LOT) 이후 제품이 영향 범위입니다. 다음 공정으로 넘어가면 되돌리기 어렵습니다.' },
-        { id: 'share', cost: 5, text: '설비·계측·생산 담당에게 알리고, 발견 시각·LOT·정비 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '영향 범위 판단과 원인 분석에 시각 기록이 필요합니다.' },
-        { id: 'stopall', cost: 5, text: '예방 차원에서 같은 공정의 모든 CVD 설비를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '모든 CVD 설비 중단', feedback: '1호기는 같은 Recipe로 정상(2.1 %)입니다. 근거 없이 다 멈추면 생산 손실만 커집니다.' },
-        { id: 'keeprun', cost: 0, text: '계측 오류일 수 있으니 확인될 때까지 3호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '3호기 계속 생산', status: '3호기 가동 중 (이상 상태)', feedback: '계측 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 커집니다. 먼저 멈추고 확인합니다.' },
-        { id: 'timenow', cost: 10, text: '증착 시간을 바로 늘려 가장자리 두께를 맞춘다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 증착 시간 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가립니다. 시간을 늘리면 막이 목표보다 두꺼워질 수 있습니다(CVD 장비 규칙표).' },
+        { id: 'stop3', title: '3호기 생산 중단', target: '3호기', cost: 5, text: '3호기 생산을 멈춘다', score: { contain: 6 }, tone: 'good', log: '3호기 생산 중단', status: '3호기 정지', feedback: '관리 상한을 넘는 설비를 계속 돌리면 불량 웨이퍼가 계속 쌓입니다.' },
+        { id: 'hold', title: '정비 이후 LOT Hold', target: '3호기 증착 LOT · 다음 공정(CMP·식각)', cost: 10, text: '정비 이후 3호기에서 증착한 LOT을 찾아 Hold하고 다음 공정(CMP·식각) 투입을 막는다', score: { contain: 9 }, tone: 'good', log: '정비 이후 3호기 LOT Hold', feedback: '이상이 시작됐을 수 있는 시점(정비 뒤 첫 LOT) 이후 제품이 영향 범위입니다. 다음 공정으로 넘어가면 되돌리기 어렵습니다.' },
+        { id: 'share', title: '관련 부서 공유 · 시각 기록', target: '설비·계측·생산 담당', cost: 5, text: '설비·계측·생산 담당에게 알리고, 발견 시각·LOT·정비 시각을 기록한다', score: { contain: 5 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '영향 범위 판단과 원인 분석에 시각 기록이 필요합니다.' },
+        { id: 'stopall', title: 'CVD 설비 전체 중단', target: '같은 공정의 모든 CVD 설비', cost: 5, text: '예방 차원에서 같은 공정의 모든 CVD 설비를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '모든 CVD 설비 중단', feedback: '1호기는 같은 Recipe로 정상(2.1 %)입니다. 근거 없이 다 멈추면 생산 손실만 커집니다.' },
+        { id: 'keeprun', title: '확인될 때까지 3호기 계속 가동', target: '3호기', cost: 0, text: '계측 오류일 수 있으니 확인될 때까지 3호기를 계속 돌린다', score: { contain: -8 }, tone: 'bad', log: '3호기 계속 생산', status: '3호기 가동 중 (이상 상태)', feedback: '계측 확인은 필요하지만, 그동안 생산을 계속하면 진짜 불량일 경우 피해가 커집니다. 먼저 멈추고 확인합니다.' },
+        { id: 'timenow', title: '증착 시간 즉시 연장', target: '3호기 Recipe', cost: 10, text: '증착 시간을 바로 늘려 가장자리 두께를 맞춘다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '원인 확인 전 증착 시간 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가립니다. 시간을 늘리면 막이 목표보다 두꺼워질 수 있습니다(CVD 장비 규칙표).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요. 보고서에 들어갑니다.' },
       hints: [
@@ -201,11 +221,11 @@ export default {
       goal: '원인을 없애는 조치를 하나 고릅니다. 고른 조치에 따라 결과가 달라집니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'fix_press', cost: 30, text: '정비한 배기·압력 조절 부분을 점검·복구해 실제 압력이 설정을 따라가는지 확인하고, 모니터 웨이퍼 증착 → 두께 맵 확인 후 재가동한다', score: { fix: 15 }, tone: 'good', log: '압력 제어 복구 + 모니터 웨이퍼 확인', status: '압력 복구 · 모니터 웨이퍼 확인', next: 'r_good', feedback: '바뀐 것(정비 부위)을 원래대로 되돌리고, 다른 조건은 건드리지 않아 새 문제도 만들지 않았습니다.' },
-        { id: 'temp_up', cost: 15, text: '기판 온도를 올려 가장자리 두께를 보정한다', score: { fix: 0 }, tone: 'bad', log: '온도 상향으로 보정', status: '온도 변경 후 재가동', next: 'r_temp', feedback: '원인(압력)은 그대로 둔 채 다른 조건으로 덮는 조치입니다.' },
-        { id: 'gas_up', cost: 15, text: '원료 가스 유량을 늘려 가장자리까지 원료를 보낸다', score: { fix: 0 }, tone: 'bad', log: '가스 유량 상향', status: '가스 변경 후 재가동', next: 'r_gas', feedback: '원인(압력)은 그대로 두고 다른 조건을 바꿨습니다.' },
-        { id: 'time_up', cost: 10, text: '증착 시간을 늘려 가장자리 두께를 목표에 맞춘다', score: { fix: 3 }, tone: 'warn', log: '증착 시간 상향', status: '시간 변경 후 재가동', next: 'r_time', feedback: '평균은 맞출 수 있어도 "고르지 않음"은 그대로입니다.' },
-        { id: 'clean', cost: 40, text: '챔버를 세정한 뒤 재가동한다', score: { fix: 3 }, tone: 'warn', log: '챔버 세정', status: '세정 후 재가동', next: 'r_clean', feedback: '확인된 원인과 관계없는 조치라 시간만 들 수 있습니다.' },
+        { id: 'fix_press', title: '배기·압력 조절부 점검·복구 + 모니터 확인', target: '3호기 배기·압력 조절부', cost: 30, text: '정비한 배기·압력 조절 부분을 점검·복구해 실제 압력이 설정을 따라가는지 확인하고, 모니터 웨이퍼 증착 → 두께 맵 확인 후 재가동한다', score: { fix: 15 }, tone: 'good', log: '압력 제어 복구 + 모니터 웨이퍼 확인', status: '압력 복구 · 모니터 웨이퍼 확인', next: 'r_good', feedback: '바뀐 것(정비 부위)을 원래대로 되돌리고, 다른 조건은 건드리지 않아 새 문제도 만들지 않았습니다.' },
+        { id: 'temp_up', title: '기판 온도 상향', target: '3호기 Recipe', cost: 15, text: '기판 온도를 올려 가장자리 두께를 보정한다', score: { fix: 0 }, tone: 'bad', log: '온도 상향으로 보정', status: '온도 변경 후 재가동', next: 'r_temp', feedback: '원인(압력)은 그대로 둔 채 다른 조건으로 덮는 조치입니다.' },
+        { id: 'gas_up', title: '원료 가스 유량 증가', target: '3호기 Recipe', cost: 15, text: '원료 가스 유량을 늘려 가장자리까지 원료를 보낸다', score: { fix: 0 }, tone: 'bad', log: '가스 유량 상향', status: '가스 변경 후 재가동', next: 'r_gas', feedback: '원인(압력)은 그대로 두고 다른 조건을 바꿨습니다.' },
+        { id: 'time_up', title: '증착 시간 연장', target: '3호기 Recipe', cost: 10, text: '증착 시간을 늘려 가장자리 두께를 목표에 맞춘다', score: { fix: 3 }, tone: 'warn', log: '증착 시간 상향', status: '시간 변경 후 재가동', next: 'r_time', feedback: '평균은 맞출 수 있어도 "고르지 않음"은 그대로입니다.' },
+        { id: 'clean', title: '챔버 세정 후 재가동', target: '3호기 챔버', cost: 40, text: '챔버를 세정한 뒤 재가동한다', score: { fix: 3 }, tone: 'warn', log: '챔버 세정', status: '세정 후 재가동', next: 'r_clean', feedback: '확인된 원인과 관계없는 조치라 시간만 들 수 있습니다.' },
       ],
       hints: ['원인으로 확인한 것은 무엇이었나요? 그것은 언제, 왜 바뀌었나요?', '바뀐 것을 원래대로 되돌리는 조치와, 다른 조건으로 결과를 맞추는 조치를 구분해 보세요.', '압력 제어(정비 부위)를 복구하고 모니터 웨이퍼로 확인하는 것이 가장 직접적입니다.'],
     },

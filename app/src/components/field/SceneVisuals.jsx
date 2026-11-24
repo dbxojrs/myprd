@@ -3,6 +3,7 @@ import { ORIGIN_LABEL } from '../../data/visuals.js'
 import { highlightedParts, mediaFor } from '../../data/media.js'
 import ProcessMovie, { Cites } from '../movie/ProcessMovie.jsx'
 import { processMovies } from '../../data/processMovies/index.js'
+import { ISO } from '../equipment/index.js'
 
 // 현장 실무 시나리오의 시각 자료: 상황 개요, 미디어 틀(확대·출처·대체 UI), 교육용 도식, 차트.
 // 수치·도식은 시나리오 데이터(c.scene, 데이터 항목 result)에서만 가져옵니다. 확인하지 않은 데이터는 보여 주지 않습니다.
@@ -216,10 +217,24 @@ export const SocketContactFigure = memo(function SocketContactFigure() {
 
 const DIAGRAMS = { TestCellDiagram, SocketContactFigure }
 
+// 장비 입체 도식: 누른 부위, 없으면 가장 최근에 확인한 데이터의 부위를 강조합니다.
+function EquipmentStage({ m, focus, highlight, onPick }) {
+  const Iso = ISO[m.kind]
+  if (!Iso) return null
+  const on = focus && m.hotspots.includes(focus) ? focus : highlight.at(-1) ?? null
+  return (
+    <div className="eq-stage">
+      <Iso focus={on} onPick={onPick} tags />
+      {highlight.length > 0 && <p className="muted eq-stage-note">강조: 확인한 데이터와 관련된 부위 {highlight.length}곳 — 아래 번호를 눌러 차례로 볼 수 있습니다(장비 구조 탭).</p>}
+    </div>
+  )
+}
+
 // ── 가로 막대 차트(0에서 시작, 값 표시, 이상 항목은 색 + ✕ + 글자) ──
+// chart.limit: 관리 한계(가상) 점선, chart.limitLabel: 그 이름(예: "관리 상한 5 %")
 export function BarChart({ chart }) {
   const [hover, setHover] = useState(null)
-  const max = chart.max ?? Math.max(...chart.rows.map((r) => r.value)) * 1.08
+  const max = chart.max ?? Math.max(...chart.rows.map((r) => r.value), chart.limit ?? 0) * 1.12
   const fmt = (v) => `${v}${chart.unit === '%' ? ' %' : chart.unit ? ` ${chart.unit}` : ''}`
   return (
     <div className="bc" role="figure" aria-label={`${chart.title}: ${chart.rows.map((r) => `${r.label} ${fmt(r.value)}${r.flag ? ' (이상)' : ''}`).join(', ')}`}>
@@ -230,6 +245,7 @@ export function BarChart({ chart }) {
             <span className="bc-label">{r.label}</span>
             <span className="bc-track">
               <i style={{ width: `${Math.max(1, (r.value / max) * 100)}%` }} />
+              {chart.limit != null && <b className="bc-limit" style={{ left: `${(chart.limit / max) * 100}%` }} aria-hidden="true" />}
             </span>
             <span className="bc-val">
               {fmt(r.value)}
@@ -240,7 +256,7 @@ export function BarChart({ chart }) {
         ))}
       </ul>
       <p className="bc-note muted">
-        {chart.virtual !== false && <span className="virtual-badge">가상 데이터</span>} {chart.note ?? ''} 막대는 0에서 시작합니다.
+        {chart.virtual !== false && <span className="virtual-badge">가상 데이터</span>} {chart.limit != null && <span className="bc-limit-key">┊ {chart.limitLabel ?? `한계 ${chart.limit}`}</span>} {chart.note ?? ''} 막대는 0에서 시작합니다.
       </p>
     </div>
   )
@@ -334,7 +350,13 @@ export function StageMedia({ c, run, stage, focus, onPick, only, collapsed = fal
         const props = m.component === 'TestCellDiagram' ? { ...(c.scene?.diagram ?? {}), flags: (c.scene?.diagram?.flags ?? []).filter((f) => run.viewed.includes(f.after)), highlight: highlightedParts(m, run.viewed), focus, onPick } : {}
         return (
           <MediaFrame key={m.mediaId} m={m}>
-            {m.mediaType === 'movie' ? <LazyMovie key={m.startScene} m={m} onOpenProcess={onOpenProcess} /> : Diagram ? <Diagram {...props} /> : null}
+            {m.mediaType === 'movie' ? (
+              <LazyMovie key={m.startScene} m={m} onOpenProcess={onOpenProcess} />
+            ) : m.mediaType === 'equipment' ? (
+              <EquipmentStage m={m} focus={focus} highlight={highlightedParts(m, run.viewed)} onPick={onPick} />
+            ) : Diagram ? (
+              <Diagram {...props} />
+            ) : null}
           </MediaFrame>
         )
       })}
@@ -363,7 +385,7 @@ export function SituationOverview({ c, run, stage, focus, onPick, onOpenProcess,
         ))}
       </dl>
       {s?.metrics && <BarChart chart={s.metrics} />}
-      <StageMedia c={c} run={run} stage={stage} focus={focus} onPick={onPick} only={compact ? ['diagram', 'movie'] : null} onOpenProcess={onOpenProcess} />
+      <StageMedia c={c} run={run} stage={stage} focus={focus} onPick={onPick} only={compact ? ['diagram', 'equipment', 'movie'] : null} onOpenProcess={onOpenProcess} />
       {onOpenProcess && (
         <button type="button" className="link" onClick={() => onOpenProcess(c.process)}>
           📽 {c.processLabel} 공정 애니메이션·설명 보기 →
@@ -420,4 +442,35 @@ export function ChartView({ chart }) {
   if (chart.kind === 'trend') return <TrendChart chart={chart} />
   if (chart.kind === 'compare') return <CompareBars chart={chart} />
   return null
+}
+
+// ── 결과 평가의 사건 처리 타임라인: 가상 시각 · 행동 · 판정(✓ 적절 / ⚠ 보완 / ✕ 위험). 결과 화면에서만 판정을 보여 줍니다. ──
+const TL_MARK = { ok: ['✓', '적절'], warn: ['⚠', '보완'], bad: ['✕', '위험'], info: ['·', ''] }
+export function ScenarioTimeline({ log, clock, limit, total }) {
+  if (!log?.length) return null
+  return (
+    <section className="tl" aria-label="사건 처리 타임라인">
+      <h4>
+        사건 처리 타임라인 <small className="muted">가상 {total}분{limit ? ` / 제한 ${limit}분` : ''}</small>
+      </h4>
+      <ol>
+        {log.map((l, i) => {
+          const [mark, label] = TL_MARK[l.tone] ?? TL_MARK.info
+          return (
+            <li key={i} className={`tl-${l.tone ?? 'info'}${limit && l.t > limit ? ' over' : ''}`}>
+              <time>{clock(l.t)}</time>
+              <span className="tl-dot" aria-hidden="true">
+                {mark}
+              </span>
+              <span className="tl-text">
+                {l.text}
+                {label && <small className={`status ${l.tone}`}>{label}</small>}
+                {limit && l.t > limit && <small className="status warn">제한 시간 뒤</small>}
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+    </section>
+  )
 }

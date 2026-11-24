@@ -41,6 +41,23 @@ export default {
     { kind: 'screen', id: 'cases', label: '사례 서술형 연습' },
   ],
 
+  scene: {
+    location: '다이 본더 3호기 생산분',
+    clock: '오후 2:00 보고 (어제 오전 샘플부터 증가)',
+    state: '3호기 X-ray 보이드 증가',
+    metrics: {
+      title: 'X-ray 보이드 면적 (평균)',
+      unit: '%',
+      limit: 8,
+      limitLabel: '관리 기준 8 % (가상)',
+      rows: [
+        { label: '1호기', value: 3.0 },
+        { label: '3호기', value: 10.6, flag: true, flagText: '기준 초과' },
+      ],
+      note: '같은 에폭시 품번·같은 Recipe·같은 X-ray 검사 기준의 비교입니다. 작을수록 좋습니다.',
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 대책을 정하지 못해, 그동안 대기 스트립이 더 쌓이고 Hold 물량이 늘었습니다.' },
 
@@ -106,14 +123,16 @@ export default {
       title: '초기 대응 판단',
       goal: '불량이 다음 공정으로 넘어가지 않게 막습니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 설비·LOT을 두고 서로 반대되는 행동)
+      exclusive: [['hold', 'shipon']],
       options: [
-        { id: 'stop3', cost: 5, text: '3호기 생산을 멈추고 새로 붙인 스트립의 경화 대기를 늘리지 않는다', score: { contain: 4 }, tone: 'good', log: '3호기 생산 중단', status: '3호기 정지', feedback: '원인을 모르는 채 계속 붙이면 이상 스트립이 계속 쌓입니다.' },
-        { id: 'hold', cost: 10, text: '어제 오전 이후 3호기 생산 LOT을 찾아 Hold하고, 와이어 본딩 대기열에서 빼낸다', score: { contain: 8 }, tone: 'good', log: '어제 오전 이후 3호기 LOT Hold · 대기열에서 제외', feedback: '다이 아래 보이드는 몰딩 뒤에는 고치기 어렵습니다. 다음 공정 투입 전에 막아야 합니다.' },
-        { id: 'xray', cost: 15, text: 'Hold한 LOT에서 X-ray 검사 시료 수를 늘려 영향 범위를 확인한다', score: { contain: 4 }, tone: 'good', log: 'Hold LOT X-ray 시료 확대', feedback: '보이드는 겉으로 보이지 않아 X-ray나 초음파 현미경으로 찾습니다(arXiv 조사 논문, TI 기사).' },
-        { id: 'share', cost: 5, text: '생산·품질·오븐 담당에게 알리고 발견 시각·LOT을 기록한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '오븐 PM처럼 다른 부서의 일정이 원인과 엮일 수 있어 함께 알려야 합니다.' },
-        { id: 'stopall', cost: 5, text: '예방 차원에서 1호기를 포함한 다이 본더 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '다이 본더 전체 중단', feedback: '1호기는 정상 값입니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
-        { id: 'shipon', cost: 0, text: '전기 특성에는 문제가 없을 테니 와이어 본딩을 그대로 진행한다', score: { contain: -8 }, tone: 'bad', log: '이상 LOT 다음 공정 진행', status: '이상 LOT 와이어 본딩 진행', feedback: '보이드는 열 저항을 높이고 접착층 균열·계면 박리로 이어질 수 있습니다(TI 기사). 겉으로 정상이어도 넘기면 안 됩니다.' },
-        { id: 'forceup', cost: 10, text: '본드 포스를 바로 올려 접착제를 더 눌러 퍼지게 한다', score: { contain: -5, fix: -5 }, tone: 'bad', log: '원인 확인 전 본드 포스 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가리고, 지나친 하중은 접착층을 얇게 만들고 넘치게 할 수 있습니다(다이 본더 규칙표, 교육용 가설).' },
+        { id: 'stop3', title: '3호기 생산 중단', target: '3호기', cost: 5, text: '3호기 생산을 멈추고 새로 붙인 스트립의 경화 대기를 늘리지 않는다', score: { contain: 4 }, tone: 'good', log: '3호기 생산 중단', status: '3호기 정지', feedback: '원인을 모르는 채 계속 붙이면 이상 스트립이 계속 쌓입니다.' },
+        { id: 'hold', title: '어제 오전 이후 LOT Hold', target: '3호기 LOT · 와이어 본딩 대기열', cost: 10, text: '어제 오전 이후 3호기 생산 LOT을 찾아 Hold하고, 와이어 본딩 대기열에서 빼낸다', score: { contain: 8 }, tone: 'good', log: '어제 오전 이후 3호기 LOT Hold · 대기열에서 제외', feedback: '다이 아래 보이드는 몰딩 뒤에는 고치기 어렵습니다. 다음 공정 투입 전에 막아야 합니다.' },
+        { id: 'xray', title: 'X-ray 검사 시료 확대', target: 'Hold한 LOT', cost: 15, text: 'Hold한 LOT에서 X-ray 검사 시료 수를 늘려 영향 범위를 확인한다', score: { contain: 4 }, tone: 'good', log: 'Hold LOT X-ray 시료 확대', feedback: '보이드는 겉으로 보이지 않아 X-ray나 초음파 현미경으로 찾습니다(arXiv 조사 논문, TI 기사).' },
+        { id: 'share', title: '관련 부서 공유 · 시각 기록', target: '생산·품질·오븐 담당', cost: 5, text: '생산·품질·오븐 담당에게 알리고 발견 시각·LOT을 기록한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '오븐 PM처럼 다른 부서의 일정이 원인과 엮일 수 있어 함께 알려야 합니다.' },
+        { id: 'stopall', title: '다이 본더 전체 중단', target: '1호기 포함 전체', cost: 5, text: '예방 차원에서 1호기를 포함한 다이 본더 전체를 멈춘다', score: { contain: -3 }, tone: 'warn', log: '다이 본더 전체 중단', feedback: '1호기는 정상 값입니다. 근거 없이 멈추면 생산 손실만 커집니다.' },
+        { id: 'shipon', title: '와이어 본딩 그대로 진행', target: '3호기 LOT', cost: 0, text: '전기 특성에는 문제가 없을 테니 와이어 본딩을 그대로 진행한다', score: { contain: -8 }, tone: 'bad', log: '이상 LOT 다음 공정 진행', status: '이상 LOT 와이어 본딩 진행', feedback: '보이드는 열 저항을 높이고 접착층 균열·계면 박리로 이어질 수 있습니다(TI 기사). 겉으로 정상이어도 넘기면 안 됩니다.' },
+        { id: 'forceup', title: '본드 포스 즉시 상향', target: '3호기 Recipe', cost: 10, text: '본드 포스를 바로 올려 접착제를 더 눌러 퍼지게 한다', score: { contain: -5, fix: -5 }, tone: 'bad', log: '원인 확인 전 본드 포스 상향', feedback: '원인을 모르는 채 조건을 바꾸면 진짜 원인을 가리고, 지나친 하중은 접착층을 얇게 만들고 넘치게 할 수 있습니다(다이 본더 규칙표, 교육용 가설).' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요.' },
       hints: [
@@ -215,10 +234,10 @@ export default {
       goal: '원인을 관리하는 조치를 하나 고릅니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'waitrule', cost: 20, text: '경화 전 대기 시간 상한을 정해 먼저 붙인 스트립부터 경화하고, 오븐 A PM이 끝날 때까지 3호기 투입량을 오븐 B 처리량에 맞춘 뒤 첫 스트립 X-ray를 확인한다', score: { fix: 15 }, tone: 'good', log: '대기 시간 상한 + 투입량 조정 + 첫 스트립 X-ray', status: '3호기 재가동 · 투입량 조정', next: 'r_good', feedback: '원인(긴 대기)을 직접 관리하고, 설정 조건은 건드리지 않았습니다.' },
-        { id: 'newpaste', cost: 15, text: '에폭시를 새 박스로 바꿔 다시 시작한다', score: { fix: 4 }, tone: 'warn', log: '에폭시 새 박스로 교체', next: 'r_paste', feedback: '자재는 원인이 아니었습니다. 대기 시간은 그대로입니다.' },
-        { id: 'mixer', cost: 25, text: '시린지 에폭시를 원심 탈포기로 한 번 더 기포를 뺀 뒤 쓴다', score: { fix: 3 }, tone: 'warn', log: '에폭시 원심 탈포 추가', next: 'r_paste', feedback: '원심 탈포는 해동 때 갇힌 공기를 없애는 데 쓰이는 방법입니다(TI 기사). 이번 원인(대기 중 흡습)과는 다릅니다.' },
-        { id: 'force_up', cost: 10, text: '본드 포스를 올려 접착제를 더 눌러 퍼지게 한 뒤 재가동한다', score: { fix: 0 }, tone: 'bad', log: '본드 포스 상향 후 재가동', status: '조건 변경 후 재가동', next: 'r_force', feedback: '원인(대기)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
+        { id: 'waitrule', title: '경화 전 대기 시간 관리 + 첫 스트립 X-ray', target: '3호기 투입 계획 · 경화 순서', cost: 20, text: '경화 전 대기 시간 상한을 정해 먼저 붙인 스트립부터 경화하고, 오븐 A PM이 끝날 때까지 3호기 투입량을 오븐 B 처리량에 맞춘 뒤 첫 스트립 X-ray를 확인한다', score: { fix: 15 }, tone: 'good', log: '대기 시간 상한 + 투입량 조정 + 첫 스트립 X-ray', status: '3호기 재가동 · 투입량 조정', next: 'r_good', feedback: '원인(긴 대기)을 직접 관리하고, 설정 조건은 건드리지 않았습니다.' },
+        { id: 'newpaste', title: '에폭시 새 박스로 교체', target: '3호기 에폭시', cost: 15, text: '에폭시를 새 박스로 바꿔 다시 시작한다', score: { fix: 4 }, tone: 'warn', log: '에폭시 새 박스로 교체', next: 'r_paste', feedback: '자재는 원인이 아니었습니다. 대기 시간은 그대로입니다.' },
+        { id: 'mixer', title: '에폭시 원심 탈포 추가', target: '3호기 에폭시', cost: 25, text: '시린지 에폭시를 원심 탈포기로 한 번 더 기포를 뺀 뒤 쓴다', score: { fix: 3 }, tone: 'warn', log: '에폭시 원심 탈포 추가', next: 'r_paste', feedback: '원심 탈포는 해동 때 갇힌 공기를 없애는 데 쓰이는 방법입니다(TI 기사). 이번 원인(대기 중 흡습)과는 다릅니다.' },
+        { id: 'force_up', title: '본드 포스 상향 후 재가동', target: '3호기 Recipe', cost: 10, text: '본드 포스를 올려 접착제를 더 눌러 퍼지게 한 뒤 재가동한다', score: { fix: 0 }, tone: 'bad', log: '본드 포스 상향 후 재가동', status: '조건 변경 후 재가동', next: 'r_force', feedback: '원인(대기)은 그대로 둔 채 조건으로 덮는 조치입니다.' },
       ],
       hints: ['확인한 원인은 "설비 설정"이었나요, "공정 흐름(대기 시간)"이었나요?', '원인을 직접 관리하는 조치와 결과만 맞추는 조치를 구분해 보세요.', '대기 시간 상한 + 오븐 처리량에 맞춘 투입 + 첫 스트립 확인이 가장 직접적입니다.'],
     },

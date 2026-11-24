@@ -6,7 +6,7 @@ import { markActive } from '../../lib/activity.js'
 import { addNote, openNotePage } from '../../lib/notes.js'
 import { findScenario } from '../../data/scenarios.js'
 import { addReport, reportFromRun } from '../../lib/reports.js'
-import { ChartView, SituationOverview, StageMedia } from './SceneVisuals.jsx'
+import { ChartView, ScenarioTimeline, SituationOverview, StageMedia } from './SceneVisuals.jsx'
 import { writeStored } from '../../lib/storage.js'
 import { findProcess } from '../../data/processes.js'
 import EquipmentPanel from './EquipmentPanel.jsx'
@@ -485,7 +485,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
               <SituationOverview c={c} run={run} stage={2} focus={part} onPick={pickPart} compact />
             </details>
           ) : (
-            <StageMedia c={c} run={run} stage={node.step} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
+            <StageMedia c={c} run={run} stage={node.step} focus={part} onPick={pickPart} only={['diagram', 'equipment', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           )}
           <p className="field-prompt">{node.prompt}</p>
           {!done ? (
@@ -594,7 +594,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       const groups = [...new Set(node.items.map((i) => i.group))]
       return (
         <>
-          <StageMedia c={c} run={run} stage={3} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
+          <StageMedia c={c} run={run} stage={3} focus={part} onPick={pickPart} only={['diagram', 'equipment', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           <p className="field-prompt">{node.prompt}</p>
           <div className={`field-budget${left <= node.budget * 0.2 ? ' warn' : ''}`}>
             <span>데이터 확인 시간</span>
@@ -683,7 +683,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       }
       return (
         <>
-          <StageMedia c={c} run={run} stage={4} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
+          <StageMedia c={c} run={run} stage={4} focus={part} onPick={pickPart} only={['diagram', 'equipment', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           <p className="field-prompt">{node.prompt}</p>
           {last && !last.correct && !h.solved && (
             <div className="field-verdict bad">
@@ -938,6 +938,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
             ))}
           </tbody>
         </table>
+        <ScenarioTimeline log={run.log} clock={clock} limit={run.timed && exam ? c.timeLimit : null} total={run.time} />
         <div className="field-eval-grid">
           <section>
             <h4>✓ 적절한 판단</h4>
