@@ -44,6 +44,34 @@ export default {
     { kind: 'screen', id: 'datalab', label: '공정 데이터 분석 (Bin Pareto)' },
   ],
 
+  // 현장 상황 개요(현장 보기)와 테스트 셀 개념도 설정. 수치는 아래 brief 표와 같은 가상 데이터입니다.
+  // diagram.flags는 해당 데이터(after)를 확인한 뒤에만 그림에 표시합니다(정답 미리 노출 방지).
+  scene: {
+    location: '테스트 라인 · 핸들러 H3',
+    clock: '오전 7:40 보고 (어젯밤 11시 무렵 LOT부터 저하)',
+    startClock: '07:40',
+    state: 'H3 수율 저하',
+    metrics: {
+      title: '핸들러별 최근 2 LOT 수율',
+      unit: '%',
+      max: 100,
+      rows: [
+        { label: 'H1', value: 98.1 },
+        { label: 'H2', value: 97.9 },
+        { label: 'H3', value: 94.0, flag: true, flagText: '저하' },
+      ],
+      note: 'H1·H2·H3는 같은 제품·같은 테스트 프로그램·같은 웨이퍼 LOT 묶음을 검사하는 핸들러입니다(같은 기준의 비교).',
+    },
+    diagram: {
+      handler: '핸들러 H3',
+      sites: 4,
+      flags: [
+        { after: 'site', site: 2, text: '사이트 2 수율 85.6 % (확인한 데이터)' },
+        { after: 'swap', text: '소켓을 맞바꾸자 불량이 소켓을 따라 옮겨 감 (확인한 데이터)' },
+      ],
+    },
+  },
+
   timeLimit: 180,
   timeRule: { cat: 'contain', penalty: 5, text: '목표 시간(가상 180분) 안에 원인 쪽을 가르지 못해, 그동안 H3의 테스트 대기 물량이 쌓였습니다.' },
 
@@ -101,14 +129,16 @@ export default {
       title: '초기 대응 판단',
       goal: '피해가 커지지 않게 하면서 원인을 가를 증거를 지킵니다. 해당하는 조치를 모두 고르세요.',
       prompt: '지금 바로 할 조치를 모두 고르세요.',
+      // 함께 고를 수 없는 조치(같은 불량품을 보관하면서 폐기할 수는 없음)
+      exclusive: [['hold', 'scrap']],
       options: [
-        { id: 'pause', cost: 5, text: 'H3에 새 LOT 투입을 멈추고, 대기 LOT은 정상인 H1·H2로 돌린다', score: { contain: 5 }, tone: 'good', log: 'H3 투입 중지 · 대기 LOT H1·H2로', status: 'H3 투입 중지', feedback: '원인을 모르는 채 계속 돌리면 같은 문제가 반복됩니다. 정상 설비로 생산은 이어 갑니다.' },
-        { id: 'hold', cost: 10, text: 'H3 불량품을 폐기하지 말고 LOT별로 보관하고, 해당 LOT 출하를 보류한다', score: { contain: 6 }, tone: 'good', log: 'H3 불량품 보관 · 해당 LOT 출하 보류', feedback: '테스트 환경 문제라면 불량 판정된 칩 상당수가 양품일 수 있습니다. 버리면 되돌릴 수 없습니다.' },
-        { id: 'datalog', cost: 5, text: '사이트·Bin별 테스트 기록(datalog)을 지워지기 전에 보존한다', score: { contain: 5 }, tone: 'good', log: '사이트·Bin 테스트 기록 보존', feedback: '사이트별로 나눠 봐야 원인 쪽을 가를 수 있습니다.' },
-        { id: 'share', cost: 5, text: '생산·품질 담당에게 알리고 수율 저하 시작 시각을 기록한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '시작 시각은 그때 바뀐 것을 찾는 단서입니다.' },
-        { id: 'scrap', cost: 0, text: '불량 트레이가 차니 불량품을 폐기 박스로 옮긴다', score: { contain: -8 }, tone: 'bad', log: '불량품 폐기', status: '불량품 폐기됨', feedback: '테스트 환경 때문에 생긴 불량 판정이라면 양품을 버리게 됩니다. 원인 확인 전에는 보관합니다.' },
-        { id: 'loosen', cost: 5, text: '접촉 검사 판정 기준을 조금 느슨하게 바꿔 수율을 맞춘다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '판정 기준 완화', feedback: '판정 기준이 느슨하면 규격을 벗어난 칩도 통과합니다(테스트 핸들러 규칙표). 수율 숫자만 맞추는 조치입니다.' },
-        { id: 'loop', cost: 15, text: '불량품을 H3에 넣어 통과할 때까지 여러 번 재검사한다', score: { contain: -3 }, tone: 'warn', log: 'H3에서 반복 재검사', feedback: '원인이 H3 쪽에 있다면 같은 곳에서 반복해도 원인을 가리지 못하고, 통과 여부가 우연에 좌우됩니다.' },
+        { id: 'pause', title: 'H3 신규 LOT 투입 보류', target: 'H3 · 대기 LOT', cost: 5, text: 'H3에 새 LOT 투입을 멈추고, 대기 LOT은 정상인 H1·H2로 돌린다', score: { contain: 5 }, tone: 'good', log: 'H3 투입 중지 · 대기 LOT H1·H2로', status: 'H3 투입 중지', feedback: '원인을 모르는 채 계속 돌리면 같은 문제가 반복됩니다. 정상 설비로 생산은 이어 갑니다.' },
+        { id: 'hold', title: '불량품 보관 · 해당 LOT 출하 보류', target: 'H3 불량 트레이 · 해당 LOT', cost: 10, text: 'H3 불량품을 폐기하지 말고 LOT별로 보관하고, 해당 LOT 출하를 보류한다', score: { contain: 6 }, tone: 'good', log: 'H3 불량품 보관 · 해당 LOT 출하 보류', feedback: '테스트 환경 문제라면 불량 판정된 칩 상당수가 양품일 수 있습니다. 버리면 되돌릴 수 없습니다.' },
+        { id: 'datalog', title: '사이트·Bin 테스트 기록 보존', target: '테스트 데이터', cost: 5, text: '사이트·Bin별 테스트 기록(datalog)을 지워지기 전에 보존한다', score: { contain: 5 }, tone: 'good', log: '사이트·Bin 테스트 기록 보존', feedback: '사이트별로 나눠 봐야 원인 쪽을 가를 수 있습니다.' },
+        { id: 'share', title: '생산·품질 담당에게 현황 공유', target: '관련 부서', cost: 5, text: '생산·품질 담당에게 알리고 수율 저하 시작 시각을 기록한다', score: { contain: 4 }, tone: 'good', log: '관련 부서 공유, 시각 기록', feedback: '시작 시각은 그때 바뀐 것을 찾는 단서입니다.' },
+        { id: 'scrap', title: '불량품 폐기', target: 'H3 불량 트레이', cost: 0, text: '불량 트레이가 차니 불량품을 폐기 박스로 옮긴다', score: { contain: -8 }, tone: 'bad', log: '불량품 폐기', status: '불량품 폐기됨', feedback: '테스트 환경 때문에 생긴 불량 판정이라면 양품을 버리게 됩니다. 원인 확인 전에는 보관합니다.' },
+        { id: 'loosen', title: '접촉 판정 기준 완화', target: '테스트 프로그램 판정 기준', cost: 5, text: '접촉 검사 판정 기준을 조금 느슨하게 바꿔 수율을 맞춘다', score: { contain: -6, fix: -5 }, tone: 'bad', log: '판정 기준 완화', feedback: '판정 기준이 느슨하면 규격을 벗어난 칩도 통과합니다(테스트 핸들러 규칙표). 수율 숫자만 맞추는 조치입니다.' },
+        { id: 'loop', title: 'H3에서 반복 재검사', target: 'H3 불량품', cost: 15, text: '불량품을 H3에 넣어 통과할 때까지 여러 번 재검사한다', score: { contain: -3 }, tone: 'warn', log: 'H3에서 반복 재검사', feedback: '원인이 H3 쪽에 있다면 같은 곳에서 반복해도 원인을 가리지 못하고, 통과 여부가 우연에 좌우됩니다.' },
       ],
       essay: { label: '판단 이유 (선택)', placeholder: '왜 이렇게 판단했는지 짧게 써 보세요.' },
       hints: [
@@ -128,8 +158,9 @@ export default {
       budget: 60,
       maxScore: 'data',
       items: [
-        { id: 'site', icon: '🔢', purpose: 'H3의 4개 사이트 수율을 나눠 봅니다.', label: 'H3 사이트별 수율', group: '테스트 데이터', cost: 10, parts: ['socket'], observe: { normal: '네 사이트 수율이 비슷합니다.', abnormal: '한 사이트만 수율이 낮습니다("bad site").' }, score: { data: 6 }, key: true, result: { kind: 'table', cols: ['사이트', '수율', '판정'], rows: [['사이트 1', '98.0 %', '✓'], ['사이트 2', '85.6 %', '✕'], ['사이트 3', '98.2 %', '✓'], ['사이트 4', '97.9 %', '✓']] }, note: '불량이 사이트 2에 몰려 있습니다. 멀티 사이트에서는 사이트별로 나눠 "몰려 있는 불량"을 찾습니다(onsemi 학회 논문).' },
-        { id: 'bins', icon: '📊', purpose: '어떤 종류의 불량(Bin)이 늘었는지 봅니다.', label: '불량 Bin 분포 (Pareto)', group: '테스트 데이터', cost: 5, score: { data: 3 }, key: true, result: { kind: 'table', cols: ['Bin', '개수', '누적'], rows: [['접촉 불량 (Open/Short)', '128', '71 %'], ['누설 전류', '21', '83 %'], ['기능 불량', '17', '92 %'], ['속도 불량', '9', '97 %'], ['기타', '5', '100 %']] }, note: '접촉(Open/Short) 불량이 대부분입니다. 공정 데이터 분석 화면의 Pareto 실습에서 직접 계산해 볼 수 있습니다.' },
+        { id: 'site', icon: '🔢', purpose: 'H3의 4개 사이트 수율을 나눠 봅니다.', label: 'H3 사이트별 수율', group: '테스트 데이터', cost: 10, parts: ['socket'], observe: { normal: '네 사이트 수율이 비슷합니다.', abnormal: '한 사이트만 수율이 낮습니다("bad site").' }, score: { data: 6 }, key: true, result: { kind: 'bars', title: 'H3 사이트별 수율', unit: '%', max: 100, rows: [{ label: '사이트 1', value: 98.0 }, { label: '사이트 2', value: 85.6, flag: true, flagText: '낮음' }, { label: '사이트 3', value: 98.2 }, { label: '사이트 4', value: 97.9 }], note: '같은 LOT·같은 시간대에 네 사이트가 나눠 검사한 결과입니다.' }, note: '불량이 사이트 2에 몰려 있습니다. 멀티 사이트에서는 사이트별로 나눠 "몰려 있는 불량"을 찾습니다(onsemi 학회 논문).' },
+        { id: 'lottrend', icon: '📈', purpose: 'H3에서 검사한 최근 LOT의 수율이 언제부터 떨어졌는지 봅니다.', label: 'H3 최근 LOT별 수율 추이', group: '테스트 데이터', cost: 5, score: { data: 1 }, result: { kind: 'trend', title: 'H3 최근 LOT별 수율', unit: '%', points: [{ label: 'L1', value: 97.7 }, { label: 'L2', value: 98.4 }, { label: 'L3', value: 97.9 }, { label: 'L4', value: 98.1 }, { label: 'L5', value: 97.6 }, { label: 'L6', value: 98.0 }, { label: 'L7', value: 97.8 }, { label: 'L8', value: 94.2, flag: true, note: '어젯밤 11시 무렵 시작' }, { label: 'L9', value: 93.8, flag: true }], note: 'L8부터 떨어졌습니다. "언제부터"는 알려 주지만, 칩 문제인지 테스트 환경 문제인지는 알려 주지 않습니다.' }, note: '수율이 L8(어젯밤 11시 무렵)부터 떨어졌습니다. 그때 바뀐 것을 찾는 단서가 됩니다.' },
+        { id: 'bins', icon: '📊', purpose: '어떤 종류의 불량(Bin)이 늘었는지 봅니다.', label: '불량 Bin 분포 (Pareto)', group: '테스트 데이터', cost: 5, score: { data: 3 }, key: true, result: { kind: 'bars', title: '불량 Bin 개수 (많은 순)', unit: '개', rows: [{ label: '접촉 불량 (Open/Short)', value: 128, note: '누적 71 %' }, { label: '누설 전류', value: 21, note: '누적 83 %' }, { label: '기능 불량', value: 17, note: '누적 92 %' }, { label: '속도 불량', value: 9, note: '누적 97 %' }, { label: '기타', value: 5, note: '누적 100 %' }], note: '전체 180개 중 접촉 불량이 71 %입니다(막대에 마우스를 올리면 누적 비율).' }, note: '접촉(Open/Short) 불량이 대부분입니다. 공정 데이터 분석 화면의 Pareto 실습에서 직접 계산해 볼 수 있습니다.' },
         { id: 'retest', icon: '🔁', purpose: '사이트 2 불량품을 정상 사이트·다른 핸들러에서 다시 검사합니다.', label: '사이트 2 불량품을 H1에서 재검사', group: '테스트 데이터', cost: 15, observe: { normal: '진짜 불량이면 다른 곳에서도 다시 실패합니다(실패가 칩을 따라감).', abnormal: '다른 곳에서는 통과합니다(실패가 위치를 따라감).' }, score: { data: 6 }, key: true, result: { kind: 'table', cols: ['재검사 대상', '수량', 'H1 결과'], rows: [['사이트 2 접촉 불량품', '50', '통과 46 · 실패 4'], ['사이트 1·3·4 불량품', '20', '통과 1 · 실패 19']] }, note: '사이트 2 불량품 대부분이 다른 곳에서는 통과합니다 → 실패가 칩이 아니라 위치를 따라갑니다(Semiconductor Engineering 기사의 구분법).' },
         { id: 'swap', icon: '🔀', purpose: '사이트 1과 2의 소켓을 맞바꿔 불량이 소켓을 따라가는지 봅니다.', label: '소켓 맞바꾸기 (사이트 1 ↔ 2)', group: '설비 점검', cost: 15, parts: ['socket', 'head'], observe: { normal: '맞바꿔도 수율이 그대로면 소켓보다 사이트 쪽(채널·보드)을 의심합니다.', abnormal: '불량이 소켓을 따라 다른 사이트로 옮겨 갑니다.' }, score: { data: 3 }, key: true, result: { kind: 'table', cols: ['맞바꾼 뒤', '수율'], rows: [['사이트 1 (예전 사이트 2 소켓)', '86.1 % ✕'], ['사이트 2 (예전 사이트 1 소켓)', '98.0 % ✓']] }, note: '불량이 소켓을 따라 옮겨 갔습니다 → 테스터 채널이 아니라 소켓 쪽입니다. 소켓을 맞바꿔 오류가 하드웨어를 따라가는지 보는 방법입니다(Semiconductor Engineering 기사).' },
         { id: 'socketlog', icon: '🧹', purpose: '소켓 삽입 횟수와 청소 이력을 봅니다.', label: '소켓 삽입 횟수·청소 이력', group: '설비 점검', cost: 5, parts: ['socket'], score: { data: 2 }, key: true, result: { kind: 'table', cols: ['사이트', '마지막 청소 뒤 삽입 횟수', '청소 주기(가상)'], rows: [['사이트 1', '18,200', '25,000'], ['사이트 2', '31,500 ⚠', '25,000'], ['사이트 3', '17,900', '25,000'], ['사이트 4', '18,400', '25,000']] }, note: '사이트 2 소켓만 청소 주기를 넘겼습니다(지난번 청소 때 교체 소켓이 늦게 와 미룸). 반복 삽입은 찌꺼기와 접점 마모로 접촉 저항을 올립니다(재검사 기사).' },
@@ -215,10 +246,10 @@ export default {
       goal: '원인을 없애고 양품 손실을 막는 조치를 하나 고릅니다.',
       prompt: '어떤 조치를 하시겠습니까?',
       options: [
-        { id: 'clean', cost: 25, text: '사이트 2 소켓을 청소(필요하면 교체)하고 사이트별 수율이 비슷한지 확인한 뒤 재가동한다. 사이트 2 불량품은 정상 사이트에서 재검사해 진짜 불량만 남긴다', score: { fix: 15 }, tone: 'good', log: '사이트 2 소켓 청소·교체 + 사이트별 확인 + 불량품 재검사', status: 'H3 재가동 · 사이트 2 소켓 교체', next: 'r_good', feedback: '원인(소켓)을 없애고, 잘못 불량 판정된 양품도 되살렸습니다.' },
-        { id: 'disable', cost: 10, text: '사이트 2만 끄고 3사이트로 계속 돌린다', score: { fix: 6 }, tone: 'warn', log: '사이트 2 비활성화 후 3사이트 가동', next: 'r_disable', feedback: '불량 확산은 막지만, 원인은 그대로이고 처리량이 줄어듭니다.' },
-        { id: 'loosen', cost: 5, text: '접촉 검사 판정 기준을 느슨하게 바꿔 재가동한다', score: { fix: 0 }, tone: 'bad', log: '판정 기준 완화 후 재가동', status: '판정 기준 완화', next: 'r_loosen', feedback: '원인(소켓)은 그대로 두고 판정을 바꿔 숫자만 맞추는 조치입니다.' },
-        { id: 'scrap', cost: 5, text: '불량품은 모두 폐기하고 소켓만 청소한다', score: { fix: 4 }, tone: 'bad', log: '불량품 전량 폐기 + 소켓 청소', next: 'r_scrap', feedback: '원인은 없앴지만 잘못 불량 판정된 양품까지 버렸습니다.' },
+        { id: 'clean', title: '사이트 2 소켓 청소·교체 + 재검사', target: '사이트 2 소켓 · 불량품', cost: 25, text: '사이트 2 소켓을 청소(필요하면 교체)하고 사이트별 수율이 비슷한지 확인한 뒤 재가동한다. 사이트 2 불량품은 정상 사이트에서 재검사해 진짜 불량만 남긴다', score: { fix: 15 }, tone: 'good', log: '사이트 2 소켓 청소·교체 + 사이트별 확인 + 불량품 재검사', status: 'H3 재가동 · 사이트 2 소켓 교체', next: 'r_good', feedback: '원인(소켓)을 없애고, 잘못 불량 판정된 양품도 되살렸습니다.' },
+        { id: 'disable', title: '사이트 2 끄고 3사이트 가동', target: '사이트 2', cost: 10, text: '사이트 2만 끄고 3사이트로 계속 돌린다', score: { fix: 6 }, tone: 'warn', log: '사이트 2 비활성화 후 3사이트 가동', next: 'r_disable', feedback: '불량 확산은 막지만, 원인은 그대로이고 처리량이 줄어듭니다.' },
+        { id: 'loosen', title: '판정 기준 완화 후 재가동', target: '테스트 프로그램 판정 기준', cost: 5, text: '접촉 검사 판정 기준을 느슨하게 바꿔 재가동한다', score: { fix: 0 }, tone: 'bad', log: '판정 기준 완화 후 재가동', status: '판정 기준 완화', next: 'r_loosen', feedback: '원인(소켓)은 그대로 두고 판정을 바꿔 숫자만 맞추는 조치입니다.' },
+        { id: 'scrap', title: '불량품 폐기 + 소켓 청소', target: '불량품 · 소켓', cost: 5, text: '불량품은 모두 폐기하고 소켓만 청소한다', score: { fix: 4 }, tone: 'bad', log: '불량품 전량 폐기 + 소켓 청소', next: 'r_scrap', feedback: '원인은 없앴지만 잘못 불량 판정된 양품까지 버렸습니다.' },
       ],
       hints: ['원인을 없애는 일과, 이미 잘못 판정된 칩을 다루는 일을 함께 생각해 보세요.', '판정 기준을 바꾸면 무엇이 통과하게 될까요?', '소켓 청소·교체 + 사이트별 확인 + 불량품을 정상 사이트에서 재검사입니다.'],
     },
@@ -229,6 +260,7 @@ export default {
       title: '조치 결과',
       tone: 'ok',
       text: '소켓을 바꾼 뒤 네 사이트 수율이 비슷하게 돌아왔고, 사이트 2 불량품 대부분이 재검사에서 양품으로 확인됐습니다.',
+      chart: { kind: 'compare', title: 'H3 사이트별 수율: 조치 전 → 조치 후', unit: '%', max: 100, rows: [{ label: '사이트 1', before: 98.0, after: 97.8 }, { label: '사이트 2', before: 85.6, after: 98.1 }, { label: '사이트 3', before: 98.2, after: 98.2 }, { label: '사이트 4', before: 97.9, after: 97.9 }] },
       table: { virtual: true, cols: ['항목', '결과', '판정'], rows: [['사이트별 수율', '97.8 / 98.1 / 98.2 / 97.9 %', '✓ 고름'], ['사이트 2 불량품 재검사', '128개 중 117개 통과', '✓ 양품 회수'], ['H3 LOT 수율', '97.9 %', '✓']] },
       next: 'verify',
     },

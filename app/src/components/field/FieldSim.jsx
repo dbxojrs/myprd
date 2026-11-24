@@ -6,6 +6,7 @@ import { markActive } from '../../lib/activity.js'
 import { addNote, openNotePage } from '../../lib/notes.js'
 import { findScenario } from '../../data/scenarios.js'
 import { addReport, reportFromRun } from '../../lib/reports.js'
+import { ChartView, SituationOverview, StageMedia } from './SceneVisuals.jsx'
 import { writeStored } from '../../lib/storage.js'
 import { findProcess } from '../../data/processes.js'
 import EquipmentPanel from './EquipmentPanel.jsx'
@@ -215,9 +216,45 @@ function WaferMap({ data }) {
   )
 }
 
+// 가상 시각: 시나리오 시작 시각(scene.startClock 또는 보고 시각 "오전 7:40") + 경과 분
+export function makeClock(c) {
+  const a = c.scene?.startClock?.match(/^(\d{1,2}):(\d{2})$/)
+  const b = !a && c.nodes.brief?.who?.match(/(오전|오후)\s*(\d{1,2}):(\d{2})/)
+  const start = a ? +a[1] * 60 + +a[2] : b ? ((+b[2] % 12) + (b[1] === '오후' ? 12 : 0)) * 60 + +b[3] : null
+  return (t) => {
+    if (start == null) return `${t}분`
+    const m = (start + t) % 1440
+    return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  }
+}
+
+// 차트로 보여 준 데이터의 표 보기(접근성: 색·모양 말고 숫자로도 읽기)
+function ChartTable({ result }) {
+  const rows =
+    result.kind === 'trend'
+      ? result.points.map((p) => [p.label, `${p.value} ${result.unit}`, p.flag ? '✕ 이상' : ''])
+      : result.kind === 'compare'
+        ? result.rows.map((r) => [r.label, `${r.before} → ${r.after} ${result.unit}`, ''])
+        : result.rows.map((r) => [r.label, `${r.value} ${result.unit}`, [r.flag ? `✕ ${r.flagText ?? '이상'}` : '', r.note ?? ''].filter(Boolean).join(' · ')])
+  return (
+    <details className="dl-table">
+      <summary>표로 보기</summary>
+      <DataView result={{ kind: 'table', cols: ['항목', '값', '비고'], rows }} />
+    </details>
+  )
+}
+
 function DataView({ result }) {
   if (!result) return null
   const meta = result.meta && <p className="data-meta">📋 {result.meta}</p>
+  if (['bars', 'trend', 'compare'].includes(result.kind))
+    return (
+      <>
+        {meta}
+        <ChartView chart={result} />
+        <ChartTable result={result} />
+      </>
+    )
   if (result.kind === 'wafermap')
     return (
       <>
@@ -280,12 +317,21 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
   const [panel, setPanel] = useState('data')
   const [part, setPart] = useState(null) // 장비 구조 탭에서 강조할 부위 id 또는 검사 그림 id
   // 데이터 항목의 장비 위치 보기(관련 부위 강조 + 장비 구조 탭)
-  const showOnEquipment = (item) => {
+  const [drawer, setDrawer] = useState(false) // 좁은 화면: 오른쪽 패널을 아래 서랍으로 엽니다
+  const showOnEquipment = (item, open = false) => {
     const target = item.parts?.[0] ?? item.figure
     if (!target) return
     setPart(target)
     setPanel('equip')
+    if (open) setDrawer(true)
   }
+  // 구성도·장비 그림의 부위를 누르면 장비 구조 탭에서 설명
+  const pickPart = (id) => {
+    setPart(id)
+    setPanel('equip')
+    setDrawer(true)
+  }
+  const clock = makeClock(c)
   // 장비 구조 탭에서 "이 데이터 확인하러 가기": 데이터 수집 단계의 해당 카드로 스크롤
   const jumpToData = (id) => {
     const el = document.getElementById(`fd-${id}`)
@@ -363,6 +409,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
               <p>{node.report}</p>
             </div>
           </div>
+          <SituationOverview c={c} run={run} stage={1} focus={part} onPick={pickPart} onOpenProcess={onOpenProcess} />
           <div className="field-status">
             {node.status.map((s) => (
               <span key={s.label} className={`status ${s.tone}`}>
@@ -424,30 +471,62 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
         setRun(r)
       }
       const shown = node.multi ? run.picks[run.node] ?? [] : lastPick ? [lastPick] : []
+      // 함께 고를 수 없는 조치(시나리오의 exclusive 규칙)
+      const blockedBy = (id) => {
+        const pair = (node.exclusive ?? []).find((g) => g.includes(id))
+        return pair?.find((x) => x !== id && pickedNow.includes(x))
+      }
+      const totalCost = pickedNow.reduce((t, id) => t + (node.options.find((o) => o.id === id)?.cost ?? 0), 0)
       return (
         <>
+          {node.step <= 2 ? (
+            <details className="scene-peek" open>
+              <summary>🏭 현장 보기 — 장비 구성과 초기 데이터</summary>
+              <SituationOverview c={c} run={run} stage={2} focus={part} onPick={pickPart} compact />
+            </details>
+          ) : (
+            <StageMedia c={c} run={run} stage={node.step} focus={part} onPick={pickPart} only={['diagram']} collapsed />
+          )}
           <p className="field-prompt">{node.prompt}</p>
           {!done ? (
             <>
-              <div className="field-options" role={node.multi ? 'group' : 'radiogroup'}>
+              <div className="field-options action-cards" role={node.multi ? 'group' : 'radiogroup'} aria-label={node.multi ? '조치 (여러 개 고르기)' : '조치 (하나 고르기)'}>
                 {node.options.map((o) => {
                   const on = pickedNow.includes(o.id)
+                  const block = !on && blockedBy(o.id)
+                  const other = block && node.options.find((x) => x.id === block)
                   return (
-                    <label key={o.id} className={`field-option${on ? ' on' : ''}`}>
+                    <label key={o.id} className={`field-option action-card${on ? ' on' : ''}${block ? ' blocked' : ''}`}>
                       <input
                         type={node.multi ? 'checkbox' : 'radio'}
                         name={run.node}
                         checked={on}
+                        disabled={Boolean(block)}
                         onChange={() => setDraft((d) => ({ ...d, picks: node.multi ? (on ? pickedNow.filter((x) => x !== o.id) : [...pickedNow, o.id]) : [o.id] }))}
                       />
-                      <span>
-                        {o.text}
-                        {o.cost > 0 && <small className="field-cost"> · 가상 {o.cost}분</small>}
+                      <span className="ac-body">
+                        <span className="ac-head">
+                          <strong>{o.title ?? o.text}</strong>
+                          {on && (
+                            <span className="ac-check" aria-hidden="true">
+                              ✓
+                            </span>
+                          )}
+                        </span>
+                        {o.title && <span className="ac-desc">{o.text}</span>}
+                        <span className="ac-meta">
+                          {o.target && <span>🎯 대상: {o.target}</span>}
+                          <span>⏱ {o.cost > 0 ? `가상 ${o.cost}분` : '즉시'}</span>
+                        </span>
+                        {other && <small className="ac-block">"{other.title ?? other.text}"와(과) 함께 고를 수 없습니다.</small>}
                       </span>
                     </label>
                   )
                 })}
               </div>
+              <p className="ac-total" aria-live="polite">
+                {node.multi ? `선택 ${pickedNow.length}개 · ` : pickedNow.length ? '선택함 · ' : ''}예상 소요 가상 {totalCost}분
+              </p>
               {node.essay && (
                 <label className="field-essay">
                   <span>{node.essay.label}</span>
@@ -515,11 +594,12 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       const groups = [...new Set(node.items.map((i) => i.group))]
       return (
         <>
+          <StageMedia c={c} run={run} stage={3} focus={part} onPick={pickPart} only={['diagram']} collapsed />
           <p className="field-prompt">{node.prompt}</p>
           <div className={`field-budget${left <= node.budget * 0.2 ? ' warn' : ''}`}>
             <span>데이터 확인 시간</span>
             <div className="home-progress-bar" aria-hidden="true">
-              <span style={{ width: `${(run.time / node.budget) * 100}%` }} />
+              <span style={{ width: `${Math.min(100, (usedHere / node.budget) * 100)}%` }} />
             </div>
             <strong>
               {node.budget - left} / {node.budget}분
@@ -546,7 +626,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
                           <small className="field-cost">예상 소요 {i.cost}분</small>
                         </span>
                         {(i.parts?.length > 0 || i.figure) && (
-                          <button type="button" className="link field-eq-link" onClick={() => showOnEquipment(i)} title="이 데이터와 관련된 장비 부위·검사 원리를 오른쪽 패널에서 봅니다">
+                          <button type="button" className="link field-eq-link" onClick={() => showOnEquipment(i, true)} title="이 데이터와 관련된 장비 부위·검사 원리를 오른쪽 패널에서 봅니다">
                             🔧 장비에서 보기
                           </button>
                         )}
@@ -603,6 +683,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       }
       return (
         <>
+          <StageMedia c={c} run={run} stage={4} focus={part} onPick={pickPart} only={['diagram']} collapsed />
           <p className="field-prompt">{node.prompt}</p>
           {last && !last.correct && !h.solved && (
             <div className="field-verdict bad">
@@ -755,6 +836,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
             <span className={`status ${node.tone}`}>{node.tone === 'ok' ? '정상 복귀 신호' : node.tone === 'bad' ? '새 문제 발생' : '불완전한 결과'}</span>
             <p>{node.text}</p>
           </div>
+          {node.chart && <ChartView chart={node.chart} />}
           {node.table && <Table table={node.table} />}
           {node.lesson && <p className="field-lesson">📘 {node.lesson}</p>}
           <button type="button" className="primary" onClick={() => goto(log(run, node.text, node.tone), node.next)}>
@@ -1041,7 +1123,9 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
                 const tone = hideFeedback ? 'info' : l.tone
                 return (
                   <li key={i} className={`tone-${tone}`}>
-                    <small className="field-log-time">{l.t}분</small>
+                    <small className="field-log-time" title={`시작 뒤 ${l.t}분`}>
+                      {clock(l.t)}
+                    </small>
                     <span>{l.text}</span>
                     {!hideFeedback && (tone === 'ok' || tone === 'bad' || tone === 'warn') && <small className={`field-log-res ${tone}`}>{tone === 'ok' ? '적절' : tone === 'bad' ? '위험' : '보완'}</small>}
                   </li>
@@ -1072,10 +1156,29 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
 
       {/* 가운데: 상황 · 판단 */}
       <div className="field-center card" role="region" aria-label="상황과 판단" aria-live="polite">
+        <nav className="field-crumb" aria-label="현재 위치">
+          <button type="button" className="link" onClick={onBack}>
+            현장 실무 훈련
+          </button>
+          <span aria-hidden="true">›</span>
+          <span>{c.category === 'FAB' ? '전공정 FAB' : '후공정 PKG'}</span>
+          <span aria-hidden="true">›</span>
+          <strong>{c.processLabel}</strong>
+          {started && <span className={`status ${exam ? 'warn' : 'info'} field-crumb-mode`}>{exam ? `평가 모드${run.timed ? ' · 제한 시간' : ''}` : '연습 모드'}</span>}
+        </nav>
         <dl className="field-summary" aria-label="사건 요약">
           <div>
             <dt>사건</dt>
             <dd>{c.id}</dd>
+          </div>
+          <div className="field-summary-step">
+            <dt>현재 단계 · 진행률</dt>
+            <dd>
+              {run.done ? `${c.steps.length}/${c.steps.length} 결과 평가` : `${stepNo}/${c.steps.length} ${c.steps[stepNo - 1] ?? ''}`}
+              <span className="field-timebar" aria-hidden="true">
+                <span style={{ width: `${run.done ? 100 : Math.round(((stepNo - 1) / c.steps.length) * 100)}%` }} />
+              </span>
+            </dd>
           </div>
           <div>
             <dt>공정</dt>
@@ -1103,6 +1206,18 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
             </dd>
           </div>
         </dl>
+        <ol className="field-stepbar" aria-label="진행 단계">
+          {c.steps.map((st, i) => {
+            const n = i + 1
+            const k = run.done || n < stepNo ? 'done' : n === stepNo ? 'now' : ''
+            return (
+              <li key={st} className={k} aria-current={k === 'now' ? 'step' : undefined}>
+                <span>{k === 'done' ? '✓' : n}</span>
+                <small>{st}</small>
+              </li>
+            )
+          })}
+        </ol>
         {run.timed && exam && !run.done && timeRatio >= 0.8 && (
           <p className="field-time-warn">{timeRatio >= 1 ? `⚠ 제한 시간(${c.timeLimit}분)을 넘겼습니다. 끝까지 진행할 수 있으며, 사건 규칙대로 감점됩니다.` : `⚠ 제한 시간까지 ${c.timeLimit - run.time}분 남았습니다. 우선순위를 정하세요.`}</p>
         )}
@@ -1120,7 +1235,10 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
             <button type="button" onClick={() => setSheet('summary')}>
               🗂 현재까지 정리하기
             </button>
-            <button type="button" onClick={() => setPanel('mentor')} disabled={!node?.hints}>
+            <button type="button" className="field-drawer-btn" onClick={() => setDrawer((d) => !d)} aria-expanded={drawer}>
+              📂 자료 {run.viewed.length}
+            </button>
+            <button type="button" onClick={() => (setPanel('mentor'), setDrawer(true))} disabled={!node?.hints}>
               💡 힌트{exam ? ` (−${HINT_PENALTY}점)` : ''}
             </button>
             <button
@@ -1144,23 +1262,39 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
           </div>
         )}
       </div>
-      {sheet && <FieldSheet kind={sheet} c={c} run={run} hideFeedback={hideFeedback} onClose={() => setSheet(null)} />}
+      {sheet && <FieldSheet kind={sheet} c={c} run={run} hideFeedback={hideFeedback} clock={clock} onClose={() => setSheet(null)} />}
 
       {/* 오른쪽: 확보한 데이터 · 공정 조건 · 선임 엔지니어 */}
-      <aside className="field-right card">
-        <div className="seg" role="tablist" aria-label="오른쪽 패널">
+      {drawer && <div className="field-drawer-bg" onClick={() => setDrawer(false)} aria-hidden="true" />}
+      <aside className={`field-right card${drawer ? ' open' : ''}`} aria-label="자료 패널">
+        <div className="field-drawer-head">
+          <strong>자료 패널</strong>
+          <button type="button" className="link" onClick={() => setDrawer(false)}>
+            닫기 ✕
+          </button>
+        </div>
+        <div className="field-tabs" role="tablist" aria-label="오른쪽 패널">
           {[
-            ['data', `확보한 데이터 ${run.viewed.length}`],
-            ['equip', '장비 구조'],
-            ['hypo', `현재 가설 ${(run.hypotheses ?? []).length}`],
-            ['mentor', '선임 엔지니어'],
-          ].map(([id, label]) => (
+            ['data', '📂', '확보 데이터', run.viewed.length],
+            ['scene', '🏭', '현장 보기'],
+            ['equip', '🔧', '장비 구조'],
+            ['hypo', '🧠', '현재 가설', (run.hypotheses ?? []).length],
+            ['mentor', '🧑‍🔧', '선임 엔지니어'],
+          ].map(([id, icon, label, n]) => (
             <button key={id} type="button" role="tab" aria-selected={panel === id} className={panel === id ? 'active' : ''} onClick={() => setPanel(id)}>
-              {label}
+              <span aria-hidden="true">{icon}</span>
+              <span>
+                {label}
+                {n ? <b>{n}</b> : null}
+              </span>
             </button>
           ))}
         </div>
-        {panel === 'equip' ? (
+        {panel === 'scene' ? (
+          <div className="field-panel">
+            <SituationOverview c={c} run={run} stage={run.done ? null : stepNo} focus={part} onPick={pickPart} compact />
+          </div>
+        ) : panel === 'equip' ? (
           <div className="field-panel">
             <EquipmentPanel c={c} run={run} focus={part} onFocus={setPart} onJumpData={jumpToData} canJump={node?.type === 'data' && !run.done} hideObserve={hideFeedback} />
           </div>
@@ -1181,6 +1315,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
                   <details key={id} className="field-panel-item" open={id === run.viewed.at(-1)}>
                     <summary>
                       {it.label} <small className="muted">· {it.group}</small>
+                      {run.log.find((l) => l.text === `확인: ${it.label}`) && <small className="muted"> · 확보 {clock(run.log.find((l) => l.text === `확인: ${it.label}`).t)}</small>}
                     </summary>
                     <DataView result={it.result} />
                   </details>
@@ -1290,7 +1425,7 @@ function HypothesisBoard({ run, items, onChange }) {
 }
 
 // 하단 버튼의 "이전 단계 보기"·"현재까지 정리하기" 창(읽기 전용)
-function FieldSheet({ kind, c, run, hideFeedback, onClose }) {
+function FieldSheet({ kind, c, run, hideFeedback, clock, onClose }) {
   const dataNode = Object.values(c.nodes).find((n) => n.type === 'data')
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose()
@@ -1352,7 +1487,7 @@ function FieldSheet({ kind, c, run, hideFeedback, onClose }) {
               <ul>
                 {run.log.map((l, i) => (
                   <li key={i}>
-                    <small className="muted">{l.t}분</small> {l.text}
+                    <small className="muted">{clock(l.t)}</small> {l.text}
                     {!hideFeedback && l.tone !== 'info' && <small className={`field-log-res ${l.tone}`}> {l.tone === 'ok' ? '적절' : l.tone === 'bad' ? '위험' : '보완'}</small>}
                   </li>
                 ))}

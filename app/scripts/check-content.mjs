@@ -117,6 +117,36 @@ for (const f of fs.readdirSync(fcDir).filter((f) => f.endsWith('.js') && f !== '
       for (const pt of it.parts ?? []) if (!eq?.modules.some((m) => m.id === pt)) problems.push(`${where}/${it.id}: 장비에 없는 부위 "${pt}"`)
       if (it.figure && !VISUALS[it.figure]) problems.push(`${where}/${it.id}: 시각 자료 목록에 없는 그림 "${it.figure}"`)
     }
+  // 상황 개요·액션 카드 규칙: 그림 표시 조건(after)과 상호 배타 규칙은 실제 데이터·선택지 id여야 합니다.
+  const itemIds = new Set(Object.values(fc.nodes).filter((x) => x.type === 'data').flatMap((n) => n.items.map((i) => i.id)))
+  for (const f of fc.scene?.diagram?.flags ?? []) if (!itemIds.has(f.after)) problems.push(`${where}/scene: 없는 데이터 id "${f.after}"`)
+  for (const m of fc.scene?.metrics?.rows ?? []) if (typeof m.value !== 'number') problems.push(`${where}/scene: 수치가 아닌 지표 "${m.label}"`)
+  for (const [nid, n] of Object.entries(fc.nodes))
+    for (const g of n.exclusive ?? []) for (const id of g) if (!n.options?.some((o) => o.id === id)) problems.push(`${where}/${nid}: 상호 배타 규칙의 없는 선택지 "${id}"`)
+}
+
+// 시나리오 미디어 등록부(data/media.js): 필수 필드, 부위 id, 공개 조건, 이미지 파일
+const { MEDIA } = await import(pathToFileURL(path.join(root, 'data/media.js')).href)
+const fieldCaseList = []
+for (const f of fs.readdirSync(fcDir).filter((f) => /^(fab|pkg)-.*\.js$/.test(f))) fieldCaseList.push(await load(path.join(fcDir, f)))
+for (const m of MEDIA) {
+  const where = `media/${m.mediaId}`
+  for (const k of ['mediaId', 'processCategory', 'process', 'stages', 'mediaType', 'title', 'description', 'alt', 'source', 'license', 'validationStatus']) if (m[k] == null) problems.push(`${where}: "${k}" 없음`)
+  if (typeof m.isEducationalIllustration !== 'boolean') problems.push(`${where}: isEducationalIllustration(교육용 도식 여부) 없음`)
+  const eq = EQUIPMENT[m.process]
+  for (const h of m.hotspots ?? []) if (!eq?.modules.some((x) => x.id === h)) problems.push(`${where}: 장비에 없는 부위 "${h}"`)
+  for (const h of Object.values(m.relatedDataIds ?? {}).flat()) if (!eq?.modules.some((x) => x.id === h)) problems.push(`${where}: 장비에 없는 강조 부위 "${h}"`)
+  const cases = fieldCaseList.filter((c) => (m.scenarioId ? c.id === m.scenarioId : c.process === m.process))
+  if (m.scenarioId && !cases.length) problems.push(`${where}: 없는 시나리오 "${m.scenarioId}"`)
+  const caseItems = new Set(cases.flatMap((c) => Object.values(c.nodes).filter((x) => x.type === 'data').flatMap((n) => n.items.map((i) => i.id))))
+  for (const id of [...(m.revealAfter ?? []), ...Object.keys(m.relatedDataIds ?? {})]) if (!caseItems.has(id)) problems.push(`${where}: 시나리오 데이터에 없는 id "${id}"`)
+  if (m.assetPath && !fs.existsSync(path.join(root, '..', 'public', m.assetPath))) problems.push(`${where}: 이미지 파일 없음 "${m.assetPath}"`)
+  for (const k of m.cite ?? []) checkCites(where, [k])
+}
+// 공정 설명의 사진(시나리오 상황 개요에도 씀): 파일과 출처·라이선스
+for (const p of processes.filter((x) => x.photo?.src)) {
+  if (!fs.existsSync(path.join(root, '..', 'public', p.photo.src))) problems.push(`process/${p.id}: 사진 파일 없음 "${p.photo.src}"`)
+  if (!p.photo.license || !p.photo.url) problems.push(`process/${p.id}: 사진 출처·라이선스 없음`)
 }
 
 const unused = keys.filter((k) => !used.has(k))
