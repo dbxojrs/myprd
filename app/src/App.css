@@ -5635,3 +5635,27 @@ button { min-height: 36px; }
 .tl-bad .tl-dot { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); }
 .tl-text { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; padding-top: 2px; }
 .tl li.over time { color: var(--warn); }
+/* 공정별 원리 도식 */
+.fig-gas { fill: var(--accent); opacity: 0.85; }
+.fig-chamber { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
+.fig-head { fill: var(--muted); }
+.fig-wafer, .fig-under { fill: color-mix(in srgb, var(--muted) 45%, var(--surface)); }
+.fig-film, .fig-filmlayer { fill: var(--good); opacity: 0.75; }
+.fig-resist { fill: var(--warn); opacity: 0.8; }
+.fig-etched { fill: var(--surface); }
+.fig-residue { fill: var(--bad); opacity: 0.85; }
+.fig-mark { fill: color-mix(in srgb, var(--accent) 35%, var(--surface)); stroke: var(--accent); stroke-width: 1.5; }
+.fig-true { stroke: var(--good); stroke-width: 2; stroke-dasharray: 4 3; }
+.fig-meas { stroke: var(--bad); stroke-width: 2; }
+.fig-cap { fill: var(--surface-2); stroke: var(--text); stroke-width: 1.5; }
+.fig-wire { stroke: var(--warn); stroke-width: 2.5; }
+.fig-ball { fill: var(--warn); opacity: 0.9; }
+.fig-die { fill: color-mix(in srgb, var(--accent) 30%, var(--surface)); stroke: var(--accent); stroke-width: 1.2; }
+.fig-adh { fill: color-mix(in srgb, var(--warn) 45%, var(--surface)); }
+.fig-void { fill: var(--surface); stroke: var(--bad); stroke-width: 1.2; }
+.fig-heat { stroke: var(--bad); stroke-width: 2; fill: none; }
+.fig-heat.blocked { stroke-dasharray: 3 3; opacity: 0.6; }
+.fig-mold { fill: color-mix(in srgb, var(--muted) 30%, var(--surface)); stroke: var(--border); }
+.fig-pad { fill: color-mix(in srgb, var(--warn) 70%, var(--surface)); }
+.fig-gap { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 1.2; }
+.fig-vapor { stroke: var(--bad); stroke-width: 1.5; fill: none; }

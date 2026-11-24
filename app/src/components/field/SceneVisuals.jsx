@@ -215,7 +215,231 @@ export const SocketContactFigure = memo(function SocketContactFigure() {
   )
 })
 
-const DIAGRAMS = { TestCellDiagram, SocketContactFigure }
+
+// ── 공정별 교육용 원리 도식(실제 치수·모양 아님). 설명 문장의 출처는 data/media.js 항목의 cite로 표시합니다. ──
+const Panel = ({ x, title, sub, children }) => (
+  <g>
+    <text x={x + 80} y="18" textAnchor="middle" className="tc-label">
+      {title}
+    </text>
+    {children}
+    <text x={x + 80} y="194" textAnchor="middle" className="tc-sub">
+      {sub}
+    </text>
+  </g>
+)
+
+// CVD: 압력이 낮을 때 / 높을 때 원료 전달
+export const CvdPressureFigure = memo(function CvdPressureFigure() {
+  const dots = (x, spread) =>
+    Array.from({ length: 14 }, (_, i) => {
+      const col = i % 7
+      const row = Math.floor(i / 7)
+      const cx = spread ? x + 18 + col * 21 : x + 58 + (col % 4) * 12 + row * 4
+      const cy = spread ? 60 + row * 30 + (col % 2) * 10 : 52 + row * 14 + (col % 3) * 6
+      return <circle key={i} cx={cx} cy={cy} r="3.2" className="fig-gas" />
+    })
+  const box = (x, high) => (
+    <g>
+      <rect x={x + 6} y="30" width="148" height="122" rx="6" className="fig-chamber" />
+      <rect x={x + 50} y="30" width="60" height="8" className="fig-head" />
+      {dots(x, !high)}
+      <rect x={x + 16} y="140" width="128" height="8" className="fig-wafer" />
+      {high ? <path d={`M${x + 16} 140 Q${x + 80} 122 ${x + 144} 140 Z`} className="fig-film" /> : <rect x={x + 16} y="132" width="128" height="8" className="fig-film" />}
+    </g>
+  )
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="CVD 원리 도식: 압력이 낮으면 기체 분자가 멀리 퍼져 막이 고르게 자라고, 압력이 높으면 분자가 멀리 가지 못해 막이 고르지 않게 자란다">
+      <Panel x={0} title="✓ 압력 낮음" sub="분자가 멀리 퍼짐 → 고른 막">
+        {box(0, false)}
+      </Panel>
+      <Panel x={180} title="✕ 압력 높음" sub="멀리 못 감 → 고르지 않은 막">
+        {box(180, true)}
+      </Panel>
+    </svg>
+  )
+})
+
+// 식각: 마이크로 로딩(넓게 열린 영역이 식각제를 많이 차지)
+export const MicroloadingFigure = memo(function MicroloadingFigure() {
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="마이크로 로딩 도식: 넓게 열린 영역이 식각제를 많이 차지해 옆의 좁은 무늬는 덜 깎여 막이 남는다">
+      <text x="90" y="18" textAnchor="middle" className="tc-label">
+        좁은 무늬
+      </text>
+      <text x="250" y="18" textAnchor="middle" className="tc-label">
+        넓게 열린 영역
+      </text>
+      <rect x="10" y="120" width="320" height="40" className="fig-under" />
+      <rect x="10" y="96" width="320" height="24" className="fig-filmlayer" />
+      {[20, 60, 100, 140].map((x) => (
+        <rect key={x} x={x} y="80" width="22" height="16" className="fig-resist" />
+      ))}
+      {[42, 82, 122].map((x) => (
+        <g key={x}>
+          <rect x={x} y="96" width="18" height="14" className="fig-etched" />
+          <rect x={x} y="110" width="18" height="10" className="fig-residue" />
+        </g>
+      ))}
+      <rect x="170" y="80" width="10" height="16" className="fig-resist" />
+      <rect x="180" y="96" width="150" height="24" className="fig-etched" />
+      {Array.from({ length: 16 }, (_, i) => (
+        <circle key={i} cx={190 + (i % 8) * 17} cy={44 + Math.floor(i / 8) * 18} r="3" className="fig-gas" />
+      ))}
+      {[70, 110].map((x) => (
+        <circle key={x} cx={x} cy="52" r="3" className="fig-gas" />
+      ))}
+      <text x="90" y="176" textAnchor="middle" className="tc-sub">
+        ✕ 식각제 부족 → 바닥에 막이 남음(잔류물)
+      </text>
+      <text x="255" y="176" textAnchor="middle" className="tc-sub">
+        식각제를 많이 차지 · 끝까지 깎임
+      </text>
+      <text x="170" y="194" textAnchor="middle" className="tc-sub">
+        ● 식각제 · ▬ 감광액 · 붉은 칸 = 덜 깎인 막
+      </text>
+    </svg>
+  )
+})
+
+// 포토: 정렬 마크 대칭 / 비대칭 → 잰 중심이 어긋남
+export const MarkAsymFigure = memo(function MarkAsymFigure() {
+  const mark = (x, asym) => (
+    <g>
+      <rect x={x + 10} y="120" width="140" height="24" className="fig-under" />
+      <path d={asym ? `M${x + 40} 120 L${x + 52} 70 L${x + 104} 70 L${x + 128} 120 Z` : `M${x + 40} 120 L${x + 52} 70 L${x + 108} 70 L${x + 120} 120 Z`} className="fig-mark" />
+      <line x1={x + 80} y1="58" x2={x + 80} y2="150" className="fig-true" />
+      {asym && <line x1={x + 86} y1="58" x2={x + 86} y2="150" className="fig-meas" />}
+      <text x={x + 80} y="52" textAnchor="middle" className="tc-sub">
+        {asym ? '실제 중심 · 잰 중심 어긋남' : '잰 중심 = 실제 중심'}
+      </text>
+    </g>
+  )
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="정렬 마크 도식: 대칭인 마크는 잰 중심이 실제 중심과 같고, 한쪽 벽이 기운 비대칭 마크는 잰 중심이 어긋나 정렬 오차가 생긴다">
+      <Panel x={0} title="✓ 대칭 마크" sub="정렬이 맞음">
+        {mark(0, false)}
+      </Panel>
+      <Panel x={180} title="✕ 비대칭 마크" sub="한쪽 벽이 기욺 → 정렬 오차">
+        {mark(180, true)}
+      </Panel>
+    </svg>
+  )
+})
+
+// 와이어 본딩: 캐필러리 팁 깨끗함 / 이물
+export const CapillaryTipFigure = memo(function CapillaryTipFigure() {
+  const tip = (x, dirty) => (
+    <g>
+      <rect x={x + 20} y="150" width="120" height="14" className="fig-under" />
+      <rect x={x + 44} y="142" width="72" height="8" className="sc-pkg" />
+      <path d={`M${x + 52} 30 L${x + 108} 30 L${x + 92} 100 L${x + 68} 100 Z`} className="fig-cap" />
+      <line x1={x + 80} y1="30" x2={x + 80} y2="104" className="fig-wire" />
+      <ellipse cx={x + 80} cy="124" rx={dirty ? 18 : 26} ry={dirty ? 14 : 16} className="fig-ball" transform={dirty ? `rotate(-12 ${x + 80} 124)` : undefined} />
+      <line x1={x + (dirty ? 70 : 58)} y1="141" x2={x + (dirty ? 88 : 102)} y2="141" className={`sc-contact ${dirty ? 'bad' : 'ok'}`} />
+      {dirty && [0, 1, 2, 3].map((k) => <circle key={k} cx={x + 70 + k * 7} cy={102 + (k % 2) * 3} r="2.8" className="sc-debris" />)}
+    </g>
+  )
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="캐필러리 도식: 깨끗한 팁은 볼을 고르게 눌러 패드와 넓게 닿고, 이물이 붙은 팁은 볼이 고르지 않게 눌려 닿는 면이 좁다">
+      <Panel x={0} title="✓ 깨끗한 팁" sub="볼-패드 접촉면 넓음">
+        {tip(0, false)}
+      </Panel>
+      <Panel x={180} title="✕ 팁에 이물" sub="고르지 않게 눌림 · 접촉면 좁음">
+        {tip(180, true)}
+      </Panel>
+    </svg>
+  )
+})
+
+// 다이 어태치: 접착층 보이드와 열이 빠지는 길
+export const DieAttachVoidFigure = memo(function DieAttachVoidFigure() {
+  const stack = (x, voids) => (
+    <g>
+      <rect x={x + 30} y="44" width="100" height="34" className="fig-die" />
+      <text x={x + 80} y="66" textAnchor="middle" className="tc-sub">
+        다이(칩)
+      </text>
+      <rect x={x + 26} y="78" width="108" height="16" className="fig-adh" />
+      {voids && [36, 52, 66, 84, 98, 116].map((vx, k) => <ellipse key={vx} cx={x + vx} cy={86 + (k % 2) * 2} rx="5" ry="3.5" className="fig-void" />)}
+      <rect x={x + 10} y="94" width="140" height="22" className="fig-under" />
+      <text x={x + 80} y="109" textAnchor="middle" className="tc-sub">
+        기판·리드프레임
+      </text>
+      {[50, 80, 110].map((ax, k) => (
+        <path key={ax} d={`M${x + ax} 120 L${x + ax} ${voids && k !== 1 ? 132 : 158}`} className={`fig-heat${voids && k !== 1 ? ' blocked' : ''}`} markerEnd="url(#fig-arrow)" />
+      ))}
+    </g>
+  )
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="다이 어태치 단면 도식: 보이드가 없으면 칩의 열이 접착층을 지나 아래로 잘 빠지고, 보이드가 많으면 열이 빠지는 길이 막힌다">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" className="tc-arrowhead" />
+        </marker>
+      </defs>
+      <Panel x={0} title="✓ 보이드 적음" sub="열이 아래로 잘 빠짐">
+        {stack(0, false)}
+      </Panel>
+      <Panel x={180} title="✕ 보이드 많음" sub="열 저항 커짐 · 균열·박리 위험">
+        {stack(180, true)}
+      </Panel>
+    </svg>
+  )
+})
+
+// 몰딩: 다이 패드-몰드 계면 박리와 C-SAM
+export const MoldDelamFigure = memo(function MoldDelamFigure() {
+  // 다이는 다이 패드 위에 붙어 있고, 박리는 다이 패드와 그 아래 몰드 사이에 생긴 틈으로 그립니다.
+  const pkg = (x, delam) => (
+    <g>
+      <rect x={x + 12} y="40" width="136" height="96" rx="6" className="fig-mold" />
+      <text x={x + 80} y="56" textAnchor="middle" className="tc-sub">
+        몰드(EMC)
+      </text>
+      <rect x={x + 50} y="80" width="60" height="18" className="fig-die" />
+      <text x={x + 80} y="93" textAnchor="middle" className="tc-sub">
+        다이
+      </text>
+      <rect x={x + 34} y="98" width="92" height="10" className="fig-pad" />
+      <rect x={x + 6} y="98" width="24" height="8" className="fig-pad" />
+      <rect x={x + 130} y="98" width="24" height="8" className="fig-pad" />
+      {delam && <rect x={x + 34} y="108" width="92" height="7" className="fig-gap" />}
+      {delam && [52, 80, 108].map((vx) => <path key={vx} d={`M${x + vx - 4} 113 q4 -4 8 0`} className="fig-vapor" />)}
+      <path d={`M${x + 80} 22 L${x + 80} 36`} className="fig-heat" markerEnd="url(#fig-arrow2)" />
+      <text x={x + 80} y="14" textAnchor="middle" className="tc-sub">
+        C-SAM(초음파)
+      </text>
+      <text x={x + 80} y="128" textAnchor="middle" className="tc-sub">
+        다이 패드
+      </text>
+      <text x={x + 80} y="156" textAnchor="middle" className="tc-sub">
+        {delam ? '다이 패드와 몰드 사이 틈' : '다이 패드와 몰드가 붙어 있음'}
+      </text>
+    </g>
+  )
+  return (
+    <svg viewBox="0 0 340 200" className="sc-svg" role="img" aria-label="몰딩 패키지 단면 도식: 다이는 다이 패드 위에 붙어 있다. 정상은 다이 패드와 몰드가 붙어 있고, 박리는 리플로 때 습기 증기압으로 다이 패드와 몰드 사이에 틈이 생긴다. 초음파 현미경으로 위에서 찾는다">
+      <defs>
+        <marker id="fig-arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" className="tc-arrowhead" />
+        </marker>
+      </defs>
+      <g transform="translate(0 6)">
+        {pkg(0, false)}
+        {pkg(180, true)}
+      </g>
+      <text x="80" y="190" textAnchor="middle" className="tc-label">
+        ✓ 정상
+      </text>
+      <text x="260" y="190" textAnchor="middle" className="tc-label">
+        ✕ 박리 (습기 증기압)
+      </text>
+    </svg>
+  )
+})
+
+const DIAGRAMS = { TestCellDiagram, SocketContactFigure, CvdPressureFigure, MicroloadingFigure, MarkAsymFigure, CapillaryTipFigure, DieAttachVoidFigure, MoldDelamFigure }
 
 // 장비 입체 도식: 누른 부위, 없으면 가장 최근에 확인한 데이터의 부위를 강조합니다.
 function EquipmentStage({ m, focus, highlight, onPick }) {
@@ -397,7 +621,8 @@ export function SituationOverview({ c, run, stage, focus, onPick, onOpenProcess,
 
 // ── 조치 전후 비교(두 계열: 조치 전 = 흐린 막대, 조치 후 = 진한 막대, 범례 표시) ──
 export function CompareBars({ chart }) {
-  const max = chart.max ?? Math.max(...chart.rows.flatMap((r) => [r.before, r.after])) * 1.08
+  const max = chart.max ?? Math.max(...chart.rows.flatMap((r) => [r.before, r.after]), chart.limit ?? 0) * 1.12
+  const limitMark = chart.limit != null && <b className="bc-limit" style={{ left: `${(chart.limit / max) * 100}%` }} aria-hidden="true" />
   const u = chart.unit === '%' ? ' %' : ` ${chart.unit ?? ''}`
   return (
     <div className="bc compare" role="figure" aria-label={`${chart.title}: ${chart.rows.map((r) => `${r.label} 조치 전 ${r.before}${u}, 조치 후 ${r.after}${u}`).join('; ')}`}>
@@ -416,10 +641,12 @@ export function CompareBars({ chart }) {
             <span className="bc-label">{r.label}</span>
             <span className="bc-pair">
               <span className="bc-track before">
-                <i style={{ width: `${(r.before / max) * 100}%` }} />
+                <i style={{ width: `${Math.max(0.5, (r.before / max) * 100)}%` }} />
+                {limitMark}
               </span>
               <span className="bc-track">
-                <i style={{ width: `${(r.after / max) * 100}%` }} />
+                <i style={{ width: `${Math.max(0.5, (r.after / max) * 100)}%` }} />
+                {limitMark}
               </span>
             </span>
             <span className="bc-val">
@@ -430,7 +657,7 @@ export function CompareBars({ chart }) {
         ))}
       </ul>
       <p className="bc-note muted">
-        <span className="virtual-badge">가상 데이터</span> 고른 조치에 따라 시나리오 규칙이 정한 결과입니다. 막대는 0에서 시작합니다.
+        <span className="virtual-badge">가상 데이터</span> {chart.limit != null && <span className="bc-limit-key">┊ {chart.limitLabel ?? `한계 ${chart.limit}`}</span>} {chart.note ?? ''} 고른 조치에 따라 시나리오 규칙이 정한 결과입니다. 막대는 0에서 시작합니다.
       </p>
     </div>
   )
