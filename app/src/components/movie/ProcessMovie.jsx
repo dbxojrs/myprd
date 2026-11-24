@@ -14,15 +14,35 @@ import { prefersReducedMotion } from '../Illustrations.jsx'
 const HOLD = 1.2 // 장면 끝에서 다음 장면으로 넘어가기 전 잠깐 멈추는 시간(초)
 const SPEEDS = [0.75, 1, 1.25, 1.5]
 
-export default function ProcessMovie({ id, onOpenProcess, chapters }) {
+// startScene: 처음 열 장면 id(현장 시나리오 단계별 장면). 없으면 첫 장면이고, 지난번 본 장면이 있으면 "이어 보기"를 보여 줍니다.
+export default function ProcessMovie({ id, onOpenProcess, chapters, startScene, compact = false }) {
   const movie = processMovies[id]
   const art = movieArt[id]
   if (!movie || !art) return null
   return (
     <MovieBoundary>
-      <Movie movie={movie} art={art} id={id} onOpenProcess={onOpenProcess} chapters={chapters} />
+      <Movie key={`${id}-${startScene ?? ''}`} movie={movie} art={art} id={id} onOpenProcess={onOpenProcess} chapters={chapters} startScene={startScene} compact={compact} />
     </MovieBoundary>
   )
+}
+
+// 재생 위치 저장: localStorage 'tutor.moviePos' = { 영상 id: 마지막으로 본 장면 번호 }
+const POS_KEY = 'tutor.moviePos'
+const readPos = (id) => {
+  try {
+    return JSON.parse(localStorage.getItem(POS_KEY) ?? '{}')[id] ?? 0
+  } catch {
+    return 0
+  }
+}
+const writePos = (id, si) => {
+  try {
+    const all = JSON.parse(localStorage.getItem(POS_KEY) ?? '{}')
+    all[id] = si
+    localStorage.setItem(POS_KEY, JSON.stringify(all))
+  } catch {
+    // 저장 실패는 재생에 영향 없음
+  }
 }
 
 // 공정 목차: 지금 공정이 들어 있는 묶음을 번호와 함께 보여 주고, 누르면 그 공정으로 갑니다.
@@ -52,18 +72,22 @@ function Chapters({ id, onOpenProcess, chapters }) {
   )
 }
 
-function Movie({ movie, art, id, onOpenProcess, chapters }) {
+function Movie({ movie, art, id, onOpenProcess, chapters, startScene, compact }) {
   const scenes = movie.scenes
   const last = scenes.length - 1
   const [reduced] = useState(prefersReducedMotion)
   const beatOf = (i) => art[scenes[i].id].beat ?? 3.4
   // 멈춘 상태로 장면을 열 때 보여줄 모습: 첫 문장의 그림이 다 그려진 때(동작 줄이기면 장면 끝)
   const posterAt = (i) => (reduced ? beatOf(i) * scenes[i].beats.length : beatOf(i) - 0.05)
-  const [si, setSi] = useState(0)
+  const startAt = Math.max(0, scenes.findIndex((x) => x.id === startScene))
+  const [si, setSi] = useState(startAt)
+  const [resume] = useState(() => (startScene ? 0 : readPos(id))) // 지난번 본 장면(처음 장면이면 0)
+  const [loop, setLoop] = useState(false) // 지금 장면 구간 반복
+  const [cc, setCc] = useState(true) // 화면 자막 켜기
   const [playing, setPlaying] = useState(false)
   const [started, setStarted] = useState(false)
   const [speed, setSpeed] = useState(1)
-  const [elapsed, setElapsed] = useState(() => posterAt(0))
+  const [elapsed, setElapsed] = useState(() => posterAt(startAt))
   const [take, setTake] = useState(0) // 같은 장면을 다시 그릴 때 바꾸는 값
   const [ended, setEnded] = useState(false)
   const [showAll, setShowAll] = useState(false)
@@ -123,6 +147,11 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
   // 장면이 끝나면 다음 장면으로
   useEffect(() => {
     if (elapsed < sceneLen + HOLD) return
+    if (loop) {
+      setElapsed(0)
+      setTake((n) => n + 1)
+      return
+    }
     if (si < last) {
       setSi(si + 1)
       setElapsed(0)
@@ -132,7 +161,12 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
       setEnded(true)
       setElapsed(sceneLen)
     }
-  }, [elapsed, sceneLen, si, last])
+  }, [elapsed, sceneLen, si, last, loop])
+
+  // 재생을 시작한 뒤 본 장면을 기억합니다(다음에 "이어 보기").
+  useEffect(() => {
+    if (started) writePos(id, ended ? 0 : si)
+  }, [id, si, started, ended])
 
   const goScene = (to, { play = playing } = {}) => {
     if (to < 0 || to > last) return
@@ -216,10 +250,17 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
             <small>재생 · 약 {Math.round(scenes.reduce((n, s) => n + s.beats.length * (art[s.id].beat ?? 3.4) + HOLD, 0))}초</small>
           </button>
         )}
-        <p className="movie-caption" aria-live="polite" key={`${si}-${beat}`}>
-          {current.text}
-          <Cites keys={current.cite} />
-        </p>
+        {cc && (
+          <p className="movie-caption" aria-live="polite" key={`${si}-${beat}`}>
+            {current.text}
+            <Cites keys={current.cite} />
+          </p>
+        )}
+        {!started && resume > 0 && resume <= last && resume !== si && (
+          <button type="button" className="movie-resume" onClick={() => goScene(resume)}>
+            ↺ 지난번 본 {resume + 1}. {scenes[resume].title}부터 이어 보기
+          </button>
+        )}
       </div>
 
       <div className="movie-bar" role="group" aria-label="장면">
@@ -234,7 +275,7 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
         })}
       </div>
 
-      <Chapters id={id} onOpenProcess={onOpenProcess} chapters={chapters} />
+      {!compact && <Chapters id={id} onOpenProcess={onOpenProcess} chapters={chapters} />}
 
       <div className="movie-controls">
         <button type="button" onClick={() => (beat > 0 ? goBeat(0) : goScene(si - 1))} aria-label="이전 장면" title="이전 장면 (←)">
@@ -260,6 +301,12 @@ function Movie({ movie, art, id, onOpenProcess, chapters }) {
             ))}
           </select>
         </label>
+        <button type="button" onClick={() => setLoop((v) => !v)} aria-pressed={loop} className={loop ? 'on' : ''} title="지금 장면만 반복 (구간 반복)">
+          🔁 장면 반복
+        </button>
+        <button type="button" onClick={() => setCc((v) => !v)} aria-pressed={cc} className={cc ? 'on' : ''} title="화면 자막 켜기/끄기">
+          CC
+        </button>
         <button type="button" onClick={() => setShowAll((v) => !v)} aria-pressed={showAll} title="자막 전체 보기">
           ☰ 자막
         </button>

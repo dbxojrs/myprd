@@ -485,7 +485,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
               <SituationOverview c={c} run={run} stage={2} focus={part} onPick={pickPart} compact />
             </details>
           ) : (
-            <StageMedia c={c} run={run} stage={node.step} focus={part} onPick={pickPart} only={['diagram']} collapsed />
+            <StageMedia c={c} run={run} stage={node.step} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           )}
           <p className="field-prompt">{node.prompt}</p>
           {!done ? (
@@ -594,7 +594,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       const groups = [...new Set(node.items.map((i) => i.group))]
       return (
         <>
-          <StageMedia c={c} run={run} stage={3} focus={part} onPick={pickPart} only={['diagram']} collapsed />
+          <StageMedia c={c} run={run} stage={3} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           <p className="field-prompt">{node.prompt}</p>
           <div className={`field-budget${left <= node.budget * 0.2 ? ' warn' : ''}`}>
             <span>데이터 확인 시간</span>
@@ -683,7 +683,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
       }
       return (
         <>
-          <StageMedia c={c} run={run} stage={4} focus={part} onPick={pickPart} only={['diagram']} collapsed />
+          <StageMedia c={c} run={run} stage={4} focus={part} onPick={pickPart} only={['diagram', 'movie']} collapsed onOpenProcess={onOpenProcess} />
           <p className="field-prompt">{node.prompt}</p>
           {last && !last.correct && !h.solved && (
             <div className="field-verdict bad">
@@ -1007,6 +1007,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
             ))}
           </ol>
         </details>
+        <StageMedia c={c} run={run} stage={6} only={['diagram', 'movie', 'photo']} collapsed onOpenProcess={onOpenProcess} />
         <div className="field-next">
           <h4>이어서 공부하기</h4>
           <div className="button-row">
@@ -1292,7 +1293,7 @@ function FieldRun({ c, saved, onBack, onOpenCase, onOpenProcess, onOpenMachine, 
         </div>
         {panel === 'scene' ? (
           <div className="field-panel">
-            <SituationOverview c={c} run={run} stage={run.done ? null : stepNo} focus={part} onPick={pickPart} compact />
+            <SituationOverview c={c} run={run} stage={run.done ? 6 : stepNo} focus={part} onPick={pickPart} compact />
           </div>
         ) : panel === 'equip' ? (
           <div className="field-panel">

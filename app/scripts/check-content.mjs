@@ -143,6 +143,14 @@ for (const m of MEDIA) {
   if (m.assetPath && !fs.existsSync(path.join(root, '..', 'public', m.assetPath))) problems.push(`${where}: 이미지 파일 없음 "${m.assetPath}"`)
   for (const k of m.cite ?? []) checkCites(where, [k])
 }
+// 시나리오 단계별 공정 애니메이션 장면 id가 실제 영상에 있는지
+const { MOVIE_STAGE_SCENES } = await import(pathToFileURL(path.join(root, 'data/media.js')).href)
+for (const [pid, map] of Object.entries(MOVIE_STAGE_SCENES)) {
+  const file = path.join(movieDir, `${pid}.js`)
+  const movie = fs.existsSync(file) ? await load(file) : null
+  for (const sid of Object.values(map)) if (!movie?.scenes.some((x) => x.id === sid)) problems.push(`media/movie-${pid}: 영상에 없는 장면 "${sid}"`)
+}
+for (const c of fieldCaseList) if (!MOVIE_STAGE_SCENES[c.process]) problems.push(`실무 시나리오 ${c.id}: 연결된 공정 애니메이션 없음(${c.process})`)
 // 공정 설명의 사진(시나리오 상황 개요에도 씀): 파일과 출처·라이선스
 for (const p of processes.filter((x) => x.photo?.src)) {
   if (!fs.existsSync(path.join(root, '..', 'public', p.photo.src))) problems.push(`process/${p.id}: 사진 파일 없음 "${p.photo.src}"`)

@@ -82,11 +82,49 @@ function processPhoto(process) {
   }
 }
 
+// 공정 애니메이션(components/movie, 자막 문장마다 출처)을 시나리오 단계에 연결합니다.
+// 단계별로 처음 열 장면 id. 원인을 미리 알려 주지 않도록 공정 동작을 보여 주는 장면만 고릅니다.
+export const MOVIE_STAGE_SCENES = {
+  test: { default: 'handler', 5: 'sort', 6: 'sort' }, // 소켓에 넣고 검사 → (조치·검증) 나누고 알리기
+  'wire-bond': { default: 'ball' },
+  'die-attach': { default: 'place' },
+  molding: { default: 'fill' },
+  deposition: { default: 'cvd' },
+  etch: { default: 'dry' },
+  photo: { default: 'expose' },
+}
+function processMovie(process, stage, processMovies = {}) {
+  const movie = processMovies[process]
+  const map = MOVIE_STAGE_SCENES[process]
+  if (!movie || !map) return null
+  const sceneId = map[stage] ?? map.default
+  const scene = movie.scenes.find((x) => x.id === sceneId)
+  return {
+    mediaId: `movie-${process}`,
+    scenarioId: null,
+    process,
+    stages: [1, 2, 3, 4, 5, 6],
+    mediaType: 'movie',
+    movieId: process,
+    startScene: sceneId,
+    title: movie.title,
+    description: `"${scene?.title ?? ''}" 장면부터 엽니다. 자동 재생하지 않으며, 장면 이동·배속·자막·구간 반복을 쓸 수 있습니다.`,
+    alt: `${movie.title} 교육용 애니메이션`,
+    source: '자막 문장마다 출처 표시(공정 애니메이션 데이터)',
+    license: '자체 제작',
+    validationStatus: movie.reviewed ? 'reviewed' : 'unreviewed',
+    isEducationalIllustration: true,
+  }
+}
+
 // 이 시나리오의 이 단계에서 보여 줄 미디어. 아직 확인하지 않은 데이터에 묶인 미디어는 숨깁니다.
-export function mediaFor(c, stage, viewed = []) {
+// movies: data/processMovies의 영상 목록(화면 쪽에서 넘김 — 이 파일은 Node 검사에서도 읽히도록 Vite 전용 import를 쓰지 않습니다)
+export function mediaFor(c, stage, viewed = [], movies = {}) {
   const list = MEDIA.filter((m) => (m.scenarioId === c.id || (!m.scenarioId && m.process === c.process)) && (!stage || m.stages.includes(stage)))
   const photo = processPhoto(c.process)
   if (photo && (!stage || photo.stages.includes(stage))) list.push(photo)
+  const movie = processMovie(c.process, stage, movies)
+  if (movie) list.push(movie)
   return list.filter((m) => !m.revealAfter || m.revealAfter.some((id) => viewed.includes(id)))
 }
 

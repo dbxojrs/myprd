@@ -1,7 +1,8 @@
 import { memo, useEffect, useState } from 'react'
 import { ORIGIN_LABEL } from '../../data/visuals.js'
 import { highlightedParts, mediaFor } from '../../data/media.js'
-import { Cites } from '../movie/ProcessMovie.jsx'
+import ProcessMovie, { Cites } from '../movie/ProcessMovie.jsx'
+import { processMovies } from '../../data/processMovies/index.js'
 
 // 현장 실무 시나리오의 시각 자료: 상황 개요, 미디어 틀(확대·출처·대체 UI), 교육용 도식, 차트.
 // 수치·도식은 시나리오 데이터(c.scene, 데이터 항목 result)에서만 가져옵니다. 확인하지 않은 데이터는 보여 주지 않습니다.
@@ -39,9 +40,11 @@ export function MediaFrame({ m, children }) {
           {origin.icon} {origin.label}
           {m.validationStatus !== 'reviewed' && ' · 검수 전'}
         </span>
-        <button type="button" className="link media-zoom" onClick={() => setZoom(true)} aria-label={`${m.title} 크게 보기`}>
-          ⤢ 크게
-        </button>
+        {m.mediaType !== 'movie' && (
+          <button type="button" className="link media-zoom" onClick={() => setZoom(true)} aria-label={`${m.title} 크게 보기`}>
+            ⤢ 크게
+          </button>
+        )}
       </div>
       <div className="media-body">{body}</div>
       <figcaption className="muted">
@@ -66,6 +69,18 @@ export function MediaFrame({ m, children }) {
       )}
     </figure>
   )
+}
+
+// ── 공정 애니메이션: 누르기 전에는 불러오지 않습니다(자동 재생·자동 로딩 없음). 단계가 바뀌면 그 단계 장면으로 엽니다. ──
+function LazyMovie({ m, onOpenProcess }) {
+  const [open, setOpen] = useState(false)
+  if (!open)
+    return (
+      <button type="button" className="media-movie-open" onClick={() => setOpen(true)}>
+        <span aria-hidden="true">▶</span> 애니메이션 열기 <small className="muted">(자막·배속·구간 반복 · 소리 없음)</small>
+      </button>
+    )
+  return <ProcessMovie id={m.movieId} startScene={m.startScene} onOpenProcess={onOpenProcess} compact />
 }
 
 // ── 테스트 셀 관계 개념도 (부위를 누르면 장비 구조 탭에서 설명) ──
@@ -302,14 +317,14 @@ export function TrendChart({ chart }) {
 }
 
 // 시나리오 단계에 맞는 미디어 목록 렌더링
-export function StageMedia({ c, run, stage, focus, onPick, only, collapsed = false }) {
-  const list = mediaFor(c, stage, run.viewed).filter((m) => !only || only.includes(m.mediaType))
+export function StageMedia({ c, run, stage, focus, onPick, only, collapsed = false, onOpenProcess }) {
+  const list = mediaFor(c, stage, run.viewed, processMovies).filter((m) => !only || only.includes(m.mediaType))
   if (!list.length) return null
   if (collapsed)
     return (
       <details className="scene-peek">
         <summary>🖼️ 관련 시각 자료 {list.length}개 — {list.map((m) => m.title.split(' (')[0]).join(' · ')}</summary>
-        <StageMedia c={c} run={run} stage={stage} focus={focus} onPick={onPick} only={only} />
+        <StageMedia c={c} run={run} stage={stage} focus={focus} onPick={onPick} only={only} onOpenProcess={onOpenProcess} />
       </details>
     )
   return (
@@ -319,7 +334,7 @@ export function StageMedia({ c, run, stage, focus, onPick, only, collapsed = fal
         const props = m.component === 'TestCellDiagram' ? { ...(c.scene?.diagram ?? {}), flags: (c.scene?.diagram?.flags ?? []).filter((f) => run.viewed.includes(f.after)), highlight: highlightedParts(m, run.viewed), focus, onPick } : {}
         return (
           <MediaFrame key={m.mediaId} m={m}>
-            {Diagram ? <Diagram {...props} /> : null}
+            {m.mediaType === 'movie' ? <LazyMovie key={m.startScene} m={m} onOpenProcess={onOpenProcess} /> : Diagram ? <Diagram {...props} /> : null}
           </MediaFrame>
         )
       })}
@@ -348,7 +363,7 @@ export function SituationOverview({ c, run, stage, focus, onPick, onOpenProcess,
         ))}
       </dl>
       {s?.metrics && <BarChart chart={s.metrics} />}
-      <StageMedia c={c} run={run} stage={compact ? null : stage} focus={focus} onPick={onPick} only={compact ? ['diagram'] : null} />
+      <StageMedia c={c} run={run} stage={stage} focus={focus} onPick={onPick} only={compact ? ['diagram', 'movie'] : null} onOpenProcess={onOpenProcess} />
       {onOpenProcess && (
         <button type="button" className="link" onClick={() => onOpenProcess(c.process)}>
           📽 {c.processLabel} 공정 애니메이션·설명 보기 →

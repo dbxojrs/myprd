@@ -5606,3 +5606,13 @@ button { min-height: 36px; }
   .field-tabs button { font-size: 0.68rem; }
 }
 @media (prefers-reduced-motion: reduce) { .field-right { transition: none; } }
+
+/* ── 시나리오 안 공정 애니메이션 · 플레이어 확장(구간 반복·자막 끄기·이어 보기) ── */
+.media-movie-open { width: 100%; min-height: 64px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px dashed var(--accent); border-radius: 10px; background: var(--accent-soft); color: var(--text); font-weight: 700; }
+.media-movie-open > span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-text); }
+.media-body .movie { margin: 0; }
+.movie-controls button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.movie-resume { position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); z-index: 3; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--accent); font-size: 0.85rem; box-shadow: var(--shadow); max-width: 90%; }
+.field-right .movie-controls { gap: 4px; padding: 6px 8px; }
+.field-right .movie-controls button { min-width: 34px; padding: 4px 6px; font-size: 0.8rem; }
+.field-right .movie-count, .field-right .movie-speed .muted { display: none; }
