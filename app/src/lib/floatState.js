@@ -8,7 +8,7 @@ export const PANELS = ['notes', 'chat']
 export const floatStore = createStore('tutor.float', {
   open: { notes: false, chat: false },
   order: ['notes', 'chat'],
-  bubble: { notes: { side: 'right', y: 0.74 }, chat: { side: 'right', y: 0.86 } },
+  bubble: { notes: { side: 'right', y: 0.68 }, chat: { side: 'right', y: 0.79 } },
   win: { notes: null, chat: null }, // 데스크톱: { x, y, w, h, max }
   sheet: 'mid', // 모바일 시트 높이: low | mid | full
 })

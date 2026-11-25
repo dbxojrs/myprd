@@ -24,6 +24,8 @@ const PANEL_INFO = {
   chat: { icon: '💬', label: '질문하기', key: 'K' },
 }
 const BUBBLE = 56
+// 배포 사이트 오른쪽 아래에 붙는 "Powered by Netlify" 표시와 겹치지 않게, 오른쪽 버튼은 화면 아래 이만큼 위에 둡니다.
+const SAFE_BOTTOM_RIGHT = 70
 const EDGE = 16
 const SNAPS = { low: 0.35, mid: 0.65, full: 1 }
 
@@ -130,7 +132,7 @@ function FloatBubble({ name, pos, dot, view }) {
   const [live, setLive] = useState(null) // 끄는 중의 위치
 
   const restX = pos.side === 'left' ? EDGE : view.w - BUBBLE - EDGE
-  const restY = clamp(pos.y * view.h - BUBBLE / 2, EDGE + 56, view.h - BUBBLE - EDGE)
+  const restY = clamp(pos.y * view.h - BUBBLE / 2, EDGE + 56, view.h - BUBBLE - EDGE - (pos.side === 'right' ? SAFE_BOTTOM_RIGHT : 0))
   const x = live?.x ?? restX
   const y = live?.y ?? restY
 
