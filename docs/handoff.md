@@ -11,7 +11,7 @@
 | P8 선택 | 해당 없음 — 수업 공통 앱(AX 보드)의 A/B 선택이 아니라 개인 과제 앱이라 기록할 선택이 없음 |
 | 확인 | 배포 주소 https://semicon-tutor.netlify.app 동작 확인, 빌드 통과, `check-content` 통과, 자동 브라우저 테스트(Playwright): 현장 시나리오 7개·15개 경로 점수 일치, FAB 공정 시뮬레이션 21항목, 시나리오 시각화 38항목, 애니메이션 22항목, 수락조건 AC-01~AC-10 (PRD v2 표) |
 | PR/리뷰 | PR 없음 — 개인 저장소라 `main`에 직접 커밋·푸시. 다른 사람 코드 리뷰는 받지 않음 |
-| 남은 문제/다음 행동 | 1) **배포 완료**: https://semicon-tutor.netlify.app (Netlify `semicon-tutor`, 공개, main 푸시 시 자동 배포) 2) **구글 로그인**: Supabase(`study_data` 표·RLS)·구글 OAuth·Netlify 환경 변수 설정 완료, 개발 서버에서 로그인·"계정에 저장됨" 확인. 남은 설정: Supabase URL Configuration에 배포 주소 추가, Google Auth Platform에서 앱 게시 3) 설명 출처에 기대는 판정 근거를 1순위 출처로 교체(PRD v2 "출처 현황") 4) 현직자·교수 검수 — 모든 내용 "검수 전" 5) 실제 학생 사용 테스트로 PRD의 [가설] 확인 |
+| 남은 문제/다음 행동 | 1) **배포 완료**: https://semicon-tutor.netlify.app (Netlify `semicon-tutor`, 공개, main 푸시 시 자동 배포) 2) **구글 로그인**: Supabase(`study_data` 표·RLS)·구글 OAuth·Netlify 환경 변수 설정 완료, Supabase URL Configuration에 배포 주소 등록, Google Auth Platform 앱 게시 완료 → 배포 주소에서 휴대폰 로그인·"계정에 저장됨"·기기 간 동기화 확인(2026-11-25) 3) 설명 출처에 기대는 판정 근거를 1순위 출처로 교체(PRD v2 "출처 현황") 4) 현직자·교수 검수 — 모든 내용 "검수 전" 5) 실제 학생 사용 테스트로 PRD의 [가설] 확인 |
 
 ## 구조도 위험 (architecture.md v2에서 옮김)
 설비 규칙 175개 중 65개와 현장 시나리오 일부 원인이 설명 출처(2순위)에 기댐. 화면에 "설명 출처·검수 전"을 표시하고 있으며, 1순위 출처 교체와 검수가 다음 단계.
