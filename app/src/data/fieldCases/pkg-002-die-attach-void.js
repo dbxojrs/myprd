@@ -34,7 +34,7 @@ export default {
     '대기 시간별 보이드 비교표는 원인 구조를 보여 주려고 만든 가상 결과입니다.',
     '원인 분류는 업계 매체 기사(설명 출처)를 바탕으로 하며 전문가 검수 전입니다.',
   ],
-  sources: ['sst-da-void-ti', 'arxiv-da-wb-defects-2022', 'meridian-frozen-epoxy', 'kmeps-2025-daf', 'hynix-be-4'],
+  sources: ['heliyon-igbt-void', 'nasa-ct-dieattach', 'sens-sam-review', 'arxiv-da-wb-defects-2022', 'kmeps-2025-daf', 'sst-da-void-ti', 'meridian-frozen-epoxy', 'hynix-be-4'],
   related: [
     { kind: 'process', id: 'die-attach', label: '다이 어태치 공정 설명' },
     { kind: 'machine', id: 'die-attach', label: '다이 본더 설비 실습' },

@@ -34,7 +34,7 @@ export default {
     '"가상 시간"은 데이터 확인에 드는 시간을 단순하게 나타낸 것입니다.',
     '원인·불량 설명은 앱의 와이어 본더 규칙표를 근거로 하며 전문가 검수 전입니다.',
   ],
-  sources: ['hynix-be-6', 'oa-capillary-2021', 'ufl-wirebond-sop'],
+  sources: ['oa-capillary-2021', 'osti-hybrid-1976', 'hynix-be-6', 'ufl-wirebond-sop'],
   related: [
     { kind: 'process', id: 'wire-bond', label: '와이어 본딩 공정 설명' },
     { kind: 'machine', id: 'wire-bond', label: '와이어 본더 설비 실습' },

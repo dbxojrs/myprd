@@ -30,7 +30,7 @@ export default {
     '검사·단면 관찰 결과는 판단 연습을 위해 단순화했습니다.',
     '원인·불량 설명은 앱의 식각기 규칙표를 근거로 하며 전문가 검수 전입니다.',
   ],
-  sources: ['hynix-fe-4', 'samsung-8-5', 'mit-6152j-dry-etch'],
+  sources: ['osti-tsv-tutorial', 'mi-drie-grating', 'hynix-fe-4', 'samsung-8-5', 'mit-6152j-dry-etch'],
   related: [
     { kind: 'process', id: 'etch', label: '식각 공정 설명' },
     { kind: 'machine', id: 'etch', label: '식각 설비 실습' },
