@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import machines from '../../data/machines/index.js'
 import { FIELD_CASES } from '../../data/fieldCases/index.js'
+import { sourceTier } from '../../lib/sourceTier.js'
 
 // 불량 분석 도감: 설비 실습 규칙표(data/machines)의 알람·불량 규칙을 모아 공정별로 보여 줍니다.
 // 새 설명을 지어내지 않고 규칙표의 원인·조치·근거를 그대로 씁니다. 근거 수준(출처 원문 / 앱 공정 데이터 / 교육용 가설)을 함께 표시합니다.
@@ -13,13 +14,14 @@ const SEVERITY = {
 }
 
 const BASIS = {
-  source: { label: '출처 원문', tone: 'ok' },
+  source: { label: '근거 출처', tone: 'ok' },
+  explain: { label: '설명 출처', tone: 'info' },
   data: { label: '앱 공정 데이터', tone: 'info' },
   edu: { label: '교육용 가설 · 검수 전', tone: 'warn' },
 }
 
-function basisOf(rule) {
-  if (rule.src) return 'source'
+function basisOf(rule, sources) {
+  if (rule.src) return sourceTier(sources?.[rule.src]) === 'evidence' ? 'source' : 'explain'
   if (/교육용 가설/.test(rule.basis ?? '')) return 'edu'
   return 'data'
 }
@@ -32,7 +34,7 @@ function buildAtlas() {
     m.rules.forEach((r, i) => {
       if (seen.has(r.title)) return
       seen.add(r.title)
-      items.push({ key: `${m.id}:${i}`, ...r, basisKind: basisOf(r), source: r.src ? m.sources?.[r.src] : null })
+      items.push({ key: `${m.id}:${i}`, ...r, basisKind: basisOf(r, m.sources), source: r.src ? m.sources?.[r.src] : null })
     })
     items.sort((a, b) => (SEVERITY[a.severity]?.order ?? 9) - (SEVERITY[b.severity]?.order ?? 9))
     const cases = FIELD_CASES.filter((c) => c.machine === m.id).map((c) => {
@@ -65,14 +67,14 @@ export default function DefectAtlas({ onOpenMachine, onOpenProcess, onOpenField 
     }))
     .filter((s) => s.shown.length || (s.cases.length && !query && sev === 'all' && basis === 'all'))
   const total = sections.reduce((n, s) => n + s.shown.length, 0)
-  const counts = { source: 0, data: 0, edu: 0 }
+  const counts = { source: 0, explain: 0, data: 0, edu: 0 }
   atlas.forEach((s) => s.items.forEach((it) => (counts[it.basisKind] += 1)))
 
   return (
     <section className="screen atlas">
       <h2>불량 분석 도감</h2>
       <p className="muted">
-        설비 실습의 판정 규칙표에 있는 알람·불량을 공정별로 모았습니다. 원인·조치 문장은 규칙표 그대로이고, 근거 수준을 함께 표시합니다: 출처 원문 {counts.source}개 · 앱 공정 데이터 {counts.data}개 · 교육용 가설 {counts.edu}개.
+        설비 실습의 판정 규칙표에 있는 알람·불량을 공정별로 모았습니다. 원인·조치 문장은 규칙표 그대로이고, 근거 수준을 함께 표시합니다: 근거 출처(논문·공공 보고서) {counts.source}개 · 설명 출처(강의·업체 자료) {counts.explain}개 · 앱 공정 데이터 {counts.data}개 · 교육용 가설 {counts.edu}개.
       </p>
 
       <div className="atlas-filters">

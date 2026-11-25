@@ -9,6 +9,7 @@ import EquipmentTour from './EquipmentTour.jsx'
 import { RESULT } from './equipment/index.js'
 import { DetailIllustration } from './DetailIllustration.jsx'
 import { Term } from '../lib/terms.jsx'
+import { sourceTier, TIER_LABEL } from '../lib/sourceTier.js'
 
 // 고급 장비 시뮬레이터. 장비 조작반처럼 조건을 정하고 START를 누르면 가동 순서를 따라 진행하고,
 // 규칙표(data/machineSim.js)로 알람·불량·경고·정상을 판정합니다.
@@ -128,7 +129,7 @@ function Basis({ finding }) {
         <a href={source.url} target="_blank" rel="noreferrer">
           {source.publisher} · {source.title}
         </a>{' '}
-        — {finding.cite}
+        <span className={`tier ${sourceTier(source)}`}>{TIER_LABEL[sourceTier(source)]}</span> — {finding.cite}
       </p>
     )
   }

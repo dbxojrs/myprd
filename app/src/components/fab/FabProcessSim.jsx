@@ -6,6 +6,7 @@ import { finalVerdict, incoming, lineMachines } from '../../lib/machineLine.js'
 import { useStoredState } from '../../lib/storage.js'
 import { markActive } from '../../lib/activity.js'
 import { WaferSection } from './WaferSection.jsx'
+import { sourceTier, TIER_LABEL } from '../../lib/sourceTier.js'
 
 // FAB 공정 시뮬레이션: 전공정 6단계(산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선)의 조건을 바꾸며 웨이퍼 단면이 어떻게 달라지는지 봅니다.
 // 판정은 설비 규칙표(data/machines/*.js)와 라인 연결 규칙(data/machineLine.js)으로만 계산합니다(AI·무작위 없음). 모두 검수 전입니다.
@@ -66,7 +67,7 @@ function Findings({ machine, result }) {
                   <a href={src.url} target="_blank" rel="noreferrer">
                     {src.title}
                   </a>{' '}
-                  · {src.publisher}
+                  · {src.publisher} <span className={`tier ${sourceTier(src)}`}>{TIER_LABEL[sourceTier(src)]}</span>
                   {f.cite && <q>{f.cite}</q>}
                 </>
               ) : (

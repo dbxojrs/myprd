@@ -1,5 +1,5 @@
 # 반도체 패키징 공정 튜터 작업 규칙
-- PRD.md, architecture.md, wireframe.md를 먼저 읽는다.
+- docs/PRD.md, docs/architecture.md, docs/wireframe.md를 먼저 읽는다. (최종본은 각 문서 아래쪽의 "v2" 절)
 - 앱 코드는 ytgprd/app 안에서만 수정한다. 저장소 루트의 ax-board 데모 앱은 건드리지 않는다.
 - 기능은 자기 branch에서 수정한다.
 - 공정·패키지·시뮬레이션 데이터는 app/src/data에만 둔다. 화면 코드에 공정 설명을 직접 쓰지 않는다.

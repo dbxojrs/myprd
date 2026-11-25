@@ -5740,3 +5740,7 @@ button { min-height: 36px; }
   .fs-panel { grid-template-columns: 1fr; }
   .fs-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+.atlas-basis.explain { color: var(--muted); }
+.ms-basis .tier, .fs-basis .tier { font-size: 0.72rem; font-weight: 700; padding: 0 6px; border-radius: 6px; border: 1px solid currentColor; }
+.tier.explain { color: var(--muted); }
+.tier.evidence { color: var(--good); }
