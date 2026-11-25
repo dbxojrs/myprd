@@ -26,6 +26,7 @@ import CasePractice from './components/CasePractice.jsx'
 import FieldSim from './components/field/FieldSim.jsx'
 import TodayPage from './components/TodayPage.jsx'
 import DataLab from './components/analysis/DataLab.jsx'
+import FabProcessSim from './components/fab/FabProcessSim.jsx'
 import DefectAtlas from './components/analysis/DefectAtlas.jsx'
 import LearningAnalytics from './components/analysis/LearningAnalytics.jsx'
 import EngineerReport from './components/report/EngineerReport.jsx'
@@ -203,7 +204,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className={`app-body${['field', 'field-fab', 'field-pkg', 'report'].includes(screen) ? ' wide' : ''}`}>
+      <div className={`app-body${['field', 'field-fab', 'field-pkg', 'report', 'fab-sim'].includes(screen) ? ' wide' : ''}`}>
       {showFlowBar && !ui.focus && !ui.flowbar && (
         <button type="button" className="flowbar-collapsed" aria-expanded="false" onClick={() => setUi({ flowbar: true })}>
           공정 흐름{activeFlowName ? ` · 현재: ${activeFlowName}` : ''} ▾ 펼치기
@@ -272,6 +273,7 @@ export default function App() {
             onReport={(id) => setReports((list) => [...list, { processId: id, at: new Date().toISOString() }])}
           />
         )}
+        {screen === 'fab-sim' && <FabProcessSim onOpenProcess={openProcess} onOpenMachine={openMachine} />}
         {screen === 'sim' && <ProcessSim />}
         {(screen === 'machine-fab' || screen === 'machine-pkg') && (
           <MachineSim

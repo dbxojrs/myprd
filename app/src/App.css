@@ -5659,3 +5659,84 @@ button { min-height: 36px; }
 .fig-pad { fill: color-mix(in srgb, var(--warn) 70%, var(--surface)); }
 .fig-gap { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 1.2; }
 .fig-vapor { stroke: var(--bad); stroke-width: 1.5; fill: none; }
+
+/* ── FAB 공정 시뮬레이션 ── */
+.fabsim .tabs { margin-bottom: 12px; }
+.fs-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.fs-panel { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 1fr); gap: 12px; align-items: start; }
+.fs-view { display: grid; gap: 12px; }
+.fs-result { grid-column: 1 / -1; }
+.fs-section-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.fs-note { margin: 6px 0 0; font-size: 0.78rem; }
+.fs-controls h4, .fs-result h4, .fs-view h4 { margin: 4px 0 8px; font-size: 0.9rem; }
+.fs-cond { display: grid; gap: 4px; margin-bottom: 10px; }
+.fs-cond-name { font-size: 0.85rem; font-weight: 700; display: flex; gap: 6px; align-items: center; }
+.fs-levels { display: flex; flex-wrap: wrap; gap: 4px; }
+.fs-levels button { display: grid; gap: 1px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); font-size: 0.82rem; min-height: 36px; position: relative; }
+.fs-levels button small { color: var(--muted); font-size: 0.7rem; }
+.fs-levels button.best::after { content: '권장'; position: absolute; top: -7px; right: -4px; font-size: 0.6rem; padding: 0 4px; border-radius: 6px; background: var(--good-soft); color: var(--good); font-weight: 700; }
+.fs-levels button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); font-weight: 700; box-shadow: 0 0 0 1px var(--accent) inset; }
+.fs-levels button:disabled { opacity: 0.7; cursor: not-allowed; }
+.fs-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0 10px; }
+.fs-metrics { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.fs-metrics li { display: grid; grid-template-columns: minmax(80px, 1fr) 2fr 32px; gap: 8px; align-items: center; font-size: 0.85rem; }
+.fs-metrics li small { grid-column: 2 / -1; margin-top: -6px; font-size: 0.7rem; }
+.fs-metrics b { text-align: right; font-variant-numeric: tabular-nums; }
+.fs-findings { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.fs-findings li { border: 1px solid var(--border); border-left-width: 4px; border-radius: 10px; padding: 8px 12px; }
+.fs-findings li.alarm, .fs-findings li.bad { border-left-color: var(--bad); }
+.fs-findings li.warn { border-left-color: var(--warn); }
+.fs-findings p { margin: 4px 0 0; font-size: 0.88rem; }
+.fs-f-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.fs-basis q { display: block; font-style: italic; margin-top: 2px; }
+.fs-ok { margin: 0; }
+.fs-next { margin-top: 12px; align-items: center; }
+.fs-flow-intro { margin: 0 0 10px; }
+.fs-arrive { margin-bottom: 12px; border-color: var(--accent); }
+.fs-arrive ul { margin: 6px 0 0; padding-left: 18px; font-size: 0.88rem; }
+.fs-strip { list-style: none; padding: 0; margin: 0 0 12px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.fs-strip li { border: 1px solid var(--border); border-radius: 10px; padding: 6px; background: var(--surface); opacity: 0.75; }
+.fs-strip li.done { opacity: 1; }
+.fs-strip li.now { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.fs-strip-head { display: flex; gap: 4px; align-items: center; font-size: 0.74rem; font-weight: 700; margin-bottom: 4px; flex-wrap: wrap; }
+.fs-strip-head b { width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--surface-2); font-size: 0.7rem; }
+.fs-strip-empty { height: 70px; display: grid; place-items: center; color: var(--muted); font-size: 0.78rem; border: 1px dashed var(--border); border-radius: 8px; }
+.fs-strip .ws-tag, .fs-strip .ws-badge, .fs-strip .ws-stop-text { display: none; }
+.fs-verdict-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.fs-verdict-head .status { font-size: 1rem; padding: 4px 12px; }
+.fs-verdict ul { padding-left: 18px; display: grid; gap: 6px; }
+.ws-svg { width: 100%; height: auto; display: block; background: var(--surface-2); border-radius: 8px; }
+.ws-si { fill: color-mix(in srgb, var(--muted) 45%, var(--surface)); }
+.ws-oxide { fill: color-mix(in srgb, #38bdf8 45%, var(--surface)); stroke: color-mix(in srgb, #38bdf8 70%, var(--surface)); stroke-width: 0.8; }
+.ws-oxide.porous { fill-opacity: 0.55; stroke-dasharray: 3 2; }
+.ws-resist { fill: color-mix(in srgb, #f59e0b 60%, var(--surface)); }
+.ws-resist.blur { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 2 2; }
+.ws-residue, .ws-gouge { fill: var(--bad); opacity: 0.8; }
+.ws-gouge { opacity: 0.5; }
+.ws-defect { fill: var(--bad); }
+.ws-damage { stroke: var(--bad); stroke-width: 1.5; fill: none; }
+.ws-hole { fill: var(--surface-2); }
+.ws-film { fill: color-mix(in srgb, #2dd4bf 55%, var(--surface)); }
+.ws-dirt { fill: var(--bad); }
+.ws-doped { fill: color-mix(in srgb, #a78bfa 65%, var(--surface)); opacity: 0.9; }
+.ws-doped.sparse { opacity: 0.45; }
+.ws-doped.tail { fill: none; stroke: #a78bfa; stroke-width: 2; stroke-dasharray: 3 2; }
+.ws-doped.stray { fill: var(--bad); opacity: 0.45; }
+.ws-amorph { fill: var(--warn); opacity: 0.45; }
+.ws-beam { stroke: #a78bfa; stroke-width: 1.5; }
+.ws-beam-head { fill: #a78bfa; }
+.ws-metal { fill: color-mix(in srgb, #e0a15b 80%, var(--surface)); }
+.ws-metal.porous { fill-opacity: 0.6; }
+.ws-gap { fill: var(--bad); }
+.ws-contact { stroke: var(--bad); stroke-width: 3; }
+.ws-tag { font-size: 11px; fill: var(--text); font-weight: 600; }
+.ws-tag.light { fill: var(--muted); }
+.ws-bad { font-size: 12px; font-weight: 800; fill: var(--bad); }
+.ws-warn { font-size: 12px; font-weight: 800; fill: var(--warn); }
+.ws-stop { fill: var(--bad-soft); opacity: 0.8; }
+.ws-stop-text { font-size: 14px; font-weight: 800; fill: var(--bad); }
+@media (max-width: 1100px) { .fs-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .fs-panel { grid-template-columns: 1fr; }
+  .fs-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
