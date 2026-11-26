@@ -2,7 +2,7 @@
 // PRD "정보 정확성 정책": 1순위(근거 출처) = 논문(학회지·저널·arXiv), 정부·공공 연구기관 보고서 / 2순위(설명 출처) = 대학 공개 강의, 업체 공식 자료.
 // 2순위만 있는 판정에는 "설명 출처"라고 표시합니다(PRD 예외 규정: 교육용 시나리오·설비 규칙).
 
-const EVIDENCE = /학회지|학회 논문|학회|Journal|Micromachines|Nanoscale|arXiv|NASA|NIST|Sandia|OSTI|Proceedings|Transactions/i
+const EVIDENCE = /학회지|학회 논문|학회|Journal|Micromachines|Nanoscale|arXiv|NASA|NIST|Sandia|OSTI|Sonochemistry|Proceedings|Transactions/i
 
 export const sourceTier = (src) => (src && EVIDENCE.test(`${src.publisher ?? ''} ${src.title ?? ''}`) ? 'evidence' : 'explain')
 export const TIER_LABEL = { evidence: '근거 출처', explain: '설명 출처' }

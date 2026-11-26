@@ -1,6 +1,6 @@
 // 습식 세정 장비 규칙표. 형식은 data/machineSim.js 머리 주석을 보세요.
 // 인용문(cite)은 출처 원문을 내려받아 그대로 있는지 대조했습니다(2026-11-26). 원인과 결과를 잇는 부분 중 출처에 없는 것은 "교육용 가설"로 적습니다.
-// 세정은 1순위 근거 출처를 아직 찾지 못해 모두 설명 출처(장비 업체 기술 자료·업계 매체·뉴스룸)입니다.
+// 메가소닉 손상 규칙은 OA 논문(근거 출처), 나머지는 설명 출처(장비 업체 기술 자료·업계 매체·뉴스룸)입니다.
 
 export default {
   id: 'cleaning',
@@ -18,6 +18,11 @@ export default {
       title: 'Creating Defectless Wafers: A Look at CLEAN & CMP Technology',
       publisher: 'SK hynix Newsroom',
       url: 'https://news.skhynix.com/en/creating-defectless-wafers-a-look-at-clean-cmp-technology/',
+    },
+    megasonicOa: {
+      title: 'Chemically controlled megasonic cleaning of patterned structures using solutions with dissolved gas and surfactant',
+      publisher: 'Ultrasonics Sonochemistry (2021), CC BY-NC-ND 4.0',
+      url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8799594/',
     },
   },
   name: '습식 세정 장비 (매엽식 세정)',
@@ -138,10 +143,10 @@ export default {
       when: { pattern: [1], mega: [1] },
       severity: 'bad',
       title: '메가소닉 기포로 섬세한 패턴 손상',
-      cause: '메가소닉의 터지는 기포가 섬세한 구조를 손상시킬 수 있어, 첨단 공정에서는 거의 쓰지 않게 되었습니다.',
+      cause: '메가소닉에서 기포가 갑자기 터지면 패턴을 다치게 하는 힘이 생깁니다. 섬세한 패턴은 이 손상을 피하기 어려워 첨단 공정에서는 거의 쓰지 않게 되었습니다.',
       fix: '메가소닉을 "끔"으로 바꿉니다.',
-      src: 'semiengClean',
-      cite: '"after 65nm, the industry moved away from megasonics, because popping bubbles can damage delicate structures"',
+      src: 'megasonicOa',
+      cite: '"transient cavitation could produce damaging forces" (Semiconductor Engineering: "popping bubbles can damage delicate structures")',
     },
     {
       when: { pattern: [1], dry: [0] },

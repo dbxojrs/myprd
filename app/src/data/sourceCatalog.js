@@ -699,6 +699,14 @@ export const SOURCE_CATALOG = [
     title: "Overlay Metrology Using Physics and AI-Based Scanning Electron Microscopy",
     publisher: "NIST (연구 과제 소개)",
     url: "https://www.nist.gov/programs-projects/overlay-metrology-using-physics-and-ai-based-scanning-electron-microscopy" },
+  { key: "oa-megasonic-2021", short: "논문(OA)", tier: "evidence", checked: "2026-11-26",
+    title: "Chemically controlled megasonic cleaning of patterned structures using solutions with dissolved gas and surfactant",
+    publisher: "Ultrasonics Sonochemistry (2021), CC BY-NC-ND 4.0",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8799594/" },
+  { key: "oa-rca-sc2-2025", short: "논문(OA)", tier: "evidence", checked: "2026-11-26",
+    title: "Degradation Mechanism of Perfluoroelastomer (FFKM) in the Acidic SC2 Solution of Semiconductor RCA Cleaning",
+    publisher: "Polymers (MDPI, 2025), CC BY 4.0",
+    url: "https://www.mdpi.com/2073-4360/17/22/3081" },
 ]
 
 const byKey = new Map(SOURCE_CATALOG.map((s) => [s.key, s]))

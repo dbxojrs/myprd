@@ -553,6 +553,8 @@ export const processes = [
       { title: '반도체 품질을 올리는 잔류물 청소반, 세정공정이란?', publisher: '삼성전자 반도체 뉴스룸 (2019.12.20)', url: 'https://news.samsungsemiconductor.com/kr/%EB%B0%98%EB%8F%84%EC%B2%B4-%ED%92%88%EC%A7%88%EC%9D%84-%EC%98%AC%EB%A6%AC%EB%8A%94-%EC%9E%94%EB%A5%98%EB%AC%BC-%EC%B2%AD%EC%86%8C%EB%B0%98-%EC%84%B8%EC%A0%95%EA%B3%B5%EC%A0%95%EC%9D%B4%EB%9E%80/', tier: 'explain' },
       { title: 'Wafer Surface Cleaning', publisher: 'MKS Instruments (장비 업체 기술 자료)', url: 'https://www.mks.com/n/cmos-wafer-cleaning', tier: 'explain' },
       { title: 'Wafer Cleaning Becomes Key Challenge In Manufacturing 3D Structures', publisher: 'Semiconductor Engineering (2022.10.20, A. Hars)', url: 'https://semiengineering.com/wafer-cleaning-becomes-key-challenge-in-manufacturing-3d-structures', tier: 'explain' },
+      { title: 'Degradation Mechanism of Perfluoroelastomer (FFKM) in the Acidic SC2 Solution of Semiconductor RCA Cleaning', publisher: 'Polymers (MDPI, 2025), CC BY 4.0', url: 'https://www.mdpi.com/2073-4360/17/22/3081', tier: 'evidence' },
+      { title: 'Chemically controlled megasonic cleaning of patterned structures using solutions with dissolved gas and surfactant', publisher: 'Ultrasonics Sonochemistry (2021), CC BY-NC-ND 4.0', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8799594/', tier: 'evidence' },
     ],
     sourceDate: '2026-11-26',
   },

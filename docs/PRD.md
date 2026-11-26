@@ -442,13 +442,13 @@ AI 답변의 오류를 완전히 없앨 수는 없으므로, 위 정책은 오�
 | 공정 | 근거 출처(1순위) | 설명 출처(2순위) |
 |---|---|---|
 | CMP | Cambridge JMR 리뷰(OA), MIT 연구실 논문, Sandia(OSTI) | SK하이닉스 뉴스룸 |
-| 세정 | 없음 — 1순위 출처를 찾지 못함 | 삼성반도체 뉴스룸, MKS 기술 자료 3건, Semiconductor Engineering, NIST 장비 소개, SK하이닉스 |
+| 세정 | OA 논문 2편: Polymers(MDPI) 2025 — RCA SC-1·SC-2의 역할, Ultrasonics Sonochemistry 2021 — 메가소닉 손상 원리 | 삼성반도체 뉴스룸, MKS 기술 자료 3건, Semiconductor Engineering, NIST 장비 소개, SK하이닉스 |
 | 열처리 | TU Wien 학위논문 | MIT OCW, KTH 강의, Mattson(AVS 발표) |
 | ALD | OA 논문 2편(STAM 2019, MDPI 2014) | Semiconductor Engineering(Lam 기고), SK하이닉스 |
 | 계측·검사 | NIST 논문(Nature Electronics, PMC), IOP OA 논문, NIST e-Handbook 2건, NIST 연구 소개 | 삼성반도체 뉴스룸 |
 
 남은 질문
-1. 세정의 1순위 근거 출처(대학 강의 PDF·논문)를 찾아 설명 출처를 바꿀 수 있을까?
+1. 세정: 근거 출처 2편을 추가했지만 RCA 표준 배합비·온도, 마랑고니 건조는 아직 근거 출처를 찾지 못했습니다.
 2. CMP 종점 검출, 노광 초점심도와 CMP의 관계, 막 두께 측정 원리(엘립소메트리)는 확인한 출처에서 찾지 못했습니다(gaps에 표시).
 
 
