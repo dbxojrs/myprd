@@ -157,7 +157,8 @@ export default function App() {
     (queryStage && MENU_GROUPS.find((group) => group.stages.includes(queryStage))) ||
     MENU_GROUPS.find((group) => group.items.some((item) => item.id === screen))
   // 공정 흐름 막대는 공정을 따라가는 화면에서만 보여줍니다.
-  const showFlowBar = ['front', 'flow', 'query', 'line'].includes(screen)
+  // 공정 검색 첫 화면(아직 공정을 고르지 않음)에서는 흐름 막대를 숨깁니다.
+  const showFlowBar = ['front', 'flow', 'line'].includes(screen) || (screen === 'query' && Boolean(processId))
 
   const activeItem = activeGroup?.items.find((item) => item.id === screen)
 

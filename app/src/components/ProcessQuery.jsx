@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { findProcess } from '../data/processes.js'
+import { findProcess, processes, STAGES, STAGE_ORDER } from '../data/processes.js'
 import { searchProcess } from '../lib/search.js'
 import { recommendPrerequisites } from '../lib/prereq.js'
 import { processAnalogies } from '../data/analogies.js'
@@ -62,6 +62,30 @@ export default function ProcessQuery({ initialId, pkg, completed, onComplete, on
       </form>
 
       {result?.status === 'empty' && <p className="notice">공정 이름을 입력하세요.</p>}
+
+      {/* 아직 아무 공정도 고르지 않았을 때: 빈 화면 대신 단계별 공정 목록을 바로 고를 수 있게 */}
+      {!result && (
+        <article className="card query-start">
+          <h3>어떤 공정을 볼까요?</h3>
+          <p className="muted">이름(한글·영문)으로 검색하거나, 아래에서 단계별로 고르세요.</p>
+          {STAGE_ORDER.map((stage) => {
+            const list = processes.filter((p) => p.stage === stage)
+            if (!list.length) return null
+            return (
+              <div key={stage} className="query-stage">
+                <span className="query-stage-name">{STAGES[stage].name.ko}</span>
+                <div className="button-row">
+                  {list.map((p) => (
+                    <button key={p.id} type="button" className="chip small" onClick={() => open(p.id)}>
+                      {p.name.ko}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </article>
+      )}
 
       {result?.status === 'none' && (
         <p className="notice">검증된 자료에서 확인되지 않음. 공정 이름을 바꿔 다시 검색해 보세요.</p>

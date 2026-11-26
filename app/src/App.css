@@ -5870,3 +5870,19 @@ button { min-height: 36px; }
 .peek.wide { width: min(620px, 100vw); }
 .peek .eq-stage { grid-template-columns: 1fr; }
 .peek .eq-tour { margin: 0; box-shadow: none; }
+
+/* 공정 검색 첫 화면: 단계별 공정 고르기 */
+.query-start { display: grid; gap: 10px; }
+.query-start h3 { margin: 0; }
+.query-start > .muted { margin: 0 0 4px; }
+.query-stage { display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: start; padding-top: 8px; border-top: 1px solid var(--border); }
+.query-stage-name { font-size: 13px; font-weight: 700; color: var(--muted); padding-top: 4px; }
+@media (max-width: 640px) { .query-stage { grid-template-columns: 1fr; } }
+
+/* 메뉴 묶음 안의 작은 소제목 */
+.side-sep { display: block; margin: 8px 0 2px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; color: var(--muted); }
+.side-sub-item:first-child .side-sep { margin-top: 2px; }
+
+.atlas-legend { margin: -4px 0 10px; font-size: 13px; }
+.atlas-legend summary { cursor: pointer; width: fit-content; }
+.atlas-legend p { margin: 4px 0 0; }

@@ -54,6 +54,8 @@ export default function TodayPage({ pkg, completed, onGo, onOpenProcess, onOpenU
           )}
         </article>
         <FieldTodayCard completed={completed} onGo={onGo} />
+        {/* 다시 볼 문제가 있을 때만 보여 줍니다(빈 카드는 숨김). */}
+        {wrong.length + wrongW.length > 0 && (
         <article className="card">
           <p className="home-eyebrow">4 · 오답 복습</p>
           <h3>{wrong.length + wrongW.length}문제</h3>
@@ -69,6 +71,7 @@ export default function TodayPage({ pkg, completed, onGo, onOpenProcess, onOpenU
             </button>
           </div>
         </article>
+        )}
       </div>
     </section>
   )

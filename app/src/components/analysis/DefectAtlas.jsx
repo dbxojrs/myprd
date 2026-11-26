@@ -76,8 +76,13 @@ export default function DefectAtlas({ onOpenMachine, onOpenProcess, onOpenField 
     <section className="screen atlas">
       <h2>불량 분석 도감</h2>
       <p className="muted">
-        설비 실습의 판정 규칙표에 있는 알람·불량을 공정별로 모았습니다. 원인·조치 문장은 규칙표 그대로이고, 근거 수준을 함께 표시합니다: 근거 출처(논문·공공 보고서) {counts.source}개 · 설명 출처(강의·업체 자료) {counts.explain}개 · 앱 공정 데이터 {counts.data}개 · 교육용 가설 {counts.edu}개.
+        설비 실습의 알람·불량을 공정별로 모았습니다. 카드를 누르면 원인·조치와 근거를 봅니다.
       </p>
+      {/* 근거 수준 숫자는 한 줄 범례로(필터의 "모든 근거"와 같은 분류) */}
+      <details className="atlas-legend">
+        <summary className="muted">근거 수준 보기</summary>
+        <p className="muted">근거 출처(논문·공공 보고서) {counts.source}개 · 설명 출처(강의·업체 자료) {counts.explain}개 · 앱 공정 데이터 {counts.data}개 · 교육용 가설 {counts.edu}개</p>
+      </details>
 
       <div className="atlas-filters">
         <div className="seg" role="group" aria-label="공정 구분">

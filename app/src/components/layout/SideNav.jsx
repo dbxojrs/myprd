@@ -128,8 +128,9 @@ function SideGroup({ group, screen, active, collapsed, onGo }) {
             // 숨은 하위 화면(예: 후공정 시나리오)을 보고 있으면 그 위 메뉴를 켭니다.
             const on = screen === item.id || group.items.some((x) => x.id === screen && x.under === item.id)
             return (
+            <div key={item.id} className="side-sub-item">
+            {item.sep && <span className="side-sep">{item.sep}</span>}
             <button
-              key={item.id}
               type="button"
               className={`side-item sm${on ? ' active' : ''}`}
               aria-current={on ? 'page' : undefined}
@@ -139,6 +140,7 @@ function SideGroup({ group, screen, active, collapsed, onGo }) {
               <span className="dot" aria-hidden="true" />
               <span className="side-text">{item.label}</span>
             </button>
+            </div>
             )
           })}
         </div>
