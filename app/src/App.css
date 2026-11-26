@@ -5759,3 +5759,25 @@ button { min-height: 36px; }
 /* 공부 일정: 목표일 미리 보기 */
 .plan-preview { margin: 4px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); font-size: 14px; line-height: 1.55; }
 .plan-preview.warn { background: rgb(234 88 12 / 0.12); color: inherit; }
+
+/* 휴대폰 위 막대의 노트·질문하기 버튼 (데스크톱은 떠 있는 동그라미를 씀) */
+.topbar-float { display: none; }
+@media (max-width: 959px) {
+  .topbar-float { display: inline-flex; min-width: 44px; min-height: 44px; }
+}
+
+/* 홈: 처음 온 사람용 3단계 안내 */
+.dash-mid.single { grid-template-columns: 1fr; }
+.dash-start { display: grid; gap: 10px; }
+.dash-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.dash-steps button { width: 100%; display: grid; grid-template-columns: 32px 1fr auto; gap: 12px; align-items: center; text-align: left; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: inherit; cursor: pointer; }
+.dash-steps button:hover { border-color: var(--accent); }
+.dash-steps strong { display: block; font-size: 15px; }
+.dash-steps small { color: var(--muted); font-size: 13px; }
+.dash-step-n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+/* 설비 실습: 숫자 표시 방식 접기 */
+.ms-view { font-size: 13.5px; color: var(--muted); }
+.ms-view summary { cursor: pointer; width: fit-content; padding: 4px 0; }
+.ms-view summary strong { color: var(--text); font-weight: 600; }
+.ms-view[open] .button-row { margin-top: 6px; }

@@ -49,6 +49,9 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
   const left = plan.settings ? dday(plan.settings.goal, today) : null
   const stage = openStage && STAGES[openStage]
   const stageIds = openStage ? order.filter((id) => findProcess(id)?.stage === openStage) : []
+  const wrongCount = wrong.length + wrongW.length
+  // 처음 온 사람: 기록이 하나도 없으면 0으로 가득한 숫자판 대신 "어떻게 쓰는지" 3단계를 보여 줍니다.
+  const fresh = !plan.settings && done === 0 && streak === 0 && wrongCount === 0 && notes.length === 0
   const dateText = `${today.getMonth() + 1}월 ${today.getDate()}일 ${WEEK[today.getDay()]}요일`
 
   return (
@@ -96,6 +99,29 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
           )}
         </article>
 
+        {fresh ? (
+          <article className="card dash-start">
+            <p className="home-eyebrow">처음이라면 이렇게 써 보세요</p>
+            <ol className="dash-steps">
+              {[
+                ['배운다', '반도체 기초부터 애니메이션으로', 'basics'],
+                ['바꿔 본다', '공정 조건을 바꾸면 웨이퍼가 어떻게 되는지', 'fab-sim'],
+                ['풀어 본다', '가상 현장 사건을 엔지니어처럼 해결', 'field'],
+              ].map(([title, desc, id], i) => (
+                <li key={id}>
+                  <button type="button" onClick={() => onGo(id)}>
+                    <span className="dash-step-n" aria-hidden="true">{i + 1}</span>
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{desc}</small>
+                    </span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </article>
+        ) : (
         <div className="dash-stats">
           <button type="button" className="card dash-stat" onClick={() => onGo('map')}>
             <Ring value={order.length ? done / order.length : 0} />
@@ -132,18 +158,22 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
             </span>
           </button>
         </div>
+        )}
       </div>
 
-      <div className="dash-mid">
+      {/* 오답 카드는 다시 볼 문제가 있을 때만 */}
+      <div className={`dash-mid${wrongCount ? '' : ' single'}`}>
         <FieldTodayCard completed={completed} onGo={onGo} />
-        <article className="card dash-wrong">
-          <p className="home-eyebrow">🔁 오답 복습</p>
-          <h3>{wrong.length + wrongW.length}문제 다시 보기</h3>
-          <p className="muted">틀린 문제는 다시 맞힐 때까지 남습니다. 실무 시나리오에서 틀린 점검 문제도 여기에 모입니다.</p>
-          <button type="button" onClick={() => onGo('wrong')} disabled={!wrong.length}>
-            오답 노트 열기 →
-          </button>
-        </article>
+        {wrongCount > 0 && (
+          <article className="card dash-wrong">
+            <p className="home-eyebrow">🔁 오답 복습</p>
+            <h3>{wrongCount}문제 다시 보기</h3>
+            <p className="muted">틀린 문제는 다시 맞힐 때까지 남습니다. 실무 시나리오에서 틀린 점검 문제도 여기에 모입니다.</p>
+            <button type="button" onClick={() => onGo('wrong')}>
+              오답 노트 열기 →
+            </button>
+          </article>
+        )}
       </div>
 
       <h3 className="dash-h">반도체가 만들어지는 6단계</h3>

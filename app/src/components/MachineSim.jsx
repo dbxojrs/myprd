@@ -343,8 +343,7 @@ export default function MachineSim({ onOpenProcess, initialId = null, area = nul
     <section className="screen">
       <h2>{area === 'front' ? 'FAB 설비 실습 (EQ)' : area === 'back' ? 'PKG 설비 실습 (EQ)' : '설비 실습 (EQ)'}</h2>
       <p className="muted">
-        실제 장비 조작반처럼 상태를 확인하고 조건을 정한 뒤 START를 누르세요. 가동 순서대로 진행하다가 문제가 있으면 알람으로 멈추고,
-        끝나면 불량·경고·정상을 판정합니다. 판정은 규칙표로만 계산하며 검수 전입니다.
+        장비를 고르고 조건을 정한 뒤 START를 누르세요. 문제가 있으면 알람으로 멈추고, 끝나면 불량·경고·정상을 판정합니다(규칙표로 계산, 검수 전).
       </p>
 
       <div className="ms-toolbar">
@@ -373,14 +372,19 @@ export default function MachineSim({ onOpenProcess, initialId = null, area = nul
             </button>
           ))}
         </div>
-        <div className="button-row" role="group" aria-label="값 표시">
-          {DISPLAY_MODES.map((d) => (
-            <button key={d.id} type="button" className={display === d.id ? 'chip chip-active' : 'chip'} aria-pressed={display === d.id} onClick={() => setDisplay(d.id)}>
-              {d.label}
-            </button>
-          ))}
-        </div>
-        <p className="muted ms-note">{DISPLAY_MODES.find((d) => d.id === display).note}</p>
+        {/* 숫자 표시 방식은 자주 바꾸지 않아 "보기 설정"으로 접어 둡니다. */}
+        <details className="ms-view">
+          <summary>
+            숫자 표시: <strong>{DISPLAY_MODES.find((d) => d.id === display).label}</strong> · {DISPLAY_MODES.find((d) => d.id === display).note}
+          </summary>
+          <div className="button-row" role="group" aria-label="값 표시">
+            {DISPLAY_MODES.map((d) => (
+              <button key={d.id} type="button" className={display === d.id ? 'chip chip-active' : 'chip'} aria-pressed={display === d.id} onClick={() => setDisplay(d.id)}>
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </details>
       </div>
 
       {mode === 'scenario' && (

@@ -94,13 +94,13 @@ export default function FloatDock({ currentRef, onOpenProcess, onOpenMachine }) 
     if (mobile && float.open.notes && float.open.chat) openPanel(float.order.at(-1))
   }, [mobile, float.open.notes, float.open.chat, float.order])
 
-  const anyOpen = float.open.notes || float.open.chat
   const panels = ['notes', 'chat']
 
   return (
     <div className="float-dock">
       {panels.map((name) =>
-        float.open[name] || (mobile && anyOpen) ? null : (
+        // 휴대폰에서는 동그라미를 띄우지 않고 위 막대의 노트·질문하기 버튼으로 엽니다(본문을 가리지 않게).
+        float.open[name] || mobile ? null : (
           <FloatBubble key={name} name={name} pos={float.bubble[name]} dot={name === 'notes' ? Boolean(currentId) : dots[name]} view={view} />
         ),
       )}

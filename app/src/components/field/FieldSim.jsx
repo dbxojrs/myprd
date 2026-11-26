@@ -64,13 +64,12 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
   return (
     <section className="screen field">
       <div className="field-hero">
-        <p className="home-eyebrow">현장 실무 훈련</p>
         <h2>현장 실무 훈련</h2>
         <p className="muted">
-          실제 반도체 생산 현장에서 발생할 수 있는 문제를 해결하며 공정 엔지니어의 판단 능력을 훈련합니다. <strong>상황 파악 → 초기 대응 → 데이터 수집 → 원인 분석 → 조치·검증 → 평가</strong> 순서로 진행하고,
-          고른 조치에 따라 다음 상황이 달라집니다. 점수는 공개된 기준으로만 계산하며 API 키 없이 진행됩니다.
+          가상 현장 사건을 <strong>상황 파악 → 초기 대응 → 데이터 → 원인 → 조치·검증 → 평가</strong> 순서로 풉니다. 고른 조치에 따라 다음 상황이 달라지고, 점수는 공개된 기준으로만 계산합니다.
         </p>
-        <span className="virtual-badge">모든 사례·수치는 교육용 가상 데이터</span>
+        {/* 카드마다 붙이던 "검수 전" 표시를 여기 한 번으로 모았습니다(버전은 시나리오 안에서 보여 줌). */}
+        <span className="virtual-badge">모든 사례·수치는 교육용 가상 데이터 · 모든 시나리오 검수 전</span>
       </div>
 
       <div className="field-tabs" role="tablist" aria-label="공정 구분">
@@ -124,8 +123,7 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
               <div className="case-tags">
                 <span className="quiz-tag">{x.difficulty}</span>
                 <span className="quiz-tag soft">약 {x.minutes}분</span>
-                <span className={`status ${s === 'done' ? 'ok' : s === 'doing' ? 'info' : 'warn'}`}>{STATUS_LABEL[s]}</span>
-                <span className="status warn">검수 전 v{x.version}</span>
+                {s !== 'new' && <span className={`status ${s === 'done' ? 'ok' : 'info'}`}>{STATUS_LABEL[s]}</span>}
               </div>
               <p className="field-comp">
                 <strong>주요 역량</strong> {x.competencies?.join(' · ')}

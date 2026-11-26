@@ -25,6 +25,7 @@ import { setUi, useUi } from './lib/uiOpen.js'
 import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
+import { togglePanel } from './lib/floatState.js'
 import { pushNav, readHash, replaceNav, useBackLayer } from './lib/nav.js'
 
 // 큰 화면은 처음 열 때 나눠 받습니다(첫 로딩을 가볍게). 첫 화면이 뜬 뒤 쉬는 시간에 미리 받아 두어 이동할 때 기다리지 않습니다.
@@ -231,19 +232,25 @@ export default function App() {
           {activeGroup ? (
             <>
               <span className="crumb">{activeGroup.label}</span>
-              <strong>{activeItem?.label ?? '공정 상세'}</strong>
-              {activeItem?.desc && <small className="topbar-desc">{activeItem.desc}</small>}
+              {/* 화면 설명은 본문 머리에 있으므로 위 막대에는 제목만 둡니다(마우스를 올리면 설명). */}
+              <strong title={activeItem?.desc}>{activeItem?.label ?? '공정 상세'}</strong>
             </>
           ) : (
             <>
               <span className="crumb">반도체 공정 튜터</span>
               <strong>홈</strong>
-              <small className="topbar-desc">칩 설계부터 FAB · PKG·TEST · 보드 실장까지</small>
             </>
           )}
         </div>
         <div className="topbar-tools">
           <TermModeSwitch />
+          {/* 휴대폰: 떠 있는 동그라미 대신 위 막대에서 노트·질문하기를 엽니다(본문을 가리지 않게). */}
+          <button type="button" className="icon-btn topbar-float" aria-label="노트 열기" title="노트" onClick={() => togglePanel('notes')}>
+            <Icon name="memo" />
+          </button>
+          <button type="button" className="icon-btn topbar-float" aria-label="질문하기 열기" title="질문하기" onClick={() => togglePanel('chat')}>
+            <Icon name="chat" />
+          </button>
           <button
             type="button"
             className={ui.focus ? 'icon-btn focus-toggle active' : 'icon-btn focus-toggle'}
