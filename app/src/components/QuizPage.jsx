@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { makeQuiz, QUIZ_SCOPES, topicLabel } from '../lib/quiz.js'
 import { findSource } from '../data/sourceCatalog.js'
-import { useStoredState } from '../lib/storage.js'
+import { useSessionState, useStoredState } from '../lib/storage.js'
 import { AiExplain, AiKeyBox, AiQuizMaker } from './AiTutor.jsx'
 import { appendToCurrentNote } from '../lib/notes.js'
 import { markActive } from '../lib/activity.js'
@@ -42,7 +42,8 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
   const [attempt, setAttempt] = useStoredState('tutor.quizAttempt', 0)
   const [wrong, setWrong] = useStoredState('tutor.wrong', [])
   const [history, setHistory] = useStoredState('tutor.quizHistory', [])
-  const [run, setRun] = useState(null) // { questions, answers: [], index, fromWrong, scopeLabel }
+  // 진행 중인 시험은 이 탭에 기억해, 설명 화면에 다녀와도 이어서 풉니다.
+  const [run, setRun] = useSessionState('tutor-s.quizRun', null) // { questions, answers: [], index, fromWrong, scopeLabel }
 
   // 메뉴에서 다른 화면(문제 풀기 ↔ 오답 노트)으로 바꾸면 풀던 시험을 닫습니다.
   useEffect(() => setRun(null), [view])

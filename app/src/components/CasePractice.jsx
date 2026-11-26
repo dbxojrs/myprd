@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSessionState } from '../lib/storage.js'
 import { BASIS_LABEL, findScenario, RUBRIC, SCENARIOS } from '../data/scenarios.js'
 import { createStore, useStore } from '../lib/sharedStore.js'
 import { useApiKey } from '../lib/apiKey.js'
@@ -30,7 +31,7 @@ function scoreOf(scenario, checked, withFollowup) {
 
 export default function CasePractice({ onOpenProcess, onOpenMachine }) {
   const cases = useCases()
-  const [openId, setOpenId] = useState(null)
+  const [openId, setOpenId] = useSessionState('tutor-s.caseOpen', null)
   const scenario = findScenario(openId)
   if (scenario) return <CaseRun key={scenario.id} scenario={scenario} state={cases[scenario.id]} onBack={() => setOpenId(null)} onNext={(id) => setOpenId(id)} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
 

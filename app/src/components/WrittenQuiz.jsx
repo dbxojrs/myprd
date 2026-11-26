@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { checkKeywords, gradeShort, makeWritten, norm, WRITTEN_KINDS, WRITTEN_SCOPES, writtenTopicLabel } from '../lib/writtenQuiz.js'
-import { useStoredState } from '../lib/storage.js'
+import { useSessionState, useStoredState } from '../lib/storage.js'
 import { useApiKey } from '../lib/apiKey.js'
 import { appendToCurrentNote } from '../lib/notes.js'
 import { markActive } from '../lib/activity.js'
@@ -43,7 +43,8 @@ export default function WrittenQuiz({ onOpenProcess }) {
   const [attempt, setAttempt] = useStoredState('tutor.wq.attempt', 0)
   const [wrong, setWrong] = useStoredState('tutor.wrongWritten', [])
   const [history, setHistory] = useStoredState('tutor.wq.history', [])
-  const [run, setRun] = useState(null) // { questions, results: [{text, verdict, ai}], index, done, fromWrong, label }
+  // 진행 중인 시험은 이 탭에 기억해, 설명 화면에 다녀와도 이어서 풉니다.
+  const [run, setRun] = useSessionState('tutor-s.wqRun', null) // { questions, results: [{text, verdict, ai}], index, done, fromWrong, label }
 
   const start = (questions, fromWrong, label) => setRun({ questions, results: questions.map(() => null), index: 0, fromWrong, label })
 
@@ -165,7 +166,8 @@ function WrittenRun({ run, setRun, finish, onOpenProcess }) {
   const { questions, results, index, done } = run
   const q = questions[index]
   const r = results[index]
-  const [draft, setDraft] = useState(r?.text ?? '')
+  // 쓰던 답안도 이 탭에 기억합니다(문제마다).
+  const [draft, setDraft] = useSessionState(`tutor-s.wqDraft.${run.label ?? ''}.${index}`, r?.text ?? '')
   const [hint, setHint] = useState(false)
   const last = index === questions.length - 1
   const submitted = Boolean(r?.submitted)

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { readSession, writeSession } from '../lib/storage.js'
 import { DISPLAY_MODES, machines, SEVERITY, SOURCES } from '../data/machineSim.js'
 import { findProcess, STAGE_ORDER, STAGES } from '../data/processes.js'
 import { defaultValues, findFindings, goalMet, judge, levelText } from '../lib/machineJudge.js'
@@ -174,26 +175,38 @@ function LineVerdict({ verdict, onRestart }) {
 export default function MachineSim({ onOpenProcess, initialId = null, area = null, onMachineChange }) {
   // area: 'front'이면 전공정(FAB) 설비만, 'back'이면 후공정(PKG·TEST) 설비만 보여줍니다.
   const pool = area ? machines.filter((m) => m.stage === area) : machines
-  const first = pool.find((m) => m.id === initialId) ?? pool[0]
+  // 진행 중이던 설비·조건·결과는 이 탭에 기억해, 설명 화면에 다녀와도 이어서 합니다.
+  // 다른 화면에서 특정 설비를 열고 왔으면(initialId) 그 설비부터 새로 시작합니다.
+  const SKEY = `tutor-s.ms.${area ?? 'all'}`
+  const [saved] = useState(() => {
+    const s = readSession(SKEY)
+    if (!s || (initialId && s.machineId !== initialId) || !pool.some((m) => m.id === s.machineId)) return null
+    return s
+  })
+  const first = pool.find((m) => m.id === (saved?.machineId ?? initialId)) ?? pool[0]
   const [machineId, setMachineId] = useState(first.id)
   const machine = machines.find((m) => m.id === machineId)
   // 노트·챗봇 창이 지금 보는 설비를 알 수 있게 알려줍니다.
   useEffect(() => {
     onMachineChange?.(machineId)
   }, [machineId, onMachineChange])
-  const [mode, setMode] = useState('free')
-  const [display, setDisplay] = useState('example')
-  const [scenarioId, setScenarioId] = useState(null)
-  const [values, setValues] = useState(() => defaultValues(first))
-  const [phase, setPhase] = useState('idle') // idle | running | finished
+  const [mode, setMode] = useState(saved?.mode ?? 'free')
+  const [display, setDisplay] = useState(saved?.display ?? 'example')
+  const [scenarioId, setScenarioId] = useState(saved?.scenarioId ?? null)
+  const [values, setValues] = useState(() => ({ ...defaultValues(first), ...(saved?.values ?? {}) }))
+  // 가동 중에 떠났다면 돌아왔을 때는 대기 상태로 둡니다.
+  const [phase, setPhase] = useState(saved?.phase === 'finished' && saved?.result ? 'finished' : 'idle') // idle | running | finished
   const [step, setStep] = useState(0)
-  const [log, setLog] = useState([])
+  const [log, setLog] = useState(saved?.log ?? [])
   const [runId, setRunId] = useState(0)
-  const [result, setResult] = useState(null)
-  const [history, setHistory] = useState([])
-  const [lineId, setLineId] = useState(null)
-  const [lot, setLot] = useState({})
-  const [lineDone, setLineDone] = useState(false)
+  const [result, setResult] = useState(saved?.phase === 'finished' ? saved?.result ?? null : null)
+  const [history, setHistory] = useState(saved?.history ?? [])
+  const [lineId, setLineId] = useState(saved?.lineId ?? null)
+  const [lot, setLot] = useState(saved?.lot ?? {})
+  const [lineDone, setLineDone] = useState(saved?.lineDone ?? false)
+  useEffect(() => {
+    writeSession(SKEY, { machineId, mode, display, scenarioId, values, phase: phase === 'running' ? 'idle' : phase, result, log, history, lineId, lot, lineDone })
+  }, [SKEY, machineId, mode, display, scenarioId, values, phase, result, log, history, lineId, lot, lineDone])
 
   const scenario = mode === 'scenario' ? machine.scenarios.find((s) => s.id === scenarioId) : null
   const line = mode === 'line' ? LINES.find((l) => l.id === lineId) : null

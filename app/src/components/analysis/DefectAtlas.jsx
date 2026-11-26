@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSessionState } from '../../lib/storage.js'
 import machines from '../../data/machines/index.js'
 import { FIELD_CASES } from '../../data/fieldCases/index.js'
 import { sourceTier } from '../../lib/sourceTier.js'
@@ -47,11 +48,12 @@ function buildAtlas() {
 
 export default function DefectAtlas({ onOpenMachine, onOpenProcess, onOpenField }) {
   const atlas = useMemo(buildAtlas, [])
-  const [cat, setCat] = useState('ALL')
-  const [sev, setSev] = useState('all')
-  const [basis, setBasis] = useState('all')
-  const [q, setQ] = useState('')
-  const [only, setOnly] = useState('all')
+  // 고른 필터는 이 탭에 기억해, 설명 화면에 다녀와도 그대로입니다.
+  const [cat, setCat] = useSessionState('tutor-s.atlas.cat', 'ALL')
+  const [sev, setSev] = useSessionState('tutor-s.atlas.sev', 'all')
+  const [basis, setBasis] = useSessionState('tutor-s.atlas.basis', 'all')
+  const [q, setQ] = useSessionState('tutor-s.atlas.q', '')
+  const [only, setOnly] = useSessionState('tutor-s.atlas.only', 'all')
 
   const query = q.trim().toLowerCase()
   const sections = atlas

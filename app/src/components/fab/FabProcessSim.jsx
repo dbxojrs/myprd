@@ -3,7 +3,7 @@ import { findMachine, SEVERITY, SOURCES } from '../../data/machineSim.js'
 import { LINES } from '../../data/machineLine.js'
 import { defaultValues, judge, levelText } from '../../lib/machineJudge.js'
 import { finalVerdict, incoming, lineMachines } from '../../lib/machineLine.js'
-import { useStoredState } from '../../lib/storage.js'
+import { useSessionState, useStoredState } from '../../lib/storage.js'
 import { markActive } from '../../lib/activity.js'
 import { WaferSection } from './WaferSection.jsx'
 import { sourceTier, TIER_LABEL } from '../../lib/sourceTier.js'
@@ -206,8 +206,11 @@ export default function FabProcessSim({ onOpenProcess, onOpenMachine }) {
   }
 
   // 단위 공정
-  const [unitId, setUnitId] = useState(ids[0])
-  const [unitValues, setUnitValues] = useState(() => Object.fromEntries(ids.map((id) => [id, defaultValues(findMachine(id))])))
+  // 단위 공정에서 고른 공정·조건은 이 탭에 기억합니다(설명 화면에 다녀와도 유지).
+  const [unitId, setUnitId] = useSessionState('tutor-s.fab.unit', ids[0])
+  const [unitValuesRaw, setUnitValues] = useSessionState('tutor-s.fab.values', () => Object.fromEntries(ids.map((id) => [id, defaultValues(findMachine(id))])))
+  // 새로 추가된 공정(예: CMP)은 기본값으로 채웁니다.
+  const unitValues = Object.fromEntries(ids.map((id) => [id, unitValuesRaw?.[id] ?? defaultValues(findMachine(id))]))
 
   // 전체 흐름: 지나온 단계의 조건·결과(lot)와 지금 단계의 조건
   const [flow, setFlow] = useStoredState('tutor.fabSim', { lot: {}, values: null, finished: false })
