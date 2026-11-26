@@ -24,8 +24,9 @@ const PANEL_INFO = {
   chat: { icon: '💬', label: '질문하기', key: 'K' },
 }
 const BUBBLE = 56
-// 배포 사이트 오른쪽 아래에 붙는 "Powered by Netlify" 표시와 겹치지 않게, 오른쪽 버튼은 화면 아래 이만큼 위에 둡니다.
-const SAFE_BOTTOM_RIGHT = 70
+// 배포 사이트 오른쪽 아래에 붙는 "Powered by Netlify" 배지(휴대폰에서 아래쪽 약 100px)와 겹치지 않게,
+// 오른쪽 버튼은 화면 아래 이만큼 위에 둡니다.
+const SAFE_BOTTOM_RIGHT = 110
 const EDGE = 16
 const SNAPS = { low: 0.35, mid: 0.65, full: 1 }
 

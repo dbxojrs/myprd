@@ -4074,7 +4074,8 @@ button.danger:hover { background: var(--bad-soft); }
     transform: translateX(-102%);
     transition: transform 0.25s cubic-bezier(0.45, 0, 0.55, 1);
     box-shadow: 0 0 40px rgb(0 0 0 / 0.2);
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    /* 아래쪽은 "Powered by Netlify" 배지 자리를 비워, 다크 모드 스위치가 가려지지 않게 합니다. */
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
     z-index: 1200;
   }
   .nav-open .side { transform: none; }
@@ -4097,7 +4098,7 @@ button.danger:hover { background: var(--bad-soft); }
   .topbar .term-switch { display: none; }
   .focus-toggle span { display: none; }
   .focus-toggle { min-width: 44px; min-height: 44px; }
-  .tutor-main .app-body { padding: 12px 12px 40px; }
+  .tutor-main .app-body { padding: 12px 12px calc(110px + env(safe-area-inset-bottom)); }
   .flowbar-wrap { top: 52px; }
 }
 @media (prefers-reduced-motion: reduce) {
