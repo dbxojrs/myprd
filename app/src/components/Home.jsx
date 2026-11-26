@@ -101,12 +101,12 @@ export default function Home({ pkg, completed, onGo, onOpenProcess, onOpenUnit }
 
         {fresh ? (
           <article className="card dash-start">
-            <p className="home-eyebrow">처음이라면 이렇게 써 보세요</p>
+            <p className="home-eyebrow">처음이라면 이 순서로 시작해 보세요</p>
             <ol className="dash-steps">
               {[
-                ['배운다', '반도체 기초부터 애니메이션으로', 'basics'],
-                ['바꿔 본다', '공정 조건을 바꾸면 웨이퍼가 어떻게 되는지', 'fab-sim'],
-                ['풀어 본다', '가상 현장 사건을 엔지니어처럼 해결', 'field'],
+                ['이론 학습', '반도체 기초부터 애니메이션으로 익히기', 'basics'],
+                ['공정 실습', '공정 조건에 따라 웨이퍼가 어떻게 달라지는지 확인', 'fab-sim'],
+                ['실전 연습', '가상 현장 사건을 엔지니어처럼 해결', 'field'],
               ].map(([title, desc, id], i) => (
                 <li key={id}>
                   <button type="button" onClick={() => onGo(id)}>

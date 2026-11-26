@@ -1,5 +1,5 @@
 // 화면 메뉴(왼쪽 사이드바·위쪽 경로 표시). 기존 화면 id는 그대로 두고 상위 묶음만 정리했습니다.
-// 멘토 피드백("화면이 복잡하다")에 따라 홈 + 4묶음으로 줄였습니다: 배운다 → 바꿔 본다 → 풀어 본다 → 내 학습.
+// 멘토 피드백("화면이 복잡하다")에 따라 홈 + 4묶음으로 줄였습니다: 이론 학습 → 공정 실습 → 실전 연습 → 내 학습.
 // single: 펼치지 않고 바로 가는 한 줄 메뉴 / hidden: 메뉴에는 안 보이지만 그 묶음에 속하는 화면(다른 화면의 탭으로 엶)
 // stages: 공정 상세 화면(query)에서 이 묶음을 켤 공정 단계
 export const MENU_GROUPS = [
@@ -16,8 +16,8 @@ export const MENU_GROUPS = [
   },
   {
     id: "learn",
-    label: "배운다",
-    en: "Learn",
+    label: "이론 학습",
+    en: "Theory",
     desc: "반도체 기초부터 FAB 전공정, PKG 후공정, 첨단 패키징까지 애니메이션과 출처 있는 설명으로 공부합니다.",
     stages: ["design","front","link","mid","back","board"],
     items: [
@@ -32,8 +32,8 @@ export const MENU_GROUPS = [
   },
   {
     id: "sim",
-    label: "바꿔 본다",
-    en: "Simulate",
+    label: "공정 실습",
+    en: "Practice",
     desc: "공정 조건과 설비 레시피를 바꿔 웨이퍼 단면·결과·불량이 어떻게 달라지는지 봅니다.",
     stages: [],
     items: [
@@ -47,8 +47,8 @@ export const MENU_GROUPS = [
   },
   {
     id: "field",
-    label: "풀어 본다",
-    en: "Solve",
+    label: "실전 연습",
+    en: "Field & Exam",
     desc: "가상 현장 사건과 문제를 풀며 엔지니어의 판단을 연습하고, 배운 내용을 시험으로 확인합니다. 모든 사례·수치는 교육용 가상 데이터입니다.",
     stages: [],
     items: [
