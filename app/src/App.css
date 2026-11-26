@@ -5819,3 +5819,38 @@ button { min-height: 36px; }
   .ms-cmp-groove.run, .ms-cmp-press.run, .ms-cmp-drop, .ms-cmp-brush, .ms-cmp-spinline.run { animation: none; }
 }
 .ms-cl-water { fill: var(--accent); }
+
+/* ───────── 설명 미리보기 창 (components/ProcessPeek.jsx) ───────── */
+.peek-scrim { position: fixed; inset: 0; z-index: 1300; background: rgb(15 20 30 / 0.18); animation: peek-fade 0.2s ease-out; }
+.peek {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 1310; width: min(440px, 100vw);
+  display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--border);
+  box-shadow: -12px 0 40px rgb(0 0 0 / 0.18); animation: peek-in-right 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.peek-handle { display: none; }
+.peek-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); }
+.peek-prev { font-size: 13px; margin-bottom: 4px; }
+.peek-title-row { display: flex; align-items: flex-start; gap: 8px; }
+.peek-title-row h2 { flex: 1; margin: 0; font-size: 19px; line-height: 1.35; outline: none; }
+.peek-close { flex: none; min-width: 36px; min-height: 36px; }
+.peek-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; }
+.peek-body { flex: 1; overflow-y: auto; padding: 14px 16px; overscroll-behavior: contain; display: grid; gap: 12px; align-content: start; }
+.peek-summary { margin: 0; font-size: 15px; line-height: 1.6; }
+.peek-io { margin: 0; font-size: 13.5px; line-height: 1.6; padding: 8px 10px; border-radius: 8px; background: var(--accent-soft); }
+.peek-movie { display: grid; gap: 8px; }
+.peek-movie .subtab { justify-self: start; }
+.peek-pre .muted { margin: 0 0 6px; font-size: 13px; }
+.peek-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--surface); }
+.peek-foot small { flex-basis: 100%; font-size: 12px; }
+@keyframes peek-in-right { from { transform: translateX(40px); opacity: 0; } }
+@keyframes peek-in-up { from { transform: translateY(60px); opacity: 0; } }
+@keyframes peek-fade { from { opacity: 0; } }
+@media (max-width: 959px) {
+  .peek { top: auto; left: 0; width: 100%; height: 85dvh; border-left: none; border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgb(0 0 0 / 0.22); animation-name: peek-in-up; transition: transform 0.2s; }
+  .peek-handle { display: grid; place-items: center; height: 22px; cursor: grab; touch-action: none; }
+  .peek-handle span { width: 42px; height: 5px; border-radius: 3px; background: var(--border); }
+  .peek-head { padding-top: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .peek, .peek-scrim { animation: none; transition: none; }
+}

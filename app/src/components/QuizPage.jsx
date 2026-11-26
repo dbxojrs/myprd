@@ -46,10 +46,9 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
   const [run, setRun] = useSessionState('tutor-s.quizRun', null) // { questions, answers: [], index, fromWrong, scopeLabel }
 
   // 메뉴에서 다른 화면(문제 풀기 ↔ 오답 노트)으로 바꾸면 풀던 시험을 닫습니다.
-  useEffect(() => setRun(null), [view])
 
   const start = (questions, fromWrong, scopeLabel, forceMode) =>
-    setRun({ questions, answers: Array(questions.length).fill(null), index: 0, fromWrong, scopeLabel, mode: forceMode ?? (fromWrong ? 'practice' : mode) })
+    setRun({ view, questions, answers: Array(questions.length).fill(null), index: 0, fromWrong, scopeLabel, mode: forceMode ?? (fromWrong ? 'practice' : mode) })
 
   const startNew = () => {
     const seed = attempt + 1
@@ -80,7 +79,8 @@ export default function QuizPage({ view = 'quiz', onOpenProcess, onOpenMachine }
     setRun({ ...run, answers, done: true })
   }
 
-  if (run) return <QuizRun run={run} setRun={setRun} finish={finish} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
+  // 다른 탭(문제풀이·오답 노트·AI 문제)에서 시작한 시험은 그 탭에서만 이어 갑니다.
+  if (run && (run.view ?? view) === view) return <QuizRun run={run} setRun={setRun} finish={finish} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} />
 
   if (view === 'ai') return <AiQuizMaker onStart={(questions, label) => start(questions, false, label, 'practice')} />
 

@@ -27,6 +27,11 @@ import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
 import { togglePanel } from './lib/floatState.js'
 import { pushNav, readHash, replaceNav, useBackLayer, useCanGoBack } from './lib/nav.js'
+import { closePeek, openPeek } from './lib/peek.js'
+import ProcessPeek from './components/ProcessPeek.jsx'
+
+// 설명 버튼을 미리보기 창으로 여는 화면(진행 중인 일이 있는 화면)
+const PEEK_SCREENS = new Set(['quiz', 'wrong', 'ai', 'written', 'cases', 'machine-fab', 'machine-pkg', 'fab-sim', 'sim', 'line', 'field', 'field-fab', 'field-pkg', 'defects', 'report', 'datalab', 'analytics', 'notes'])
 
 // 큰 화면은 처음 열 때 나눠 받습니다(첫 로딩을 가볍게). 첫 화면이 뜬 뒤 쉬는 시간에 미리 받아 두어 이동할 때 기다리지 않습니다.
 const LOADERS = [
@@ -109,6 +114,7 @@ export default function App() {
   }, [navOpen])
   useEffect(() => {
     window.scrollTo({ top: 0 })
+    closePeek()
   }, [screen])
   // 첫 화면이 뜬 뒤 브라우저가 한가할 때 나머지 화면 코드를 미리 받아 둡니다.
   useEffect(() => {
@@ -166,11 +172,15 @@ export default function App() {
       : null
   const activeFlowName = findProcess(activeId)?.name.ko
 
-  const openProcess = (id) => {
+  // 공정 설명 화면으로 옮깁니다.
+  const goProcess = (id) => {
     setProcessId(id)
     setQueryKey((key) => key + 1)
     setScreen('query', id)
   }
+  // 진행 중인 화면(문제풀이·설비 실습·시나리오 등)에서는 화면을 옮기지 않고 설명 미리보기 창을 띄웁니다.
+  // 학습 화면(이론 학습·공정 검색·흐름도)에서는 지금처럼 설명 화면으로 옮깁니다.
+  const openProcess = (id) => (PEEK_SCREENS.has(screen) ? openPeek(id) : goProcess(id))
 
   // 다른 화면(시험 해설 등)에서 특정 장비 시뮬레이터를 바로 엽니다.
   const openMachine = (id) => {
@@ -195,7 +205,7 @@ export default function App() {
   // 공부 일정의 단원 열기: 공정 상세 / 영상 강의 단원 / 다른 화면
   const openUnit = (unit) => {
     const go = unit.go
-    if (go.kind === 'process') openProcess(go.id)
+    if (go.kind === 'process') goProcess(go.id)
     else if (go.kind === 'course') {
       writeStored(courseStorageKey(go.course), go.lesson)
       setScreen(go.course === 'basics' ? 'basics' : COURSES[go.course].screen)
@@ -390,6 +400,7 @@ export default function App() {
 
       </div>
 
+      <ProcessPeek onNavigate={goProcess} />
       <SelectionToNote currentRef={currentRef} />
       <FloatDock currentRef={currentRef} onOpenProcess={openProcess} onOpenMachine={openMachine} />
     </div>
