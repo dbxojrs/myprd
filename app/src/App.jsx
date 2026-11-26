@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { findPackage } from './data/packages.js'
 import { findProcess } from './data/processes.js'
 import { useStoredState } from './lib/storage.js'
@@ -40,26 +40,37 @@ import { setUi, useUi } from './lib/uiOpen.js'
 import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
+import { pushNav, readHash, replaceNav, useBackLayer } from './lib/nav.js'
 
 export default function App() {
-  // 지금 보는 화면은 이 탭(sessionStorage)에만 기억합니다. 새로고침하면 보던 화면으로 돌아오고, 새 탭은 홈부터.
-  const [screen, setScreenState] = useState(() => {
+  // 지금 보는 화면은 주소(#/화면)와 이 탭(sessionStorage)에 기억합니다. 새로고침하면 보던 화면으로 돌아오고, 새 탭은 홈부터.
+  // 화면을 옮길 때마다 브라우저 기록을 남겨, "뒤로 가기"가 앱 안의 이전 화면으로 갑니다(lib/nav.js).
+  const [initial] = useState(() => {
+    const fromHash = readHash()
+    if (fromHash) return fromHash
     try {
-      return sessionStorage.getItem('tutor-screen') || 'home'
+      return { screen: sessionStorage.getItem('tutor-screen') || 'home', processId: null }
     } catch {
-      return 'home'
+      return { screen: 'home', processId: null }
     }
   })
-  const setScreen = (next) => {
-    setScreenState(next)
+  const [screen, setScreenState] = useState(initial.screen)
+  const [packageId, setPackageId] = useState(null)
+  const [processId, setProcessId] = useState(initial.processId)
+  const processRef = useRef(processId)
+  processRef.current = processId
+  const remember = (next) => {
     try {
       sessionStorage.setItem('tutor-screen', next)
     } catch {
       // 저장 못 해도 화면 이동에는 영향 없음
     }
   }
-  const [packageId, setPackageId] = useState(null)
-  const [processId, setProcessId] = useState(null)
+  const setScreen = (next, pid = processId) => {
+    setScreenState(next)
+    remember(next)
+    pushNav({ screen: next, processId: pid })
+  }
   const [lineProcessId, setLineProcessId] = useState(null)
   const [queryKey, setQueryKey] = useState(0)
   const [machineFocus, setMachineFocus] = useState(null)
@@ -78,6 +89,24 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [screen])
+  // 메뉴 서랍은 뒤로 가기로 닫습니다.
+  useBackLayer(navOpen, () => setNavOpen(false), 'nav', { transient: true })
+  // 처음 열 때 지금 화면을 기록에 적고, 뒤로·앞으로 가기를 하면 그 기록의 화면으로 돌아갑니다.
+  useEffect(() => {
+    if (!history.state?.tutor) replaceNav({ screen: initial.screen, processId: initial.processId })
+    const onPop = (event) => {
+      const st = event.state?.tutor ? event.state : readHash()
+      if (!st) return
+      setScreenState(st.screen)
+      remember(st.screen)
+      if (st.screen === 'query' && st.processId) {
+        if (processRef.current !== st.processId) setQueryKey((key) => key + 1)
+        setProcessId(st.processId)
+      }
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [initial])
   // 어디서든 노트를 "페이지로 열기"하면 내 노트 화면으로 옮깁니다.
   const { pageId } = useEdit()
   useEffect(() => {
@@ -114,7 +143,7 @@ export default function App() {
   const openProcess = (id) => {
     setProcessId(id)
     setQueryKey((key) => key + 1)
-    setScreen('query')
+    setScreen('query', id)
   }
 
   // 다른 화면(시험 해설 등)에서 특정 장비 시뮬레이터를 바로 엽니다.
@@ -266,7 +295,10 @@ export default function App() {
               markActive()
               setCompleted((list) => (list.includes(id) ? list : [...list, id]))
             }}
-            onOpenProcess={setProcessId}
+            onOpenProcess={(id) => {
+              setProcessId(id)
+              pushNav({ screen: 'query', processId: id })
+            }}
             onOpenMap={() => setScreen('map')}
             onOpenCourse={openCourse}
             onOpenField={openField}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useBackLayer } from '../../lib/nav.js'
 import { DIFFICULTIES, FIELD_CASES, FIELD_PROCESSES, findFieldCase, PLANNED_CASES } from '../../data/fieldCases/index.js'
 import { findSource } from '../../data/sourceCatalog.js'
 import { evaluate, finishRun, grade, HINT_PENALTY, newRun, resetRun, saveRun, useField } from '../../lib/fieldSim.js'
@@ -33,6 +34,11 @@ export default function FieldSim({ tab = 'ALL', onOpenProcess, onOpenMachine, on
     window.scrollTo({ top: 0 })
   }
   const c = findFieldCase(openId)
+  // 시나리오를 열면 기록을 하나 쌓아, 뒤로 가기로 시나리오 목록에 돌아옵니다.
+  useBackLayer(!!c, () => {
+    setOpenId(null)
+    writeStored('tutor.field.open', null)
+  }, 'field-case')
   if (c) return <FieldRun key={c.id} c={c} saved={field[c.id]} onBack={() => open(null)} onOpenCase={open} onOpenProcess={onOpenProcess} onOpenMachine={onOpenMachine} onGo={onGo} />
 
   const TABS = [
