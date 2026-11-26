@@ -1,0 +1,237 @@
+// CMP 장비 규칙표. 형식은 data/machineSim.js 머리 주석을 보세요.
+// 인용문(cite)은 출처 원문을 내려받아 그대로 있는지 대조했습니다(2026-11-26). 원인과 결과를 잇는 부분 중 출처에 없는 것은 "교육용 가설"로 적습니다.
+const PRESTON = '"MRR = KPV" (깎이는 속도 = 계수 × 압력 × 상대 속도)'
+const OVERPOLISH = '"“over-polish” to ensure clearing of the copper and barrier ... during which time substantial dishing and erosion may take place"'
+
+export default {
+  id: 'cmp',
+  processId: 'cmp',
+  stage: 'front',
+  sources: {
+    seoCmp: {
+      title: 'A review on chemical and mechanical phenomena at the wafer interface during chemical mechanical planarization',
+      publisher: 'Journal of Materials Research (2020), CC BY 4.0',
+      url: 'https://www.cambridge.org/core/journals/journal-of-materials-research/article/review-on-chemical-and-mechanical-phenomena-at-the-wafer-interface-during-chemical-mechanical-planarization/F53CF209A1FD6CA18FFF50631A0CC654',
+    },
+    mitCmp: {
+      title: 'Pattern Dependent Modeling for CMP Optimization and Control',
+      publisher: 'MIT Microsystems Technology Laboratories (MRS 1999 Proceedings)',
+      url: 'https://boning.mit.edu/wp-content/uploads/2022/11/MRS99-reprint.pdf',
+    },
+    sandiaCmp: {
+      title: 'Designing for Chemical-Mechanical-Polishing (SAND2016-3854B)',
+      publisher: 'Sandia National Laboratories (OSTI)',
+      url: 'https://www.osti.gov/servlets/purl/1574644',
+    },
+    hynixCleanCmp: {
+      title: 'Creating Defectless Wafers: A Look at CLEAN & CMP Technology',
+      publisher: 'SK hynix Newsroom',
+      url: 'https://news.skhynix.com/en/creating-defectless-wafers-a-look-at-clean-cmp-technology/',
+    },
+  },
+  name: 'CMP 장비 (화학적 기계적 연마)',
+  reviewed: false,
+  conditions: [
+    {
+      id: 'film',
+      name: { en: 'Film to Polish', ko: '연마할 막' },
+      levels: [
+        { label: '절연막 (산화막)', pct: 30 },
+        { label: '구리 배선 (다마신)', pct: 70 },
+      ],
+      best: 0,
+    },
+    {
+      id: 'density',
+      name: { en: 'Pattern Density', ko: '패턴 밀도' },
+      levels: [
+        { label: '고름', pct: 30 },
+        { label: '촘촘한 영역 있음', pct: 80 },
+      ],
+      best: 0,
+    },
+    {
+      id: 'slurry',
+      name: { en: 'Slurry Condition', ko: '슬러리 상태' },
+      levels: [
+        { label: '정상', pct: 100 },
+        { label: '큰 입자 섞임', pct: 20 },
+      ],
+      best: 0,
+    },
+  ],
+  controls: [
+    {
+      id: 'pressure',
+      name: { en: 'Down Force', ko: '누르는 압력' },
+      levels: [
+        { label: '낮음', example: '1 psi', pct: 20, sourced: { value: '깎이는 속도 ↓ (압력에 비례)', src: 'seoCmp', cite: PRESTON } },
+        { label: '적정', example: '3 psi', pct: 50 },
+        { label: '높음', example: '6 psi', pct: 90, sourced: { value: '깎이는 속도 ↑ (압력에 비례)', src: 'seoCmp', cite: PRESTON } },
+      ],
+      best: 1,
+    },
+    {
+      id: 'speed',
+      name: { en: 'Platen Speed', ko: '회전 속도' },
+      levels: [
+        { label: '느림', example: '30 rpm', pct: 20, sourced: { value: '깎이는 속도 ↓ (속도에 비례)', src: 'seoCmp', cite: PRESTON } },
+        { label: '적정', example: '80 rpm', pct: 50 },
+        { label: '빠름', example: '120 rpm', pct: 85, sourced: { value: '깎이는 속도 ↑ (속도에 비례)', src: 'seoCmp', cite: PRESTON } },
+      ],
+      best: 1,
+    },
+    {
+      id: 'time',
+      name: { en: 'Polish Time', ko: '연마 시간' },
+      levels: [
+        { label: '짧게', example: '30초', pct: 20 },
+        { label: '적정', example: '60초', pct: 50 },
+        { label: '과연마', example: '120초', pct: 95 },
+      ],
+      best: 1,
+    },
+    {
+      id: 'flow',
+      name: { en: 'Slurry Supply', ko: '슬러리 공급' },
+      levels: [
+        { label: '끊김', pct: 0 },
+        { label: '정상', pct: 70 },
+      ],
+      best: 1,
+    },
+    {
+      id: 'post',
+      name: { en: 'Post-CMP Clean', ko: 'CMP 후 세정' },
+      levels: [
+        { label: '생략', pct: 0 },
+        { label: '브러시 세정 + 건조', pct: 100 },
+      ],
+      best: 1,
+    },
+  ],
+  actions: [{ id: 'slurry', label: '슬러리 교체', needs: { slurry: 1 }, sets: { slurry: 0 }, log: '큰 입자가 섞인 슬러리를 버리고 새 슬러리로 바꿈' }],
+  rules: [
+    {
+      when: { flow: [0] },
+      severity: 'alarm',
+      at: 'polish',
+      title: '슬러리 공급 끊김 · 연마 정지',
+      cause: '슬러리 없이 기계적으로만 갈면 CMP보다 표면 손상이 크고 막 종류를 가려 깎지 못합니다.',
+      fix: '슬러리 공급을 "정상"으로 되돌립니다.',
+      src: 'sandiaCmp',
+      cite: '"mechanical grinding alone ... the surface damage is high as compared to CMP". 정지 동작은 교육용 가설(검수 전)',
+    },
+    {
+      when: { slurry: [1] },
+      severity: 'bad',
+      title: '스크래치(긁힘) 불량',
+      cause: '슬러리는 표면 긁힘을 막는 역할을 하는데, 상태가 나쁜 슬러리로 갈면 긁힘이 생깁니다. 큰 입자가 원인이라는 연결은 교육용 가설입니다.',
+      fix: '"슬러리 교체" 후 다시 연마합니다.',
+      src: 'hynixCleanCmp',
+      cite: '"A chemical slurry is used ... to prevent any scratches", "CMP Scratch (CMSC) defects generated in the CMP process"',
+    },
+    {
+      when: { time: [2], film: [1] },
+      severity: 'bad',
+      title: '디싱: 구리 배선이 오목하게 패임',
+      cause: '구리·배리어를 확실히 걷어 내려고 오래 갈면(과연마) 구리 배선이 접시처럼 패입니다.',
+      fix: '연마 시간을 "적정"으로 줄입니다.',
+      src: 'mitCmp',
+      cite: OVERPOLISH,
+    },
+    {
+      when: { time: [2], density: [1] },
+      severity: 'bad',
+      title: '이로전: 촘촘한 영역의 막이 함께 깎임',
+      cause: '배선이 촘촘한 영역에서는 과연마 때 배선 사이 절연막까지 깎여 나갑니다.',
+      fix: '연마 시간을 "적정"으로 줄입니다.',
+      src: 'mitCmp',
+      cite: '"the erosion of supporting oxide or dielectric spaces in arrays between lines"',
+    },
+    {
+      when: { time: [1], pressure: [2], speed: [2], film: [1] },
+      severity: 'warn',
+      title: '압력·속도가 모두 높아 과연마에 가까움',
+      cause: '깎이는 속도는 압력과 속도에 비례하므로, 둘 다 높이면 같은 시간에도 훨씬 많이 깎여 디싱 위험이 커집니다.',
+      fix: '압력이나 회전 속도를 "적정"으로 낮춥니다.',
+      src: 'seoCmp',
+      cite: `${PRESTON}. 디싱 위험으로 잇는 부분은 교육용 가설(검수 전)`,
+    },
+    {
+      when: { time: [0], film: [1] },
+      severity: 'bad',
+      title: '구리 잔막: 넘친 구리가 덜 걷힘',
+      cause: '다마신은 넘친 구리와 배리어를 모두 걷어 내야 배선이 나뉩니다. 너무 짧게 갈면 구리가 남아 배선끼리 이어질 수 있습니다.',
+      fix: '연마 시간을 "적정"으로 늘립니다.',
+      src: 'sandiaCmp',
+      cite: '"using CMP to polish away excess overlaying material". 배선끼리 이어진다는 결과는 교육용 가설(검수 전)',
+    },
+    {
+      when: { time: [0], pressure: [0] },
+      severity: 'warn',
+      title: '평탄화 부족: 단차가 남음',
+      cause: '압력이 낮으면 깎이는 속도가 느린데 시간까지 짧아 튀어나온 곳이 다 깎이지 않습니다.',
+      fix: '연마 시간이나 압력을 "적정"으로 올립니다.',
+      src: 'seoCmp',
+      cite: `${PRESTON}. 단차가 남는다는 결과는 교육용 가설(검수 전)`,
+    },
+    {
+      when: { density: [1], time: [1] },
+      severity: 'warn',
+      title: '패턴 밀도 차이로 남은 두께가 지역마다 다름',
+      cause: '패턴 밀도에 따라 평탄화되는 정도가 달라, 칩 안에서도 남는 막 두께가 지역마다 달라질 수 있습니다.',
+      fix: '설계에서 밀도를 고르게(더미 패턴 등) 하는 방법이 연구됩니다. 측정으로 지역별 두께를 확인하세요.',
+      src: 'mitCmp',
+      cite: '"global nonplanarity across the chip resulting from pattern density dependent planarization". 조치 문장은 교육용 가설(검수 전)',
+    },
+    {
+      when: { post: [0] },
+      severity: 'bad',
+      title: '잔류 입자·이물 불량',
+      cause: '남은 입자·이물·긁힘·부식 같은 결함은 연마 중에 모두 막을 수 없어 CMP 후 세정이 꼭 필요합니다.',
+      fix: 'CMP 후 세정을 "브러시 세정 + 건조"로 바꿉니다.',
+      src: 'seoCmp',
+      cite: '"post-CMP cleaning has become essential ... (e.g., residual particles, foreign materials, scratches, and corrosion)"',
+    },
+  ],
+  metrics: [
+    { id: 'throughput', name: '처리 속도', good: 'high', base: 5, add: { pressure: [0, 25, 40], speed: [0, 20, 30], time: [30, 15, 0], post: [10, 0] } },
+    { id: 'removal', name: '깎인 양 지수', good: 'mid', base: 0, add: { pressure: [5, 20, 35], speed: [5, 20, 30], time: [5, 25, 45] } },
+    { id: 'flatness', name: '평탄도', good: 'high', base: 60, add: { time: [-30, 20, -10], density: [0, -25], pressure: [-10, 10, 0] } },
+    { id: 'defect', name: '결함 위험', good: 'low', base: 5, add: { slurry: [0, 50], post: [40, 0], flow: [60, 0], time: [0, 0, 20] } },
+  ],
+  sequence: [
+    { id: 'load', text: '웨이퍼 로딩 · 헤드가 뒤집어 잡기', scene: '헤드가 웨이퍼 앞면이 아래로 가게 잡습니다.' },
+    { id: 'polish', text: '연마: {pressure} · {speed} · 슬러리 {flow}', scene: '회전하는 패드 위에 웨이퍼를 누르고 슬러리를 뿌려 갈아 냅니다.' },
+    { id: 'over', text: '마무리 연마: {time}', scene: '남은 막을 걷어 냅니다. 너무 오래 갈면 디싱·이로전이 생깁니다.' },
+    { id: 'clean', text: 'CMP 후 세정: {post}', scene: '브러시로 남은 슬러리·입자를 씻고 말립니다.' },
+    { id: 'measure', text: '두께·평탄도 측정', scene: '남은 막 두께와 평탄도를 재서 목표와 비교합니다.' },
+  ],
+  scenarios: [
+    {
+      id: 'dishing',
+      title: '구리 배선 디싱',
+      brief: '다마신 구리 배선이 오목하게 패였다는 보고입니다. 조건을 점검해 정상으로 만드세요.',
+      preset: { film: 1, time: 2 },
+      goal: { maxGrade: 'good' },
+      hint: '구리를 확실히 걷어 내려는 단계가 길어지면 무슨 일이 생길까요?',
+    },
+    {
+      id: 'scratch',
+      title: '스크래치 불량 급증',
+      brief: '연마 후 긁힘 결함이 갑자기 늘었습니다. 원인을 찾아 정상으로 연마하세요.',
+      preset: { slurry: 1 },
+      goal: { maxGrade: 'good' },
+      hint: '긁힘을 막는 역할을 하는 것은 무엇이었나요?',
+    },
+    {
+      id: 'fast',
+      title: '빨리, 하지만 디싱 없이',
+      brief: '구리 배선 로트의 처리 속도를 75 이상으로 올리되 경고 없이 마치세요.',
+      preset: { film: 1 },
+      goal: { maxGrade: 'good', metric: { throughput: 75 } },
+      hint: '프레스턴 식: 압력과 속도 중 하나만 올려 보세요.',
+    },
+  ],
+}

@@ -373,7 +373,7 @@ export default function MachineSim({ onOpenProcess, initialId = null, area = nul
           ))}
         </div>
         {/* 숫자 표시 방식은 자주 바꾸지 않아 "보기 설정"으로 접어 둡니다. */}
-        <details className="ms-view">
+        <details className="ms-viewset">
           <summary>
             숫자 표시: <strong>{DISPLAY_MODES.find((d) => d.id === display).label}</strong> · {DISPLAY_MODES.find((d) => d.id === display).note}
           </summary>

@@ -5777,10 +5777,10 @@ button { min-height: 36px; }
 .dash-step-n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 
 /* 설비 실습: 숫자 표시 방식 접기 */
-.ms-view { font-size: 13.5px; color: var(--muted); }
-.ms-view summary { cursor: pointer; width: fit-content; padding: 4px 0; }
-.ms-view summary strong { color: var(--text); font-weight: 600; }
-.ms-view[open] .button-row { margin-top: 6px; }
+.ms-viewset { font-size: 13.5px; color: var(--muted); }
+.ms-viewset summary { cursor: pointer; width: fit-content; padding: 4px 0; }
+.ms-viewset summary strong { color: var(--text); font-weight: 600; }
+.ms-viewset[open] .button-row { margin-top: 6px; }
 
 /* 문제은행 근거 출처 */
 .quiz-cite { font-size: 13px; color: var(--muted); margin: 6px 0; }
@@ -5800,3 +5800,22 @@ button { min-height: 36px; }
   .topbar-title .crumb { display: none; }
   .topbar-title strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 }
+
+/* CMP·세정 장비 그림 (components/machines/CmpView·CleanView) */
+.ms-cmp-pad { fill: color-mix(in srgb, var(--accent) 22%, var(--surface)); stroke: var(--muted); stroke-width: 0.8; }
+.ms-cmp-groove { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 5; }
+.ms-cmp-groove.run { animation: ms-flow var(--dur, 1.3s) linear infinite; }
+.ms-cmp-press { transform-box: fill-box; }
+.ms-cmp-press.run { animation: ms-cmp-press 1.4s ease-in-out infinite; }
+.ms-cmp-press.low.run { animation-duration: 2s; }
+.ms-cmp-press.high.run { animation-duration: 0.9s; }
+@keyframes ms-cmp-press { 0%, 100% { transform: translateY(-6px); } 50% { transform: translateY(2px); } }
+.ms-cmp-drop { animation: ms-cmp-drop 0.9s ease-in infinite; }
+@keyframes ms-cmp-drop { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
+.ms-cmp-brush { animation: ms-slide 1.2s ease-in-out infinite alternate; }
+.ms-cmp-spinline { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
+.ms-cmp-spinline.run { animation: ms-flow 0.6s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ms-cmp-groove.run, .ms-cmp-press.run, .ms-cmp-drop, .ms-cmp-brush, .ms-cmp-spinline.run { animation: none; }
+}
+.ms-cl-water { fill: var(--accent); }

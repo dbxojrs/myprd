@@ -5,6 +5,8 @@ import etch from './etch.js'
 import deposition from './deposition.js'
 import ionImplant from './ionImplant.js'
 import metallization from './metallization.js'
+import cleaning from './cleaning.js'
+import cmp from './cmp.js'
 import backgrind from './backgrind.js'
 import waferSaw from './waferSaw.js'
 import dieAttach from './dieAttach.js'
@@ -14,4 +16,4 @@ import marking from './marking.js'
 import packageSaw from './packageSaw.js'
 import test from './test.js'
 
-export default [oxidation, photo, etch, deposition, ionImplant, metallization, backgrind, waferSaw, dieAttach, wireBond, molding, marking, packageSaw, test]
+export default [oxidation, photo, etch, deposition, ionImplant, metallization, cleaning, cmp, backgrind, waferSaw, dieAttach, wireBond, molding, marking, packageSaw, test]
