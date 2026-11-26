@@ -29,15 +29,48 @@ export default function StudyPlan({ completed, onOpenUnit }) {
   return <PlanCalendar plan={plan} completed={completed} onOpenUnit={onOpenUnit} />
 }
 
+// 오늘부터 goal까지(포함) 공부 요일이 며칠인지
+const studyDaysUntil = (today, goalYmd, days) => {
+  let n = 0
+  for (let d = new Date(today); ymd(d) <= goalYmd; d = addDays(d, 1)) if (days.includes(d.getDay())) n += 1
+  return n
+}
+// 하루 minutes분씩 공부 요일에만 할 때 total분을 마치는 날
+const finishDate = (today, total, minutes, days) => {
+  if (!days.length) return null
+  let left = total
+  let d = new Date(today)
+  for (let guard = 0; guard < 3660; guard += 1, d = addDays(d, 1)) {
+    if (days.includes(d.getDay())) left -= minutes
+    if (left <= 0) return ymd(d)
+  }
+  return null
+}
+
+// 목표일 정하는 방법: 내 속도로(공부 시간으로 계산) / 기간으로 / 면접·시험 날짜
+const GOAL_MODES = [
+  { id: 'pace', label: '내 속도로', hint: '공부 요일·시간으로 끝나는 날을 계산해요' },
+  { id: 'weeks', label: '기간으로', hint: '몇 주 안에 끝낼지 골라요' },
+  { id: 'date', label: '면접·시험 날짜가 있어요', hint: '그 날짜에 맞춰 나눠요' },
+]
+const WEEK_CHOICES = [2, 4, 8, 12]
+
 function PlanSetup({ initial, onDone }) {
   const today = new Date()
   const [title, setTitle] = useState(initial?.title ?? '반도체 공정 공부 끝내기')
-  const [goal, setGoal] = useState(initial?.goal ?? ymd(addDays(today, 28)))
+  const [mode, setMode] = useState(initial ? 'date' : 'pace')
+  const [weeks, setWeeks] = useState(null)
+  const [pickedDate, setPickedDate] = useState(initial?.goal ?? '')
   const [days, setDays] = useState(initial?.days ?? [1, 2, 3, 4, 5])
   const [minutes, setMinutes] = useState(initial?.minutes ?? 60)
   const total = allUnits().reduce((s, u) => s + u.min, 0)
   const toggle = (d) => setDays((list) => (list.includes(d) ? list.filter((x) => x !== d) : [...list, d].sort()))
-  const valid = goal >= ymd(today) && days.length > 0
+  const paceGoal = finishDate(today, total, minutes, days)
+  const goal = mode === 'pace' ? paceGoal : mode === 'weeks' ? (weeks ? ymd(addDays(today, weeks * 7)) : '') : pickedDate
+  const valid = !!goal && goal >= ymd(today) && days.length > 0
+  // 고른 날짜까지 끝내려면 하루에 몇 분이 필요한지
+  const studyDays = valid ? studyDaysUntil(today, goal, days) : 0
+  const needPerDay = studyDays ? Math.ceil(total / studyDays) : null
 
   return (
     <section className="screen plan">
@@ -59,10 +92,29 @@ function PlanSetup({ initial, onDone }) {
           <span>목표 이름</span>
           <input className="wq-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 삼성 패키징 직무 면접" />
         </label>
-        <label className="quiz-field">
-          <span>목표 날짜</span>
-          <input className="wq-input" type="date" value={goal} min={ymd(today)} onChange={(e) => setGoal(e.target.value)} />
-        </label>
+        <div className="quiz-field">
+          <span>언제까지 끝낼까요?</span>
+          <div className="button-row" role="radiogroup" aria-label="목표일 정하는 방법">
+            {GOAL_MODES.map((m) => (
+              <button key={m.id} type="button" role="radio" aria-checked={mode === m.id} className={mode === m.id ? 'subtab active' : 'subtab'} onClick={() => setMode(m.id)}>
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <small className="muted">{GOAL_MODES.find((m) => m.id === mode).hint}</small>
+          {mode === 'weeks' && (
+            <div className="button-row" role="radiogroup" aria-label="기간">
+              {WEEK_CHOICES.map((w) => (
+                <button key={w} type="button" role="radio" aria-checked={weeks === w} className={weeks === w ? 'subtab active' : 'subtab'} onClick={() => setWeeks(w)}>
+                  {w}주
+                </button>
+              ))}
+            </div>
+          )}
+          {mode === 'date' && (
+            <input className="wq-input" type="date" value={pickedDate} min={ymd(today)} aria-label="면접·시험 날짜" onChange={(e) => setPickedDate(e.target.value)} />
+          )}
+        </div>
         <div className="quiz-field">
           <span>공부하는 요일</span>
           <div className="button-row" role="group" aria-label="공부하는 요일">
@@ -83,6 +135,17 @@ function PlanSetup({ initial, onDone }) {
             ))}
           </div>
         </div>
+        <p className={`plan-preview${valid && needPerDay > minutes ? ' warn' : ''}`} role="status">
+          {!days.length
+            ? '공부할 요일을 하루 이상 골라 주세요.'
+            : !valid
+              ? mode === 'weeks'
+                ? '기간을 골라 주세요.'
+                : '날짜를 골라 주세요.'
+              : needPerDay > minutes
+                ? `${goal}까지 끝내려면 공부하는 날마다 약 ${needPerDay}분이 필요해요. 지금 정한 ${minutes}분으로는 부족하니 시간·요일을 늘리거나 날짜를 미뤄 보세요.`
+                : `목표일 ${goal} (D-${dday(goal, today)}) · 공부하는 날 ${studyDays}일 · 하루 약 ${needPerDay}분이면 ${allUnits().length}개 단원을 끝낼 수 있어요.`}
+        </p>
         <div className="button-row">
           <button type="submit" className="primary" disabled={!valid}>
             {initial ? '저장하고 다시 나누기' : '일정 만들기'}
