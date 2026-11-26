@@ -276,7 +276,65 @@ function Metal({ values, result }) {
   )
 }
 
-const BY_ID = { oxidation: Oxidation, photo: Photo, etch: Etch, deposition: Deposition, 'ion-implant': Implant, metallization: Metal }
+// CMP: 절연막 홈에 채운 구리를 갈아 배선만 남깁니다. 결과(findings)에 따라 디싱·이로전·잔막·긁힘·잔류 입자를 그립니다.
+function Cmp({ values, result }) {
+  const m = result.metrics
+  const ox = 34
+  const top = SI_TOP - ox
+  const copper = values.film === 1
+  const dense = values.density === 1
+  const dishing = has(result, '디싱')
+  const erosion = has(result, '이로전')
+  const residue = has(result, '잔막')
+  const scratch = has(result, '스크래치')
+  const particles = has(result, '잔류')
+  const step = has(result, '평탄화 부족')
+  // 왼쪽: 넓은 배선 1개, 오른쪽: 촘촘한 배선 4개(밀도 차이를 보여 줌)
+  const wide = { x: 40, w: 90 }
+  const fine = dense ? [190, 214, 238, 262] : [196, 250]
+  const fw = dense ? 14 : 22
+  const ero = erosion ? 10 : 0
+  return (
+    <Base result={result} label={`CMP 단면: 평탄도 ${m.flatness}, 깎인 양 지수 ${m.removal}${dishing ? ', 디싱' : ''}${erosion ? ', 이로전' : ''}${residue ? ', 구리 잔막' : ''}`}>
+      {/* 절연막: 촘촘한 영역은 이로전이면 낮아짐 */}
+      <rect x="10" y={top} width={170} height={ox} className="ws-oxide" />
+      <rect x="180" y={top + ero} width={W - 190} height={ox - ero} className="ws-oxide" />
+      {step && <path d={`M10 ${top} h40 l8 -8 h80 l8 8`} className="ws-oxide" />}
+      {copper ? (
+        <g>
+          {/* 넓은 배선: 디싱이면 가운데가 오목 */}
+          <path
+            d={`M${wide.x} ${SI_TOP} V${top} ${dishing ? `Q${wide.x + wide.w / 2} ${top + 14} ${wide.x + wide.w} ${top}` : `H${wide.x + wide.w}`} V${SI_TOP} Z`}
+            className="ws-metal"
+          />
+          {fine.map((x) => (
+            <rect key={x} x={x} y={top + ero} width={fw} height={ox - ero} className="ws-metal" />
+          ))}
+          {residue && <rect x="10" y={top - 5} width={W - 20} height="5" className="ws-metal" opacity="0.75" />}
+        </g>
+      ) : (
+        <rect x="10" y={top - 6} width={W - 20} height="6" className="ws-oxide" />
+      )}
+      {scratch && <path d={`M60 ${top + 1} l40 2 M200 ${top + ero + 1} l50 -1`} className="ws-damage" />}
+      {particles && dotsIn(30, 290, top - 8, top - 3, 6, 'ws-dirt')}
+      <text x={wide.x + wide.w / 2} y={top - 10} textAnchor="middle" className="ws-tag">
+        {copper ? (dishing ? '넓은 배선: 디싱(오목)' : '넓은 배선') : '절연막 평탄화'}
+      </text>
+      {copper && (
+        <text x={235} y={top - 10} textAnchor="middle" className="ws-tag">
+          {dense ? (erosion ? '촘촘한 영역: 이로전' : '촘촘한 영역') : '좁은 배선'}
+        </text>
+      )}
+      {residue && (
+        <text x={W / 2} y={top - 22} textAnchor="middle" className="ws-tag">
+          구리가 덜 걷혀 위를 덮음
+        </text>
+      )}
+    </Base>
+  )
+}
+
+const BY_ID = { oxidation: Oxidation, photo: Photo, etch: Etch, deposition: Deposition, 'ion-implant': Implant, metallization: Metal, cmp: Cmp }
 
 export const WaferSection = memo(function WaferSection({ machineId, values, result }) {
   const Comp = BY_ID[machineId]

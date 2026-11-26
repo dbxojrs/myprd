@@ -8,7 +8,7 @@ import { markActive } from '../../lib/activity.js'
 import { WaferSection } from './WaferSection.jsx'
 import { sourceTier, TIER_LABEL } from '../../lib/sourceTier.js'
 
-// FAB 공정 시뮬레이션: 전공정 6단계(산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선)의 조건을 바꾸며 웨이퍼 단면이 어떻게 달라지는지 봅니다.
+// FAB 공정 시뮬레이션: 전공정 7단계(산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선 → CMP)의 조건을 바꾸며 웨이퍼 단면이 어떻게 달라지는지 봅니다.
 // 판정은 설비 규칙표(data/machines/*.js)와 라인 연결 규칙(data/machineLine.js)으로만 계산합니다(AI·무작위 없음). 모두 검수 전입니다.
 // 설비 실습(장비 조작)과 같은 규칙을 공정·웨이퍼 관점에서 보는 화면입니다.
 
@@ -162,7 +162,7 @@ function ProcessPanel({ machine, values, setValues, locked = [], onOpenProcess, 
   )
 }
 
-// 6단계 단면 띠(지나온 단계 · 지금 단계 · 남은 단계)
+// 7단계 단면 띠(지나온 단계 · 지금 단계 · 남은 단계)
 function Strip({ ids, lot, currentId, liveValues }) {
   return (
     <ol className="fs-strip" aria-label="공정 단계">
@@ -223,12 +223,12 @@ export default function FabProcessSim({ onOpenProcess, onOpenMachine }) {
     <section className="screen fabsim">
       <h2>FAB 공정 시뮬레이션</h2>
       <p className="muted">
-        전공정 6단계의 조건을 바꾸며 웨이퍼 단면과 불량이 어떻게 달라지는지 봅니다. 판정은 설비 실습과 같은 규칙표로만 계산하고, 규칙마다 근거(출처 또는 "교육용 가설")를 함께 보여 줍니다. 모든 내용은 검수 전입니다.
+        전공정 7단계의 조건을 바꾸며 웨이퍼 단면과 불량이 어떻게 달라지는지 봅니다. 판정은 설비 실습과 같은 규칙표로만 계산하고, 규칙마다 근거(출처 또는 "교육용 가설")를 함께 보여 줍니다. 모든 내용은 검수 전입니다.
       </p>
       <div className="tabs" role="tablist">
         {[
           ['unit', '단위 공정'],
-          ['flow', '전체 흐름 (6공정 연결)'],
+          ['flow', '전체 흐름 (7공정 연결)'],
         ].map(([id, label]) => (
           <button key={id} type="button" role="tab" aria-selected={mode === id} className={`tab${mode === id ? ' tab-active' : ''}`} onClick={() => pickMode(id)}>
             {label}

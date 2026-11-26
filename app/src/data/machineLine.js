@@ -11,8 +11,8 @@ export const LINES = [
   {
     id: 'front',
     name: '전공정 라인',
-    desc: '산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선 장비를 이어서 돌립니다.',
-    machines: ['oxidation', 'photo', 'etch', 'deposition', 'ion-implant', 'metallization'],
+    desc: '산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선 → CMP 장비를 이어서 돌립니다.',
+    machines: ['oxidation', 'photo', 'etch', 'deposition', 'ion-implant', 'metallization', 'cmp'],
   },
   {
     id: 'back',
@@ -186,5 +186,34 @@ export const handoffs = [
     final: { grade: 'bad', text: '배선 저항이 높거나 비아가 이어지지 않아 신호가 제대로 전달되지 않습니다.' },
     note: '금속 배선 불량 → 신호 전달 불량',
     basis: '공정 데이터: 금속 배선은 전기가 통하는 길',
+  },
+  {
+    from: 'metallization',
+    to: 'cmp',
+    when: {},
+    sets: { film: 1 },
+    note: '금속 배선에서 금속을 넘치게 채운 웨이퍼 → CMP 장비에 "구리 배선(다마신)"으로 도착(교육용 단순화)',
+    basis: 'SK하이닉스 뉴스룸: 구리는 홈을 판 뒤 채우고 넘친 구리를 갈아냄 · Sandia CMP 설계 문서: 넘친 재료를 CMP로 갈아내는 다마신',
+  },
+  {
+    from: 'cmp',
+    when: { titles: ['디싱', '이로전'] },
+    final: { grade: 'bad', text: '배선이 패이거나 촘촘한 영역의 막이 함께 깎여, 칩 안에서 남는 두께가 고르지 않습니다.' },
+    note: 'CMP 과연마 → 디싱·이로전',
+    basis: 'MIT CMP 패턴 의존 모델 논문: 과연마 때 디싱·이로전이 크게 생기고, 칩 전체 평탄도가 핵심 관심사',
+  },
+  {
+    from: 'cmp',
+    when: { titles: ['잔막'] },
+    final: { grade: 'bad', text: '넘친 구리가 덜 걷혀 배선끼리 이어질 수 있습니다(교육용 가설).' },
+    note: 'CMP 연마 부족 → 구리 잔막',
+    basis: 'Sandia CMP 설계 문서: 다마신은 넘친 재료를 CMP로 갈아냄. 배선끼리 이어진다는 결과는 교육용 가설(검수 전)',
+  },
+  {
+    from: 'cmp',
+    when: { titles: ['스크래치', '잔류'] },
+    final: { grade: 'warn', text: '긁힘이나 남은 입자가 다음 층에 결함으로 남을 수 있습니다.' },
+    note: 'CMP 긁힘·잔류 입자 → 다음 층 결함 위험',
+    basis: 'Cambridge JMR CMP 리뷰: CMP 후 세정은 잔류 입자·이물·긁힘·부식 같은 결함을 없애는 필수 단계',
   },
 ]
