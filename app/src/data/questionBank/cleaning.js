@@ -1,0 +1,68 @@
+// 문제은행: 세정. data/explainers/cleaning.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'cleaning',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-cleaning-1',
+      kind: 'choice',
+      prompt: 'RCA 세정에서 염산·과산화수소·초순수를 섞은 산성 액인 SC-2는 무엇을 없애려고 쓰나요?',
+      choices: ['금속 오염', '자연산화막', '감광막', '녹지 않는 입자'],
+      answer: 0,
+      explain: 'SC-2는 염산·과산화수소·초순수를 섞은 산성 액으로, 금속 오염을 제거합니다.',
+      basis: 'SC-2는 염산·과산화수소·초순수를 섞은 산성 액으로, 금속 오염을 제거합니다.',
+      cite: ['mks-wafer-cleaning'],
+    },
+    {
+      id: 'qb-cleaning-2',
+      kind: 'choice',
+      prompt: '웨이퍼에 남은 금속 오염이 문제가 되는 까닭으로 알맞은 것은?',
+      choices: [
+        '웨이퍼 표면을 수소로 덮어 버려서',
+        '감광막을 너무 단단하게 만들어서',
+        '누설 전류를 키워 소자 성능을 떨어뜨려서',
+        '웨이퍼가 너무 빨리 말라서',
+      ],
+      answer: 2,
+      explain: '금속 오염은 누설 전류를 키워 소자 성능을 떨어뜨립니다.',
+      basis: '금속 오염은 누설 전류를 키워 소자 성능을 떨어뜨립니다.',
+      cite: ['mks-wafer-cleaning'],
+    },
+    {
+      id: 'qb-cleaning-3',
+      kind: 'ox',
+      prompt: '초임계 유체로 웨이퍼를 씻는 까닭은 초임계 유체의 표면장력이 액체 약품보다 커서이다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '액체 약품의 표면장력 때문에 여러 결함이 생깁니다. 그래서 표면장력이 없는 초임계 유체로 씻는 방법을 씁니다.',
+      basis: '액체 약품의 표면장력 때문에 여러 결함이 생기기 때문에, 표면장력이 없는 초임계 유체로 씻는 방법도 씁니다.',
+      cite: ['hynix-clean-cmp'],
+    },
+    {
+      id: 'qb-cleaning-4',
+      kind: 'choice',
+      prompt: '메가소닉 세정이 65nm 이후 첨단 공정에서 거의 쓰이지 않게 된 이유는?',
+      choices: [
+        '입자를 전혀 떼어 내지 못해서',
+        '터지는 기포가 섬세한 구조를 손상시킬 수 있어서',
+        '초순수를 쓸 수 없어서',
+        '배치식 장비에서만 쓸 수 있어서',
+      ],
+      answer: 1,
+      explain: '메가소닉에서 터지는 기포가 섬세한 구조를 손상시킬 수 있습니다. 그래서 65nm 이후 첨단 공정에서는 거의 쓰이지 않게 되었습니다.',
+      basis: '메가소닉은 터지는 기포가 섬세한 구조를 손상시킬 수 있어 65nm 이후 첨단 공정에서는 거의 쓰이지 않게 되었습니다.',
+      cite: ['semieng-cleaning-3d'],
+    },
+    {
+      id: 'qb-cleaning-5',
+      kind: 'ox',
+      prompt: '3D 구조에서는 건조 단계에서 가는 패턴이 쓰러질 위험이 커져서, IPA 건조 단계가 점점 많이 필요해졌다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: '3D 구조에서는 건조 단계가 패턴 붕괴 위험을 키웁니다. 그래서 IPA 건조 단계가 점점 많이 필요해졌습니다.',
+      basis: '3D 구조에서는 건조 단계가 가는 패턴이 쓰러지는(패턴 붕괴) 위험을 키워, IPA 건조 단계가 점점 많이 필요해졌습니다.',
+      cite: ['semieng-cleaning-3d'],
+    },
+  ],
+}
