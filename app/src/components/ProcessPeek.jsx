@@ -3,6 +3,9 @@ import { findProcess, STAGES } from '../data/processes.js'
 import { explainers } from '../data/explainers/index.js'
 import { processMovies } from '../data/processMovies/index.js'
 import { backPeek, closePeek, openPeek, usePeek } from '../lib/peek.js'
+import { findMachine } from '../data/machineSim.js'
+import { defaultValues, judge } from '../lib/machineJudge.js'
+import EquipmentTour from './EquipmentTour.jsx'
 import { useBackLayer } from '../lib/nav.js'
 import { Term } from '../lib/terms.jsx'
 import ProcessExplainer from './ProcessExplainer.jsx'
@@ -12,18 +15,21 @@ import ProcessMovie from './movie/ProcessMovie.jsx'
 // 설명 미리보기 창: 문제풀이·설비 실습처럼 진행 중인 화면에서 공정 설명을 화면 이동 없이 띄웁니다.
 // 데스크톱은 오른쪽 패널, 휴대폰은 아래에서 올라오는 시트. 닫으면 하던 화면 그대로 이어집니다.
 // 내용은 기존 데이터(processes·explainers·processMovies)와 컴포넌트를 그대로 씁니다(설명 글을 새로 쓰지 않음).
-// onNavigate: "전체 설명 페이지로 이동"(화면을 옮김). 진행 중 화면의 상태는 각 화면이 이 탭에 기억합니다.
-export default function ProcessPeek({ onNavigate }) {
+// onNavigate: "전체 설명 페이지로 이동"(화면을 옮김), onNavigateMachine: "설비 실습에서 가동해 보기". 진행 중 화면의 상태는 각 화면이 이 탭에 기억합니다.
+// 'm:장비id'면 장비 둘러보기(부위·조작 순서·결과물·용어)를 띄웁니다.
+export default function ProcessPeek({ onNavigate, onNavigateMachine }) {
   const { stack } = usePeek()
   const id = stack[stack.length - 1]
   const open = Boolean(id)
   useBackLayer(open, closePeek, 'peek', { transient: true })
   if (!open) return null
-  return <PeekDialog key={id} id={id} canBack={stack.length > 1} prevId={stack[stack.length - 2]} onNavigate={onNavigate} />
+  return <PeekDialog key={id} id={id} canBack={stack.length > 1} prevId={stack[stack.length - 2]} onNavigate={onNavigate} onNavigateMachine={onNavigateMachine} />
 }
 
-function PeekDialog({ id, canBack, prevId, onNavigate }) {
-  const process = findProcess(id)
+function PeekDialog({ id, canBack, prevId, onNavigate, onNavigateMachine }) {
+  const machineId = id.startsWith('m:') ? id.slice(2) : null
+  const machine = machineId ? findMachine(machineId) : null
+  const process = machineId ? null : findProcess(id)
   const boxRef = useRef(null)
   const titleRef = useRef(null)
   const [movie, setMovie] = useState(false)
@@ -74,7 +80,7 @@ function PeekDialog({ id, canBack, prevId, onNavigate }) {
     if (moved > 90) closePeek()
   }
 
-  const prev = prevId && findProcess(prevId)
+  const prev = prevId && (prevId.startsWith('m:') ? { name: { ko: findMachine(prevId.slice(2))?.name ?? '장비' } } : findProcess(prevId))
   const stage = process && STAGES[process.stage]
   const hasMovie = Boolean(processMovies[id])
 
@@ -83,7 +89,7 @@ function PeekDialog({ id, canBack, prevId, onNavigate }) {
       <div className="peek-scrim" onClick={closePeek} aria-hidden="true" />
       <aside
         ref={boxRef}
-        className="peek"
+        className={machine ? 'peek wide' : 'peek'}
         role="dialog"
         aria-modal="true"
         aria-labelledby="peek-title"
@@ -100,7 +106,7 @@ function PeekDialog({ id, canBack, prevId, onNavigate }) {
           )}
           <div className="peek-title-row">
             <h2 id="peek-title" ref={titleRef} tabIndex={-1}>
-              {process ? <Term value={process.name} /> : id}
+              {machine ? machine.name : process ? <Term value={process.name} /> : id}
             </h2>
             <button type="button" className="icon-btn peek-close" aria-label="설명 창 닫기" onClick={closePeek}>
               ✕
@@ -115,7 +121,8 @@ function PeekDialog({ id, canBack, prevId, onNavigate }) {
         </header>
 
         <div className="peek-body">
-          {!process && <p className="muted">이 공정의 설명을 찾지 못했습니다.</p>}
+          {machine && <MachineBody machine={machine} />}
+          {!process && !machine && <p className="muted">이 공정의 설명을 찾지 못했습니다.</p>}
           {process && (
             <>
               <p className="peek-summary">{process.summary}</p>
@@ -165,12 +172,35 @@ function PeekDialog({ id, canBack, prevId, onNavigate }) {
               전체 설명 페이지로 이동 →
             </button>
           )}
+          {machine && (
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                closePeek()
+                onNavigateMachine(machine.id)
+              }}
+            >
+              설비 실습에서 직접 가동해 보기 →
+            </button>
+          )}
           <button type="button" onClick={closePeek}>
             닫기
           </button>
           <small className="muted">하던 화면은 그대로 기억됩니다. 이동해도 "← 뒤로"로 돌아올 수 있어요.</small>
         </footer>
       </aside>
+    </>
+  )
+}
+
+// 장비 미리보기: 설비 실습과 같은 장비 둘러보기를 권장 조건 기준으로 보여 줍니다.
+function MachineBody({ machine }) {
+  const values = defaultValues(machine)
+  return (
+    <>
+      <p className="peek-summary">권장 조건 기준으로 장비 부위·조작 순서·결과물을 봅니다. 조건을 바꿔 가동해 보려면 아래 "설비 실습"으로 가세요.</p>
+      <EquipmentTour machineId={machine.id} values={values} result={judge(machine, values)} />
     </>
   )
 }

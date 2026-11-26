@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 
 // 설명 미리보기 창 상태(앱 전체에서 하나). 화면을 옮기지 않고 지금 화면 위에 공정 설명을 띄웁니다.
 // stack: 창 안에서 다른 공정을 눌러 들어간 순서(맨 끝이 지금 보는 공정). 비어 있으면 창이 닫힌 상태입니다.
+// 장비는 'm:장비id'로 넣습니다(openMachinePeek).
 let state = { stack: [], from: null }
 const listeners = new Set()
 const emit = () => listeners.forEach((fn) => fn())
@@ -14,6 +15,9 @@ export function openPeek(id) {
   state = { stack: top === id ? state.stack : [...state.stack, id], from }
   emit()
 }
+
+// 장비 둘러보기를 같은 창에 띄웁니다.
+export const openMachinePeek = (id) => openPeek(`m:${id}`)
 
 // 창 안의 "← 이전 공정"
 export function backPeek() {

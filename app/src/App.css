@@ -5865,3 +5865,8 @@ button { min-height: 36px; }
 @media (prefers-reduced-motion: reduce) {
   .eq-cmp-slurry line, .eq-cmp-head.run, .eq-cl-wafer.run, .eq-cmp-brush, .eq-cl-dry { animation: none; }
 }
+
+/* 장비 미리보기: 둘러보기 그림이 들어가도록 넓게, 한 줄로 */
+.peek.wide { width: min(620px, 100vw); }
+.peek .eq-stage { grid-template-columns: 1fr; }
+.peek .eq-tour { margin: 0; box-shadow: none; }

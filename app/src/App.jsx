@@ -27,7 +27,7 @@ import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
 import { togglePanel } from './lib/floatState.js'
 import { pushNav, readHash, replaceNav, useBackLayer, useCanGoBack } from './lib/nav.js'
-import { closePeek, openPeek } from './lib/peek.js'
+import { closePeek, openMachinePeek, openPeek } from './lib/peek.js'
 import ProcessPeek from './components/ProcessPeek.jsx'
 
 // 설명 버튼을 미리보기 창으로 여는 화면(진행 중인 일이 있는 화면)
@@ -183,10 +183,12 @@ export default function App() {
   const openProcess = (id) => (PEEK_SCREENS.has(screen) ? openPeek(id) : goProcess(id))
 
   // 다른 화면(시험 해설 등)에서 특정 장비 시뮬레이터를 바로 엽니다.
-  const openMachine = (id) => {
+  const goMachine = (id) => {
     setMachineFocus(id)
     setScreen(machines.find((m) => m.id === id)?.stage === 'front' ? 'machine-fab' : 'machine-pkg')
   }
+  // 진행 중인 화면에서는 장비 둘러보기를 미리보기 창으로 띄웁니다(설비 실습 화면 자체에서는 그대로 이동).
+  const openMachine = (id) => (PEEK_SCREENS.has(screen) && !['machine-fab', 'machine-pkg'].includes(screen) ? openMachinePeek(id) : goMachine(id))
 
   // 다른 화면(도감·분석·보고서)에서 현장 실무 시나리오 하나를 바로 엽니다.
   const openField = (id, category) => {
@@ -400,7 +402,7 @@ export default function App() {
 
       </div>
 
-      <ProcessPeek onNavigate={goProcess} />
+      <ProcessPeek onNavigate={goProcess} onNavigateMachine={goMachine} />
       <SelectionToNote currentRef={currentRef} />
       <FloatDock currentRef={currentRef} onOpenProcess={openProcess} onOpenMachine={openMachine} />
     </div>
