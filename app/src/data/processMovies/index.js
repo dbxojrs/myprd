@@ -11,6 +11,7 @@ export const processMovies = Object.fromEntries(
 export const CHAPTERS = [
   { title: '반도체 기초', ids: ['b-atom', 'b-doping', 'b-pn', 'b-transistor', 'b-mosfet', 'b-cmos', 'b-evolution'] },
   { title: '전공정 8대 공정', ids: ['wafer-make', 'oxidation', 'photo', 'etch', 'deposition', 'ion-implant', 'metallization', 'eds'] },
+  { title: '전공정 반복 공정', ids: ['cleaning', 'cmp'] },
   { title: '후공정(PKG·TEST)', ids: ['backgrind', 'wafer-saw', 'die-attach', 'wire-bond', 'molding', 'marking', 'package-saw', 'test'] },
   { title: '첨단 패키징', ids: ['bumping', 'flipchip-bond', 'underfill', 'rdl', 'tsv'] },
 ]
