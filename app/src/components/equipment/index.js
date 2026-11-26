@@ -29,6 +29,10 @@ import PkgSawIso from './PkgSawIso.jsx'
 import PkgSawResult from './PkgSawResult.jsx'
 import TestIso from './TestIso.jsx'
 import TestResult from './TestResult.jsx'
+import CmpIso from './CmpIso.jsx'
+import CmpResult from './CmpResult.jsx'
+import CleanIso from './CleanIso.jsx'
+import CleanResult from './CleanResult.jsx'
 
 export const ISO = {
   oxidation: OxidationIso,
@@ -37,6 +41,8 @@ export const ISO = {
   deposition: CvdIso,
   'ion-implant': ImplantIso,
   metallization: PvdIso,
+  cleaning: CleanIso,
+  cmp: CmpIso,
   backgrind: GrinderIso,
   'wafer-saw': SawIso,
   'die-attach': DieBonderIso,
@@ -54,6 +60,8 @@ export const RESULT = {
   deposition: CvdResult,
   'ion-implant': ImplantResult,
   metallization: PvdResult,
+  cleaning: CleanResult,
+  cmp: CmpResult,
   backgrind: GrinderResult,
   'wafer-saw': SawResult,
   'die-attach': DieBonderResult,

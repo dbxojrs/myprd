@@ -5854,3 +5854,14 @@ button { min-height: 36px; }
 @media (prefers-reduced-motion: reduce) {
   .peek, .peek-scrim { animation: none; transition: none; }
 }
+
+/* CMP·세정 장비 입체 그림 */
+.eq-cmp-slurry line { stroke: var(--warn); stroke-width: 2; stroke-dasharray: 3 3; animation: ms-flow 0.6s linear infinite; }
+.eq-cmp-slurry circle { fill: var(--warn); }
+.eq-cmp-head.run, .eq-cl-wafer.run { animation: eq-wobble 0.9s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes eq-wobble { 50% { transform: translateX(2px); } }
+.eq-cmp-brush { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 4 3; animation: ms-flow 0.5s linear infinite; }
+.eq-cl-dry { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; animation: ms-flow 0.6s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .eq-cmp-slurry line, .eq-cmp-head.run, .eq-cl-wafer.run, .eq-cmp-brush, .eq-cl-dry { animation: none; }
+}
