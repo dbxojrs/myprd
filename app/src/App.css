@@ -4094,7 +4094,7 @@ button.danger:hover { background: var(--bad-soft); }
   .topbar { padding: 6px 12px; gap: 6px; min-height: 52px; }
   .topbar-menu { display: inline-flex; min-width: 44px; min-height: 44px; }
   .topbar-desc { display: none; }
-  .topbar-title strong { font-size: 15.5px; white-space: normal; }
+  .topbar-title strong { font-size: 15.5px; }
   .topbar .term-switch { display: none; }
   .focus-toggle span { display: none; }
   .focus-toggle { min-width: 44px; min-height: 44px; }
@@ -5781,3 +5781,22 @@ button { min-height: 36px; }
 .ms-view summary { cursor: pointer; width: fit-content; padding: 4px 0; }
 .ms-view summary strong { color: var(--text); font-weight: 600; }
 .ms-view[open] .button-row { margin-top: 6px; }
+
+/* 문제은행 근거 출처 */
+.quiz-cite { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.quiz-cite a { color: var(--accent); }
+
+/* 위 막대의 "← 뒤로" 버튼 */
+.topbar-back { display: inline-flex; align-items: center; gap: 4px; flex: none; min-height: 36px; padding: 0 12px 0 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; }
+.topbar-back:hover { border-color: var(--accent); color: var(--accent); }
+.topbar-back span[aria-hidden] { font-size: 16px; }
+@media (max-width: 959px) {
+  .topbar-back { min-height: 40px; padding: 0 10px; }
+  .topbar-back-text { display: none; }
+}
+@media (max-width: 959px) {
+  /* 휴대폰 위 막대: 경로(묶음 이름)는 빼고 제목만 한 줄로 */
+  .topbar-title { min-width: 0; }
+  .topbar-title .crumb { display: none; }
+  .topbar-title strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+}

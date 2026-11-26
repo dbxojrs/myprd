@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // 화면 이동을 브라우저 기록(History API)에 남깁니다.
 // - 화면을 옮길 때마다 기록이 하나 쌓여, 휴대폰·브라우저의 "뒤로 가기"가 앱 안의 이전 화면으로 갑니다.
@@ -28,17 +28,38 @@ const safe = (fn) => {
   }
 }
 
+// 앱 안에서 몇 번째 기록인지(idx). 0이면 처음 들어온 화면이라 "뒤로"를 누르면 앱 밖으로 나갑니다.
+const depth = () => (typeof history === 'undefined' ? 0 : history.state?.idx ?? 0)
+const notify = () => window.dispatchEvent(new Event('tutor-nav'))
+
 // 지금 기록을 바꿉니다(처음 열 때).
 export function replaceNav(st) {
-  safe(() => history.replaceState({ tutor: 1, screen: st.screen, processId: st.processId ?? null }, '', hashFor(st)))
+  safe(() => history.replaceState({ tutor: 1, idx: depth(), screen: st.screen, processId: st.processId ?? null }, '', hashFor(st)))
+  notify()
+}
+
+// 위 막대의 "← 뒤로" 버튼: 앱 안에 이전 화면이 있을 때만 true
+export function useCanGoBack() {
+  const [can, setCan] = useState(() => depth() > 0)
+  useEffect(() => {
+    const on = () => setCan(depth() > 0)
+    window.addEventListener('popstate', on)
+    window.addEventListener('tutor-nav', on)
+    return () => {
+      window.removeEventListener('popstate', on)
+      window.removeEventListener('tutor-nav', on)
+    }
+  }, [])
+  return can
 }
 
 // 새 화면 기록을 쌓습니다. 같은 화면이면 쌓지 않고, 맨 위가 잠깐 열린 층(메뉴 서랍)이면 그 자리를 바꿉니다.
 export function pushNav(st) {
-  const next = { tutor: 1, screen: st.screen, processId: st.screen === 'query' ? st.processId ?? null : null }
   const cur = typeof history === 'undefined' ? null : history.state
+  const next = { tutor: 1, idx: cur?.transient ? depth() : depth() + 1, screen: st.screen, processId: st.screen === 'query' ? st.processId ?? null : null }
   if (cur?.tutor && !cur.layer && cur.screen === next.screen && (cur.processId ?? null) === next.processId) return
   safe(() => (cur?.transient ? history.replaceState(next, '', hashFor(next)) : history.pushState(next, '', hashFor(next))))
+  notify()
 }
 
 const pendingBack = new Map()
@@ -52,7 +73,10 @@ export function useBackLayer(active, close, id, { transient = false } = {}) {
   useEffect(() => {
     if (!active) return undefined
     clearTimeout(pendingBack.get(id))
-    if (history.state?.layer !== id) safe(() => history.pushState({ ...(history.state ?? {}), layer: id, transient }, '', location.hash))
+    if (history.state?.layer !== id) {
+      safe(() => history.pushState({ ...(history.state ?? {}), idx: depth() + 1, layer: id, transient }, '', location.hash))
+      notify()
+    }
     const onPop = () => {
       if (history.state?.layer !== id) closeRef.current()
     }

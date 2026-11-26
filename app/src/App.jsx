@@ -26,7 +26,7 @@ import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
 import { togglePanel } from './lib/floatState.js'
-import { pushNav, readHash, replaceNav, useBackLayer } from './lib/nav.js'
+import { pushNav, readHash, replaceNav, useBackLayer, useCanGoBack } from './lib/nav.js'
 
 // 큰 화면은 처음 열 때 나눠 받습니다(첫 로딩을 가볍게). 첫 화면이 뜬 뒤 쉬는 시간에 미리 받아 두어 이동할 때 기다리지 않습니다.
 const LOADERS = [
@@ -98,6 +98,7 @@ export default function App() {
   const ui = useUi()
   const [navOpen, setNavOpen] = useState(false)
   const [dark, setDark] = useTheme()
+  const canBack = useCanGoBack()
 
   // 모바일 메뉴 서랍: Esc로 닫고, 화면을 옮기면 맨 위로
   useEffect(() => {
@@ -228,6 +229,13 @@ export default function App() {
         <button type="button" className="icon-btn topbar-menu" aria-label="메뉴 열기" onClick={() => setNavOpen(true)}>
           <Icon name="menu" />
         </button>
+        {/* 앱 안에 이전 화면이 있을 때만 보입니다(처음 들어온 화면에서는 숨겨 앱 밖으로 나가지 않게). */}
+        {canBack && (
+          <button type="button" className="topbar-back" aria-label="이전 화면으로" title="이전 화면으로 (브라우저 뒤로 가기와 같음)" onClick={() => history.back()}>
+            <span aria-hidden="true">←</span>
+            <span className="topbar-back-text">뒤로</span>
+          </button>
+        )}
         <div className="topbar-title page-title-in" key={screen}>
           {activeGroup ? (
             <>
