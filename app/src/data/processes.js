@@ -548,7 +548,13 @@ export const processes = [
       { name: '건조', desc: '물 자국이 남지 않게 웨이퍼를 빠르게 말립니다.' },
     ],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Creating Defectless Wafers: A Look at CLEAN & CMP Technology', publisher: 'SK hynix Newsroom (2022.01.24)', url: 'https://news.skhynix.com/en/creating-defectless-wafers-a-look-at-clean-cmp-technology/', tier: 'explain' },
+      { title: '반도체 품질을 올리는 잔류물 청소반, 세정공정이란?', publisher: '삼성전자 반도체 뉴스룸 (2019.12.20)', url: 'https://news.samsungsemiconductor.com/kr/%EB%B0%98%EB%8F%84%EC%B2%B4-%ED%92%88%EC%A7%88%EC%9D%84-%EC%98%AC%EB%A6%AC%EB%8A%94-%EC%9E%94%EB%A5%98%EB%AC%BC-%EC%B2%AD%EC%86%8C%EB%B0%98-%EC%84%B8%EC%A0%95%EA%B3%B5%EC%A0%95%EC%9D%B4%EB%9E%80/', tier: 'explain' },
+      { title: 'Wafer Surface Cleaning', publisher: 'MKS Instruments (장비 업체 기술 자료)', url: 'https://www.mks.com/n/cmos-wafer-cleaning', tier: 'explain' },
+      { title: 'Wafer Cleaning Becomes Key Challenge In Manufacturing 3D Structures', publisher: 'Semiconductor Engineering (2022.10.20, A. Hars)', url: 'https://semiengineering.com/wafer-cleaning-becomes-key-challenge-in-manufacturing-3d-structures', tier: 'explain' },
+    ],
+    sourceDate: '2026-11-26',
   },
   {
     id: 'cmp',
@@ -569,7 +575,13 @@ export const processes = [
       { name: '세정', desc: '남은 슬러리와 가루를 씻어 냅니다.' },
     ],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Creating Defectless Wafers: A Look at CLEAN & CMP Technology', publisher: 'SK hynix Newsroom (2022.01.24)', url: 'https://news.skhynix.com/en/creating-defectless-wafers-a-look-at-clean-cmp-technology/', tier: 'explain' },
+      { title: 'A review on chemical and mechanical phenomena at the wafer interface during chemical mechanical planarization', publisher: 'Journal of Materials Research (2020), J. Seo, DOI 10.1557/jmr.2020.215, CC BY 4.0', url: 'https://www.cambridge.org/core/journals/journal-of-materials-research/article/review-on-chemical-and-mechanical-phenomena-at-the-wafer-interface-during-chemical-mechanical-planarization/F53CF209A1FD6CA18FFF50631A0CC654', tier: 'evidence' },
+      { title: 'Pattern Dependent Modeling for CMP Optimization and Control', publisher: 'D. Boning et al., MIT Microsystems Technology Laboratories (MRS 1999 Proceedings, 연구실 공개 사본)', url: 'https://boning.mit.edu/wp-content/uploads/2022/11/MRS99-reprint.pdf', tier: 'evidence' },
+      { title: 'Designing for Chemical-Mechanical-Polishing (SAND2016-3854B)', publisher: 'J. J. Sniegowski, Sandia National Laboratories (OSTI)', url: 'https://www.osti.gov/servlets/purl/1574644', tier: 'evidence' },
+    ],
+    sourceDate: '2026-11-26',
   },
   {
     id: 'anneal',
@@ -584,7 +596,13 @@ export const processes = [
     terms: [{ en: 'Activation', ko: '활성화' }, { en: 'Rapid Thermal Processing', ko: '급속 열처리' }, { en: 'Crystal Damage', ko: '결정 손상' }],
     prerequisites: ['ion-implant'],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'Lecture 6: Diffusion/Implantation (6.152J Micro/Nano Processing Technology, Fall 2005)', publisher: 'MIT OpenCourseWare', url: 'https://ocw.mit.edu/courses/6-152j-micro-nano-processing-technology-fall-2005/resources/lecture6/', tier: 'explain' },
+      { title: 'IH2655 Lecture 6: Annealing / Diffusion / Ion Implantation (Spring 2011)', publisher: 'KTH Royal Institute of Technology (C. Henkel, M. Östling)', url: 'https://www.kth.se/social/upload/5102a019f2765408df3843b7/Lecture%206.pdf', tier: 'explain' },
+      { title: 'Flat-Top Flash Annealing For Advanced CMOS Processing', publisher: 'Mattson Technology, AVS NCCAVS Joint Technical Group 발표 (2012)', url: 'https://www.nccavs-usergroups.avs.org/wp-content/uploads/JTG2012/JTG2012_7timans_mattson.pdf', tier: 'explain' },
+      { title: 'Degradation of Electrical Parameters of Power Semiconductor Devices: Process influences on BTI', publisher: 'G. Pobegen, 박사학위논문, TU Wien Institute for Microelectronics', url: 'https://www.iue.tuwien.ac.at/phd/pobegen/Process-influences-on-BTI.html', tier: 'evidence' },
+    ],
+    sourceDate: '2026-11-26',
   },
   {
     id: 'ald',
@@ -605,7 +623,41 @@ export const processes = [
       { name: '퍼지 후 반복', desc: '다시 불어 내고, 원하는 두께가 될 때까지 되풀이합니다.' },
     ],
     reviewed: false,
-    sources: [],
+    sources: [
+      { title: 'New development of atomic layer deposition: processes, methods and applications', publisher: 'Science and Technology of Advanced Materials (2019), DOI 10.1080/14686996.2019.1599694, CC BY 4.0', url: 'https://doi.org/10.1080/14686996.2019.1599694', tier: 'evidence' },
+      { title: 'Emerging Applications for High K Materials in VLSI Technology', publisher: 'Materials (MDPI, 2014), R. D. Clark, DOI 10.3390/ma7042913, CC BY 3.0', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5453339/', tier: 'evidence' },
+      { title: 'How Atomic Layer Deposition Works', publisher: 'Semiconductor Engineering (2018, Lam Research D. Hausmann 기고)', url: 'https://semiengineering.com/a-look-at-atomic-layer-deposition-2', tier: 'explain' },
+      { title: 'Enabling Nanoscale Device Fabrication Through Area-Selective Atomic Layer Deposition', publisher: 'SK hynix Newsroom (2023.10.23)', url: 'https://news.skhynix.com/en/enabling-nanoscale-device-fabrication-through-as-ald/', tier: 'explain' },
+    ],
+    sourceDate: '2026-11-26',
+  },
+
+  {
+    id: 'metrology',
+    name: { en: 'Metrology & Inspection', ko: '계측·검사' },
+    aliases: ['계측', '검사', '계측 검사', '메트롤로지', '인스펙션', 'metrology', 'inspection', 'cd-sem', '오버레이 측정'],
+    group: '',
+    stage: 'front',
+    repeatsAfter: ['oxidation', 'photo', 'etch', 'deposition', 'ion-implant', 'metallization', 'cmp'],
+    summary: '공정이 끝날 때마다 의도한 크기·두께대로 됐는지 재고(계측), 불량이나 먼지가 생겼는지 찾습니다(검사). 잰 값으로 공정을 관리합니다.',
+    input: '한 공정을 마친 웨이퍼',
+    output: '측정값과 결함 지도가 기록된 웨이퍼(다음 공정 진행 여부 판단)',
+    terms: [{ en: 'Critical Dimension', ko: '임계 치수(CD)' }, { en: 'Overlay', ko: '오버레이' }, { en: 'Defect Inspection', ko: '결함 검사' }],
+    prerequisites: ['photo', 'etch'],
+    steps: [
+      { name: '샘플 고르기', desc: '모든 웨이퍼를 재지 않고 일부 웨이퍼·일부 지점을 골라 잽니다.' },
+      { name: '계측', desc: '선폭(CD)·막 두께·층 사이 어긋남(오버레이)을 잽니다.' },
+      { name: '결함 검사', desc: '빛이나 전자빔으로 결함이 있는지, 어디 있는지 찾아 결함 지도를 만듭니다.' },
+      { name: '판정·관리', desc: '측정값을 관리 한계와 비교하고, 벗어나면 원인을 조사합니다.' },
+    ],
+    reviewed: false,
+    sources: [
+      { title: '[인생맛칩 Ep.13] 완벽한 반도체의 시작은 정확한 계측으로부터! 모든 공정의 짝꿍, 계측 공정 살펴보기', publisher: '삼성전자 반도체 뉴스룸 (2022.08.30)', url: 'https://news.samsungsemiconductor.com/kr/%ec%9d%b8%ec%83%9d%eb%a7%9b%ec%b9%a9-ep-13-%ec%99%84%eb%b2%bd%ed%95%9c-%eb%b0%98%eb%8f%84%ec%b2%b4%ec%9d%98-%ec%8b%9c%ec%9e%91%ec%9d%80-%ec%a0%95%ed%99%95%ed%95%9c-%ea%b3%84%ec%b8%a1%ec%9c%bc/', tier: 'explain' },
+      { title: 'Metrology for the next generation of semiconductor devices', publisher: 'Nature Electronics (2018), N. G. Orji et al. (NIST 저자 원고, PMC 공개)', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6605074/', tier: 'evidence' },
+      { title: 'Optical wafer defect inspection at the 10 nm technology node and beyond', publisher: 'International Journal of Extreme Manufacturing (2022), J. Zhu et al., CC BY 3.0', url: 'https://iopscience.iop.org/article/10.1088/2631-7990/ac64d7', tier: 'evidence' },
+      { title: 'NIST/SEMATECH e-Handbook 6.1.2: What is Statistical Process Control?', publisher: 'NIST/SEMATECH e-Handbook of Statistical Methods', url: 'https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc12.htm', tier: 'evidence' },
+    ],
+    sourceDate: '2026-11-26',
   },
 
   // ── 팹 아웃·웨이퍼 출하/입고: 전공정이 끝난 웨이퍼가 후공정(또는 웨이퍼 레벨 패키징)으로 넘어가는 과정 ──
