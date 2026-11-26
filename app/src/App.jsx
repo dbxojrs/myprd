@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { findPackage } from './data/packages.js'
 import { findProcess } from './data/processes.js'
 import { useStoredState } from './lib/storage.js'
@@ -7,30 +7,15 @@ import FlowChart from './components/FlowChart.jsx'
 import ProcessMap from './components/ProcessMap.jsx'
 import FrontFlow from './components/FrontFlow.jsx'
 import ProcessQuery from './components/ProcessQuery.jsx'
-import ProcessSim from './components/ProcessSim.jsx'
-import MachineSim from './components/MachineSim.jsx'
-import QuizPage from './components/QuizPage.jsx'
 import { machines } from './data/machineSim.js'
-import AdvancedPackage from './components/AdvancedPackage.jsx'
-import LineSim from './components/LineSim.jsx'
 import FlowBar from './components/FlowBar.jsx'
 import Home from './components/Home.jsx'
 import { MENU_GROUPS } from './components/menu.js'
 import { TermModeSwitch } from './lib/terms.jsx'
 import FloatDock from './components/float/FloatDock.jsx'
 import SelectionToNote from './components/notes/SelectionToNote.jsx'
-import NotesPage from './components/notes/NotesPage.jsx'
 import CoursePage from './components/CoursePage.jsx'
-import WrittenQuiz from './components/WrittenQuiz.jsx'
-import CasePractice from './components/CasePractice.jsx'
-import FieldSim from './components/field/FieldSim.jsx'
 import TodayPage from './components/TodayPage.jsx'
-import DataLab from './components/analysis/DataLab.jsx'
-import FabProcessSim from './components/fab/FabProcessSim.jsx'
-import DefectAtlas from './components/analysis/DefectAtlas.jsx'
-import LearningAnalytics from './components/analysis/LearningAnalytics.jsx'
-import EngineerReport from './components/report/EngineerReport.jsx'
-import StudyPlan from './components/StudyPlan.jsx'
 import { markActive } from './lib/activity.js'
 import { useEdit } from './lib/notes.js'
 import Collapsible from './components/ui/Collapsible.jsx'
@@ -41,6 +26,40 @@ import SideNav from './components/layout/SideNav.jsx'
 import Icon from './components/layout/icons.jsx'
 import { useTheme } from './lib/theme.js'
 import { pushNav, readHash, replaceNav, useBackLayer } from './lib/nav.js'
+
+// 큰 화면은 처음 열 때 나눠 받습니다(첫 로딩을 가볍게). 첫 화면이 뜬 뒤 쉬는 시간에 미리 받아 두어 이동할 때 기다리지 않습니다.
+const LOADERS = [
+  () => import('./components/ProcessSim.jsx'),
+  () => import('./components/MachineSim.jsx'),
+  () => import('./components/QuizPage.jsx'),
+  () => import('./components/AdvancedPackage.jsx'),
+  () => import('./components/LineSim.jsx'),
+  () => import('./components/notes/NotesPage.jsx'),
+  () => import('./components/WrittenQuiz.jsx'),
+  () => import('./components/CasePractice.jsx'),
+  () => import('./components/field/FieldSim.jsx'),
+  () => import('./components/analysis/DataLab.jsx'),
+  () => import('./components/fab/FabProcessSim.jsx'),
+  () => import('./components/analysis/DefectAtlas.jsx'),
+  () => import('./components/analysis/LearningAnalytics.jsx'),
+  () => import('./components/report/EngineerReport.jsx'),
+  () => import('./components/StudyPlan.jsx'),
+]
+const ProcessSim = lazy(LOADERS[0])
+const MachineSim = lazy(LOADERS[1])
+const QuizPage = lazy(LOADERS[2])
+const AdvancedPackage = lazy(LOADERS[3])
+const LineSim = lazy(LOADERS[4])
+const NotesPage = lazy(LOADERS[5])
+const WrittenQuiz = lazy(LOADERS[6])
+const CasePractice = lazy(LOADERS[7])
+const FieldSim = lazy(LOADERS[8])
+const DataLab = lazy(LOADERS[9])
+const FabProcessSim = lazy(LOADERS[10])
+const DefectAtlas = lazy(LOADERS[11])
+const LearningAnalytics = lazy(LOADERS[12])
+const EngineerReport = lazy(LOADERS[13])
+const StudyPlan = lazy(LOADERS[14])
 
 export default function App() {
   // 지금 보는 화면은 주소(#/화면)와 이 탭(sessionStorage)에 기억합니다. 새로고침하면 보던 화면으로 돌아오고, 새 탭은 홈부터.
@@ -89,6 +108,11 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [screen])
+  // 첫 화면이 뜬 뒤 브라우저가 한가할 때 나머지 화면 코드를 미리 받아 둡니다.
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 1200))
+    idle(() => LOADERS.forEach((load) => load().catch(() => {})))
+  }, [])
   // 메뉴 서랍은 뒤로 가기로 닫습니다.
   useBackLayer(navOpen, () => setNavOpen(false), 'nav', { transient: true })
   // 처음 열 때 지금 화면을 기록에 적고, 뒤로·앞으로 가기를 하면 그 기록의 화면으로 돌아갑니다.
@@ -256,6 +280,7 @@ export default function App() {
       )}
 
       {/* 화면이 바뀌면 본문이 부드럽게 들어오고, 카드들이 차례로 떠오릅니다. */}
+      <Suspense fallback={<PageSkeleton />}>
       <main key={screen === 'query' ? `query-${queryKey}` : screen} className="page-enter">
         {screen === 'package' && (
           <PackageSelect packageId={packageId} onSelect={setPackageId} onStart={() => setScreen('flow')} onOpenProcess={openProcess} />
@@ -341,6 +366,7 @@ export default function App() {
         {screen === 'advanced' && <CourseBlock courseId="adv" onOpenProcess={openProcess} onGo={setScreen} />}
         {screen === 'advanced' && <AdvancedPackage onOpenProcess={openProcess} onOpenPackage={openPackage} />}
       </main>
+      </Suspense>
 
       {!ui.focus && <footer className="disclaimer">
         모든 설명과 시뮬레이션 규칙은 검수 전 교육용 초안입니다. 출처가 등록되기 전까지 학습 참고용으로만 쓰세요.
@@ -364,5 +390,20 @@ function CourseBlock({ courseId, onOpenProcess, onGo }) {
         <CoursePage key={courseId} courseId={courseId} embedded onOpenProcess={onOpenProcess} onGo={onGo} />
       </Collapsible>
     </section>
+  )
+}
+
+// 화면 코드를 받는 동안 빈 화면 대신 보여 주는 뼈대
+function PageSkeleton() {
+  return (
+    <div className="page-skeleton" role="status" aria-label="화면을 불러오는 중">
+      <div className="sk sk-title" />
+      <div className="sk sk-line" />
+      <div className="sk-grid">
+        <div className="sk sk-card" />
+        <div className="sk sk-card" />
+        <div className="sk sk-card" />
+      </div>
+    </div>
   )
 }
