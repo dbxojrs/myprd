@@ -85,6 +85,24 @@ function SideGroup({ group, screen, active, collapsed, onGo }) {
   const [foldActive, setFoldActive] = useState(false)
   useEffect(() => setFoldActive(false), [active])
   const shown = active ? !foldActive : open
+  // 한 줄 메뉴(홈)는 펼치지 않고 바로 갑니다.
+  if (group.single) {
+    const id = group.items[0].id
+    return (
+      <div className={`side-group${active ? ' active' : ''}`}>
+        <button
+          type="button"
+          className={`side-item group-h${screen === id ? ' active' : ''}`}
+          aria-current={screen === id ? 'page' : undefined}
+          title={group.desc}
+          onClick={() => onGo(id)}
+        >
+          <Icon name={GROUP_ICON[group.id] ?? 'box'} />
+          <span className="side-text">{group.label}</span>
+        </button>
+      </div>
+    )
+  }
   return (
     <div className={`side-group${active ? ' active' : ''}`}>
       <button
@@ -106,19 +124,23 @@ function SideGroup({ group, screen, active, collapsed, onGo }) {
       {!collapsed && (
         <div className={`side-sub-wrap${shown ? ' open' : ''}`} inert={!shown}>
         <div className="side-sub">
-          {group.items.map((item) => (
+          {group.items.filter((item) => !item.hidden).map((item) => {
+            // 숨은 하위 화면(예: 후공정 시나리오)을 보고 있으면 그 위 메뉴를 켭니다.
+            const on = screen === item.id || group.items.some((x) => x.id === screen && x.under === item.id)
+            return (
             <button
               key={item.id}
               type="button"
-              className={`side-item sm${screen === item.id ? ' active' : ''}`}
-              aria-current={screen === item.id ? 'page' : undefined}
+              className={`side-item sm${on ? ' active' : ''}`}
+              aria-current={on ? 'page' : undefined}
               title={item.desc}
               onClick={() => onGo(item.id)}
             >
               <span className="dot" aria-hidden="true" />
               <span className="side-text">{item.label}</span>
             </button>
-          ))}
+            )
+          })}
         </div>
         </div>
       )}

@@ -1,24 +1,23 @@
 // 화면 메뉴(왼쪽 사이드바·위쪽 경로 표시). 기존 화면 id는 그대로 두고 상위 묶음만 정리했습니다.
-// 홈 → 이론 학습 → 공정 시뮬레이터 → 현장 실무 훈련 → 시험 및 평가 → 내 학습: 배우고 · 해 보고 · 현장처럼 풀고 · 확인하고 · 관리합니다.
+// 멘토 피드백("화면이 복잡하다")에 따라 홈 + 4묶음으로 줄였습니다: 배운다 → 바꿔 본다 → 풀어 본다 → 내 학습.
+// single: 펼치지 않고 바로 가는 한 줄 메뉴 / hidden: 메뉴에는 안 보이지만 그 묶음에 속하는 화면(다른 화면의 탭으로 엶)
 // stages: 공정 상세 화면(query)에서 이 묶음을 켤 공정 단계
 export const MENU_GROUPS = [
   {
     id: "home",
     label: "홈",
     en: "Home",
-    icon: "🏠",
     desc: "오늘 할 공부와 이어서 할 학습, 추천 실무 훈련을 한눈에 봅니다.",
     stages: [],
+    single: true,
     items: [
       { id: "home", label: "내 대시보드", desc: "진도·연속 공부일·다시 볼 문제·D-day와 6단계 진도를 한 화면에서 봅니다." },
-      { id: "today", label: "오늘의 학습", desc: "오늘 일정, 이어서 할 공정, 오늘의 현장 실무 훈련, 오답 복습을 순서대로 보여 줍니다." },
     ],
   },
   {
     id: "learn",
-    label: "이론 학습",
+    label: "배운다",
     en: "Learn",
-    icon: "📘",
     desc: "반도체 기초부터 FAB 전공정, PKG 후공정, 첨단 패키징까지 애니메이션과 출처 있는 설명으로 공부합니다.",
     stages: ["design","front","link","mid","back","board"],
     items: [
@@ -33,59 +32,46 @@ export const MENU_GROUPS = [
   },
   {
     id: "sim",
-    label: "공정 시뮬레이터",
-    en: "Simulator",
-    icon: "🎛️",
-    desc: "설비를 직접 가동하고 조건을 바꿔 결과와 불량을 확인합니다.",
+    label: "바꿔 본다",
+    en: "Simulate",
+    desc: "공정 조건과 설비 레시피를 바꿔 웨이퍼 단면·결과·불량이 어떻게 달라지는지 봅니다.",
     stages: [],
     items: [
+      { id: "fab-sim", label: "FAB 공정 시뮬레이션", desc: "산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선의 조건을 바꾸며 웨이퍼 단면과 불량을 봅니다. 공정 하나씩 또는 6공정을 이어서 진행하고 최종 판정을 받습니다." },
       { id: "machine-fab", label: "FAB 설비 실습", desc: "확산로·스캐너·식각기·CVD·이온 주입기·PVD를 둘러보고, 레시피를 정해 가동해 알람·불량을 판정받습니다." },
       { id: "machine-pkg", label: "PKG 설비 실습", desc: "그라인더·쏘·다이 본더·와이어 본더·몰드·마커·테스트 핸들러를 둘러보고 가동해 봅니다." },
-      { id: "fab-sim", label: "FAB 공정 시뮬레이션", desc: "산화 → 포토 → 식각 → 증착 → 이온 주입 → 금속 배선의 조건을 바꾸며 웨이퍼 단면과 불량을 봅니다. 공정 하나씩 또는 6공정을 이어서 진행하고 최종 판정을 받습니다." },
       { id: "sim", label: "PKG 단위 공정 시뮬레이션", desc: "단위 공정 하나의 조건을 바꿔 결과와 불량을 봅니다." },
       { id: "line", label: "PKG 라인 시뮬레이션", desc: "첫 공정부터 끝까지 조건을 골라 완성된 패키지를 판정받습니다." },
+      { id: "datalab", label: "공정 데이터 분석", desc: "관리도(SPC)·관리 이탈 규칙, 공정능력(Cp·Cpk), Pareto를 가상 공정 데이터나 내 숫자로 직접 계산해 봅니다." },
     ],
   },
   {
     id: "field",
-    label: "현장 실무 훈련",
-    en: "Field Training",
-    icon: "🛠️",
-    desc: "실제 반도체 생산 현장에서 발생할 수 있는 문제를 해결하며 공정 엔지니어의 판단 능력을 훈련합니다. 모든 사례·수치는 교육용 가상 데이터입니다.",
+    label: "풀어 본다",
+    en: "Solve",
+    desc: "가상 현장 사건과 문제를 풀며 엔지니어의 판단을 연습하고, 배운 내용을 시험으로 확인합니다. 모든 사례·수치는 교육용 가상 데이터입니다.",
     stages: [],
-    badge: "신규",
     items: [
-      { id: "field", label: "시나리오 전체", desc: "전공정 FAB와 후공정 PKG 시나리오를 함께 보고, 상태·난이도·공정·검색으로 거릅니다." },
-      { id: "field-fab", label: "전공정 FAB 시나리오", desc: "Photo·Etch·CVD·PVD·산화·이온주입·CMP·세정·계측 공정의 현장 문제를 풉니다." },
-      { id: "field-pkg", label: "후공정 PKG 시나리오", desc: "Back Grinding·Dicing·Die Attach·Wire Bonding·Flip Chip·Molding·Singulation·Test 공정의 현장 문제를 풉니다." },
+      { id: "field", label: "현장 실무 시나리오", desc: "전공정 FAB와 후공정 PKG 시나리오를 함께 보고, 상태·난이도·공정·검색으로 거릅니다." },
+      { id: "field-fab", hidden: true, under: "field", label: "전공정 FAB 시나리오", desc: "Photo·Etch·CVD·PVD·산화·이온주입·CMP·세정·계측 공정의 현장 문제를 풉니다." },
+      { id: "field-pkg", hidden: true, under: "field", label: "후공정 PKG 시나리오", desc: "Back Grinding·Dicing·Die Attach·Wire Bonding·Flip Chip·Molding·Singulation·Test 공정의 현장 문제를 풉니다." },
       { id: "defects", label: "불량 분석 도감", desc: "설비 판정 규칙표의 알람·불량 175개를 공정별로 모아 원인·조치·근거 수준을 보고, 설비 실습과 현장 사례로 바로 갑니다." },
-      { id: "datalab", label: "공정 데이터 분석", desc: "관리도(SPC)·관리 이탈 규칙, 공정능력(Cp·Cpk), Pareto를 가상 공정 데이터나 내 숫자로 직접 계산해 봅니다." },
       { id: "report", label: "엔지니어 보고서", desc: "8D·5 Why·피시본 양식으로 현장 문제를 정리합니다. 끝낸 시나리오 기록으로 초안을 만들고 노트로 보냅니다." },
       { id: "cases", label: "사례 서술형 연습", desc: "와이어 본딩 접합 강도 급락, 다이 어태치 보이드, 몰딩 보이드, 테스트 수율 급락, 고객 클레임을 현장 상황·데이터로 풀고 100점 기준으로 평가받습니다. 추가 데이터로 판단을 고치는 연습까지 합니다." },
-    ],
-  },
-  {
-    id: "exam",
-    label: "시험 및 평가",
-    en: "Exam",
-    icon: "📝",
-    desc: "배운 내용을 객관식·주관식 문제로 확인하고 틀린 문제를 다시 풉니다.",
-    stages: [],
-    items: [
       { id: "quiz", label: "문제풀이", desc: "공정·설비 범위를 골라 연습하거나 시험을 봅니다. 해설과 관련 화면으로 바로 갑니다." },
       { id: "written", label: "심화 주관식", desc: "보기 없이 공정 이름·세부 단계·핵심 개념을 직접 쓰고, 서술형으로 과정과 원리를 설명합니다. 단답형은 바로 채점, 서술형은 핵심어 검사와 모범 답안으로 판정합니다(AI 채점은 선택)." },
-      { id: "ai", label: "AI 문제 생성", desc: "내 Claude API 키로 고른 범위의 앱 자료에서 새 문제를 만들고, 문제마다 AI 해설을 듣습니다(선택)." },
       { id: "wrong", label: "오답 노트", desc: "틀린 문제만 모아 다시 풉니다. 맞히면 목록에서 빠집니다." },
+      { id: "ai", label: "AI 문제 생성", desc: "내 Claude API 키로 고른 범위의 앱 자료에서 새 문제를 만들고, 문제마다 AI 해설을 듣습니다(선택)." },
     ],
   },
   {
     id: "mine",
     label: "내 학습",
     en: "My Study",
-    icon: "📒",
-    desc: "공부 일정을 짜고, 학습 기록을 분석하고, 공부하며 쓴 노트를 모아 복습합니다.",
+    desc: "오늘 할 공부, 공부 일정, 학습 기록 분석, 노트를 모아 봅니다.",
     stages: [],
     items: [
+      { id: "today", label: "오늘의 학습", desc: "오늘 일정, 이어서 할 공정, 오늘의 현장 실무 훈련, 오답 복습을 순서대로 보여 줍니다." },
       { id: "plan", label: "학습 일정", desc: "목표 날짜와 하루 공부 시간을 정하면 단원을 날짜별로 나눠 주고, 빠진 날은 자동으로 뒤로 밀어 줍니다. 내 API 키가 있으면 AI로 순서를 조정합니다." },
       { id: "analytics", label: "학습 분석", desc: "실무 역량 6가지, 시나리오·문제풀이 기록, 오답 종류, 공부한 날을 보고 약한 부분에 맞춘 다음 공부를 추천받습니다." },
       { id: "notes", label: "내 노트", desc: "어느 화면에서든 📝 동그라미로 쓴 노트를 공정 단계·태그·날짜로 묶어 보고, 복습 모드로 다시 떠올려 봅니다." },
