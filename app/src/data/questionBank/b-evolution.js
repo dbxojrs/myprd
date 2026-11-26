@@ -1,0 +1,73 @@
+// 문제은행: 반도체 기초 - 트랜지스터의 진화. data/explainers/b-evolution.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'b-evolution',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-b-evolution-1',
+      kind: 'choice',
+      prompt: '트랜지스터를 작게 만들수록 단채널 현상이 생기는 이유는 무엇인가요?',
+      choices: [
+        '게이트가 길어져 전류가 지나가지 못해서',
+        '소스와 드레인이 멀어져 전류가 약해져서',
+        '소스와 드레인이 가까워지고 게이트가 짧아져, 게이트가 전류를 제대로 막지 못해서',
+        '채널이 사라져 전류의 길이 없어져서',
+      ],
+      answer: 2,
+      explain: '작아질수록 소스와 드레인이 가까워지고 게이트가 짧아집니다. 그러면 게이트가 전류를 제대로 막지 못하는 단채널 현상이 생깁니다.',
+      basis: '작아질수록 소스와 드레인이 가까워지고 게이트가 짧아져, 게이트가 전류를 제대로 막지 못하는 단채널 현상이 생깁니다.',
+      cite: ['samsung-gaa-ep6', 'samsung-gaa-chat1', 'samsung-gaa-2019', 'samsung-blog-scaling'],
+    },
+    {
+      id: 'qb-b-evolution-2',
+      kind: 'choice',
+      prompt: '게이트가 채널을 감싸는 면을 1면 → 3면(핀펫) → 4면(GAA)으로 늘려 온 까닭은 무엇인가요?',
+      choices: [
+        '트랜지스터가 작아지면 전류가 새기 쉬워져서',
+        '트랜지스터를 더 크게 만들기 위해서',
+        '채널에 전류가 흐르지 않게 영구히 막기 위해서',
+        '게이트를 없애고 채널만 남기기 위해서',
+      ],
+      answer: 0,
+      explain: '트랜지스터가 작아지면 전류가 새기 쉬워집니다. 그래서 게이트가 채널을 감싸는 면을 늘려 왔습니다.',
+      basis: ['트랜지스터가 작아지면 전류가 새기 쉬워집니다.', '그래서 게이트가 채널을 감싸는 면을 1면 → 3면(핀펫) → 4면(GAA)으로 늘려 왔습니다.'],
+      cite: ['samsung-gaa-ep6', 'samsung-gaa-2019', 'samsung-term-finfet', 'samsung-3nm-gaa'],
+    },
+    {
+      id: 'qb-b-evolution-3',
+      kind: 'choice',
+      prompt: '삼성이 가는 나노와이어 대신 얇고 넓은 나노시트를 여러 장 쌓은 MBCFET을 만든 이유는 무엇인가요?',
+      choices: [
+        '나노와이어는 게이트가 한 면만 감쌀 수 있어서',
+        '가는 나노와이어 채널(지름 약 1nm)로는 전류를 충분히 얻기 어려워서',
+        '나노시트가 나노와이어보다 누설이 훨씬 많아서',
+        '나노와이어는 핀펫보다 오래된 기술이라서',
+      ],
+      answer: 1,
+      explain: '지름 약 1nm의 가는 나노와이어 채널은 전류를 충분히 얻기 어렵습니다. 그래서 얇고 넓은 나노시트를 여러 장 쌓은 MBCFET을 만들었습니다.',
+      basis: '가는 나노와이어 채널(지름 약 1nm)은 전류를 충분히 얻기 어려워, 삼성은 얇고 넓은 나노시트를 여러 장 쌓은 MBCFET을 만들었습니다.',
+      cite: ['samsung-gaa-2019', 'samsung-blog-scaling', 'samsung-3nm-gaa'],
+    },
+    {
+      id: 'qb-b-evolution-4',
+      kind: 'ox',
+      prompt: 'MBCFET에서는 전력을 아껴야 하는 곳에 넓은 나노시트를, 계산이 많은 곳에 좁은 나노시트를 쓴다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '반대입니다. 계산이 많은 곳에는 넓은 시트, 전력을 아낄 곳에는 좁은 시트를 써서 전류를 맞춥니다.',
+      basis: '나노시트의 폭을 조절해 전류를 세밀하게 맞출 수 있습니다. 계산이 많은 곳에는 넓은 시트, 전력을 아낄 곳에는 좁은 시트를 씁니다.',
+      cite: ['samsung-3nm-gaa', 'samsung-gaa-chat1'],
+    },
+    {
+      id: 'qb-b-evolution-5',
+      kind: 'ox',
+      prompt: '핀펫(FinFET)은 지느러미처럼 세운 채널의 세 면을 게이트가 감싸, 닿는 면적을 넓혀 누설을 줄였다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: '핀펫은 채널의 세 면을 게이트가 감싸 닿는 면적을 넓혔고, 그 덕분에 성능을 높이고 누설을 줄였습니다.',
+      basis: '지느러미처럼 세운 채널의 세 면을 게이트가 감싸 닿는 면적을 넓혀 성능을 높이고 누설을 줄였습니다.',
+      cite: ['samsung-term-finfet', 'samsung-gaa-2019'],
+    },
+  ],
+}

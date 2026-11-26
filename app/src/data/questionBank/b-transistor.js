@@ -1,0 +1,73 @@
+// 문제은행: 반도체 기초 - 트랜지스터. data/explainers/b-transistor.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'b-transistor',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-b-transistor-1',
+      kind: 'choice',
+      prompt: 'BJT에서 베이스의 작은 전류로 콜렉터의 큰 전류를 만들 수 있는 이유는 무엇인가요?',
+      choices: [
+        '베이스가 가장 두꺼워 전자를 많이 모아 두어서',
+        '베이스가 아주 얇아 이미터에서 나온 전자 대부분이 콜렉터로 넘어가서',
+        '콜렉터가 스스로 전자를 만들어 내서',
+        '이미터와 콜렉터가 직접 맞붙어 있어서',
+      ],
+      answer: 1,
+      explain: '베이스가 아주 얇아서 이미터에서 나온 전자 대부분이 콜렉터로 넘어갑니다. 그래서 베이스의 작은 전류로 콜렉터의 큰 전류를 만듭니다.',
+      basis: '베이스가 아주 얇아 이미터에서 나온 전자 대부분이 콜렉터로 넘어가므로, 베이스의 작은 전류로 콜렉터의 큰 전류를 만듭니다.',
+      cite: ['samsung-transistor-principle'],
+    },
+    {
+      id: 'qb-b-transistor-2',
+      kind: 'choice',
+      prompt: 'BJT로 증폭할 때 두 접합에 거는 전압으로 알맞은 것은?',
+      choices: [
+        '베이스-이미터 역방향, 베이스-콜렉터 순방향',
+        '두 접합 모두 역방향',
+        '베이스-이미터 순방향, 베이스-콜렉터 역방향',
+        '두 접합 모두 순방향',
+      ],
+      answer: 2,
+      explain: '베이스-이미터 접합에는 순방향, 베이스-콜렉터 접합에는 역방향 전압을 겁니다. 그러면 이미터에서 들어온 전자를 콜렉터가 끌어갑니다.',
+      basis: '증폭할 때는 베이스-이미터 접합에 순방향, 베이스-콜렉터 접합에 역방향 전압을 걸어, 이미터에서 들어온 전자를 콜렉터가 끌어갑니다.',
+      cite: ['mit-6012-l17'],
+    },
+    {
+      id: 'qb-b-transistor-3',
+      kind: 'ox',
+      prompt: 'BJT의 세 전극(이미터·베이스·콜렉터) 가운데 가장 얇은 것은 콜렉터다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '가장 얇은 것은 전류를 조절하는 베이스입니다. 콜렉터는 캐리어를 모으는 전극입니다.',
+      basis: '전극은 캐리어를 내보내는 이미터, 모으는 콜렉터, 전류를 조절하는 베이스 3개이고, 베이스가 가장 얇습니다.',
+      cite: ['samsung-transistor-principle'],
+    },
+    {
+      id: 'qb-b-transistor-4',
+      kind: 'choice',
+      prompt: 'BJT의 구조를 pn 접합으로 설명하면 어떻게 볼 수 있나요?',
+      choices: [
+        'pn 접합 두 개를 등을 맞대어 붙인 구조',
+        'pn 접합 하나만 있는 구조',
+        'pn 접합 없이 p형만 있는 구조',
+        '금속·산화물·반도체를 겹친 구조',
+      ],
+      answer: 0,
+      explain: 'BJT는 n형과 p형을 세 겹으로 붙여 만들므로, pn 접합 두 개를 등을 맞대어 붙인 구조로 볼 수 있습니다.',
+      basis: ['BJT는 pn 접합 두 개를 등을 맞대어 붙인 구조로 볼 수 있습니다.', 'BJT는 n형과 p형을 세 겹으로 붙여 만들며, 순서에 따라 npn형과 pnp형이 있습니다.'],
+      cite: ['mit-6012-l17', 'samsung-transistor-principle'],
+    },
+    {
+      id: 'qb-b-transistor-5',
+      kind: 'ox',
+      prompt: '집적 회로 안에서 트랜지스터는 전원을 켜고 끄는 스위치 역할을 한다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: '집적 회로 안의 트랜지스터는 전원을 켜고 끄는 스위치 역할을 합니다.',
+      basis: '집적 회로 안에서 트랜지스터는 전원을 켜고 끄는 스위치 역할을 합니다.',
+      cite: ['samsung-8-3-ic-2012'],
+    },
+  ],
+}

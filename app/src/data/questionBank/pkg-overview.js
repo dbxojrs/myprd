@@ -1,0 +1,68 @@
+// 문제은행: 패키징 전체 모습과 재료. data/explainers/pkg-overview.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'pkg-overview',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-pkg-overview-1',
+      kind: 'choice',
+      prompt: '패키지가 칩을 열·습기·화학 약품·진동·충격으로부터 지키는 것은 어떤 역할에 해당하나요?',
+      choices: ['전기적 연결', '기계적 보호', '기계적 연결', '열 방출'],
+      answer: 1,
+      explain: '칩을 열·습기·화학 약품·진동·충격으로부터 지키는 것은 패키지의 기계적 보호 역할입니다.',
+      basis: '기계적 보호: 칩을 열·습기·화학 약품·진동·충격으로부터 지킵니다.',
+      cite: ['hynix-be-2', 'samsung-8-9'],
+    },
+    {
+      id: 'qb-pkg-overview-2',
+      kind: 'choice',
+      prompt: '패키지 와이어로 금 대신 구리·은 합금·팔라듐을 입힌 구리도 쓰는 이유는?',
+      choices: [
+        '금은 산화에 약해서',
+        '금은 잘 늘어나지 않아서',
+        '금은 전기가 통하지 않아서',
+        '금은 잘 늘어나고 산화에 강하지만 비싸서',
+      ],
+      answer: 3,
+      explain: '금은 잘 늘어나고 산화에 강한 좋은 재료지만 비쌉니다. 그래서 구리·은 합금·팔라듐을 입힌 구리도 씁니다.',
+      basis: '와이어: 금은 잘 늘어나고 산화에 강하지만 비싸서, 구리·은 합금·팔라듐을 입힌 구리도 씁니다.',
+      cite: ['hynix-be-9'],
+    },
+    {
+      id: 'qb-pkg-overview-3',
+      kind: 'choice',
+      prompt: '칩을 감싸는 수지 EMC는 어떤 재료인가요?',
+      choices: [
+        '구리에 은을 섞은 합금',
+        '무연 솔더를 작은 공 모양으로 만든 것',
+        '열로 굳는 에폭시 수지에 실리카를 섞은 것',
+        '빛을 받으면 녹는 감광액',
+      ],
+      answer: 2,
+      explain: 'EMC는 열로 굳는 에폭시 수지에 실리카를 섞은 재료로, 태블릿·가루·액체·필름 형태가 있습니다.',
+      basis: 'EMC: 열로 굳는 에폭시 수지에 실리카를 섞은 재료로, 태블릿·가루·액체·필름 형태가 있습니다.',
+      cite: ['hynix-be-9', 'hynix-be-6'],
+    },
+    {
+      id: 'qb-pkg-overview-4',
+      kind: 'ox',
+      prompt: '웨이퍼 레벨 패키지(WLCSP)는 웨이퍼를 자르기 전에 패키징한다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: 'WLCSP는 웨이퍼를 자르기 전에 패키징하는 웨이퍼 레벨 패키지입니다.',
+      basis: '웨이퍼를 자르기 전에 패키징하는 웨이퍼 레벨 패키지(WLCSP)도 있습니다.',
+      cite: ['hynix-be-3', 'hynix-be-7'],
+    },
+    {
+      id: 'qb-pkg-overview-5',
+      kind: 'ox',
+      prompt: '패키지 테스트는 웨이퍼 테스트보다 먼저 하는 첫 번째 테스트이다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '패키지 테스트는 웨이퍼 테스트에 이은 "두 번째" 테스트입니다. 그 결과를 제조 공정에 되돌려 품질을 높입니다.',
+      basis: '패키지 테스트는 웨이퍼 테스트에 이은 두 번째 테스트로, 결과를 제조 공정에 되돌려 품질을 높입니다.',
+      cite: ['samsung-8-9', 'hynix-be-1-test'],
+    },
+  ],
+}

@@ -1,0 +1,63 @@
+// 문제은행: 플립칩 본딩. data/explainers/flipchip-bond.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'flipchip-bond',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-flipchip-bond-1',
+      kind: 'choice',
+      prompt: '플립칩이 많은 곳에서 와이어 본딩을 대신하게 된 이유로 알맞은 것은?',
+      choices: [
+        '칩 가장자리 패드만 쓰기 때문에',
+        '와이어를 더 길게 쓸 수 있어서',
+        '패드를 칩 면 전체에 둘 수 있어 연결 수가 늘고 신호 길이 짧아져서',
+        '칩을 뒤집지 않아도 되어서',
+      ],
+      answer: 2,
+      explain: '플립칩은 패드를 칩 면 전체에 둘 수 있어 연결 수가 늘고 신호 길이 짧아집니다. 그래서 많은 곳에서 와이어 본딩을 대신했습니다.',
+      basis: '패드를 칩 면 전체에 둘 수 있어 연결 수가 늘고 신호 길이 짧아져, 많은 곳에서 와이어 본딩을 대신했습니다.',
+      cite: ['hynix-be-3'],
+    },
+    {
+      id: 'qb-flipchip-bond-2',
+      kind: 'choice',
+      prompt: '플립칩을 붙이는 방법 중 "열과 압력을 함께 주는" 방식은 무엇인가요?',
+      choices: ['매스 리플로', '열압착 방식', '스티치 본딩', '레이저 마킹'],
+      answer: 1,
+      explain: '높은 온도로 한꺼번에 녹여 붙이는 것은 매스 리플로이고, 열과 압력을 함께 주는 것은 열압착 방식입니다.',
+      basis: '높은 온도로 한꺼번에 녹여 붙이는 매스 리플로와, 열과 압력을 함께 주는 열압착 방식이 있습니다.',
+      cite: ['hynix-be-6'],
+    },
+    {
+      id: 'qb-flipchip-bond-3',
+      kind: 'ox',
+      prompt: '플립칩은 와이어 본딩보다 저항이 크고 느리다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '플립칩은 와이어보다 저항이 작고 빠르며 작은 패키지를 만들 수 있습니다.',
+      basis: '와이어보다 저항이 작고 빠르며 작은 패키지를 만들 수 있습니다.',
+      cite: ['samsung-8-9'],
+    },
+    {
+      id: 'qb-flipchip-bond-4',
+      kind: 'choice',
+      prompt: '플립칩 본딩 순서(플럭스 → 칩 올리기 → 리플로 → ? → 언더필)에서 빈칸에 들어갈 단계는?',
+      choices: ['언더필', '플럭스 바르기', '칩 올리기', '세정'],
+      answer: 3,
+      explain: '플립칩 본딩은 플럭스 → 칩 올리기 → 리플로 → 세정 → 언더필 순서로 진행합니다.',
+      basis: '플럭스 → 칩 올리기 → 리플로 → 세정 → 언더필 순서로 진행합니다.',
+      cite: ['oa-underfill-2025'],
+    },
+    {
+      id: 'qb-flipchip-bond-5',
+      kind: 'ox',
+      prompt: '플립칩 범프는 수십 μm, 웨이퍼 레벨 패키지의 볼은 수백 μm 크기로 소개된다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: '플립칩 범프는 수십 μm, 웨이퍼 레벨 패키지의 볼은 수백 μm 크기로 소개됩니다.',
+      basis: '플립칩 범프는 수십 μm, 웨이퍼 레벨 패키지의 볼은 수백 μm 크기로 소개됩니다.',
+      cite: ['hynix-be-3'],
+    },
+  ],
+}

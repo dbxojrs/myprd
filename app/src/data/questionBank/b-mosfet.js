@@ -1,0 +1,68 @@
+// 문제은행: 반도체 기초 - MOSFET. data/explainers/b-mosfet.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'b-mosfet',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-b-mosfet-1',
+      kind: 'choice',
+      prompt: 'MOSFET에서 게이트 전압이 문턱 전압을 넘지 못하면 어떻게 되나요?',
+      choices: [
+        '반전층이 두꺼워져 전류가 더 많이 흐른다',
+        '소스와 드레인이 바로 이어진다',
+        '반전층이 없어 전류가 흐르지 않는다',
+        '절연막이 녹아 게이트와 채널이 직접 닿는다',
+      ],
+      answer: 2,
+      explain: '문턱 전압을 넘어야 표면에 반전층이 생겨 소스와 드레인이 이어집니다. 넘지 못하면 반전층이 없어 전류가 흐르지 않습니다.',
+      basis: '문턱 전압을 넘으면 표면에 전자층(반전층)이 생겨 소스와 드레인이 이어지고, 넘지 못하면 반전층이 없어 전류가 흐르지 않습니다.',
+      cite: ['mit-6012-l7', 'mit-6012-l8'],
+    },
+    {
+      id: 'qb-b-mosfet-2',
+      kind: 'choice',
+      prompt: 'NMOS는 어떤 바탕에서 어떤 반전층을 쓰나요?',
+      choices: ['n형 바탕, 전자 반전층', 'p형 바탕, 전자 반전층', 'p형 바탕, 정공 반전층', 'n형 바탕, 정공 반전층'],
+      answer: 1,
+      explain: 'NMOS는 p형 바탕에서 전자 반전층을 쓰고, PMOS는 n형 바탕에서 정공 반전층을 씁니다.',
+      basis: 'NMOS는 p형 바탕에서 전자 반전층을, PMOS는 n형 바탕에서 정공 반전층을 씁니다.',
+      cite: ['mit-6012-l8'],
+    },
+    {
+      id: 'qb-b-mosfet-3',
+      kind: 'choice',
+      prompt: 'MOSFET 절연막에 고유전율(high-k) 물질을 쓰게 된 이유는 무엇인가요?',
+      choices: [
+        '절연막이 두꺼워져 전류가 너무 적게 흘러서',
+        '게이트를 금속 대신 반도체로 바꾸기 위해서',
+        '채널을 소스와 드레인 밖으로 옮기기 위해서',
+        '미세화로 절연막이 얇아지자 전하가 새어 나가 누설이 늘어서',
+      ],
+      answer: 3,
+      explain: '미세화로 절연막이 얇아지면서 전하가 새어 나가 누설이 늘었습니다. 이를 줄이려고 고유전율 물질을 쓰게 되었습니다.',
+      basis: '미세화로 절연막이 얇아지자 전하가 새어 나가 누설이 늘어, 고유전율(high-k) 물질을 쓰게 되었습니다.',
+      cite: ['samsung-sait-2023', 'hynix-hkmg'],
+    },
+    {
+      id: 'qb-b-mosfet-4',
+      kind: 'ox',
+      prompt: 'MOSFET의 게이트는 채널에 직접 맞닿아 전류를 조절한다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '게이트는 절연막을 사이에 두고 간접적으로만 채널에 영향을 줍니다. 이 점이 예전 BJT와 다릅니다.',
+      basis: '게이트는 절연막을 사이에 두고 간접적으로만 채널에 영향을 줍니다. 이 점이 예전 BJT와 다릅니다.',
+      cite: ['hynix-fe-2'],
+    },
+    {
+      id: 'qb-b-mosfet-5',
+      kind: 'ox',
+      prompt: 'MOSFET은 평평한 구조라서 웨이퍼 하나에 많은 MOSFET을 한꺼번에, 서로 연결된 상태로 만들 수 있다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: 'MOSFET은 평평한 구조여서 웨이퍼 하나에 많은 소자를 한꺼번에, 서로 연결된 상태로 만들 수 있습니다.',
+      basis: '평평한 구조라 웨이퍼 하나에 많은 MOSFET을 한꺼번에, 서로 연결된 상태로 만들 수 있습니다.',
+      cite: ['hynix-fe-1'],
+    },
+  ],
+}

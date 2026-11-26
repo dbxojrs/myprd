@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { makeQuiz, QUIZ_SCOPES, topicLabel } from '../lib/quiz.js'
+import { findSource } from '../data/sourceCatalog.js'
 import { useStoredState } from '../lib/storage.js'
 import { AiExplain, AiKeyBox, AiQuizMaker } from './AiTutor.jsx'
 import { appendToCurrentNote } from '../lib/notes.js'
@@ -332,15 +333,39 @@ function QuizRun({ run, setRun, finish, onOpenProcess, onOpenMachine }) {
 }
 
 function RefLink({ q, onOpenProcess, onOpenMachine }) {
+  // 문제은행 문제는 근거 문장의 출처를 함께 보여 줍니다.
+  const src = q.cite?.length ? <QuizCite cite={q.cite} /> : null
+  if (q.ref.kind === 'none') return src
   if (q.ref.kind === 'process')
     return (
-      <button type="button" className="link" onClick={() => onOpenProcess(q.ref.id)}>
-        이 공정 설명 다시 보기 →
-      </button>
+      <>
+        {src}
+        <button type="button" className="link" onClick={() => onOpenProcess(q.ref.id)}>
+          이 공정 설명 다시 보기 →
+        </button>
+      </>
     )
   return (
     <button type="button" className="link" onClick={() => onOpenMachine(q.ref.id)}>
       이 장비 시뮬레이터에서 확인하기 →
     </button>
+  )
+}
+
+function QuizCite({ cite }) {
+  const list = cite.map(findSource).filter(Boolean)
+  return (
+    <p className="quiz-cite">
+      근거:{' '}
+      {list.map((s, i) => (
+        <span key={s.key}>
+          {i > 0 && ' · '}
+          <a href={s.url} target="_blank" rel="noreferrer" title={s.title}>
+            {s.short ?? s.publisher}
+          </a>
+        </span>
+      ))}{' '}
+      <span className="status warn">검수 전</span>
+    </p>
   )
 }

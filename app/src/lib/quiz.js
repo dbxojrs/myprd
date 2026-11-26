@@ -1,6 +1,7 @@
 import { processes, findProcess, STAGES, STAGE_ORDER } from '../data/processes.js'
 import { wholeFlow } from '../data/packages.js'
 import { machines, SEVERITY } from '../data/machineSim.js'
+import { QUESTION_BANK } from '../data/questionBank/index.js'
 
 // 시험 문제 만들기. 공정 데이터(processes.js)와 장비 규칙표(data/machines)에 있는 내용만으로 문제를 만듭니다.
 // 섞는 순서는 seed로 정해지는 의사 난수라서, 같은 seed면 언제나 같은 시험지가 나옵니다(AI·무작위 값 아님).
@@ -116,23 +117,54 @@ function machineQuestions(rand) {
   return out
 }
 
+// 문제은행(직접 작성한 원리·이유 문제). 주제는 공정이면 그 공정의 단계, 기초(b-)·첨단 패키징(adv-)은 따로 묶습니다.
+const bankTopic = (explainer) => findProcess(explainer)?.stage ?? (explainer.startsWith('b-') ? 'basics' : explainer.startsWith('adv-') ? 'adv' : 'back')
+function bankQuestions(rand) {
+  const out = []
+  for (const bank of QUESTION_BANK) {
+    const topic = bankTopic(bank.explainer)
+    const ref = findProcess(bank.explainer) ? { kind: 'process', id: bank.explainer } : { kind: 'none' }
+    for (const q of bank.questions) {
+      // 객관식은 보기 순서를 섞고(같은 seed면 같은 순서), OX는 O·X 순서 그대로 둡니다.
+      const choices = q.kind === 'ox' ? q.choices : shuffle(q.choices, rand)
+      out.push({
+        id: q.id,
+        type: q.kind === 'ox' ? 'OX · 원리' : '원리 · 이유',
+        topic,
+        bank: true,
+        prompt: q.prompt,
+        choices,
+        answer: choices.indexOf(q.choices[q.answer]),
+        explain: q.explain,
+        cite: q.cite,
+        ref,
+      })
+    }
+  }
+  return out
+}
+
 // 시험 범위: 'all' | 'process' | 'machine' | 단계 id(front 등) | 'machine:<id>'
 export const QUIZ_SCOPES = [
   { id: 'all', label: '전체' },
+  { id: 'bank', label: '원리·이유 문제(문제은행)' },
   { id: 'process', label: '공정 전체' },
+  { id: 'basics', label: '반도체 기초' },
   ...STAGE_ORDER.map((s) => ({ id: s, label: ko(STAGES[s].name) })),
+  { id: 'adv', label: '첨단 패키징' },
   { id: 'machine', label: '장비 상황 전체' },
   ...machines.map((m) => ({ id: `machine:${m.id}`, label: m.name })),
 ]
 
 export function allQuestions(seed = 1) {
   const rand = rng(seed)
-  return [...processQuestions(rand), ...machineQuestions(rand)]
+  return [...processQuestions(rand), ...machineQuestions(rand), ...bankQuestions(rand)]
 }
 
 export function makeQuiz({ scope = 'all', count = 10, seed = 1 }) {
   const pool = allQuestions(seed).filter((q) => {
     if (scope === 'all') return true
+    if (scope === 'bank') return q.bank
     if (scope === 'process') return !q.topic.startsWith('machine:')
     if (scope === 'machine') return q.topic.startsWith('machine:')
     return q.topic === scope

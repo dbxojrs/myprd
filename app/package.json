@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "review-sheet": "node scripts/review-sheet.mjs",
     "check-machines": "node scripts/check-machines.mjs",
-    "check-content": "node scripts/check-content.mjs"
+    "check-content": "node scripts/check-content.mjs && node scripts/check-qbank.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

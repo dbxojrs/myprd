@@ -1,0 +1,58 @@
+// 문제은행: 반도체 기초 - CMOS. data/explainers/b-cmos.js의 설명 문장(근거)만으로 만든 원리·이유 문제입니다.
+// basis는 근거 문장 원문 그대로, cite는 그 문장의 출처 그대로입니다(scripts/check-qbank.mjs로 검사). (검수 전)
+export default {
+  explainer: 'b-cmos',
+  reviewed: false,
+  questions: [
+    {
+      id: 'qb-b-cmos-1',
+      kind: 'choice',
+      prompt: 'CMOS 인버터(NOT 회로)에 입력 0을 넣으면 어떻게 되나요?',
+      choices: ['NMOS 켜짐, PMOS 꺼짐 → 출력 0', 'NMOS 꺼짐, PMOS 켜짐 → 출력 1', 'NMOS·PMOS 둘 다 켜짐 → 출력 1', 'NMOS·PMOS 둘 다 꺼짐 → 출력 0'],
+      answer: 1,
+      explain: '입력이 0이면 NMOS는 꺼지고 PMOS가 켜져, 출력이 전원 전압(1)이 됩니다.',
+      basis: '입력 0: NMOS 꺼짐, PMOS 켜짐 → 출력은 전원 전압(1).',
+      cite: ['mit-6012-l13'],
+    },
+    {
+      id: 'qb-b-cmos-2',
+      kind: 'choice',
+      prompt: 'CMOS가 쉬고 있을 때 전력을 거의 쓰지 않는 이유는 무엇인가요?',
+      choices: ['NMOS와 PMOS가 항상 함께 켜져 있어서', '전원 전압이 0이라서', '입력이 늘 1로 고정되어 있어서', '어느 논리 상태에서든 둘 중 하나는 꺼져 있어서'],
+      answer: 3,
+      explain: '어느 논리 상태에서든 NMOS와 PMOS 중 하나는 꺼져 있습니다. 그래서 쉬고 있을 때는 전력을 거의 쓰지 않습니다.',
+      basis: '어느 논리 상태에서든 하나는 꺼져 있어, 쉬고 있을 때는 전력을 거의 쓰지 않습니다.',
+      cite: ['mit-6012-l13'],
+    },
+    {
+      id: 'qb-b-cmos-3',
+      kind: 'choice',
+      prompt: 'CMOS 회로가 전력을 주로 쓰는 때는 언제인가요?',
+      choices: ['아무 동작 없이 쉬고 있을 때', '입력이 계속 0으로 머물 때', '켜고 끄며 상태를 바꿀 때', '입력이 계속 1로 머물 때'],
+      answer: 2,
+      explain: '전력은 주로 상태를 바꿀 때 쓰입니다. 바뀌는 순간에는 두 트랜지스터가 잠깐 함께 켜져 전류가 지나가기도 합니다.',
+      basis: '전력은 주로 켜고 끄며 상태를 바꿀 때 쓰이며, 바뀌는 순간에는 두 트랜지스터가 잠깐 함께 켜져 전류가 지나가기도 합니다.',
+      cite: ['mit-6012-l13', 'ti-cmos-power'],
+    },
+    {
+      id: 'qb-b-cmos-4',
+      kind: 'ox',
+      prompt: 'CMOS는 이론뿐 아니라 실제로도 정적 전력이 정확히 0이다.',
+      choices: ['O', 'X'],
+      answer: 1,
+      explain: '이론상 정적 전력은 0이지만, 실제로는 역방향 접합의 누설 전류 때문에 작은 정적 전력이 있습니다.',
+      basis: '실제로는 역방향 접합의 누설 전류 때문에 작은 정적 전력이 있습니다.',
+      cite: ['ti-cmos-power'],
+    },
+    {
+      id: 'qb-b-cmos-5',
+      kind: 'ox',
+      prompt: 'CMOS는 게이트로 전류가 흐르지 않고 전원에서 접지로 이어지는 직류 길이 없어서, 이론상 정적 전력이 0이다.',
+      choices: ['O', 'X'],
+      answer: 0,
+      explain: '게이트로 전류가 흐르지 않고 전원에서 접지로 바로 이어지는 직류 길이 없기 때문에, 이론상 정적 전력은 0입니다.',
+      basis: '게이트로 전류가 흐르지 않고 전원에서 접지로 이어지는 직류 길이 없어, 이론상 정적 전력은 0입니다.',
+      cite: ['ti-cmos-power'],
+    },
+  ],
+}
