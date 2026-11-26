@@ -207,6 +207,7 @@ export const MOVIE_STAGE_SCENES = {
   deposition: { default: 'cvd' },
   etch: { default: 'dry' },
   photo: { default: 'expose' },
+  cmp: { default: 'damascene', 1: 'why', 5: 'after', 6: 'after' }, // 다마신·디싱 장면 → (조치·검증) CMP 후 세정
 }
 function processMovie(process, stage, processMovies = {}) {
   const movie = processMovies[process]
